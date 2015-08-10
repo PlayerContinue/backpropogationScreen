@@ -50,8 +50,9 @@ CNetwork::CNetwork(vector<int> &sizes)
 			tempNeuron.bias = RandomClamped();
 
 
-			//Add the weights
-			if (i > 0){
+			
+			if (i > 0){//Only add weights to non-input layers
+				//Add the weights
 				for (int k = 0; k < sizes.at(i - 1); k++){//Number of neurons in next layer used as number of outgoing outputs
 					tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
 					tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
@@ -61,6 +62,8 @@ CNetwork::CNetwork(vector<int> &sizes)
 			//Set the initial delta to 0
 			tempNeuron.delta = 0;
 
+			//Set the initial previousbias to 0
+			tempNeuron.previousBias = 0;
 
 			//Create a new neuron with a provided bias
 			this->v_layers.at(i).neurons.push_back(tempNeuron);
@@ -93,6 +96,7 @@ void CNetwork::feedForward(double *in){
 			sum = 0.0;//Reset the sum
 			//For input from each neuron in the preceding layer
 			for (int k = 0; k < this->v_layers.at(i - 1).number_per_layer; k++){
+				//Add the output from the nodes from the previous layer times the weights for that neuron on the current layer
 				sum += this->v_layers.at(i - 1).neurons.at(k).output*this->v_layers.at(i).neurons.at(j).weights.at(k);
 			}
 
@@ -172,20 +176,15 @@ void CNetwork::backprop(double *in, double *tgt){
 
 
 void CNetwork::addLayer(int position,int neuronPerLayer){
-	
-
 	//Create a new Layer
 	this->v_layers.push_back(SNeuronLayer());
 
 	//Set the number nuerons in the current layer
 	this->v_layers.at(position).number_per_layer = neuronPerLayer;
 
-
 	//Create a temporary location for new neuron
 	SNeuron tempNeuron;
 	
-
-
 	if (position == 0){
 		//The current layer is the input layer, set as such
 		this->v_layers.at(position).input_output_layer = 0;
@@ -227,7 +226,7 @@ void CNetwork::addLayer(int position,int neuronPerLayer){
 }
 
 
-void CNetwork::update_mini_batch(vector<vector<double>> &mini_batch, double eta){
+/*void CNetwork::update_mini_batch(vector<vector<double>> &mini_batch, double eta){
 
 	//Retrieve the size of the vector. Thus it only needs to be gathered once
 	int v_mini_batch_size = mini_batch.size();
@@ -248,4 +247,4 @@ void CNetwork::update_mini_batch(vector<vector<double>> &mini_batch, double eta)
 	}
 
 
-}
+}*/
