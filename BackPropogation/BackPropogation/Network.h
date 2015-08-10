@@ -86,6 +86,23 @@ private:
 	//Derivative of the sigmoid function
 	double sigmoid_prime(double z);
 
+	//Retrive the average of the next layers weights
+	double inline average_of_next_weights(int position,int nodePosition){
+		int size = this->v_layers.at(position + 1).number_per_layer;//Get number of neurons in next layer
+		double results = 0;
+
+		//Sum all the weights of the nodes in the given position and layer
+		for (int i = 0; i < size; i++){
+
+			results = this->v_layers.at(position + 1).neurons.at(i).weights.at(nodePosition);
+
+		}
+
+		//Return the average value
+		return (results / size);
+
+	
+	}
 	
 
 public:

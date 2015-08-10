@@ -44,7 +44,7 @@ struct SNeuronLayer{
 	int number_per_layer;
 
 	//Store whether the current layer is an input/output layer
-	// 0 is input, 1 is output, 2 is hidden layer
+	// 0 is input, 1 is output, 2 is hidden layer, 3 is in training
 	int input_output_layer;
 
 	//List of neurons

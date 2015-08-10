@@ -163,16 +163,25 @@ void CNetwork::backprop(double *in, double *tgt){
 	}
 
 }
+//Add a new neuron which causes will not activate until after
+// it is taught at least once
+//By keeping the neuron non active, the neural network should be able to better 
+//update the values
+void CNetwork::addNeuronToLayer(int layerPosition){
+
+}
 
 //Create a new layer with no effect on the current output of the network
 //By utilizing a no change new layer, the system can learn new values while 
 //leaving the previous layer unchanged
-void CNetwork::addLayer(const int position,int neuronPerLayer){
+void CNetwork::addLayer(int position,int neuronPerLayer){
 
 	//Create iterator for insertion
 	vector<SNeuronLayer>::iterator it;
 
-	if (position == -1){//Add a new layer below the output layer
+	//Add a new layer below the output layer
+	//Used to deal with negative values and overly large values
+	if (position < 0 || position >= (int) this->v_layers.size()){
 		it = this->v_layers.end();
 		this->v_layers.insert(it,SNeuronLayer());
 	}
@@ -194,17 +203,16 @@ void CNetwork::addLayer(const int position,int neuronPerLayer){
 		//Create a new Neuron
 		tempNeuron = SNeuron();
 
-		//Add the bias (Random Number between 0 and 1)
-		tempNeuron.bias = RandomClamped();
-
-
 		//Add the weights
 		if (position > 0){
 			for (int k = 0; k < this->v_layers.at(position-1).number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-				tempNeuron.weights.push_back(0);//Add a random weight between 0 and 1
+				tempNeuron.weights.push_back(average_of_next_weights(position,k));//Add a random weight between 0 and 1
 				tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
 			}
 		}
+
+		//Add the bias (Random Number between 0 and 1)
+		tempNeuron.bias = RandomClamped();
 
 		//Set the initial delta to 0
 		tempNeuron.delta = 0;
@@ -212,34 +220,10 @@ void CNetwork::addLayer(const int position,int neuronPerLayer){
 		//Set the initial previousbias to 0
 		tempNeuron.previousBias = 0;
 
-		//Set the initial Bias to 0
-		tempNeuron.bias = 0;
-
 		//Create a new neuron with a provided bias
 		this->v_layers.at(position).neurons.push_back(tempNeuron);
+
+		//Reset the number of layer
+		this->v_num_layers = this->v_layers.size();
 	}
 }
-
-
-/*void CNetwork::update_mini_batch(vector<vector<double>> &mini_batch, double eta){
-
-	//Retrieve the size of the vector. Thus it only needs to be gathered once
-	int v_mini_batch_size = mini_batch.size();
-
-	//The size of the internal vector, can be different for each set
-	//Contains a list of inputs/outputs
-	int v_internal_batch_size;
-
-
-
-	//update the networks weights and biases
-	//Go though each given input/desired output pair and
-	//update the network for that training set
-	for (int i = 0; i < v_mini_batch_size; i++){
-
-
-
-	}
-
-
-}*/
