@@ -51,7 +51,7 @@ struct SNeuronLayer{
 	vector<SNeuron> neurons;
 
 	//Create empty Neuron Layer
-	SNeuronLayer(){}
+	SNeuronLayer() : input_output_layer(0){}
 
 };
 

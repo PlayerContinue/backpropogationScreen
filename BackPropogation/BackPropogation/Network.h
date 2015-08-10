@@ -34,6 +34,9 @@ private:
 
 
 public:
+	//-----------------------------------------------------------------------------------------------------------
+	//Constructors
+	//-----------------------------------------------------------------------------------------------------------
 	CNetwork();
 	//Constructor 
 	//sizes - The number of neurons per layer
@@ -86,25 +89,37 @@ private:
 	//Derivative of the sigmoid function
 	double sigmoid_prime(double z);
 
+	//-----------------------------------------------------------------------------------------------------------
+
 	//Retrive the average of the next layers weights
 	double inline average_of_next_weights(int position,int nodePosition){
 		int size = this->v_layers.at(position + 1).number_per_layer;//Get number of neurons in next layer
 		double results = 0;
-
 		//Sum all the weights of the nodes in the given position and layer
 		for (int i = 0; i < size; i++){
 
 			results = this->v_layers.at(position + 1).neurons.at(i).weights.at(nodePosition);
 
 		}
-
 		//Return the average value
 		return (results / size);
+	}
 
-	
+	//Retrive the average of the next layers weights
+	double inline average_of_bias(int position){
+		int size = this->v_layers.at(position + 1).number_per_layer;//Get number of neurons in next layer
+		double results = 0;
+		//Sum all the weights of the nodes in the given position and layer
+		for (int i = 0; i < size; i++){
+
+			results = this->v_layers.at(position + 1).neurons.at(i).bias;
+
+		}
+		//Return the average value
+		return (results / size);
 	}
 	
-
+	//-----------------------------------------------------------------------------------------------------------
 public:
 	//For testing purposes
 	vector<double> getOutput(){
@@ -116,12 +131,14 @@ public:
 
 		return results;
 	}
-
+	//-----------------------------------------------------------------------------------------------------------
+	//Add New Layers and Neurons
+	//-----------------------------------------------------------------------------------------------------------
 	//Add a new layer before the position passed in 
 	void addLayer(int position, int numberPerLayer);
 
 	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layer);
+	void addNeuronToLayer(int layerPosition);
 
 };
 

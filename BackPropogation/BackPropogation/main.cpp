@@ -53,12 +53,12 @@ int main(int argc, char* argv){
 	}
 	
 	//Test the output
-	test.feedForward(value_1);
+
 	
 	cout << "input";
 	cout << endl;
 	printArray(value_1);
-	
+	test.feedForward(value_1);
 	temp2 = test.getOutput();
 	cout << "output";
 	cout << endl;
@@ -82,13 +82,16 @@ int main(int argc, char* argv){
 
 	cout << "Add New Layer";
 	cout << endl;
+
+
+
 	//Test adding a new layer
-	test.addLayer(2, 10);
+	test.addLayer(-1, 1);
 
 	cout << "input";
 	cout << endl;
 	printArray(value_1);
-
+	test.feedForward(value_1);
 	temp2 = test.getOutput();
 	cout << "output";
 	cout << endl;
@@ -108,6 +111,48 @@ int main(int argc, char* argv){
 	cout << endl;
 	printVectorOutput(temp2);
 	cout << endl;
+
+	//Trained
+
+	//Train the network on simple test values
+	for (int i = 0; i < 1000; i++){
+		if (i % 2 == 0){
+			test.backprop(value_1, value_2);
+		}
+		else{
+			test.backprop(value_3, value_4);
+		}
+	}
+
+	cout << "Training";
+	cout << endl;
+
+	cout << "input";
+	cout << endl;
+	printArray(value_1);
+	test.feedForward(value_1);
+	temp2 = test.getOutput();
+	cout << "output";
+	cout << endl;
+	printVectorOutput(temp2);
+	cout << endl;
+
+
+	test.feedForward(value_3);
+	temp2 = test.getOutput();
+
+	cout << "input";
+	cout << endl;
+	printArray(value_3);
+
+	temp2 = test.getOutput();
+	cout << "output";
+	cout << endl;
+	printVectorOutput(temp2);
+	cout << endl;
+
+	//Add a New Neuron
+	test.addNeuronToLayer(3);
 
 	int i = 0;
 }
