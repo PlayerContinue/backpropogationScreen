@@ -86,11 +86,7 @@ private:
 	//Derivative of the sigmoid function
 	double sigmoid_prime(double z);
 
-	//Add a new layer before the position passed in 
-	void addLayer(int position,int numberPerLayer);
-
-	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layer);
+	
 
 public:
 	//For testing purposes
@@ -103,6 +99,12 @@ public:
 
 		return results;
 	}
+
+	//Add a new layer before the position passed in 
+	void addLayer(int position, int numberPerLayer);
+
+	//Add a new neuron to a particular layer
+	void addNeuronToLayer(int layer);
 
 };
 

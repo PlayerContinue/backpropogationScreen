@@ -39,6 +39,8 @@ int main(int argc, char* argv){
 	
 	test.feedForward(value_3);
 	temp2 = test.getOutput();
+	
+	test.addLayer(2, 1);
 
 	int i = 0;
 }

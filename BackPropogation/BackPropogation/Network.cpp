@@ -29,16 +29,6 @@ CNetwork::CNetwork(vector<int> &sizes)
 		//Set the number nuerons in the current layer
 		this->v_layers.at(i).number_per_layer = sizes.at(i);
 
-		if (i == 0){
-			//The current layer is the input layer, set as such
-			this->v_layers.at(i).input_output_layer = 0;
-		}
-		else if (i == this->v_num_layers - 1){
-			this->v_layers.at(i).input_output_layer = 1;
-		}
-		else{
-			this->v_layers.at(i).input_output_layer = 2;
-		}
 
 		//Randomly create a bias for each of the neurons
 		for (int j = 0; j < sizes.at(i); j++){//Travel through neurons
@@ -174,29 +164,29 @@ void CNetwork::backprop(double *in, double *tgt){
 
 }
 
+//Create a new layer with no effect on the current output of the network
+//By utilizing a no change new layer, the system can learn new values while 
+//leaving the previous layer unchanged
+void CNetwork::addLayer(const int position,int neuronPerLayer){
 
-void CNetwork::addLayer(int position,int neuronPerLayer){
-	//Create a new Layer
-	this->v_layers.push_back(SNeuronLayer());
+	//Create iterator for insertion
+	vector<SNeuronLayer>::iterator it;
+
+	if (position == -1){//Add a new layer below the output layer
+		it = this->v_layers.end();
+		this->v_layers.insert(it,SNeuronLayer());
+	}
+	else{//Add a new layer at the given position
+		it = this->v_layers.begin();
+		it += position; //Move to the new position
+		this->v_layers.insert(it,SNeuronLayer());
+	}
 
 	//Set the number nuerons in the current layer
 	this->v_layers.at(position).number_per_layer = neuronPerLayer;
 
 	//Create a temporary location for new neuron
 	SNeuron tempNeuron;
-	
-	if (position == 0){
-		//The current layer is the input layer, set as such
-		this->v_layers.at(position).input_output_layer = 0;
-	}
-	else if (position == this->v_num_layers - 1){
-		//Output layer
-		this->v_layers.at(position).input_output_layer = 1;
-	}
-	else{
-		//Hidden Layer
-		this->v_layers.at(position).input_output_layer = 2;
-	}
 
 	//Randomly create a bias for each of the neurons
 	for (int j = 0; j < neuronPerLayer; j++){//Travel through neurons
@@ -211,7 +201,7 @@ void CNetwork::addLayer(int position,int neuronPerLayer){
 		//Add the weights
 		if (position > 0){
 			for (int k = 0; k < this->v_layers.at(position-1).number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-				tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+				tempNeuron.weights.push_back(0);//Add a random weight between 0 and 1
 				tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
 			}
 		}
@@ -219,6 +209,11 @@ void CNetwork::addLayer(int position,int neuronPerLayer){
 		//Set the initial delta to 0
 		tempNeuron.delta = 0;
 
+		//Set the initial previousbias to 0
+		tempNeuron.previousBias = 0;
+
+		//Set the initial Bias to 0
+		tempNeuron.bias = 0;
 
 		//Create a new neuron with a provided bias
 		this->v_layers.at(position).neurons.push_back(tempNeuron);
