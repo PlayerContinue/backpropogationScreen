@@ -21,7 +21,6 @@ CNetwork::CNetwork(vector<int> &sizes)
 
 	//Create each layer
 	for (int i = 0; i < this->v_num_layers; i++){//Travel through layers
-		//this->addLayer(i, size.at(i));
 		
 		
 		//Create a new Layer
@@ -173,15 +172,19 @@ void CNetwork::backprop(double *in, double *tgt){
 
 
 void CNetwork::addLayer(int position,int neuronPerLayer){
-	//Create a temporary location for new neuron
-	SNeuron tempNeuron;
-
+	
 
 	//Create a new Layer
 	this->v_layers.push_back(SNeuronLayer());
 
 	//Set the number nuerons in the current layer
 	this->v_layers.at(position).number_per_layer = neuronPerLayer;
+
+
+	//Create a temporary location for new neuron
+	SNeuron tempNeuron;
+	
+
 
 	if (position == 0){
 		//The current layer is the input layer, set as such
