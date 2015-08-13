@@ -31,6 +31,18 @@ private:
 	//Activation Threshold
 	const double neuron_activated = .1;
 
+	//Success Rate
+	int success = 0;
+	
+	//Failure Rate
+	int failure = 0;
+
+	//Number of Outputs
+	int I_output;
+
+	//Number of inputs
+	int I_input;
+
 
 
 
@@ -150,5 +162,46 @@ public:
 	void removeLayer(int position);
 
 	void removeNeuron(int layerPosition, int neuronPosition);
+
+private: 
+	//Checks if the current neuron is designated as temporarily removed
+	bool checkNeuronRemoved(SNeuron &neuron){
+
+		if (neuron.removed == 0){
+			return false;
+		}
+		else{
+			return true;
+		}
+
+	}
+
+	bool isNeuronActivated(SNeuron &neuron){
+		return neuron.output > this->neuron_activated ? true : false;
+	}
+
+	//-----------------------------------------------------------------------------------------------------------
+	//Check Success
+	//-----------------------------------------------------------------------------------------------------------
+
+	//Check if the target and results match
+	inline void updateSuccess(double *target){
+
+		for (int i = 0; i < this->I_output; i++){
+			
+			//Unless all results equal the target result, it is a failure
+			if (this->v_layers.back().neurons.at(i).output - .01 < target[i] < this->v_layers.back().neurons.at(i).output + .01){
+				this->failure += 1;
+				return;
+			}
+		}
+
+		//They all match so it was a success
+		this->success += 1;
+
+
+
+	}
+
 };
 

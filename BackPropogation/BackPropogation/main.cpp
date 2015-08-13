@@ -28,6 +28,18 @@ void printArray(double* arrayA){
 	}
 }
 
+void trainNetwork(double* value_1, double* value_2, double* value_3, double* value_4, CNetwork &test,int rounds){
+	//Train the network on simple test values
+	for (int i = 0; i < rounds; i++){
+		if (i % 2 == 0){
+			test.backprop(value_1, value_2);
+		}
+		else{
+			test.backprop(value_3, value_4);
+		}
+	}
+}
+
 void testOutput(double* value_1, double* value_3, CNetwork &test){
 	vector<double> temp2;
 	cout << "input";
@@ -58,9 +70,9 @@ void testOutput(double* value_1, double* value_3, CNetwork &test){
 int main(int argc, char* argv){
 	vector<int> temp = vector<int>();
 	temp.push_back(1);
-	temp.push_back(10);
-	temp.push_back(10);
-	temp.push_back(10);
+	temp.push_back(3);
+	//temp.push_back(10);
+	//temp.push_back(10);
 	temp.push_back(2);
 	CNetwork test = CNetwork(temp, 1, 2);
 	double value_1[1] = { 1.0 };
@@ -69,19 +81,25 @@ int main(int argc, char* argv){
 	double value_4[2] = { .7, .1 };
 	
 
-	//Train the network on simple test values
-	for (int i = 0; i < 20000; i++){
-		if (i % 2 == 0){
-			test.backprop(value_1, value_2);
-		}
-		else{
-			test.backprop(value_3, value_4);
-		}
-	}
+	trainNetwork(value_1, value_2, value_3, value_4, test, 20000);
 	
 	//Test the output
 	testOutput(value_1, value_3, test);
 	
+	//Remove a neuron
+	cout << "Remove a Neuron";
+	cout << endl;
+	
+	test.removeNeuron(1, 1);
+
+	//Test how Neuron Removal Affected the system
+	testOutput(value_1, value_3, test);
+
+	trainNetwork(value_1, value_2, value_3, value_4, test, 1000);
+
+	testOutput(value_1, value_3, test);
+
+
 
 	cout << "Add New Layer";
 	cout << endl;
@@ -96,14 +114,7 @@ int main(int argc, char* argv){
 	//Trained
 
 	//Train the network on simple test values
-	for (int i = 0; i < 1000; i++){
-		if (i % 2 == 0){
-			test.backprop(value_1, value_2);
-		}
-		else{
-			test.backprop(value_3, value_4);
-		}
-	}
+	trainNetwork(value_1, value_2, value_3, value_4, test, 1000);
 
 	cout << "Training";
 	cout << endl;
@@ -111,7 +122,7 @@ int main(int argc, char* argv){
 	testOutput(value_1, value_3, test);
 
 	//Add a New Neuron
-	test.addNeuronToLayer(3);
+	test.addNeuronToLayer(2);
 
 	testOutput(value_1, value_3, test);
 
