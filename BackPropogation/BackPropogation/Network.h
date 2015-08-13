@@ -28,7 +28,8 @@ private:
 	//momentum (Look up)
 	double alpha;
 
-
+	//Activation Threshold
+	const double neuron_activated = .1;
 
 
 
@@ -131,6 +132,8 @@ public:
 
 		return results;
 	}
+
+
 	//-----------------------------------------------------------------------------------------------------------
 	//Add New Layers and Neurons
 	//-----------------------------------------------------------------------------------------------------------
@@ -140,5 +143,12 @@ public:
 	//Add a new neuron to a particular layer
 	void addNeuronToLayer(int layerPosition);
 
+
+	//-----------------------------------------------------------------------------------------------------------
+	//Remove Layers and Neurons
+	//-----------------------------------------------------------------------------------------------------------
+	void removeLayer(int position);
+
+	void removeNeuron(int layerPosition, int neuronPosition);
 };
 

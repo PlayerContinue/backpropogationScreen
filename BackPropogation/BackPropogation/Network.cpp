@@ -95,8 +95,18 @@ void CNetwork::feedForward(double *in){
 
 			//Apply the sigmoid function
 			this->v_layers.at(i).neurons.at(j).output = CNetwork::sigmoid(sum);
+
+			//Possibly Temporary
+			//States if the neuron has been activated
+			if (this->v_layers.at(i).neurons.at(j).output > this->neuron_activated){
+				this->v_layers.at(i).neurons.at(j).activated += 1;
+			}
 		}
 	}
+
+}
+
+void RetrieveNeuronOutput(){
 
 }
 
@@ -164,6 +174,9 @@ void CNetwork::backprop(double *in, double *tgt){
 
 }
 
+//**********************************************
+//Add and Remove Layers and Neurons
+//**********************************************
 
 //Add a new neuron which causes will not activate until after
 // it is taught at least once
@@ -187,6 +200,11 @@ void CNetwork::addNeuronToLayer(int layerPosition){
 		for (int k = 0; k < this->v_layers.at(layerPosition - 1).number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
 			tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
 			tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+		}
+
+		//Add a new weight for the new node on the next level
+		for (int k = 0; k < this->v_layers.at(layerPosition + 1).number_per_layer; k++){
+			this->v_layers.at(layerPosition + 1).addNewWeights(1);
 		}
 
 		//Add the bias (Random Number between 0 and 1)
@@ -218,9 +236,6 @@ void CNetwork::addLayer(int position,int neuronPerLayer){
 	if (position < 0 || position >= (int) this->v_layers.size()){
 	//Change the position to the output layer position
 		position = this->v_layers.size() - 1;
-
-		
-
 	}
 	//Add a new layer at the given position
 		it = this->v_layers.begin();
@@ -263,4 +278,11 @@ void CNetwork::addLayer(int position,int neuronPerLayer){
 		//Reset the number of layer
 		this->v_num_layers = this->v_layers.size();
 	}
+}
+
+//TODO - Update neuron removal to actually remove a neuron
+void removeNeuron(int layerPosition, int neuronPosition){
+
+
+	
 }

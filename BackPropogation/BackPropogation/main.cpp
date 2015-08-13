@@ -28,6 +28,33 @@ void printArray(double* arrayA){
 	}
 }
 
+void testOutput(double* value_1, double* value_3, CNetwork &test){
+	vector<double> temp2;
+	cout << "input";
+	cout << endl;
+	printArray(value_1);
+	test.feedForward(value_1);
+	temp2 = test.getOutput();
+	cout << "output";
+	cout << endl;
+	printVectorOutput(temp2);
+	cout << endl;
+
+
+	test.feedForward(value_3);
+	temp2 = test.getOutput();
+
+	cout << "input";
+	cout << endl;
+	printArray(value_3);
+
+	temp2 = test.getOutput();
+	cout << "output";
+	cout << endl;
+	printVectorOutput(temp2);
+	cout << endl;
+}
+
 int main(int argc, char* argv){
 	vector<int> temp = vector<int>();
 	temp.push_back(1);
@@ -40,7 +67,7 @@ int main(int argc, char* argv){
 	double value_2[2] = { .2, .5 };
 	double value_3[1] = { 2.0 };
 	double value_4[2] = { .7, .1 };
-	vector<double> temp2;
+	
 
 	//Train the network on simple test values
 	for (int i = 0; i < 20000; i++){
@@ -53,31 +80,7 @@ int main(int argc, char* argv){
 	}
 	
 	//Test the output
-
-	
-	cout << "input";
-	cout << endl;
-	printArray(value_1);
-	test.feedForward(value_1);
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
-	
-	
-	test.feedForward(value_3);
-	temp2 = test.getOutput();
-
-	cout << "input";
-	cout << endl;
-	printArray(value_3);
-
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
+	testOutput(value_1, value_3, test);
 	
 
 	cout << "Add New Layer";
@@ -88,29 +91,7 @@ int main(int argc, char* argv){
 	//Test adding a new layer
 	test.addLayer(-1, 1);
 
-	cout << "input";
-	cout << endl;
-	printArray(value_1);
-	test.feedForward(value_1);
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
-
-
-	test.feedForward(value_3);
-	temp2 = test.getOutput();
-
-	cout << "input";
-	cout << endl;
-	printArray(value_3);
-
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
+	testOutput(value_1, value_3,test);
 
 	//Trained
 
@@ -127,32 +108,12 @@ int main(int argc, char* argv){
 	cout << "Training";
 	cout << endl;
 
-	cout << "input";
-	cout << endl;
-	printArray(value_1);
-	test.feedForward(value_1);
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
-
-
-	test.feedForward(value_3);
-	temp2 = test.getOutput();
-
-	cout << "input";
-	cout << endl;
-	printArray(value_3);
-
-	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
-	printVectorOutput(temp2);
-	cout << endl;
+	testOutput(value_1, value_3, test);
 
 	//Add a New Neuron
 	test.addNeuronToLayer(3);
+
+	testOutput(value_1, value_3, test);
 
 	int i = 0;
 }
