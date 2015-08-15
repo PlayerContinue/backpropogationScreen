@@ -2,10 +2,11 @@
 //Author:David Greenberg
 //Desc: Contains a backpropagation algorithm for a neural network
 //----------------------------------------------------------------------------------------
-
+#define LOCKED .000000000000000000001
 #pragma once
 #include <vector>
 #include <time.h>
+#include <math.h>
 #include "structures.h"
 #include "util.h"
 
@@ -33,7 +34,7 @@ private:
 
 	//Success Rate
 	int success = 0;
-	
+
 	//Failure Rate
 	int failure = 0;
 
@@ -105,7 +106,7 @@ private:
 	//-----------------------------------------------------------------------------------------------------------
 
 	//Retrive the average of the next layers weights
-	double inline average_of_next_weights(int position,int nodePosition){
+	double inline average_of_next_weights(int position, int nodePosition){
 		int size = this->v_layers.at(position + 1).number_per_layer;//Get number of neurons in next layer
 		double results = 0;
 		//Sum all the weights of the nodes in the given position and layer
@@ -131,7 +132,7 @@ private:
 		//Return the average value
 		return (results / size);
 	}
-	
+
 	//-----------------------------------------------------------------------------------------------------------
 public:
 	//For testing purposes
@@ -163,17 +164,31 @@ public:
 
 	void removeNeuron(int layerPosition, int neuronPosition);
 
-private: 
+	//Lock the current neuron from further changes
+	void lockNeuron(int layerPosition, int neuronPosition){
+
+		if (abs(this->v_layers.at(layerPosition).neurons.at(neuronPosition).delta) < LOCKED){
+			this->v_layers.at(layerPosition).neurons.at(neuronPosition).removed = 2;
+#ifdef DEBUG 
+	
+#endif
+		}
+	}
+private:
 	//Checks if the current neuron is designated as temporarily removed
 	bool checkNeuronRemoved(SNeuron &neuron){
 
-		if (neuron.removed == 0){
-			return false;
-		}
-		else{
+		if (neuron.removed == 1){
 			return true;
 		}
+		else{
+			return false;
+		}
 
+	}
+
+	bool checkNeuronLocked(SNeuron &neuron){
+		return (neuron.removed == 2);
 	}
 
 	bool isNeuronActivated(SNeuron &neuron){
@@ -188,9 +203,9 @@ private:
 	inline void updateSuccess(double *target){
 
 		for (int i = 0; i < this->I_output; i++){
-			
+
 			//Unless all results equal the target result, it is a failure
-			if (this->v_layers.back().neurons.at(i).output - .01 < target[i] < this->v_layers.back().neurons.at(i).output + .01){
+			if (this->v_layers.back().neurons.at(i).output!=target[i]){//!(this->v_layers.back().neurons.at(i).output - .000001 < target[i] < this->v_layers.back().neurons.at(i).output + .000001)){
 				this->failure += 1;
 				return;
 			}
@@ -198,9 +213,43 @@ private:
 
 		//They all match so it was a success
 		this->success += 1;
+	}
+
+	//-----------------------------------------------------------------------------------------------------------
+	//Reset Network Counts
+	//-----------------------------------------------------------------------------------------------------------
+public:
+	void resetNetwork(){
+		//Reset the activated count in the neurons
+		for (int layerNum = 0; layerNum < this->v_num_layers; layerNum++){
+			for (int neuronNum = 0; neuronNum < this->v_layers.at(layerNum).number_per_layer; neuronNum++){
+				this->v_layers.at(layerNum).neurons.at(neuronNum).activated = 0;
+			}
+		}
+
+		this->success = 0;
+		this->failure = 0;
+	}
+
+	//-----------------------------------------------------------------------------------------------------------
+	//Get And Set 
+	//-----------------------------------------------------------------------------------------------------------
 
 
+	//Return the Success rate
+	double getSuccessRate(){
+		double test = ((double)this->success / ((double)this->success + (double)this->failure));
+		return test;
+	}
 
+	//Retrieve the number of layers
+	int getNumLayers(){
+		return this->v_num_layers;
+	}
+
+	//Retrieve the number of neurons in a given layer
+	int getNumNeuronsInLayer(int layerPosition){
+		return this->v_layers.at(layerPosition).number_per_layer;
 	}
 
 };

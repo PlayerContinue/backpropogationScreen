@@ -135,6 +135,9 @@ void CNetwork::backprop(double *in, double *tgt){
 		//Store a pointer to the variable
 		currentNeuron = &(this->v_layers.at(this->v_num_layers - 1).neurons.at(i));
 		currentNeuron->delta = currentNeuron->output * (1 - currentNeuron->output) * (tgt[i] - currentNeuron->output);
+		
+		lockNeuron(this->v_num_layers - 1, i);
+
 	}
 
 	//Find Delta for the hidden layers
@@ -153,6 +156,7 @@ void CNetwork::backprop(double *in, double *tgt){
 			}
 			currentNeuron = &(this->v_layers.at(i).neurons.at(j));
 			currentNeuron->delta = currentNeuron->output * (1 - currentNeuron->output)*sum;
+			lockNeuron(i, j);
 		}
 	}
 
@@ -162,7 +166,7 @@ void CNetwork::backprop(double *in, double *tgt){
 		for (int layerPos = 1; layerPos < this->v_num_layers; layerPos++){
 			for (int neuronPos = 0; neuronPos < this->v_layers.at(layerPos).number_per_layer; neuronPos++){
 				currentNeuron = &(this->v_layers.at(layerPos).neurons.at(neuronPos));
-				if (!checkNeuronRemoved(*currentNeuron)){
+				if (!checkNeuronRemoved(*currentNeuron) && !checkNeuronLocked(*currentNeuron)){
 
 					//Apply the alpha to each weight
 					for (int weightPos = 0; weightPos < this->v_layers.at(layerPos - 1).number_per_layer; weightPos++){
@@ -181,7 +185,7 @@ void CNetwork::backprop(double *in, double *tgt){
 	//Apply the correction
 	for (int layerNum = 1; layerNum < this->v_num_layers; layerNum++){
 		for (int neuronPos = 0; neuronPos < this->v_layers.at(layerNum).number_per_layer; neuronPos++){
-			if (!checkNeuronRemoved(this->v_layers.at(layerNum).neurons.at(neuronPos))){//Check if Neuron is temp removed
+			if (!checkNeuronRemoved(this->v_layers.at(layerNum).neurons.at(neuronPos)) && !checkNeuronLocked(this->v_layers.at(layerNum).neurons.at(neuronPos))){//Check if Neuron is temp removed
 
 				for (int weightPos = 0; weightPos < this->v_layers.at(layerNum - 1).number_per_layer; weightPos++){
 
@@ -222,7 +226,7 @@ void CNetwork::addNeuronToLayer(int layerPosition){
 	//Special version later maybe
 	if (layerPosition < 1 || layerPosition >= (int) this->v_layers.size() - 1){
 		//Change the position to the layer below the output
-		layerPosition = this->v_layers.size() - 2;
+		layerPosition = this->v_layers.size() - 1;
 	}
 
 	//Add the new Neuron
@@ -334,5 +338,9 @@ void CNetwork::removeNeuron(int layerPosition, int neuronPosition){
 			//TODO - add permanent removal function
 		}
 	}
+
+}
+
+void CNetwork::removeLayer(int layerPosition){
 
 }

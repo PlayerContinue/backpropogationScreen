@@ -2,7 +2,6 @@
 //Author:David Greenberg
 //Desc: Contains structures used throughout the application
 //----------------------------------------------------------------------------------------
-
 #pragma once
 #include <vector>
 #include "util.h"
@@ -57,6 +56,10 @@ struct SNeuronLayer{
 
 	//List of neurons
 	vector<SNeuron> neurons;
+
+#ifdef DEBUG
+	int num_locked = 0;
+#endif
 
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
