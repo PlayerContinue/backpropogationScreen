@@ -134,7 +134,7 @@ int main(int argc, char* argv){
 
 
 	for (int i = 0; i < 500; i++){
-		trainNetwork2(value, results, test, 0,PROBLEMS, 1000);
+		trainNetwork2(value, results, test, 0,PROBLEMS, 3000);
 
 		if (i % 100 == 0){
 			//Test the output

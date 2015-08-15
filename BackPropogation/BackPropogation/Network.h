@@ -166,13 +166,18 @@ public:
 
 	//Lock the current neuron from further changes
 	void lockNeuron(int layerPosition, int neuronPosition){
+		SNeuron* currentNeuron = &(this->v_layers.at(layerPosition).neurons.at(neuronPosition));
 
-		if (abs(this->v_layers.at(layerPosition).neurons.at(neuronPosition).delta) < LOCKED){
+		
+		if (currentNeuron->removed != 2 && abs(currentNeuron->delta) < LOCKED){//Neuron is both not locked and needs to be locked
 			this->v_layers.at(layerPosition).neurons.at(neuronPosition).removed = 2;
-#ifdef DEBUG 
-	
-#endif
+		#ifdef DEBUG 
+			this->v_layers.at(layerPosition).num_locked+=1;
+		#endif
 		}
+
+		//Delete the pointer
+		currentNeuron = NULL;
 	}
 private:
 	//Checks if the current neuron is designated as temporarily removed
