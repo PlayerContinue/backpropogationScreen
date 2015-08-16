@@ -171,8 +171,6 @@ void CNetwork::backprop(double *in, double *tgt){
 					//Apply the alpha to each weight
 					for (int weightPos = 0; weightPos < this->v_layers.at(layerPos - 1).number_per_layer; weightPos++){
 						currentNeuron->weights.at(weightPos) += this->alpha * currentNeuron->previousWeight.at(weightPos);
-
-
 					}
 
 					//Add the bias

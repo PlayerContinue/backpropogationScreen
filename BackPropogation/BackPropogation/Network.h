@@ -5,6 +5,8 @@
 #define LOCKED .000000000000000000001
 #pragma once
 #include <vector>
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
 #include <time.h>
 #include <math.h>
 #include "structures.h"
