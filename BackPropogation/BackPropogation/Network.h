@@ -5,11 +5,9 @@
 #define LOCKED .000000000000000000001
 #pragma once
 #include <vector>
-#include <thrust/host_vector.h>
-#include <thrust/device_vector.h>
 #include <time.h>
 #include <math.h>
-#include "structures.h"
+#include "structures_cuda.cuh"
 #include "util.h"
 
 using namespace std;
@@ -114,7 +112,7 @@ private:
 		//Sum all the weights of the nodes in the given position and layer
 		for (int i = 0; i < size; i++){
 
-			results = this->v_layers.at(position + 1).neurons.at(i).weights.at(nodePosition);
+			results = this->v_layers.at(position + 1).neurons[i].weights[nodePosition];
 
 		}
 		//Return the average value
@@ -128,7 +126,7 @@ private:
 		//Sum all the weights of the nodes in the given position and layer
 		for (int i = 0; i < size; i++){
 
-			results = this->v_layers.at(position + 1).neurons.at(i).bias;
+			results = this->v_layers.at(position + 1).neurons[i].bias;
 
 		}
 		//Return the average value
@@ -142,7 +140,7 @@ public:
 		vector<double> results = vector<double>();
 
 		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
-			results.push_back(this->v_layers.back().neurons.at(i).output);
+			results.push_back(this->v_layers.back().neurons[i].output);
 		}
 
 		return results;
@@ -168,11 +166,11 @@ public:
 
 	//Lock the current neuron from further changes
 	void lockNeuron(int layerPosition, int neuronPosition){
-		SNeuron* currentNeuron = &(this->v_layers.at(layerPosition).neurons.at(neuronPosition));
+		SNeuron* currentNeuron = &(this->v_layers.at(layerPosition).neurons[neuronPosition]);
 
 		
 		if (currentNeuron->removed != 2 && abs(currentNeuron->delta) < LOCKED){//Neuron is both not locked and needs to be locked
-			this->v_layers.at(layerPosition).neurons.at(neuronPosition).removed = 2;
+			this->v_layers.at(layerPosition).neurons[neuronPosition].removed = 2;
 		#ifdef DEBUG 
 			this->v_layers.at(layerPosition).num_locked+=1;
 		#endif
@@ -212,7 +210,7 @@ private:
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
-			if (this->v_layers.back().neurons.at(i).output!=target[i]){//!(this->v_layers.back().neurons.at(i).output - .000001 < target[i] < this->v_layers.back().neurons.at(i).output + .000001)){
+			if (this->v_layers.back().neurons[i].output!=target[i]){
 				this->failure += 1;
 				return;
 			}
@@ -230,7 +228,7 @@ public:
 		//Reset the activated count in the neurons
 		for (int layerNum = 0; layerNum < this->v_num_layers; layerNum++){
 			for (int neuronNum = 0; neuronNum < this->v_layers.at(layerNum).number_per_layer; neuronNum++){
-				this->v_layers.at(layerNum).neurons.at(neuronNum).activated = 0;
+				this->v_layers.at(layerNum).neurons[neuronNum].activated = 0;
 			}
 		}
 

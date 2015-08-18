@@ -79,7 +79,7 @@ void CNetwork::feedForward(double *in){
 	//Store the input in the input layer
 	//Allows future calculations to be performed easier
 	for (int i = 0; i < this->v_layers.at(0).number_per_layer; i++){
-		this->v_layers.at(0).neurons.at(i).output = in[i];
+		this->v_layers.at(0).neurons[i].output = in[i];
 	}
 
 	//Perform the following actions on each hidden layer
@@ -88,13 +88,13 @@ void CNetwork::feedForward(double *in){
 		//take the output of the previous layer
 		//and perform the calculation on it
 		for (int j = 0; j < this->v_layers.at(i).number_per_layer; j++){
-			if (!checkNeuronRemoved(this->v_layers.at(i).neurons.at(j))){//The current node has not been removed, use it
+			if (!checkNeuronRemoved(this->v_layers.at(i).neurons[j])){//The current node has not been removed, use it
 				sum = 0.0;//Reset the sum
 				//For input from each neuron in the preceding layer
 				for (int k = 0; k < this->v_layers.at(i - 1).number_per_layer; k++){
-					if (!checkNeuronRemoved(this->v_layers.at(i - 1).neurons.at(k))){//The neuron in the previous layer has not been removed, add it
+					if (!checkNeuronRemoved(this->v_layers.at(i - 1).neurons[k])){//The neuron in the previous layer has not been removed, add it
 						//Add the output from the nodes from the previous layer times the weights for that neuron on the current layer
-						sum += this->v_layers.at(i - 1).neurons.at(k).output*this->v_layers.at(i).neurons.at(j).weights.at(k);
+						sum += this->v_layers.at(i - 1).neurons[k].output*this->v_layers.at(i).neurons[j].weights[k];
 					}
 				}
 
