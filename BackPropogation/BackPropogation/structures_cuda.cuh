@@ -3,6 +3,7 @@
 //Desc: Contains structures used throughout the application
 //----------------------------------------------------------------------------------------
 #pragma once
+#include <vector>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include "util.h"
@@ -11,13 +12,13 @@ using namespace std;
 //Structure containing the neuron
 struct SNeuron{
 	//Bias for the neuron
-	double bias;
+	double bias = 0;
 
 	//Previous Bias
-	double previousBias;
+	double previousBias = 0;
 
 	//The change for the current layer
-	double delta;
+	double delta = 0;
 
 	//List of weights for outgoing neurons
 	thrust::host_vector<double> weights;
@@ -26,7 +27,7 @@ struct SNeuron{
 	thrust::host_vector<double> previousWeight;
 
 	//The current output
-	double output;
+	double output = 0;
 
 	//Store how many times the neuron was activated
 	int activated = 0;
@@ -40,7 +41,7 @@ struct SNeuron{
 
 	}
 	//Create a neuron with a bias and weight
-	SNeuron(double bias, vector<double> weights) : bias(bias), weights(weights){
+	SNeuron(double bias, thrust::host_vector<double> weights) : bias(bias), weights(weights){
 
 	}
 
@@ -49,15 +50,15 @@ struct SNeuron{
 //Structure for the neuron layer
 struct SNeuronLayer{
 	//number of neurons in layer
-	int number_per_layer;
+	int number_per_layer = 0;
 
 	//Store whether the current layer is an input/output layer
 	// 0 is input, 1 is output, 2 is hidden layer, 3 is in training
-	int input_output_layer;
+	int input_output_layer = 0;
 
 	//List of neurons
-	thrust::host_vector<SNeuron> neurons;
-
+	vector<SNeuron> neurons;
+	
 #ifdef DEBUG
 	int num_locked = 0;
 #endif
@@ -69,8 +70,8 @@ struct SNeuronLayer{
 	void addNewWeights(int numberOfNeuronsAdded){
 		for (int i = 0; i < this->number_per_layer; i++){
 			for (int k = 0; k < numberOfNeuronsAdded; k++){
-				this->neurons.at(i).weights.push_back(RandomClamped());
-				this->neurons.at(i).previousWeight.push_back(0);
+				this->neurons[i].weights.push_back(RandomClamped());
+				this->neurons[i].previousWeight.push_back(0);
 			}
 		}
 	}

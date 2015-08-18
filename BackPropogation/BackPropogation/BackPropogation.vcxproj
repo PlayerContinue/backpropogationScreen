@@ -102,11 +102,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Network.cpp" />
-    <ClCompile Include="util.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="CGraphicNetwork.cuh" />
+    <ClInclude Include="CudaCalculations.cuh" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="structures.h" />
@@ -117,7 +114,14 @@
     <ResourceCompile Include="BackPropogation.rc" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="CUDA.cu" />
+    <CudaCompile Include="CGraphicNetwork.cu" />
+    <CudaCompile Include="main.cu" />
+    <CudaCompile Include="main2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Network.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
