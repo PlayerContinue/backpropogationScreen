@@ -433,8 +433,10 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mm3dnow.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdexcept
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstring
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ios
@@ -456,10 +458,6 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cerrno
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\errno.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CGraphicNetwork.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda.h
@@ -598,6 +596,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system_error.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/error_code.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/errno.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_category.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_code.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_condition.inl
@@ -867,14 +866,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl

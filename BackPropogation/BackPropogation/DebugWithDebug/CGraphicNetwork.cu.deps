@@ -862,6 +862,43 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/internal/decompose.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cuda_launch_config.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/extern_shared_ptr.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/alignment.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/inclusive_scan.h

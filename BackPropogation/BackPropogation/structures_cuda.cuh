@@ -58,13 +58,18 @@ struct SNeuronLayer{
 
 	//List of neurons
 	vector<SNeuron> neurons;
-	
+
+	//Holds the delta for the current row
+	thrust::host_vector<double> delta;
 #ifdef DEBUG
 	int num_locked = 0;
 #endif
 
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
+
+
+
 
 	//Add new weights to the current layer
 	void addNewWeights(int numberOfNeuronsAdded){
@@ -75,6 +80,46 @@ struct SNeuronLayer{
 			}
 		}
 	}
+
+	//Get and set
+
+
+
+	//Retrieve a list of the current output in the form
+	//|out_11, out_21, out_31, ... , out_n1|
+	thrust::host_vector<double> getOutput(){
+		thrust::host_vector<double> y(this->number_per_layer);
+		for (int i = 0; i < this->number_per_layer; i++){
+			//Store the weight in the vector
+			y[i] = thrust::raw_reference_cast(this->neurons[i].output);
+		}
+
+		return y;
+	}
+
+	//Retrieve a list of the current weights in the form
+	//|x_11, x_21, x_31, ... , x_n1|
+	//input n (the position of the weights desired)
+	//output y (the array of weights)
+	thrust::host_vector<double> getWeights(int n){
+		thrust::host_vector<double> y;
+		for (int i = 0; i < this->number_per_layer; i++){
+			//Store the weight in the vector
+			y.push_back(this->neurons[i].weights[n]);
+		}
+
+		return y;
+	}
+
+	//Retrieve a list of the current weights in the form
+	//|x_11, x_21, x_31, ... , x_N1
+	//input n (the position of the weights desired)
+	//output y (the array of weights)
+	thrust::host_vector<double> getDelta(){
+
+		return this->delta;
+	}
+
 
 };
 

@@ -5,13 +5,15 @@
 //Desc: Initizializing algorithm. Contains the main function and only the main function
 //----------------------------------------------------------------------------------------
 
-#define PROBLEMS 50
+#define PROBLEMS 1000
 #pragma once
 #include <vector>
+#include <stdlib.h>
+#include <bitset>
+#include <math.h>
+#include <iostream>
 #include "util.h"
 #include "CGraphicNetwork.cuh"
-#include <stdlib.h>
-#include <iostream>
 using namespace std;
 
 
@@ -60,14 +62,17 @@ void trainNetwork2(double* value[], double* results[], CGraphicsNetwork &test, i
 
 void addToNetwork(CGraphicsNetwork &test){
 
-	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
-	if (test.getSuccessRate() < .8 && (test.getNumLayers() == 2 || test.getNumNeuronsInLayer(test.getNumLayers() - 2) > 100)){
-		test.addLayer(-1, 1);
-	}
+	//Get delta in success
+	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
+	double averagedistance = abs(test.getAverageDistance());
+		//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
+	if (success < .1 && averagedistance > .002 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3 && RandBool())){
+			test.addLayer(-1, 1);
+		}
 
-	if (test.getSuccessRate() < .8){
-		test.addNeuronToLayer(test.getNumLayers() - 2);
-	}
+	if (success < .2 && averagedistance > .001 && test.getSuccessRate() < .8){
+			test.addNeuronToLayer(test.getNumLayers() - 2);
+		}
 	test.resetNetwork();
 
 }
@@ -118,25 +123,29 @@ void testOutput2(double** value, CGraphicsNetwork &test, int size){
 int main(int argc, char* argv){
 	vector<int> temp = vector<int>();
 	temp.push_back(2);
-	temp.push_back(1);
+	temp.push_back(sizeof(double));
 	CGraphicsNetwork test = CGraphicsNetwork(temp, 1, 2);
+	double zero =(double) ~0;
 	double **value = new double*[PROBLEMS];
 	double **results = new double*[PROBLEMS];
 	for (int i = 0; i < PROBLEMS; i++){
 		value[i] = new double[2];
-		double number = (double)i;
+		double number = (double)i + 1;
 		value[i][0] = number;
 		value[i][1] = number + 1;
 		number = (double)(1 / (number + number + 1));
-		results[i] = new double[1];
-		results[i][0] = number;
+		results[i] = new double[sizeof(double)];
+		for (int j = 0; j < sizeof(double); j++){
+			results[i][j] = (double)((number & zero) ? 0 : 1)
+		}
+		
 	}
 
 
 	for (int i = 0; i < 500; i++){
-		trainNetwork2(value, results, test, 0, PROBLEMS, 3000);
+		trainNetwork2(value, results, test, 0, PROBLEMS, 1000);
 
-		if (i % 100 == 0){
+		if (i % 2 == 0){
 			//Test the output
 			testOutput2(value, test, PROBLEMS);
 		}
@@ -157,6 +166,6 @@ int main(int argc, char* argv){
 	delete value;
 	delete results;
 
-	int i = 0;
+	return 0;
 }
 

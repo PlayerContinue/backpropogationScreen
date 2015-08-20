@@ -10,8 +10,9 @@
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include "structures_cuda.cuh"
 #include "util.h"
+#include "structures_cuda.cuh"
+#include "CudaCalculations.cuh"
 
 using namespace std;
 
@@ -26,7 +27,8 @@ private:
 	//Vector containing the layers of neurons
 	vector<SNeuronLayer> v_layers;
 
-
+	
+	
 	//Learning rate (look up)
 	double beta;
 
@@ -38,9 +40,16 @@ private:
 
 	//Success Rate
 	int success = 0;
+	int previousSuccess;
 
 	//Failure Rate
 	int failure = 0;
+	int previousFailure;
+
+	//Average distance 
+	double total_distance;
+
+	double average_delta;
 
 	//Number of Outputs
 	int I_output;
@@ -214,14 +223,17 @@ private:
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
-			if (this->v_layers.back().neurons[i].output != target[i]){
+			if (target[i] != this->v_layers.back().neurons[i].output){
 				this->failure += 1;
-				return;
+				//Add the average distance
+				total_distance += target[i] - this->v_layers.back().neurons[i].output;
+			}
+			else{
+				//They all match so it was a success
+				this->success += 1;
 			}
 		}
-
-		//They all match so it was a success
-		this->success += 1;
+		return;
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -235,9 +247,14 @@ public:
 				this->v_layers[layerNum].neurons[neuronNum].activated = 0;
 			}
 		}
-
+		//Reset previous and current success
+		this->previousSuccess = this->success;
+		this->previousFailure = this->failure;
 		this->success = 0;
 		this->failure = 0;
+
+		//Reset Previous Distance
+		this->total_distance = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -249,6 +266,15 @@ public:
 	double getSuccessRate(){
 		double test = ((double)this->success / ((double)this->success + (double)this->failure));
 		return test;
+	}
+
+	//Return the previous Success Rate
+	double getPreviousSuccessRate(){
+		return ((double)this->previousSuccess / ((double)this->previousSuccess + (double)this->previousFailure));
+	}
+	//Return the average distance
+	double getAverageDistance(){
+		return (this->total_distance / ((double)this->success + (double)this->failure));
 	}
 
 	//Retrieve the number of layers
