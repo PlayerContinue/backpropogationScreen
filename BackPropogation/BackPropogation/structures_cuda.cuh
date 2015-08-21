@@ -56,6 +56,8 @@ struct SNeuronLayer{
 	// 0 is input, 1 is output, 2 is hidden layer, 3 is in training
 	int input_output_layer = 0;
 
+	double average_delta = 0;
+
 	//List of neurons
 	vector<SNeuron> neurons;
 
@@ -78,6 +80,14 @@ struct SNeuronLayer{
 				this->neurons[i].weights.push_back(RandomClamped());
 				this->neurons[i].previousWeight.push_back(0);
 			}
+		}
+	}
+
+	//Remove all except X weights from the neurons
+	void keepXWeights(int X){
+		for (int i = 0; i < this->number_per_layer; i++){
+			this->neurons[i].weights.resize(X);
+			this->neurons[i].previousWeight.resize(X);
 		}
 	}
 

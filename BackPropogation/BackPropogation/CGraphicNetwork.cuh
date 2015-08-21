@@ -13,6 +13,9 @@
 #include "util.h"
 #include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
+#if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4)
+#include <iostream>
+#endif
 
 using namespace std;
 
@@ -48,6 +51,8 @@ private:
 
 	//Average distance 
 	double total_distance;
+
+	double previous_average_distance;
 
 	double average_delta;
 
@@ -167,7 +172,7 @@ public:
 	void addLayer(int position, int numberPerLayer);
 
 	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layerPosition);
+	void addNeuronToLayer(int layerPosition,int numToAdd);
 
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -247,14 +252,17 @@ public:
 				this->v_layers[layerNum].neurons[neuronNum].activated = 0;
 			}
 		}
+		
+		//Grab previous distance
+		this->previous_average_distance = (this->total_distance / ((((double)this->success + (double)this->failure))*this->I_output));
+		//Reset Previous Distance
+		this->total_distance = 0;
+
 		//Reset previous and current success
 		this->previousSuccess = this->success;
 		this->previousFailure = this->failure;
 		this->success = 0;
 		this->failure = 0;
-
-		//Reset Previous Distance
-		this->total_distance = 0;
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -268,14 +276,36 @@ public:
 		return test;
 	}
 
+	//Return the average change
+	double getAverageDelta(){
+		double numberNeurons = 0;
+		double sum = 0;
+		//Get number of neurons
+		for (int i = 1; i < this->v_num_layers; i++){
+			numberNeurons += this->v_layers[i].number_per_layer;
+			for (int j = 0; j < this->v_layers[i].delta.size(); j++){
+				sum += this->v_layers[i].delta[j];
+			}
+		}
+		return sum / numberNeurons ;
+	}
+
 	//Return the previous Success Rate
 	double getPreviousSuccessRate(){
-		return ((double)this->previousSuccess / ((double)this->previousSuccess + (double)this->previousFailure));
+		return ((double)this->previousSuccess / (((double)this->previousSuccess + (double)this->previousFailure))*this->I_output);
 	}
 	//Return the average distance
 	double getAverageDistance(){
-		return (this->total_distance / ((double)this->success + (double)this->failure));
+		return (this->total_distance / ((((double)this->success + (double)this->failure))*this->I_output));
+		
 	}
+
+	//Return the average distance
+	double getPreviousAverageDistance(){
+		return this->previous_average_distance;
+	}
+
+
 
 	//Retrieve the number of layers
 	int getNumLayers(){

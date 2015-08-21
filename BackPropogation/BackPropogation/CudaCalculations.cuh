@@ -56,7 +56,7 @@ struct OutputDelta_functor
 };
 
 template <typename T>
-struct dot_product_special
+struct dot_product_special : public unary_function<T,T>
 {
 
 
@@ -64,12 +64,19 @@ struct dot_product_special
 	//Perform a matrix multiplication
 	template <typename Tuple>
 	__host__ __device__
-		T operator()(Tuple t){
+		T operator()(Tuple &t){
 		return (thrust::get<0>(t) * thrust::get<1>(t));
 	}
 
+	//Overload the function operator
+	__host__ __device__
+		T operator()(const T &x, const T &y) const{
+		//Output * (1-output) * (sum)
+		return (x * (1 - x) * y);
+	}
 
 };
+
 
 template <typename T>
 struct saxpy_functor
@@ -105,8 +112,8 @@ inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vec
 inline thrust::host_vector<double> findNewHiddenDelta(thrust::device_vector<double> sum, thrust::device_vector<double> output){
 
 	thrust::host_vector<double> results(sum.size());
-
-	thrust::transform(output.begin(), output.end(), sum.begin(), sum.end(), OutputDelta_functor());
+	
+	thrust::transform(output.begin(), output.end(), sum.begin(), sum.begin(), dot_product_special<double>());
 
 	//Return the product as a host_copy
 	thrust::copy(sum.begin(), sum.end(), results.begin());
@@ -119,11 +126,12 @@ inline thrust::host_vector<double> findNewHiddenDelta(thrust::device_vector<doub
 //output return_sums
 inline thrust::host_vector<double> findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer previous_layer){
 	thrust::host_vector<double> return_sums(previous_layer.number_per_layer);//Sums to be returned 
+	thrust::host_vector<double> temp(previous_layer.number_per_layer);//Temporary location for weight
 	int size = neurons_weights.neurons.size();
 
 	if (size > 0){
 		thrust::device_vector<double> weights = neurons_weights.getWeights(0);//Stores the weights
-		thrust::device_vector<double> deltas = neurons_weights.getDelta();//Store the Delta in GPU Memory
+		thrust::device_vector<double> deltas = neurons_weights.delta;//Store the Delta in GPU Memory
 		thrust::device_vector<double> gpu_sums;//Sums in GPU, same number as delta
 
 		//Fill the sums with 0
@@ -132,18 +140,22 @@ inline thrust::host_vector<double> findHiddenDelta(SNeuronLayer neurons_weights,
 		//setup arguments
 		dot_product_special<double> unary_op;
 		thrust::plus<double> binary_op;
-
 		//Perform the first iteration
 		return_sums[0] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(weights.begin(), deltas.begin())),
-			thrust::make_zip_iterator(thrust::make_tuple(weights.end(), deltas.end())), unary_op, 0, binary_op);
+			thrust::make_zip_iterator(thrust::make_tuple(weights.end(), deltas.end())),
+			unary_op, (double) 0, binary_op);
 
 
 		//TODO - Modify to take advantage of the total memory available in the gpu
 		//Sum the (weights) * delta of the neurons
-		for (int i = 1; i < neurons_weights.number_per_layer; i++){
-			weights = neurons_weights.getWeights(i);
+		for (int i = 1; i < neurons_weights.neurons[0].weights.size(); i++){
+			temp = neurons_weights.getWeights(i);
+			thrust::copy(temp.begin(),temp.end(),weights.begin());
 			return_sums[i] = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(weights.begin(), deltas.begin())),
-				thrust::make_zip_iterator(thrust::make_tuple(weights.end(), deltas.end())), unary_op, 0, binary_op);
+				thrust::make_zip_iterator(thrust::make_tuple(weights.end(), deltas.end())), 
+				unary_op, 
+				(double)0,
+				binary_op);
 
 		}
 
@@ -195,6 +207,9 @@ inline void applyMomentum(SNeuronLayer currentLayer, double alpha){
 		//Set the weights back from memory
 		setWeights(currentLayer, weights, previousWeights, i, i+available_slots);
 	}
+
+	free(weights);
+	free(previousWeights);
 
 }
 

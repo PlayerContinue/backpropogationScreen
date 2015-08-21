@@ -16,7 +16,7 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 	//Get the number of layers
 	this->v_num_layers = sizes.size();
 
-	
+
 
 	//Set the number of layers
 	this->v_layers.resize(this->v_num_layers);
@@ -50,7 +50,7 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 			//Add the bias (Random Number between 0 and 1)
 			this->v_layers[i].neurons[j].bias = RandomClamped();
 
-			
+
 			if (i > 0){//Only add weights to non-input layers
 				//Add the weights
 				for (int k = 0; k < sizes.at(i - 1); k++){//Number of neurons in next layer used as number of outgoing outputs
@@ -137,7 +137,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 
 	//Set the size of the target vector
 	target_vector = thrust::host_vector<double>(this->I_output);
-	
+
 	//Perform the feedforward algorithm to retrieve the output of 
 	//each node in the network
 	this->feedForward(in);
@@ -153,53 +153,83 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 		target_vector[i] = tgt[i];
 	}
 
-	//Find the delta of the output layer
-	findOutputDelta(this->v_layers[this->v_num_layers-1].getOutput(), target_vector);
-	
+#if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4)
+	thrust::host_vector<double> delta = thrust::host_vector<double>(this->v_layers[this->v_num_layers - 1].delta.size());
+#endif
+
+#ifdef TRIAL1
 	
 	//Find Delta for the output Layer
 	//The required change to have the correct answer
-	/*for (int i = 0; i < this->v_layers[this->v_num_layers - 1].number_per_layer; i++){
-		
+	for (int i = 0; i < this->v_layers[this->v_num_layers - 1].number_per_layer; i++){
+
 		//Store a pointer to the variable
 		currentNeuron = &(this->v_layers[this->v_num_layers - 1].neurons[i]);
-		currentNeuron->delta = currentNeuron->output * (1 - currentNeuron->output) * (tgt[i] - currentNeuron->output);
-		lockNeuron(this->v_num_layers - 1, i);
+		delta[i] = currentNeuron->output * (1 - currentNeuron->output) * (tgt[i] - currentNeuron->output);
 
-	}*///Removed due to better implementation
 
-	//Replace the delta
-	//for (int i = 0; i < target_vector.size(); i++){
-		//this->v_layers[this->v_num_layers - 1].neurons[i].delta = target_vector[i];
-	//}
+	}//Removed due to better implementation
+#endif
+
+	//Find the delta of the output layer
+	findOutputDelta(this->v_layers[this->v_num_layers - 1].getOutput(), target_vector);
+
+#ifdef TRIAL1
+	int count_fail = 0;
+	for (int i = 0; i < delta.size(); i++){
+		if (delta[i] != target_vector[i]){
+			count_fail++;
+		}
+	}
+	cout << count_fail;
+#endif
+
 	this->v_layers[this->v_num_layers - 1].delta = target_vector;
 
 	//Find the delta for the hidden layers
 	for (int layerPosition = this->v_num_layers - 2; layerPosition > 0; layerPosition--){
-		//Retrieve the changed delta and store in the output vector
-		output_vector = findHiddenDelta(this->v_layers[layerPosition+1],this->v_layers[layerPosition]);
-		this->v_layers[layerPosition].delta = output_vector;
-	}
-	//Find Delta for the hidden layers
-	//The change needed to recieve the correct answer
-	//All Layers except input and output
-	/*for (int layerPosition = this->v_num_layers - 2; layerPosition > 0; layerPosition--){
+
+
+#ifdef TRIAL2
+		delta.resize(this->v_layers[layerPosition].neurons.size());
 		for (int j = 0; j < this->v_layers[layerPosition].number_per_layer; j++){
 			sum = 0.0;
-			
+
 			//Find the delta for the current neuron
 			for (int k = 0; k < this->v_layers[layerPosition + 1].number_per_layer; k++){
 				currentNeuron = &(this->v_layers[layerPosition + 1].neurons[k]);
 				if (!checkNeuronRemoved(*currentNeuron)){
 					//Delta * each weight of the neuron
-					sum += currentNeuron->delta * currentNeuron->weights[j];
+					sum += this->v_layers[layerPosition+1].delta[k] * currentNeuron->weights[j];
 				}
 
 			}
 			currentNeuron = &(this->v_layers[layerPosition].neurons[j]);
-			currentNeuron->delta = currentNeuron->output * (1 - currentNeuron->output) * sum;
-			lockNeuron(layerPosition, j);
+			delta[j] = currentNeuron->output * (1 - currentNeuron->output) * sum;
 		}
+#endif
+
+		//Retrieve the changed delta and store in the output vector
+		output_vector = findHiddenDelta(this->v_layers[layerPosition + 1], this->v_layers[layerPosition]);
+		this->v_layers[layerPosition].delta = output_vector;
+
+#ifdef TRIAL2
+		int count_fail = 0;
+		for(int i=0;i<delta.size();i++){
+			if (delta[i] != output_vector[i]){
+				count_fail++;
+			}
+		}
+		cout << count_fail << endl;
+
+#endif
+	}
+
+	//Find Delta for the hidden layers
+	//The change needed to recieve the correct answer
+	//All Layers except input and output
+	/*for (int layerPosition = this->v_num_layers - 2; layerPosition > 0; layerPosition--){
+
 	}*/
 
 	//Apply the momentum
@@ -210,19 +240,19 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 				currentNeuron = &(this->v_layers[layerPos].neurons[neuronPos]);
 				if (!checkNeuronRemoved(*currentNeuron) && !checkNeuronLocked(*currentNeuron)){
 
-					//Apply the alpha to each weight
-					for (int weightPos = 0; weightPos < this->v_layers[layerPos - 1].number_per_layer; weightPos++){
-						currentNeuron->weights[weightPos] += this->alpha * currentNeuron->previousWeight[weightPos];
-					}
-
-					//Add the bias
-					currentNeuron->bias += this->alpha * currentNeuron->previousBias;
+				//Apply the alpha to each weight
+				for (int weightPos = 0; weightPos < this->v_layers[layerPos - 1].number_per_layer; weightPos++){
+				currentNeuron->weights[weightPos] += this->alpha * currentNeuron->previousWeight[weightPos];
 				}
-			}*/
 
-			applyMomentum(this->v_layers[layerPos],this->alpha);
+				//Add the bias
+				currentNeuron->bias += this->alpha * currentNeuron->previousBias;
+				}
+				}*/
+
+			applyMomentum(this->v_layers[layerPos], this->alpha);
 		}
-		
+
 	}
 
 	//Apply the correction
@@ -238,7 +268,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 						//BETA * delta * output
 						this->v_layers[layerNum].neurons[neuronPos].previousWeight[weightPos] =
 							this->beta * this->v_layers[layerNum].delta[neuronPos] * this->v_layers[layerNum - 1].neurons[weightPos].output;
-						
+
 						this->v_layers[layerNum].neurons[neuronPos].weights[weightPos] +=
 							this->v_layers[layerNum].neurons[neuronPos].previousWeight[weightPos];
 					}
@@ -262,7 +292,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 // it is taught at least once
 //By keeping the neuron non active, the neural network should be able to better 
 //update the values
-void CGraphicsNetwork::addNeuronToLayer(int layerPosition){
+void CGraphicsNetwork::addNeuronToLayer(int layerPosition, int numToAdd){
 
 	//Can't add neurons to non-hidden layers
 	//Changing the number of inputs would change the value to greatly
@@ -272,38 +302,40 @@ void CGraphicsNetwork::addNeuronToLayer(int layerPosition){
 		//Change the position to the layer below the output
 		layerPosition = this->v_layers.size() - 1;
 	}
-	
-	//Add the new Neuron
 
-	SNeuron tempNeuron = SNeuron();
-	//Add the weights
-	for (int k = 0; k < this->v_layers[layerPosition - 1].number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-		tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
-		tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+	//Add a new delta
+	this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].delta.size() + numToAdd);
+
+	//Add the new Neuron
+	for (int i = 0; i < numToAdd; i++){
+		SNeuron tempNeuron = SNeuron();
+		//Add the weights
+		//TODO find a better algorithm for deciding the weight
+		for (int k = 0; k < this->v_layers[layerPosition - 1].number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
+			tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+			tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+		}
+
+		//Add the bias (Random Number between 0 and 1)
+		tempNeuron.bias = RandomClamped();
+
+		//Set the initial delta to 0
+		tempNeuron.delta = 0;
+
+		//Set the initial previousbias to 0
+		tempNeuron.previousBias = 0;
+
+		//Add the new neuron
+		this->v_layers[layerPosition].neurons.push_back(tempNeuron);
+
+		//Add one neuron to the count
+		this->v_layers[layerPosition].number_per_layer += 1;
+
+
 	}
 
 	//Add a new weight for the new node on the next level
-	for (int k = 0; k < this->v_layers[layerPosition + 1].number_per_layer; k++){
-		this->v_layers[layerPosition + 1].addNewWeights(1);
-	}
-
-	//Add the bias (Random Number between 0 and 1)
-	tempNeuron.bias = RandomClamped();
-
-	//Set the initial delta to 0
-	tempNeuron.delta = 0;
-
-	//Set the initial previousbias to 0
-	tempNeuron.previousBias = 0;
-
-	//Add the new neuron
-	this->v_layers[layerPosition].neurons.push_back(tempNeuron);
-
-	//Add one neuron to the count
-	this->v_layers[layerPosition].number_per_layer += 1;
-
-	//Add a new delta
-	this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].delta.size() + 1);
+	this->v_layers[layerPosition + 1].addNewWeights(numToAdd);
 }
 
 //Create a new layer with no effect on the current output of the network
@@ -320,7 +352,7 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		//Change the position to the output layer position
 		position = this->v_layers.size() - 1;
 	}
-	
+
 	//Add a new layer at the given position
 	it = this->v_layers.begin() + position;
 
@@ -349,6 +381,8 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 				tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
 			}
 		}
+
+		this->v_layers[position + 1].keepXWeights(1);
 
 		//Add the bias (Random Number between 0 and 1)
 		tempNeuron.bias = average_of_bias(position);

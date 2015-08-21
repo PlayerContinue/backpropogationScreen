@@ -5,7 +5,7 @@
 //Desc: Initizializing algorithm. Contains the main function and only the main function
 //----------------------------------------------------------------------------------------
 
-#define PROBLEMS 1000
+//#define PROBLEMS 5
 #pragma once
 #include <vector>
 #include <stdlib.h>
@@ -18,12 +18,17 @@ using namespace std;
 
 
 void printVectorOutput(vector<double> vectorA){
-	for (int i = 0; i < vectorA.size(); i++){
-		cout << 1 / vectorA.at(i);
-		cout << endl;
-		cout << vectorA.at(i);
-		cout << endl;
+	int size = vectorA.size();
+	int value = 0;//Store a int with 32 0
+	int pos = 1;
+	for (int i = vectorA.size() - 1; i >= 0; i--){
+		
+		//Either add one at the current position or add zero
+		value = value | (vectorA[i] > .5 ? pos : 0);
+
+		pos = pos << 1;
 	}
+	cout << value;
 }
 
 void printArray(double* arrayA, int size){
@@ -64,15 +69,14 @@ void addToNetwork(CGraphicsNetwork &test){
 
 	//Get delta in success
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
-	double averagedistance = abs(test.getAverageDistance());
-		//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
-	if (success < .1 && averagedistance > .002 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3 && RandBool())){
-			test.addLayer(-1, 1);
-		}
-
-	if (success < .2 && averagedistance > .001 && test.getSuccessRate() < .8){
-			test.addNeuronToLayer(test.getNumLayers() - 2);
-		}
+	double averagedistance = abs(test.getAverageDistance() - test.getPreviousAverageDistance());
+	double delta = abs(test.getAverageDelta());
+	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
+	if (success < .1 && averagedistance < .01 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3 && delta < .0005)){
+		test.addLayer(-1, 1);
+	}else if (success < .2 && averagedistance < .05 && test.getSuccessRate() < .8 && delta < .008){
+		test.addNeuronToLayer(RandInt(1, test.getNumLayers() - 2), 8);
+	}
 	test.resetNetwork();
 
 }
@@ -120,12 +124,16 @@ void testOutput2(double** value, CGraphicsNetwork &test, int size){
 	}
 }
 
-int main(int argc, char* argv){
+int main(int argc, char** argv){
+	int PROBLEMS = (((int)argv[1][0])-48);
 	vector<int> temp = vector<int>();
 	temp.push_back(2);
-	temp.push_back(sizeof(double));
+	temp.push_back(32);
+	vector<double> temp2 = vector<double>(32);
+
 	CGraphicsNetwork test = CGraphicsNetwork(temp, 1, 2);
-	double zero =(double) ~0;
+	int zero;
+	int number2;
 	double **value = new double*[PROBLEMS];
 	double **results = new double*[PROBLEMS];
 	for (int i = 0; i < PROBLEMS; i++){
@@ -133,19 +141,22 @@ int main(int argc, char* argv){
 		double number = (double)i + 1;
 		value[i][0] = number;
 		value[i][1] = number + 1;
-		number = (double)(1 / (number + number + 1));
-		results[i] = new double[sizeof(double)];
-		for (int j = 0; j < sizeof(double); j++){
-			results[i][j] = (double)((number & zero) ? 0 : 1)
+		//number = (double)(1 / (number + number + 1));
+		results[i] = new double[32];
+		number2 = number + number + 1;
+		zero = 1;
+		for (int j = 31; j >= 0; j--){
+			results[i][j] = (double)(((int)(number2 & zero)) != 0 ? .7 : 0);
+			//Shift left by one
+			zero = zero << 1;
 		}
-		
+
 	}
 
-
 	for (int i = 0; i < 500; i++){
-		trainNetwork2(value, results, test, 0, PROBLEMS, 1000);
+		trainNetwork2(value, results, test, 0, PROBLEMS, 3000);
 
-		if (i % 2 == 0){
+		if (i % 2 == 0 || true){
 			//Test the output
 			testOutput2(value, test, PROBLEMS);
 		}
