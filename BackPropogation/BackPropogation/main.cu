@@ -71,11 +71,17 @@ void addToNetwork(CGraphicsNetwork &test){
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
 	double averagedistance = abs(test.getAverageDistance() - test.getPreviousAverageDistance());
 	double delta = abs(test.getAverageDelta());
+	double distanceMeasure = .01;
 	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
-	if (success < .1 && averagedistance < .01 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3 && delta < .0005)){
-		test.addLayer(-1, 1);
-	}else if (success < .2 && averagedistance < .05 && test.getSuccessRate() < .8 && delta < .008){
-		test.addNeuronToLayer(RandInt(1, test.getNumLayers() - 2), 8);
+	if (success < .1 && averagedistance < distanceMeasure * .0000001 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3)){
+		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers()-1)/5);
+	}else if (success < .2 && averagedistance < distanceMeasure * .0003 && test.getSuccessRate() < .8){
+		if (test.getNumLayers() == 2){
+			test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
+		}
+		else{
+			test.addNeuronToLayer(1, test.getNumLayers() - 2, 2);
+		}
 	}
 	test.resetNetwork();
 
@@ -146,7 +152,7 @@ int main(int argc, char** argv){
 		number2 = number + number + 1;
 		zero = 1;
 		for (int j = 31; j >= 0; j--){
-			results[i][j] = (double)(((int)(number2 & zero)) != 0 ? .7 : 0);
+			results[i][j] = (double)(((int)(number2 & zero)) != 0 ? .7 : .1);
 			//Shift left by one
 			zero = zero << 1;
 		}
@@ -154,7 +160,7 @@ int main(int argc, char** argv){
 	}
 
 	for (int i = 0; i < 500; i++){
-		trainNetwork2(value, results, test, 0, PROBLEMS, 3000);
+		trainNetwork2(value, results, test, 0, PROBLEMS, 1000);
 
 		if (i % 2 == 0 || true){
 			//Test the output

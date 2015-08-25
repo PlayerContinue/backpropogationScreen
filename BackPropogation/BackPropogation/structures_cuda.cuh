@@ -29,6 +29,9 @@ struct SNeuron{
 	//The current output
 	double output = 0;
 
+	
+
+
 	//Store how many times the neuron was activated
 	int activated = 0;
 
@@ -61,6 +64,9 @@ struct SNeuronLayer{
 	//List of neurons
 	vector<SNeuron> neurons;
 
+	//Store the output of the neurons
+	thrust::host_vector<double> output;
+
 	//Holds the delta for the current row
 	thrust::host_vector<double> delta;
 #ifdef DEBUG
@@ -69,8 +75,6 @@ struct SNeuronLayer{
 
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
-
-
 
 
 	//Add new weights to the current layer
@@ -93,15 +97,27 @@ struct SNeuronLayer{
 
 	//Get and set
 
-
-
 	//Retrieve a list of the current output in the form
 	//|out_11, out_21, out_31, ... , out_n1|
 	thrust::host_vector<double> getOutput(){
-		thrust::host_vector<double> y(this->number_per_layer);
-		for (int i = 0; i < this->number_per_layer; i++){
+		return this->output;
+	}
+
+	//Retrieve a list of the current output in the form
+	//|out_11, out_21, out_31, ... , out_n1|
+	//Input expand - include extra values, value - value to add
+	thrust::host_vector<double> getOutput(int expand, double value){
+		thrust::host_vector<double> y(this->number_per_layer + expand);
+		//for (int i = 0; i < this->number_per_layer; i++){
 			//Store the weight in the vector
-			y[i] = thrust::raw_reference_cast(this->neurons[i].output);
+			//y[i] = this->neurons[i].output;
+		//}
+		//Copy the output into the expanded array
+		thrust::copy(this->output.begin(), this->output.end(), y.begin());
+
+		//Insert extra values
+		for (int i = this->number_per_layer; i < this->number_per_layer + expand; i++){
+			y[i] = value;
 		}
 
 		return y;

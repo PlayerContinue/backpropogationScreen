@@ -13,7 +13,7 @@
 #include "util.h"
 #include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
-#if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4)
+#if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4) || defined(TRIAL5)
 #include <iostream>
 #endif
 
@@ -43,18 +43,18 @@ private:
 
 	//Success Rate
 	int success = 0;
-	int previousSuccess;
+	int previousSuccess=0;
 
 	//Failure Rate
 	int failure = 0;
-	int previousFailure;
+	int previousFailure=0;
 
 	//Average distance 
 	double total_distance;
 
-	double previous_average_distance;
+	double previous_average_distance=0;
 
-	double average_delta;
+	double average_delta=0;
 
 	//Number of Outputs
 	int I_output;
@@ -158,7 +158,7 @@ public:
 		vector<double> results = vector<double>();
 
 		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
-			results.push_back(this->v_layers.back().neurons[i].output);
+			results.push_back(this->v_layers.back().output[i]);
 		}
 
 		return results;
@@ -172,7 +172,7 @@ public:
 	void addLayer(int position, int numberPerLayer);
 
 	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layerPosition,int numToAdd);
+	void addNeuronToLayer(int layerPosition, int layerPositionEnd,int numToAdd);
 
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -228,10 +228,10 @@ private:
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
-			if (target[i] != this->v_layers.back().neurons[i].output){
+			if (target[i] != this->v_layers.back().output[i]){
 				this->failure += 1;
 				//Add the average distance
-				total_distance += target[i] - this->v_layers.back().neurons[i].output;
+				total_distance += abs(target[i] - this->v_layers.back().output[i]);
 			}
 			else{
 				//They all match so it was a success
@@ -284,7 +284,7 @@ public:
 		for (int i = 1; i < this->v_num_layers; i++){
 			numberNeurons += this->v_layers[i].number_per_layer;
 			for (int j = 0; j < this->v_layers[i].delta.size(); j++){
-				sum += this->v_layers[i].delta[j];
+				sum += abs(this->v_layers[i].delta[j]);
 			}
 		}
 		return sum / numberNeurons ;
@@ -298,6 +298,10 @@ public:
 	double getAverageDistance(){
 		return (this->total_distance / ((((double)this->success + (double)this->failure))*this->I_output));
 		
+	}
+
+	int getTotalDistance(){
+		return this->total_distance;
 	}
 
 	//Return the average distance
