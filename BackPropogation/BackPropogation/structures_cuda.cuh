@@ -81,7 +81,9 @@ struct SNeuronLayer{
 	void addNewWeights(int numberOfNeuronsAdded){
 		for (int i = 0; i < this->number_per_layer; i++){
 			for (int k = 0; k < numberOfNeuronsAdded; k++){
-				this->neurons[i].weights.push_back(RandomClamped());
+				this->neurons[i].weights.push_back(this->neurons[i].weights[k]/2);//Set the new weight to half the previous weight
+				this->neurons[i].weights[k] = this->neurons[i].weights[k] / 2;//Set the divided weight to the same as the new weights
+				//REASON: ((n/2)*k) + ((n/2)*l) = ((n) * k) approximately 
 				this->neurons[i].previousWeight.push_back(0);
 			}
 		}
@@ -94,8 +96,9 @@ struct SNeuronLayer{
 			this->neurons[i].previousWeight.resize(X);
 		}
 	}
-
+	//***************************************
 	//Get and set
+	//***************************************
 
 	//Retrieve a list of the current output in the form
 	//|out_11, out_21, out_31, ... , out_n1|
@@ -144,6 +147,35 @@ struct SNeuronLayer{
 	thrust::host_vector<double> getDelta(){
 
 		return this->delta;
+	}
+
+	//Set the current output using a device vector
+	//Throws error when output is wrong size
+	void setOutput(thrust::device_vector<double> new_output){
+		if (new_output.size() != this->number_per_layer){
+			throw new exception("To many Outputs");
+		} 
+
+		//Error causing size change 
+		if (this->output.size() < this->number_per_layer){
+			this->output.resize(this->number_per_layer);
+		}
+
+
+		thrust::copy(new_output.begin(), new_output.end(), this->output.begin());
+	}
+
+	void setOutput(thrust::host_vector<double> new_output){
+		if (new_output.size() != this->number_per_layer){
+			throw new exception("To many Outputs");
+		}
+
+		//Error causing size change 
+		if (this->output.size() < this->number_per_layer){
+			this->output.resize(this->number_per_layer);
+		}
+		//Set the output
+		this->output = new_output;
 	}
 
 

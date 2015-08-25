@@ -183,7 +183,6 @@ inline thrust::host_vector<double> findNewHiddenDelta(thrust::device_vector<doub
 
 inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous_layer){
 	size_t availableMemory = getCurrentGPUMemory();
-	int position = 0;
 	int size_available = 0;
 	int numberNeurons = neurons_weights.neurons.size();
 	int number_weights_per_neuron = neurons_weights.neurons[0].weights.size();
@@ -453,7 +452,8 @@ inline void applyCorrection(SNeuronLayer &currentLayer, thrust::host_vector<doub
 //*******************************************************
 //Place the output into the currentlayer from start onward
 inline void setOutput(SNeuronLayer &currentLayer, thrust::device_vector<double> output, int start){
-	thrust::copy(output.begin(), output.end(), currentLayer.output.begin() + start);
+	currentLayer.setOutput(output);
+	//thrust::copy(output.begin(), output.end(), currentLayer.output.begin() + start);
 }
 
 //Find the output of each neuron of the current layer

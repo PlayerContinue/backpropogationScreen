@@ -12,6 +12,7 @@
 #include <bitset>
 #include <math.h>
 #include <iostream>
+#include <string>
 #include "util.h"
 #include "CGraphicNetwork.cuh"
 using namespace std;
@@ -22,7 +23,7 @@ void printVectorOutput(vector<double> vectorA){
 	int value = 0;//Store a int with 32 0
 	int pos = 1;
 	for (int i = vectorA.size() - 1; i >= 0; i--){
-		
+
 		//Either add one at the current position or add zero
 		value = value | (vectorA[i] > .5 ? pos : 0);
 
@@ -69,13 +70,37 @@ void addToNetwork(CGraphicsNetwork &test){
 
 	//Get delta in success
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
-	double averagedistance = abs(test.getAverageDistance() - test.getPreviousAverageDistance());
+	double averagedistance = test.getAverageDistance() - test.getPreviousAverageDistance();
 	double delta = abs(test.getAverageDelta());
-	double distanceMeasure = .01;
+	double distanceMeasure = 1;
+#ifdef FULL_SUCCESS
+	double full_success = test.getFullSuccessRate() - test.getFullPreviousSuccessRate();
+#endif
 	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
-	if (success < .1 && averagedistance < distanceMeasure * .0000001 && (test.getNumLayers() == 2 || test.getSuccessRate() < .3 && test.getPreviousSuccessRate() < .3)){
-		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers()-1)/5);
-	}else if (success < .2 && averagedistance < distanceMeasure * .0003 && test.getSuccessRate() < .8){
+	if (
+#ifdef FULL_SUCCESS
+		( success!=0 && success < .2 || success == 0 && full_success < .3) &&
+
+#else
+		success < .1 &&
+#endif
+
+		((-1 * distanceMeasure * .002) > averagedistance
+		|| 0 < averagedistance && averagedistance < distanceMeasure * .00000000000000000000001))
+	{
+		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
+	}
+	else if (
+
+#ifdef FULL_SUCCESS
+		(success != 0 && success < .2 || success == 0 && full_success < .5) &&
+#else
+
+		success < .2 &&
+#endif
+
+		((-1 * distanceMeasure * .0002) > averagedistance
+		|| 0 < averagedistance && averagedistance < (distanceMeasure * .00000003))){
 		if (test.getNumLayers() == 2){
 			test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
 		}
@@ -131,7 +156,8 @@ void testOutput2(double** value, CGraphicsNetwork &test, int size){
 }
 
 int main(int argc, char** argv){
-	int PROBLEMS = (((int)argv[1][0])-48);
+	int PROBLEMS = std::stoi(argv[1]);
+	int loop = std::stoi(argv[2]);
 	vector<int> temp = vector<int>();
 	temp.push_back(2);
 	temp.push_back(32);
@@ -160,12 +186,21 @@ int main(int argc, char** argv){
 	}
 
 	for (int i = 0; i < 500; i++){
-		trainNetwork2(value, results, test, 0, PROBLEMS, 1000);
-
-		if (i % 2 == 0 || true){
-			//Test the output
-			testOutput2(value, test, PROBLEMS);
+		try{
+			if (i != 0){
+				trainNetwork2(value, results, test, 0, PROBLEMS, loop);
+			}
+			else{
+				trainNetwork2(value, results, test, 0, PROBLEMS, loop);
+			}
 		}
+		catch (exception e){
+			cout << i << endl;
+		}
+
+		//Test the output
+		testOutput2(value, test, PROBLEMS);
+		cout << " loop " << i << endl;;
 
 		//Add new nodes to the network
 		addToNetwork(test);

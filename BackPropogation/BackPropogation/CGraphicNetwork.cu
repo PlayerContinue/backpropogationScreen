@@ -49,6 +49,9 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 		for (int j = 0; j < sizes.at(i); j++){//Travel through neurons
 			this->v_layers[i].neurons.push_back(SNeuron());
 
+			//Increase the count on the total number of nodes
+			this->total_num_nodes++;
+
 			//Add the bias (Random Number between 0 and 1)
 			this->v_layers[i].neurons[j].bias = RandomClamped();
 
@@ -248,7 +251,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 				cout.precision(20);
 				cout << this->v_layers[layerPosition + 1].delta[k] *
 					this->v_layers[layerPosition + 1].neurons[k].weights[j] << endl;
-				
+
 			}
 			cout << "___________________" << endl;
 			cout << sum << endl;
@@ -289,17 +292,17 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 #ifdef TRIAL3
 			weights.clear();
 			for (int neuronPos = 0; neuronPos < this->v_layers[layerPos].number_per_layer; neuronPos++){
-			
 
-					//Apply the alpha to each weight
-					for (int weightPos = 0; weightPos < this->v_layers[layerPos].neurons[0].weights.size(); weightPos++){
-						weights.push_back(this->v_layers[layerPos].neurons[neuronPos].weights[weightPos] + (this->alpha * this->v_layers[layerPos].neurons[neuronPos].previousWeight[weightPos]));
-					}
 
-					//Add the bias
-					weights.push_back(this->v_layers[layerPos].neurons[neuronPos].bias + (this->alpha * this->v_layers[layerPos].neurons[neuronPos].previousBias));
+				//Apply the alpha to each weight
+				for (int weightPos = 0; weightPos < this->v_layers[layerPos].neurons[0].weights.size(); weightPos++){
+					weights.push_back(this->v_layers[layerPos].neurons[neuronPos].weights[weightPos] + (this->alpha * this->v_layers[layerPos].neurons[neuronPos].previousWeight[weightPos]));
 				}
-			
+
+				//Add the bias
+				weights.push_back(this->v_layers[layerPos].neurons[neuronPos].bias + (this->alpha * this->v_layers[layerPos].neurons[neuronPos].previousBias));
+			}
+
 #endif
 
 			applyMomentum(this->v_layers[layerPos], this->alpha);
@@ -438,13 +441,17 @@ void CGraphicsNetwork::addNeuronToLayer(int layerPositionStart, int layerPositio
 	//Add a new delta
 	this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].delta.size() + numToAdd);
 
+	//Add new output
+	this->v_layers[layerPosition].output.resize(this->v_layers[layerPosition].output.size() + numToAdd);
+
 	//Add the new Neuron
 	for (int i = 0; i < numToAdd; i++){
 		SNeuron tempNeuron = SNeuron();
 		//Add the weights
 		//TODO find a better algorithm for deciding the weight
 		for (int k = 0; k < this->v_layers[layerPosition - 1].number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-			tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+			tempNeuron.weights.push_back(this->v_layers[layerPosition].neurons[i].weights[k] / 2);//Add a random weight between 0 and 1
+			this->v_layers[layerPosition].neurons[i].weights[k] = this->v_layers[layerPosition].neurons[i].weights[k] / 2;//Set the weight to half so that it takes the results
 			tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
 		}
 
@@ -468,6 +475,8 @@ void CGraphicsNetwork::addNeuronToLayer(int layerPositionStart, int layerPositio
 
 	//Add a new weight for the new node on the next level
 	this->v_layers[layerPosition + 1].addNewWeights(numToAdd);
+	//Increase the count on the total number of nodes
+	this->total_num_nodes += numToAdd;
 }
 
 //Create a new layer with no effect on the current output of the network
@@ -494,8 +503,14 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 	//Create area to store delta values
 	this->v_layers[position].delta = thrust::host_vector<double>(neuronPerLayer);
 
+	//Add new output
+	this->v_layers[position].output = thrust::host_vector<double>(neuronPerLayer);
+
 	//Set the number nuerons in the current layer
 	this->v_layers[position].number_per_layer = neuronPerLayer;
+
+
+
 
 	//Create a temporary location for new neuron
 	SNeuron tempNeuron;
@@ -509,7 +524,7 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		//Add the weights
 		if (position > 0){
 			for (int k = 0; k < this->v_layers[position - 1].number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-				tempNeuron.weights.push_back(average_of_next_weights(position, k));//Add a random weight between 0 and 1
+				tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
 				tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
 			}
 		}
@@ -517,7 +532,7 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		this->v_layers[position + 1].keepXWeights(1);
 
 		//Add the bias (Random Number between 0 and 1)
-		tempNeuron.bias = average_of_bias(position);
+		tempNeuron.bias = RandomClamped();
 
 		//Set the initial delta to 0
 		tempNeuron.delta = 0;
@@ -531,6 +546,9 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		//Reset the number of layer
 		this->v_num_layers = this->v_layers.size();
 	}
+
+	//Increase the count on the total number of nodes
+	this->total_num_nodes += neuronPerLayer;
 }
 
 //TODO - Update neuron removal to actually remove a neuron

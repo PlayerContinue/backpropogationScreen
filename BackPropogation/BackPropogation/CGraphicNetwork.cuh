@@ -30,6 +30,8 @@ private:
 	//Vector containing the layers of neurons
 	vector<SNeuronLayer> v_layers;
 
+	//Keep track of total number of nodes
+	int total_num_nodes=0;
 	
 	
 	//Learning rate (look up)
@@ -56,6 +58,15 @@ private:
 
 	double average_delta=0;
 
+#ifdef FULL_SUCCESS
+	//Temporary current, may remove
+	//Keep track of all full successes
+	int full_success = 0;
+	int full_failure = 0;
+	//Keep track of previous full success
+	int prev_full_success = 0;
+	int prev_full_failure = 0;
+#endif
 	//Number of Outputs
 	int I_output;
 
@@ -224,20 +235,30 @@ private:
 
 	//Check if the target and results match
 	inline void updateSuccess(double *target){
-
+		bool fail = false;
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
-			if (target[i] != this->v_layers.back().output[i]){
+			if (abs(target[i] - this->v_layers.back().output[i]) > .00000000000001){
 				this->failure += 1;
 				//Add the average distance
 				total_distance += abs(target[i] - this->v_layers.back().output[i]);
+				fail = true;
 			}
 			else{
 				//They all match so it was a success
 				this->success += 1;
 			}
 		}
+#ifdef FULL_SUCCESS
+		if (fail){//A failure of at least one of the numbers has occured, mark it
+			this->full_failure++;
+		}
+		else{
+			this->full_success++;
+		}
+#endif
+
 		return;
 	}
 
@@ -254,7 +275,7 @@ public:
 		}
 		
 		//Grab previous distance
-		this->previous_average_distance = (this->total_distance / ((((double)this->success + (double)this->failure))*this->I_output));
+		this->previous_average_distance = (this->total_distance / ((((double)this->success + (double)this->failure))));
 		//Reset Previous Distance
 		this->total_distance = 0;
 
@@ -263,6 +284,13 @@ public:
 		this->previousFailure = this->failure;
 		this->success = 0;
 		this->failure = 0;
+
+#ifdef FULL_SUCCESS
+		this->prev_full_success = this->full_success;
+		this->full_success = 0;
+		this->prev_full_failure = this->full_failure;
+		this->full_failure = 0;
+#endif
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -270,11 +298,30 @@ public:
 	//-----------------------------------------------------------------------------------------------------------
 
 
-	//Return the Success rate
+	//Return the Success percentage
 	double getSuccessRate(){
-		double test = ((double)this->success / ((double)this->success + (double)this->failure));
-		return test;
+		return ((double)this->success / (((double)this->success + (double)this->failure)));
 	}
+
+	//Return the previous Success Rate
+	double getPreviousSuccessRate(){
+		return ((double)this->previousSuccess / ((((double)this->previousSuccess + (double)this->previousFailure))));
+	}
+
+#ifdef FULL_SUCCESS
+	//Percentage of times all of the targets were met
+
+	//Get the full success rate
+	double getFullSuccessRate(){
+		return ((double)this->full_success / ((double)this->full_success + (double)this->full_failure));
+	}
+
+	//Return the previous Success Rate
+	double getFullPreviousSuccessRate(){
+		return ((double)this->prev_full_success / (((double)this->prev_full_success + (double)this->prev_full_failure)));
+	}
+#endif
+
 
 	//Return the average change
 	double getAverageDelta(){
@@ -287,16 +334,12 @@ public:
 				sum += abs(this->v_layers[i].delta[j]);
 			}
 		}
-		return sum / numberNeurons ;
+		return sum / numberNeurons;
 	}
 
-	//Return the previous Success Rate
-	double getPreviousSuccessRate(){
-		return ((double)this->previousSuccess / (((double)this->previousSuccess + (double)this->previousFailure))*this->I_output);
-	}
 	//Return the average distance
 	double getAverageDistance(){
-		return (this->total_distance / ((((double)this->success + (double)this->failure))*this->I_output));
+		return (this->total_distance / (((double)this->success + (double)this->failure)));
 		
 	}
 
@@ -308,8 +351,6 @@ public:
 	double getPreviousAverageDistance(){
 		return this->previous_average_distance;
 	}
-
-
 
 	//Retrieve the number of layers
 	int getNumLayers(){
