@@ -48,14 +48,3 @@ inline double RandomClamped(double a, double b){
 	double r = random * diff;
 	return a + r;
 }
-
-ref class util
-{
-public:
-	util();
-	~util();
-
-	
-
-};
-
