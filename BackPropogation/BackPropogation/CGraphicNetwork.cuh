@@ -91,11 +91,28 @@ public:
 	CGraphicsNetwork(vector<int> &sizes, double beta, double alpha);
 
 
+	//-----------------------------------------------------------------------------------------------------------
+	//Overloaded Operators
+	//-----------------------------------------------------------------------------------------------------------
 
-	/*Update the networks weights and baises by applying gradiant descent using
-	backpropagation to a single mini batch. The mini_batch
-	is a vector of vectors (x,y), and "eta" is the learning rate*/
-	void update_mini_batch(vector<vector<double>> &mini_batch, double eta);
+	friend ostream& operator<<(ostream& os, const CGraphicsNetwork& network);
+	friend istream& operator>>(istream& os, CGraphicsNetwork& network);
+
+	CGraphicsNetwork& operator=(const CGraphicsNetwork& network){
+		this->v_num_layers = network.v_num_layers;
+		this->alpha = network.alpha;
+		this->beta = network.beta;
+		this->I_input = network.I_input;
+		this->I_output = network.I_output;
+		this->v_layers = network.v_layers;
+		this->total_num_nodes = network.total_num_nodes;
+		return *this;
+
+	}
+	//-----------------------------------------------------------------------------------------------------------
+	//Main Learning And Teaching Functions
+	//-----------------------------------------------------------------------------------------------------------
+	
 
 	//Feed Forward one set of inputs 
 	void feedForward(double *in);
@@ -106,13 +123,12 @@ public:
 	to "self.biases" and "self.weights".*/
 	void backprop(double *in, double *tgt);
 
+	//-----------------------------------------------------------------------------------------------------------
+	//Output
+	//-----------------------------------------------------------------------------------------------------------
+
 private:
 
-	/*
-	Return the vector of the partial derivatives \partial C_X /
-	\partial a for the output activations
-	*/
-	double cost_derivative(double output_activation, double y);
 
 	/*
 	The sigmoid function
@@ -129,8 +145,6 @@ private:
 		return return_value;
 	}
 
-	//Derivative of the sigmoid function
-	double sigmoid_prime(double z);
 
 	//-----------------------------------------------------------------------------------------------------------
 
@@ -164,7 +178,7 @@ private:
 
 	//-----------------------------------------------------------------------------------------------------------
 public:
-	//For testing purposes
+	//Get the outputs of the current run
 	vector<double> getOutput(){
 		vector<double> results = vector<double>();
 
@@ -198,7 +212,7 @@ public:
 		SNeuron* currentNeuron = &(this->v_layers[layerPosition].neurons[neuronPosition]);
 
 
-		if (currentNeuron->removed != 2 && abs(currentNeuron->delta) < LOCKED){//Neuron is both not locked and needs to be locked
+		if (currentNeuron->removed != 2 && abs(this->v_layers[layerPosition].delta[neuronPosition]) < LOCKED){//Neuron is both not locked and needs to be locked
 			this->v_layers[layerPosition].neurons[neuronPosition].removed = 2;
 #ifdef DEBUG 
 			this->v_layers[layerPosition].num_locked += 1;
@@ -226,7 +240,8 @@ private:
 	}
 
 	bool isNeuronActivated(SNeuron &neuron){
-		return neuron.output > this->neuron_activated ? true : false;
+		//return neuron.output > this->neuron_activated ? true : false;
+		return false;
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -330,7 +345,7 @@ public:
 		//Get number of neurons
 		for (int i = 1; i < this->v_num_layers; i++){
 			numberNeurons += this->v_layers[i].number_per_layer;
-			for (int j = 0; j < this->v_layers[i].delta.size(); j++){
+			for (int j = 0; j < (int) this->v_layers[i].delta.size(); j++){
 				sum += abs(this->v_layers[i].delta[j]);
 			}
 		}

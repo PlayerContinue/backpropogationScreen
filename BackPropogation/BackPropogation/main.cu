@@ -12,8 +12,8 @@
 #include <bitset>
 #include <math.h>
 #include <iostream>
+#include <fstream>
 #include <string>
-#include "util.h"
 #include "CGraphicNetwork.cuh"
 using namespace std;
 
@@ -70,7 +70,7 @@ void addToNetwork(CGraphicsNetwork &test){
 
 	//Get delta in success
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
-	double averagedistance = test.getAverageDistance() - test.getPreviousAverageDistance();
+	double averagedistance = test.getPreviousAverageDistance() - test.getAverageDistance();
 	double delta = abs(test.getAverageDelta());
 	double distanceMeasure = 1;
 #ifdef FULL_SUCCESS
@@ -79,7 +79,7 @@ void addToNetwork(CGraphicsNetwork &test){
 	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
 	if (
 #ifdef FULL_SUCCESS
-		( success!=0 && success < .2 || success == 0 && full_success < .3) &&
+		(success!=0 && success < .2 || success == 0 && full_success < .3) &&
 
 #else
 		success < .1 &&
@@ -88,7 +88,7 @@ void addToNetwork(CGraphicsNetwork &test){
 		((-1 * distanceMeasure * .002) > averagedistance
 		|| 0 < averagedistance && averagedistance < distanceMeasure * .00000000000000000000001))
 	{
-		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
+		test.addLayer(test.getNumLayers() + 1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
 	}
 	else if (
 
@@ -102,7 +102,7 @@ void addToNetwork(CGraphicsNetwork &test){
 		((-1 * distanceMeasure * .0002) > averagedistance
 		|| 0 < averagedistance && averagedistance < (distanceMeasure * .00000003))){
 		if (test.getNumLayers() == 2){
-			test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
+			test.addLayer(test.getNumLayers() + 1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) / 5);
 		}
 		else{
 			test.addNeuronToLayer(1, test.getNumLayers() - 2, 2);
@@ -155,15 +155,59 @@ void testOutput2(double** value, CGraphicsNetwork &test, int size){
 	}
 }
 
+//Output the network to a file
+bool writeToFile(CGraphicsNetwork &network, int fileNumber){
+	std::ofstream outputfile;
+	char file_name[20];
+	sprintf(file_name, "network%d.txt", fileNumber);
+	outputfile.open(file_name, ios::trunc);
+	if (outputfile.is_open()){
+		//Output the network
+		outputfile << network << flush;
+		outputfile.close();
+		return true;
+	}
+	else{
+		cout << "Unable to write checkpoint to file." << endl;
+		cout << "continue?";
+		return false;
+	}
+
+
+}
+
+bool loadFromFile(CGraphicsNetwork& network, string fileName){
+	std::ifstream inputfile;
+
+	inputfile.open(fileName, ios_base::beg);
+	if (inputfile.is_open()){
+		inputfile >> network;
+		return true;
+	}
+	else{
+		cout << "Unable to read from file." << endl;
+		cout << "continue?";
+		return false;
+	}
+}
+
 int main(int argc, char** argv){
 	int PROBLEMS = std::stoi(argv[1]);
 	int loop = std::stoi(argv[2]);
-	vector<int> temp = vector<int>();
-	temp.push_back(2);
-	temp.push_back(32);
-	vector<double> temp2 = vector<double>(32);
+	CGraphicsNetwork test;
+	if (argc > 3){
+		test = CGraphicsNetwork();
+		loadFromFile(test, argv[3]);
+	}
+	else{
 
-	CGraphicsNetwork test = CGraphicsNetwork(temp, 1, 2);
+		vector<int> temp = vector<int>();
+		temp.push_back(2);
+		temp.push_back(32);
+		vector<double> temp2 = vector<double>(32);
+	
+	test = CGraphicsNetwork(temp, 1, 2);
+	}
 	int zero;
 	int number2;
 	double **value = new double*[PROBLEMS];
@@ -201,6 +245,7 @@ int main(int argc, char** argv){
 		//Test the output
 		testOutput2(value, test, PROBLEMS);
 		cout << " loop " << i << endl;;
+		writeToFile(test, i);
 
 		//Add new nodes to the network
 		addToNetwork(test);
@@ -208,7 +253,7 @@ int main(int argc, char** argv){
 	}
 
 	testOutput2(value, test, PROBLEMS);
-
+	
 	for (int i = 0; i < PROBLEMS; i++){
 		delete value[i];
 		delete results[i];

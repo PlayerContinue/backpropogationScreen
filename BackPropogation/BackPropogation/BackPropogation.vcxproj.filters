@@ -36,6 +36,9 @@
     <ClInclude Include="CudaCalculations.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SNeuron.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">

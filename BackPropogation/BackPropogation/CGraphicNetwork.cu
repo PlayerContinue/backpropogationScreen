@@ -68,9 +68,6 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 				this->v_layers[i].neurons[j].previousWeight.push_back(0);//Set previous weight to 0
 			}
 
-			//Set the initial delta to 0
-			this->v_layers[i].neurons[j].delta = 0;
-
 			//Set the initial previousbias to 0
 			this->v_layers[i].neurons[j].previousBias = 0;
 
@@ -139,8 +136,10 @@ void CGraphicsNetwork::feedForward(double *in){
 		}
 
 #endif
-		//Get the feedforward value
-		feedForwardGPU(this->v_layers[i], this->v_layers[i - 1]);
+
+			//Get the feedforward value
+			feedForwardGPU(this->v_layers[i], this->v_layers[i - 1]);
+		
 
 #ifdef TRIAL5
 		failure = 0;
@@ -458,8 +457,6 @@ void CGraphicsNetwork::addNeuronToLayer(int layerPositionStart, int layerPositio
 		//Add the bias (Random Number between 0 and 1)
 		tempNeuron.bias = RandomClamped();
 
-		//Set the initial delta to 0
-		tempNeuron.delta = 0;
 
 		//Set the initial previousbias to 0
 		tempNeuron.previousBias = 0;
@@ -486,13 +483,22 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 
 	//Create iterator for insertion
 	vector<SNeuronLayer>::iterator it;
-
+	bool replaceOutput = false;
 	//Add a new layer below the output layer
 	//Used to deal with negative values and overly large values
-	if (position < 0 || position >= (int) this->v_layers.size()){
+	if (position < 0 ){
 		//Change the position to the output layer position
 		position = this->v_layers.size() - 1;
 	}
+	//Adding a new output layer
+	//Requires the number of neurons to equal the output
+	else if (position > (int) this->v_layers.size()){
+		neuronPerLayer = this->I_output;
+		position = this->v_layers.size();
+		replaceOutput = true;
+	}
+
+
 
 	//Add a new layer at the given position
 	it = this->v_layers.begin() + position;
@@ -524,18 +530,36 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		//Add the weights
 		if (position > 0){
 			for (int k = 0; k < this->v_layers[position - 1].number_per_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
-				tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
-				tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+				if (!replaceOutput){
+					tempNeuron.weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+					tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+				}
+				else{
+					//By only taking in one value, the current node becomes a copy of that node
+					if (k == j){
+						tempNeuron.weights.push_back(1);//Take only one output, output the same value as the one passed in
+						tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+					}
+					else{
+						tempNeuron.weights.push_back(0);//Add a random weight between 0 and 1
+						tempNeuron.previousWeight.push_back(0);//Set previous weight to 0
+					}
+				}
 			}
 		}
 
-		this->v_layers[position + 1].keepXWeights(1);
-
-		//Add the bias (Random Number between 0 and 1)
-		tempNeuron.bias = RandomClamped();
-
-		//Set the initial delta to 0
-		tempNeuron.delta = 0;
+		
+		if (replaceOutput){
+			//Set the bias to zero to have no effect on output
+			tempNeuron.bias = 0;
+		}
+		else{
+			//Remove uneeded weights
+			this->v_layers[position + 1].keepXWeights(1);
+			//Add the bias (Random Number between 0 and 1)
+			tempNeuron.bias = RandomClamped();
+		}
+		
 
 		//Set the initial previousbias to 0
 		tempNeuron.previousBias = 0;
@@ -579,3 +603,64 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 void CGraphicsNetwork::removeLayer(int layerPosition){
 
 }
+
+//Overload the output operator
+ostream& operator<<(ostream& os, const CGraphicsNetwork& network){
+	//Set the precision
+	os.precision(60);
+	//Print the number of layers
+	os << network.v_num_layers << endl;
+	//Print the total number of nodes
+	os << network.total_num_nodes << endl;
+	//Print number of inputs and outputs
+	os << network.I_input << " " << network.I_output << endl;
+	//Print the alpha and beta
+	os << network.alpha << " " << network.beta << endl;
+	//seperator
+	os << "/" << endl;
+
+	for (int i = 0; i < network.v_num_layers; i++){
+		//Print the layers
+		os << network.v_layers[i] << "/" << endl;
+	}
+
+	return os;
+}
+
+istream& operator>>(istream& is, CGraphicsNetwork& network){
+	char next;
+	//Retrieve the number of layer
+	is >> network.v_num_layers;
+	//Set the number of layers
+	network.v_layers = vector<SNeuronLayer>(network.v_num_layers);
+	//Retrieve the total number of nodes
+	is >> network.total_num_nodes;
+	//Retrieve the number of inputs
+	is >> network.I_input;
+	//Retrieve the number of outputs
+	is >> network.I_output;
+	//Retrieve the alpha
+	is >> network.alpha;
+	//Retrieve the beta
+	is >> network.beta;
+	//Skip the seperator
+	is >> next;
+	if (next != '/'){
+		throw new exception("Text file not formatted correctly");
+	}
+	//Add the network
+	for (int i = 0; i < network.v_num_layers; i++){
+		is >> network.v_layers[i];
+		is >> next;
+		if (next != '/'){//Check if the file is formatted correctly
+			throw new exception("Text file not formatted correctly");
+		}
+	}
+
+	//Add function to check if network was created correctly
+
+
+	return is;
+}
+
+

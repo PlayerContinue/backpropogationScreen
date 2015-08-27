@@ -514,14 +514,14 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 #ifdef TRIAL5
 		printValues(gpu_output);
 #endif
+		
+			for (int j = 0; j < (int) gpu_output.size(); j++){
+				temp = gpu_output[j];
+				gpu_output[j] = std::exp((double)-temp);
+			}
 
-		for (int j = 0; j < gpu_output.size(); j++){
-			temp = gpu_output[j];
-			gpu_output[j] = std::exp((double)-temp);
-		}
-
-		//Run the sigmond function on the output
-		thrust::transform(gpu_output.begin(), gpu_output.end(), gpu_output.begin(), ((double)1/((double)1+_1)) );
+			//Run the sigmond function on the output
+			thrust::transform(gpu_output.begin(), gpu_output.end(), gpu_output.begin(), ((double)1 / ((double)1 + _1)));
 		
 
 

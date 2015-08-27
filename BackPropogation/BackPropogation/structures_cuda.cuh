@@ -6,49 +6,10 @@
 #include <vector>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <iostream>
+#include "SNeuron.cuh"
 #include "util.h"
 using namespace std;
-
-//Structure containing the neuron
-struct SNeuron{
-	//Bias for the neuron
-	double bias = 0;
-
-	//Previous Bias
-	double previousBias = 0;
-
-	//The change for the current layer
-	double delta = 0;
-
-	//List of weights for outgoing neurons
-	thrust::host_vector<double> weights;
-
-	//Store the previously stored weight
-	thrust::host_vector<double> previousWeight;
-
-	//The current output
-	double output = 0;
-
-	
-
-
-	//Store how many times the neuron was activated
-	int activated = 0;
-
-	//Neuron is either removed (1) or active (0)
-	//If 1, the neuron will be skipped during feedback
-	short removed = 0;
-
-	//Creates an empty Neuron
-	SNeuron(){
-
-	}
-	//Create a neuron with a bias and weight
-	SNeuron(double bias, thrust::host_vector<double> weights) : bias(bias), weights(weights){
-
-	}
-
-};
 
 //Structure for the neuron layer
 struct SNeuronLayer{
@@ -96,6 +57,55 @@ struct SNeuronLayer{
 			this->neurons[i].previousWeight.resize(X);
 		}
 	}
+
+	//***************************************
+	//Overload Operators
+	//***************************************
+	friend ostream& operator<<(ostream& os, const SNeuronLayer layer){
+		//Output number of neurons
+		os << layer.number_per_layer << endl;
+		//Print number of weights per neuron
+		os << layer.neurons[0].weights.size() << endl;
+		//Print the values of each neuron
+		for (int i = 0; i < layer.number_per_layer; i++){
+			os << layer.neurons[i] << endl;
+		}
+		return os;
+	}
+
+	friend istream& operator>>(istream& is, SNeuronLayer& layer){
+		int number_of_weights;
+
+		//Retrieve number of neurons
+		is >> layer.number_per_layer;
+
+		//Retrieve the number of weights
+		is >> number_of_weights;
+
+		//Create the delta holder
+		layer.delta = thrust::host_vector<double>(layer.number_per_layer);
+
+		//Create the output holder
+		layer.output = thrust::host_vector<double>(layer.number_per_layer);
+
+		//Create the neurons
+		layer.neurons = vector<SNeuron>(layer.number_per_layer);
+
+		for (int i = 0; i < layer.number_per_layer; i++){
+			layer.neurons[i] = SNeuron(number_of_weights);
+			//Set the weights
+			for (int j = 0; j < number_of_weights; j++){
+				is >> layer.neurons[i].weights[j];
+			}
+
+			//Set the bias
+			is >> layer.neurons[i].bias;
+		}
+
+
+		return is;
+	}
+
 	//***************************************
 	//Get and set
 	//***************************************
@@ -157,7 +167,7 @@ struct SNeuronLayer{
 		} 
 
 		//Error causing size change 
-		if (this->output.size() < this->number_per_layer){
+		if ((int)this->output.size() < this->number_per_layer){
 			this->output.resize(this->number_per_layer);
 		}
 
@@ -171,7 +181,7 @@ struct SNeuronLayer{
 		}
 
 		//Error causing size change 
-		if (this->output.size() < this->number_per_layer){
+		if ((int)this->output.size() < this->number_per_layer){
 			this->output.resize(this->number_per_layer);
 		}
 		//Set the output
@@ -180,4 +190,5 @@ struct SNeuronLayer{
 
 
 };
+
 
