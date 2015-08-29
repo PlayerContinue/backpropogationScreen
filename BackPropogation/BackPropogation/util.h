@@ -26,8 +26,6 @@ inline double RandFloat() {
 }
 
 
-
-
 //returns a random bool
 inline bool RandBool()
 {

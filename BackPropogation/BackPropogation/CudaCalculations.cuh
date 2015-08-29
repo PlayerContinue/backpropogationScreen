@@ -74,7 +74,7 @@ struct dot_product_special : public unary_function < T, T >
 
 
 	dot_product_special(){};
-	
+
 
 	//Overload the function operator
 	__host__ __device__
@@ -118,14 +118,26 @@ struct saxpy_functor
 
 
 template <typename T>
-struct sigmoid_functor : public unary_function <T,T>{
+struct sigmoid_functor : public unary_function < T, T > {
 	sigmoid_functor(){};
 
 	__host__ __device__
-	thrust::complex<T> operator()(const thrust::complex<T> &x) const{
-		thrust::complex<T> z = ((thrust::complex<T>) -1) * x;
+		thrust::complex<T> operator()(const thrust::complex<T> &x) const{
+		thrust::complex<T> z = ((thrust::complex<T>) - 1) * x;
 		z = ((thrust::complex<T>)1 / ((thrust::complex<T>)1 + thrust::exp(z)));
 		return z;
+	}
+
+};
+
+template <typename T>
+struct square_means_sum_functor : public unary_function < T, T > {
+	square_means_sum_functor(){};
+	
+	template <typename Tuple>
+	__host__ __device__
+	T operator()(Tuple &x){
+		return ((thrust::get<0>(x) - thrust::get<1>(x)) * (thrust::get<0>(x) - thrust::get<1>(x)));
 	}
 
 };
@@ -220,7 +232,7 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 
 	//Create the map going 0,0,...,5,5,...,n,n
 	thrust::copy(thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 % (number_weights_per_neuron)), thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 % (number_weights_per_neuron)) + weights.size(), map.begin());
-	thrust::copy(thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 / (number_weights_per_neuron)), thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 / (number_weights_per_neuron )) + weights.size(), map2.begin());
+	thrust::copy(thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 / (number_weights_per_neuron)), thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), _1 / (number_weights_per_neuron)) + weights.size(), map2.begin());
 
 
 	for (int i = 0; i < numberNeurons; i += available_slots){
@@ -235,8 +247,8 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 		cout << "_____________________" << endl;
 #endif
 		if (i == 0){
-			thrust::sort_by_key(map.begin(),map.end(), weights.begin());
-			thrust::reduce_by_key(map.begin(),map.end(),weights.begin(), thrust::make_discard_iterator(), gpu_sums.begin());
+			thrust::sort_by_key(map.begin(), map.end(), weights.begin());
+			thrust::reduce_by_key(map.begin(), map.end(), weights.begin(), thrust::make_discard_iterator(), gpu_sums.begin());
 
 #ifdef TRIAL2
 			printValues(gpu_sums);
@@ -248,9 +260,9 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 
 			thrust::sort_by_key(map.begin(), map.end(),
 				weights.begin());
-			
-			
-			thrust::reduce_by_key(map.begin(),map.end(),weights.begin(), thrust::make_discard_iterator(), gpu_sums_temp.begin());
+
+
+			thrust::reduce_by_key(map.begin(), map.end(), weights.begin(), thrust::make_discard_iterator(), gpu_sums_temp.begin());
 
 			//Sum the new sum
 			thrust::transform(gpu_sums_temp.begin(), gpu_sums_temp.end(), gpu_sums.begin(), gpu_sums.begin(), thrust::plus<double>());
@@ -340,7 +352,7 @@ inline int getWeights(SNeuronLayer currentLayer, thrust::device_vector<double> &
 		if (getBias){
 			//Get the bias as well
 			weights[weightPosition + weightsPerNeuron - 1] = currentLayer.neurons[neuronPosition].bias;
-			
+
 			if (getPrevious){
 				previousWeight[weightPosition + weightsPerNeuron - 1] = currentLayer.neurons[neuronPosition].previousBias;
 			}
@@ -485,12 +497,12 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 		getWeights(currentLayer, weights, weights, i, false, true);//Get the weights with the bias
 
 		//Multiply each of the weights by the output they recieve from the previous layer
-		thrust::transform(weights.begin(), 
-			weights.end(), 
+		thrust::transform(weights.begin(),
+			weights.end(),
 			thrust::make_permutation_iterator(output.begin(),
-				thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
-				(_1 % (number_weights_per_neuron + 1)))),
-			weights.begin(), 
+			thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
+			(_1 % (number_weights_per_neuron + 1)))),
+			weights.begin(),
 			thrust::multiplies<double>());
 
 #ifdef TRIAL5
@@ -514,15 +526,15 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 #ifdef TRIAL5
 		printValues(gpu_output);
 #endif
-		
-			for (int j = 0; j < (int) gpu_output.size(); j++){
-				temp = gpu_output[j];
-				gpu_output[j] = std::exp((double)-temp);
-			}
 
-			//Run the sigmond function on the output
-			thrust::transform(gpu_output.begin(), gpu_output.end(), gpu_output.begin(), ((double)1 / ((double)1 + _1)));
-		
+		for (int j = 0; j < (int)gpu_output.size(); j++){
+			temp = gpu_output[j];
+			gpu_output[j] = std::exp((double)-temp);
+		}
+
+		//Run the sigmond function on the output
+		thrust::transform(gpu_output.begin(), gpu_output.end(), gpu_output.begin(), ((double)1 / ((double)1 + _1)));
+
 
 
 		//Place the results back into main memory
@@ -531,6 +543,8 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 
 
 }
+
+
 
 
 //*******************************************************
@@ -543,6 +557,14 @@ inline size_t getCurrentGPUMemory(){
 	return mem_free;
 }
 
+
+
+template<typename T>
+inline T square_means_sums(T* target, T* output, int size){
+	thrust::device_vector<T> tgt(target, target + size);
+	thrust::device_vector<T> out(output, output + size);
+	return thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(), 0.0, thrust::plus<double>());
+}
 
 
 

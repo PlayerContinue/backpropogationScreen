@@ -75,7 +75,7 @@ struct SNeuronLayer{
 
 	friend istream& operator>>(istream& is, SNeuronLayer& layer){
 		int number_of_weights;
-
+		char next; 
 		//Retrieve number of neurons
 		is >> layer.number_per_layer;
 
@@ -97,7 +97,12 @@ struct SNeuronLayer{
 			for (int j = 0; j < number_of_weights; j++){
 				is >> layer.neurons[i].weights[j];
 			}
-
+			//Read in the next value to check for correct formatting of file
+			//Should be a /
+			is >> next;
+			if (next != '/'){
+				throw new exception("File not formatted correctly");
+			}
 			//Set the bias
 			is >> layer.neurons[i].bias;
 		}

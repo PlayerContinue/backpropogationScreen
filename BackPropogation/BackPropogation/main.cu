@@ -66,6 +66,47 @@ void trainNetwork2(double* value[], double* results[], CGraphicsNetwork &test, i
 
 }
 
+//Returns true if the current mean_square_error is less than the lowest_mean_square
+template <typename T>
+bool checkThreshold(T mean_square, T lowest_mean_square, T threshold){
+	if (mean_square <= lowest_mean_square){
+		return true;
+	}
+	else if (mean_square > threshold && threshold >= 0){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+//Train the current network
+//Check if the limit has been reached as the stopping point
+//Use mean square error to check distance
+void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, double threshold){
+	int training_position = start;
+	double mean_square_error = 0;
+	double lowest_mean_square_error = (double) INT_MAX;
+	do{
+		
+		test.backprop(value[training_position], results[training_position]);
+		training_position++;
+
+		if (training_position >= end){
+			
+
+			training_position = start;
+			
+			mean_square_error = test.getMeanSquareError(value, results, end - start);
+			//Set the current lowest
+			if (mean_square_error < lowest_mean_square_error){
+				lowest_mean_square_error = mean_square_error;
+			}
+		}
+		//Loop until the previously smallest mean is no longer the smallest
+	} while (checkThreshold<double>(mean_square_error,lowest_mean_square_error,threshold) && training_position==start || training_position != start);
+}
+
 void addToNetwork(CGraphicsNetwork &test){
 
 	//Get delta in success
@@ -79,7 +120,7 @@ void addToNetwork(CGraphicsNetwork &test){
 	//Add a new layer if the success is too low and either the there are no hidden layers or the previous layer has too many nodes
 	if (
 #ifdef FULL_SUCCESS
-		(success!=0 && success < .2 || success == 0 && full_success < .3) &&
+		(success != 0 && success < .2 || success == 0 && full_success < .3) &&
 
 #else
 		success < .1 &&
@@ -205,8 +246,8 @@ int main(int argc, char** argv){
 		temp.push_back(2);
 		temp.push_back(32);
 		vector<double> temp2 = vector<double>(32);
-	
-	test = CGraphicsNetwork(temp, 1, 2);
+
+		test = CGraphicsNetwork(temp, 1, 2);
 	}
 	int zero;
 	int number2;
@@ -232,10 +273,10 @@ int main(int argc, char** argv){
 	for (int i = 0; i < 500; i++){
 		try{
 			if (i != 0){
-				trainNetwork2(value, results, test, 0, PROBLEMS, loop);
+				trainNetworkDelta(value, results, test, 0, PROBLEMS,-1);
 			}
 			else{
-				trainNetwork2(value, results, test, 0, PROBLEMS, loop);
+				trainNetworkDelta(value, results, test, 0, PROBLEMS,-1);
 			}
 		}
 		catch (exception e){
@@ -245,7 +286,7 @@ int main(int argc, char** argv){
 		//Test the output
 		testOutput2(value, test, PROBLEMS);
 		cout << " loop " << i << endl;;
-		writeToFile(test, i);
+		writeToFile(test, i % 50);
 
 		//Add new nodes to the network
 		addToNetwork(test);
@@ -253,7 +294,7 @@ int main(int argc, char** argv){
 	}
 
 	testOutput2(value, test, PROBLEMS);
-	
+
 	for (int i = 0; i < PROBLEMS; i++){
 		delete value[i];
 		delete results[i];

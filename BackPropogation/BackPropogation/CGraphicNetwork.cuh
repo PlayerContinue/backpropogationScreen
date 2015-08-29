@@ -7,6 +7,7 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
+#include <cmath>
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
@@ -178,17 +179,7 @@ private:
 
 	//-----------------------------------------------------------------------------------------------------------
 public:
-	//Get the outputs of the current run
-	vector<double> getOutput(){
-		vector<double> results = vector<double>();
-
-		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
-			results.push_back(this->v_layers.back().output[i]);
-		}
-
-		return results;
-	}
-
+	
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Add New Layers and Neurons
@@ -312,6 +303,27 @@ public:
 	//Get And Set 
 	//-----------------------------------------------------------------------------------------------------------
 
+	//Return the Mean Square Error
+	double getMeanSquareError(double **in, double **tgt, int size){
+		 double sum = 0; //Stores the sum
+		double* output;
+
+
+		for (int i = 0; i < size; i++){
+			//Feed the input value in to get the output
+			this->feedForward(in[i]);
+			output = getOutputArray<double>();
+			for (int j = 0; j < this->I_output;j++){
+				//Add the sum of the (target - output)^2 
+
+				sum += square_means_sums<double>(tgt[i],output,this->I_output);
+			}
+		}
+		free(output);
+		//Return half the results
+		return ((1.0/(size*this->I_output)) * sum);
+
+	}
 
 	//Return the Success percentage
 	double getSuccessRate(){
@@ -375,6 +387,25 @@ public:
 	//Retrieve the number of neurons in a given layer
 	int getNumNeuronsInLayer(int layerPosition){
 		return this->v_layers[layerPosition].number_per_layer;
+	}
+
+	//Get the outputs of the current run
+	vector<double> getOutput(){
+		vector<double> results = vector<double>();
+
+		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
+			results.push_back(this->v_layers.back().output[i]);
+		}
+
+		return results;
+	}
+	template<typename T>
+	T* getOutputArray(){
+		T* results = new T[this->I_output];
+		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
+			results[i] = (T) this->v_layers.back().output[i];
+		}
+		return results;
 	}
 
 };
