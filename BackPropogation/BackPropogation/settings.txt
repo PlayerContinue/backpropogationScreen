@@ -1,0 +1,16 @@
+s_network_name network
+i_loops 400
+d_threshold .001
+d_distance_threshold .00001
+d_neuron_distance_threshold 1
+d_row_success_threshold .00006
+d_neuron_success_threshold .05
+d_fluctuate_square_mean .00001
+d_alpha .1
+d_beta .1
+b_trainingFromFile 0
+s_trainingSet null
+b_testingFromFile 0
+s_testSet false
+b_loadNetworkFromFile 1
+s_loadNetworkFile network3.txt

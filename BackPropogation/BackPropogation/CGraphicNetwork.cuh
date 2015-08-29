@@ -33,7 +33,9 @@ private:
 
 	//Keep track of total number of nodes
 	int total_num_nodes=0;
-	
+
+	//The learning threshold for the current network
+	double threshold;
 	
 	//Learning rate (look up)
 	double beta;
