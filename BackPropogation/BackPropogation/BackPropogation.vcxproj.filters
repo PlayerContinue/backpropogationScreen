@@ -55,10 +55,10 @@
     <CudaCompile Include="CGraphicNetwork.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main.cu">
+    <CudaCompile Include="main2.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main2.cpp">
+    <CudaCompile Include="main.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

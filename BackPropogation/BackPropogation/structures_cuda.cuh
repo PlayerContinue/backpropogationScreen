@@ -34,9 +34,18 @@ struct SNeuronLayer{
 	int num_locked = 0;
 #endif
 
+
+	//***************************************
+	//Constructors
+	//***************************************
+
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
 
+
+	//***************************************
+	//Weight Modifiers
+	//***************************************
 
 	//Add new weights to the current layer
 	void addNewWeights(int numberOfNeuronsAdded){
@@ -57,6 +66,16 @@ struct SNeuronLayer{
 			this->neurons[i].previousWeight.resize(X);
 		}
 	}
+
+	//Remove all weights which are connected to a neuron in the previous layer
+	//at position y
+	//Primarily used when removing a neuron for testing
+	void removeWeightsAtY(int y){
+		for (int i = 0; i < this->number_per_layer; i++){
+			this->neurons[i].weights.erase(this->neurons[i].weights.begin() + y);//Remove the neuron
+		}
+	}
+	
 
 	//***************************************
 	//Overload Operators
@@ -110,6 +129,9 @@ struct SNeuronLayer{
 
 		return is;
 	}
+
+
+
 
 	//***************************************
 	//Get and set

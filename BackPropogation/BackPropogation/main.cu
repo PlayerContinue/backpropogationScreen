@@ -18,6 +18,8 @@
 #include "CGraphicNetwork.cuh"
 using namespace std;
 
+//PROTOTYPES
+bool writeToFile(CGraphicsNetwork &network, CSettings settings);
 
 void printVectorOutput(vector<double> vectorA){
 	int size = vectorA.size();
@@ -87,12 +89,19 @@ bool checkThreshold(T mean_square, T lowest_mean_square, T threshold){
 void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, CSettings settings){
 	int training_position = start;
 	double mean_square_error = 0;
+	int count_loops = 0;
 	double lowest_mean_square_error = (double) INT_MAX;
 	do{
 		
 		test.backprop(value[training_position], results[training_position]);
-		training_position++;
+		
 
+		if (count_loops % settings.i_loops == 0){
+			writeToFile(test, settings);
+		}
+		training_position++;
+		count_loops++;
+		
 		if (training_position >= end){
 			training_position = start;
 			
@@ -102,6 +111,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 				lowest_mean_square_error = mean_square_error;
 			}
 		}
+		
 		//Loop until the previously smallest mean is no longer the smallest
 	} while (checkThreshold<double>(mean_square_error,lowest_mean_square_error + settings.d_fluctuate_square_mean,settings.d_threshold) && training_position==start || training_position != start);
 }
@@ -110,7 +120,7 @@ void addToNetwork(CGraphicsNetwork &test,CSettings settings){
 
 	//Get delta in success
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
-	double averagedistance = test.getPreviousAverageDistance() - test.getAverageDistance();
+	double averagedistance = abs(test.getPreviousAverageDistance() - test.getAverageDistance());
 	double delta = abs(test.getAverageDelta());
 #ifdef FULL_SUCCESS
 	double full_success = test.getFullSuccessRate() - test.getFullPreviousSuccessRate();
@@ -175,11 +185,11 @@ void testOutput2(double** value, CGraphicsNetwork &test, int size){
 }
 
 //Output the network to a file
-bool writeToFile(CGraphicsNetwork &network, int fileNumber){
+bool writeToFile(CGraphicsNetwork &network, CSettings settings){
+	static int file_number = 0;
+	file_number++;
 	std::ofstream outputfile;
-	char file_name[20];
-	sprintf(file_name, "network%d.txt", fileNumber);
-	outputfile.open(file_name, ios::trunc);
+	outputfile.open("networks/" + settings.s_network_name  + std::to_string(file_number) + ".txt", ios::trunc);
 	if (outputfile.is_open()){
 		//Output the network
 		outputfile << network << flush;
@@ -273,14 +283,24 @@ int main(int argc, char** argv){
 		}
 	}
 
+	if (settings.b_loadNetworkFromFile){
+#ifdef DEBUG1
+		test.removeNeuron(1, 2);
+		test.reloadNetwork();
+#endif
+
+		testOutput2(value, test, PROBLEMS);
+
+	}
+
 	for (int i = 0; i < 500; i++){
 		try{
 			if (i != 0){
-				trainNetwork2(value, results, test, 0, PROBLEMS, settings.i_loops);
+				//trainNetwork2(value, results, test, 0, PROBLEMS, settings.i_loops);
 				trainNetworkDelta(value, results, test, 0, PROBLEMS,settings);
 			}
 			else{
-				trainNetwork2(value, results, test, 0, PROBLEMS, settings.i_loops);
+				//trainNetwork2(value, results, test, 0, PROBLEMS, settings.i_loops);
 				trainNetworkDelta(value, results, test, 0, PROBLEMS, settings);
 			}
 		}
@@ -291,7 +311,7 @@ int main(int argc, char** argv){
 		//Test the output
 		testOutput2(value, test, PROBLEMS);
 		cout << " loop " << i << endl;
-		writeToFile(test, i % 50);
+		writeToFile(test, settings);
 
 		//Add new nodes to the network
 		addToNetwork(test,settings);

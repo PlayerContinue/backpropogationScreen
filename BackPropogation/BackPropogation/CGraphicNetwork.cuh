@@ -11,6 +11,7 @@
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <fstream>
 #include "util.h"
 #include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
@@ -200,6 +201,8 @@ public:
 
 	void removeNeuron(int layerPosition, int neuronPosition);
 
+	void reloadNetwork();
+
 	//Lock the current neuron from further changes
 	void lockNeuron(int layerPosition, int neuronPosition){
 		SNeuron* currentNeuron = &(this->v_layers[layerPosition].neurons[neuronPosition]);
@@ -215,6 +218,8 @@ public:
 		//Delete the pointer
 		currentNeuron = NULL;
 	}
+
+
 private:
 	//Checks if the current neuron is designated as temporarily removed
 	bool checkNeuronRemoved(SNeuron &neuron){

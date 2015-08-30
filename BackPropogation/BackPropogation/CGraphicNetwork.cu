@@ -575,7 +575,25 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 	this->total_num_nodes += neuronPerLayer;
 }
 
-//TODO - Update neuron removal to actually remove a neuron
+void CGraphicsNetwork::reloadNetwork(){
+	//Reload the network from a file
+	std::ifstream outputfile;
+	outputfile.open("backups/removedNodes.txt", ios::trunc);
+	if (outputfile.is_open()){
+		//Output the network
+		outputfile >> *(this);
+		outputfile.close();
+	}
+	else{
+		cout << "Unable to write backup containing removed nodes to file." << endl;
+		cout << "continue?";
+		if (cin.get() == 'n'){
+			exit(0);
+		}
+	}
+}
+
+//Remove a neuron from the current layer
 void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 
 	if (layerPosition >= this->v_num_layers || layerPosition < 0){//Layer doesn't exist
@@ -585,17 +603,36 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 		throw 21; //Out of bound Neuron
 	}
 	else{
-
-
-
-		SNeuron &temp_neuron = this->v_layers[layerPosition].neurons[neuronPosition];//Retrive the current neuron
-
-		if (temp_neuron.removed == 0){
-			temp_neuron.removed = 1;
+		//Write the network to a file in case the previous version was better
+		//Allows keeping of replacing the old network
+		std::ofstream outputfile;
+		outputfile.open("backups/removedNodes.txt", ios::trunc);
+		if (outputfile.is_open()){
+			//Output the network
+			outputfile << this << flush;
+			outputfile.close();
 		}
 		else{
-			//TODO - add permanent removal function
+			cout << "Unable to write backup containing removed nodes to file." << endl;
+			cout << "continue?";
+			if (cin.get() == 'n'){
+				exit(0);
+			}
 		}
+
+		//Remove the weights from the next layer
+		this->v_layers[layerPosition+1].removeWeightsAtY(neuronPosition);
+
+		//Remove the neuron from the array
+		this->v_layers[layerPosition].neurons.erase(this->v_layers[layerPosition].neurons.begin() + neuronPosition);
+		
+		//Remove the node from the count
+		this->v_layers[layerPosition].number_per_layer -= 1;
+
+		//Shorten the output/input such that the nuerons information is ignored
+		this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].number_per_layer);
+		this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].number_per_layer);
+
 	}
 
 }
@@ -604,6 +641,9 @@ void CGraphicsNetwork::removeLayer(int layerPosition){
 
 }
 
+//***********************************************
+//Overload Operators
+//***********************************************
 //Overload the output operator
 ostream& operator<<(ostream& os, const CGraphicsNetwork& network){
 	//Set the precision
