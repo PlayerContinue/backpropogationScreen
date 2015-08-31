@@ -16,6 +16,16 @@ public:
 	//Contains the number of times to loop if loop is set as choice
 	int i_loops = 0;
 	
+	//Allowable number of failures
+	int i_number_allowed_failures = 0;
+
+	//Number of inputs/outpus
+	int i_input = 1;
+	int i_output = 1;
+	
+	//Number of rounds before a check occurs
+	int i_number_before_growth_potential = 0;
+
 	//Threshold - Value which sets the system as trained
 	//If Mean Square Error is higher than this
 	double d_threshold;
@@ -47,6 +57,10 @@ public:
 	bool b_testingFromFile = false;
 	string s_testSet;
 
+	//Number of pieces from the testing set per round
+	int i_number_of_training;
+
+
 	//Load From File
 	bool b_loadNetworkFromFile = false;
 	string s_loadNetworkFile;
@@ -64,6 +78,19 @@ public:
 
 		is >> next;
 		is >> settings.i_loops;
+
+
+		is >> next;
+		is >> settings.i_number_allowed_failures;
+
+		is >> next;
+		is >> settings.i_number_before_growth_potential;
+
+		is >> next;
+		is >> settings.i_input;
+
+		is >> next;
+		is >> settings.i_output;
 
 		is >> next;
 		is >> settings.d_threshold;
@@ -100,6 +127,9 @@ public:
 
 		is >> next;
 		is >> settings.s_testSet;
+
+		is >> next;
+		is >> settings.i_number_of_training;
 		
 		is >> next;
 		is >> settings.b_loadNetworkFromFile;

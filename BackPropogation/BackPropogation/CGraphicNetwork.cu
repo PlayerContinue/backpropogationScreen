@@ -171,11 +171,6 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 	//Host_Vector containing the current target
 	thrust::host_vector<double> target_vector;
 
-	//Vector containing output of the results
-	thrust::host_vector<double> output_vector;
-
-	thrust::host_vector<double> delta_vector;
-
 	//Set the size of the target vector
 	target_vector = thrust::host_vector<double>(this->I_output);
 
@@ -404,7 +399,8 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 	}
 
 #endif
-
+	//Free the target vector memory
+	vector_free::free(target_vector);
 
 }
 
@@ -578,14 +574,14 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 void CGraphicsNetwork::reloadNetwork(){
 	//Reload the network from a file
 	std::ifstream outputfile;
-	outputfile.open("backups/removedNodes.txt", ios::trunc);
+	outputfile.open("backups/removedNodes.txt", ios_base::beg);
 	if (outputfile.is_open()){
 		//Output the network
-		outputfile >> *(this);
+		outputfile >> *this;
 		outputfile.close();
 	}
 	else{
-		cout << "Unable to write backup containing removed nodes to file." << endl;
+		cout << "Unable reload from file." << endl;
 		cout << "continue?";
 		if (cin.get() == 'n'){
 			exit(0);
@@ -609,7 +605,7 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 		outputfile.open("backups/removedNodes.txt", ios::trunc);
 		if (outputfile.is_open()){
 			//Output the network
-			outputfile << this << flush;
+			outputfile << *this << flush;
 			outputfile.close();
 		}
 		else{
@@ -623,6 +619,8 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 		//Remove the weights from the next layer
 		this->v_layers[layerPosition+1].removeWeightsAtY(neuronPosition);
 
+		this->total_num_nodes -= 1;
+
 		//Remove the neuron from the array
 		this->v_layers[layerPosition].neurons.erase(this->v_layers[layerPosition].neurons.begin() + neuronPosition);
 		
@@ -631,7 +629,7 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 
 		//Shorten the output/input such that the nuerons information is ignored
 		this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].number_per_layer);
-		this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].number_per_layer);
+		this->v_layers[layerPosition].output.resize(this->v_layers[layerPosition].number_per_layer);
 
 	}
 

@@ -164,6 +164,10 @@ inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vec
 	thrust::transform(X.begin(), X.end(), Y.begin(), Y.begin(), OutputDelta_functor());
 
 	thrust::copy(Y.begin(), Y.end(), target.begin());
+
+	//Free the GPU memory
+	vector_free::free(X);
+	vector_free::free(Y);
 }
 
 //*******************************************************
@@ -275,6 +279,13 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 	gpu_sums_temp = previous_layer.getOutput();
 
 	previous_layer.delta = findNewHiddenDelta(gpu_sums, gpu_sums_temp);
+
+	//Free the memory
+
+	vector_free::free(gpu_sums);
+	vector_free::free(gpu_sums_temp);
+	vector_free::free(map);
+	vector_free::free(map2);
 
 }
 
@@ -457,6 +468,10 @@ inline void applyCorrection(SNeuronLayer &currentLayer, thrust::host_vector<doub
 
 	vector_free::free(weights);
 	vector_free::free(previousWeights);
+	vector_free::free(map);
+	vector_free::free(map2);
+	vector_free::free(output);
+	vector_free::free(delta);
 }
 
 //*******************************************************
@@ -541,6 +556,12 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 		setOutput(currentLayer, gpu_output, i);
 	}
 
+	vector_free::free(gpu_output);
+
+	vector_free::free(weights);
+
+	vector_free::free(output);
+
 
 }
 
@@ -563,7 +584,11 @@ template<typename T>
 inline T square_means_sums(T* target, T* output, int size){
 	thrust::device_vector<T> tgt(target, target + size);
 	thrust::device_vector<T> out(output, output + size);
-	return thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(), 0.0, thrust::plus<double>());
+	double temp = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(), 0.0, thrust::plus<double>());
+	
+	vector_free::free(tgt);
+	vector_free::free(out);
+	return temp;
 }
 
 

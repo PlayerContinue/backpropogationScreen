@@ -53,7 +53,7 @@ private:
 
 	//Failure Rate
 	int failure = 0;
-	int previousFailure=0;
+	int previousFailure=1;
 
 	//Average distance 
 	double total_distance;
@@ -69,7 +69,7 @@ private:
 	int full_failure = 0;
 	//Keep track of previous full success
 	int prev_full_success = 0;
-	int prev_full_failure = 0;
+	int prev_full_failure = 1;
 #endif
 	//Number of Outputs
 	int I_output;
