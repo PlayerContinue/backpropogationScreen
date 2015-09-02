@@ -57,7 +57,7 @@ public:
 	//Stores the name of the file containing the test set
 	bool b_testingFromFile = false;
 	string s_testSet;
-
+	string s_outputTestSet;
 	
 	//Number of pieces from the testing set per round
 	int i_number_of_training;
@@ -127,20 +127,27 @@ public:
 		is >> next;
 		is >> settings.d_beta;
 
+		//Set the training set
 		is >> next;
 		is >> settings.b_trainingFromFile;
 
+	
 		is >> next;
 		is >> settings.s_trainingSet;
 
 		is >> next;
 		is >> settings.s_outputTrainingFile;
-
+		
+		//Set the test set
 		is >> next;
 		is >> settings.b_testingFromFile;
 
+		
 		is >> next;
 		is >> settings.s_testSet;
+
+		is >> next;
+		is >> settings.s_outputTestSet;
 
 		//Load number in each training set
 		is >> next;

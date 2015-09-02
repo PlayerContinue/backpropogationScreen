@@ -17,9 +17,10 @@ b_trainingFromFile 1
 s_trainingSet datasets/input.txt
 s_outputTrainingFile datasets/binout.txt
 b_testingFromFile 1
-s_testSet false
+s_testSet datasets/input.txt
+s_outputTestSet datasets/binout.txt
 i_number_of_training 1000
-b_loadFromCheckpoint 0
-s_checkpoint_file checkpoints/word_network_3_checkpoint_2.txt
+b_loadFromCheckpoint 1
+s_checkpoint_file checkpoints/word_network_3_checkpoint_36.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_220.txt

@@ -193,7 +193,7 @@ void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings){
 //Train the current network
 //Check if the limit has been reached as the stopping point
 //Use mean square error to check distance
-void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, double* testSetIn[], double* testSetOut[], int testLength, CSettings settings, SCheckpoint checkpoint){
+void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, double* testSetIn[], double* testSetOut[], int testLength, CSettings settings, SCheckpoint& checkpoint){
 	do{
 
 		test.backprop(value[checkpoint.i_number_of_loops], results[checkpoint.i_number_of_loops]);
@@ -541,72 +541,27 @@ void initialize_loops(int argc, char** argv){
 
 
 	//Store training set
-	getDataFromFile(settings.s_trainingSet, 0, settings.i_number_of_training, settings.i_input, value);
-	getDataFromFile(settings.s_outputTrainingFile, 0, settings.i_number_of_training, settings.i_output, results);
+	getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_input, value);
+	getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_output, results);
 
-	//Store training set
-	getDataFromFile(settings.s_trainingSet, 0, settings.i_number_of_training, settings.i_input, testIn);
-	getDataFromFile(settings.s_outputTrainingFile, 0, settings.i_number_of_training, settings.i_output, testOut);
+	if (settings.b_trainingFromFile){
+		//Store the data to test the neural network
+		getDataFromFile(settings.s_testSet, 0, settings.i_number_of_training, settings.i_input, testIn);
+		getDataFromFile(settings.s_outputTestSet, 0, settings.i_number_of_training, settings.i_output, testOut);
+	}
+	else{
+		//If no test file is given, use some from the training set
+		//Store the testing set
+		getDataFromFile(settings.s_trainingSet, 0, settings.i_number_of_training, settings.i_input, testIn);
+		getDataFromFile(settings.s_outputTrainingFile, 0, settings.i_number_of_training, settings.i_output, testOut);
 
+	}
 	trainNetworkDelta(value, results, test, 0, settings.i_number_of_training, testIn, testOut, settings.i_number_of_training, settings, checkpoint);
 
 	for (int i = 0; i < settings.i_number_of_training; i++){
 		delete value[i];
 		delete results[i];
 	}
-	
-	
-	/*if (!settings.b_trainingFromFile && !settings.b_trainingFromFile){
-		int zero;
-		int number2;
-		value = new double*[PROBLEMS];
-		results = new double*[PROBLEMS];
-		for (int i = 0; i < PROBLEMS; i++){
-			value[i] = new double[2];
-			double number = (double)RandInt(0, PROBLEMS) + 1;
-			value[i][0] = number;
-			value[i][1] = number + 1;
-			//number = (double)(1 / (number + number + 1));
-			results[i] = new double[32];
-			number2 = number + number + 1;
-			zero = 1;
-			for (int j = 31; j >= 0; j--){
-				results[i][j] = (double)(((int)(number2 & zero)) != 0 ? .7 : .1);
-				//Shift left by one
-				zero = zero << 1;
-			}
-		}
-
-		testIn = new double*[PROBLEMS];
-		testOut = new double*[PROBLEMS];
-
-		for (int i = 0; i < 100; i++){
-			testIn[i] = new double[2];
-			double number = (double)RandInt(0, PROBLEMS) + 1;
-			testIn[i][0] = number;
-			testIn[i][1] = number + 1;
-			testOut[i] = new double[32];
-			number2 = number + number + 1;
-			zero = 1;
-			for (int k = 31; k >= 0; k--){
-				testOut[i][k] = (double)(((int)(number2 & zero)) != 0 ? .7 : .1);
-				//Shift left by one
-				zero = zero << 1;
-			}
-		}
-		//trainNetwork2(value, results, test, 0, PROBLEMS, settings.i_loops);
-		trainNetworkDelta(value, results, test, 0, PROBLEMS, testIn, testOut, 100, settings);
-		for (int i = 0; i < PROBLEMS; i++){
-			delete value[i];
-			delete results[i];
-		}
-	}
-	else{*/
-		
-	//}
-
-
-
 
 	//Clean up memory
 	delete value;
