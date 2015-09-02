@@ -137,6 +137,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="CSettings.h" />
+    <ClInclude Include="SNeuron.cuh" />
     <ClInclude Include="structures.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
     </ClInclude>
@@ -157,6 +159,10 @@
     <ClCompile Include="Network.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="CSettings.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="settings.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ini">
+      <UniqueIdentifier>{82bc2ed7-7335-4a20-a1f9-f681a91ce9a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -36,6 +39,12 @@
     <ClInclude Include="CudaCalculations.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SNeuron.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -46,10 +55,10 @@
     <CudaCompile Include="CGraphicNetwork.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main.cu">
+    <CudaCompile Include="main2.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main2.cpp">
+    <CudaCompile Include="main.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>
@@ -57,5 +66,13 @@
     <ClCompile Include="Network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="settings.txt">
+      <Filter>ini</Filter>
+    </Text>
   </ItemGroup>
 </Project>

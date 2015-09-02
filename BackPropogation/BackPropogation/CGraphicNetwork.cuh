@@ -7,9 +7,11 @@
 #include <vector>
 #include <time.h>
 #include <math.h>
+#include <cmath>
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <fstream>
 #include "util.h"
 #include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
@@ -32,7 +34,9 @@ private:
 
 	//Keep track of total number of nodes
 	int total_num_nodes=0;
-	
+
+	//The learning threshold for the current network
+	double threshold;
 	
 	//Learning rate (look up)
 	double beta;
@@ -49,7 +53,7 @@ private:
 
 	//Failure Rate
 	int failure = 0;
-	int previousFailure=0;
+	int previousFailure=1;
 
 	//Average distance 
 	double total_distance;
@@ -65,7 +69,7 @@ private:
 	int full_failure = 0;
 	//Keep track of previous full success
 	int prev_full_success = 0;
-	int prev_full_failure = 0;
+	int prev_full_failure = 1;
 #endif
 	//Number of Outputs
 	int I_output;
@@ -91,11 +95,28 @@ public:
 	CGraphicsNetwork(vector<int> &sizes, double beta, double alpha);
 
 
+	//-----------------------------------------------------------------------------------------------------------
+	//Overloaded Operators
+	//-----------------------------------------------------------------------------------------------------------
 
-	/*Update the networks weights and baises by applying gradiant descent using
-	backpropagation to a single mini batch. The mini_batch
-	is a vector of vectors (x,y), and "eta" is the learning rate*/
-	void update_mini_batch(vector<vector<double>> &mini_batch, double eta);
+	friend ostream& operator<<(ostream& os, const CGraphicsNetwork& network);
+	friend istream& operator>>(istream& os, CGraphicsNetwork& network);
+
+	CGraphicsNetwork& operator=(const CGraphicsNetwork& network){
+		this->v_num_layers = network.v_num_layers;
+		this->alpha = network.alpha;
+		this->beta = network.beta;
+		this->I_input = network.I_input;
+		this->I_output = network.I_output;
+		this->v_layers = network.v_layers;
+		this->total_num_nodes = network.total_num_nodes;
+		return *this;
+
+	}
+	//-----------------------------------------------------------------------------------------------------------
+	//Main Learning And Teaching Functions
+	//-----------------------------------------------------------------------------------------------------------
+	
 
 	//Feed Forward one set of inputs 
 	void feedForward(double *in);
@@ -106,13 +127,12 @@ public:
 	to "self.biases" and "self.weights".*/
 	void backprop(double *in, double *tgt);
 
+	//-----------------------------------------------------------------------------------------------------------
+	//Output
+	//-----------------------------------------------------------------------------------------------------------
+
 private:
 
-	/*
-	Return the vector of the partial derivatives \partial C_X /
-	\partial a for the output activations
-	*/
-	double cost_derivative(double output_activation, double y);
 
 	/*
 	The sigmoid function
@@ -129,8 +149,6 @@ private:
 		return return_value;
 	}
 
-	//Derivative of the sigmoid function
-	double sigmoid_prime(double z);
 
 	//-----------------------------------------------------------------------------------------------------------
 
@@ -164,17 +182,7 @@ private:
 
 	//-----------------------------------------------------------------------------------------------------------
 public:
-	//For testing purposes
-	vector<double> getOutput(){
-		vector<double> results = vector<double>();
-
-		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
-			results.push_back(this->v_layers.back().output[i]);
-		}
-
-		return results;
-	}
-
+	
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Add New Layers and Neurons
@@ -193,12 +201,14 @@ public:
 
 	void removeNeuron(int layerPosition, int neuronPosition);
 
+	void reloadNetwork();
+
 	//Lock the current neuron from further changes
 	void lockNeuron(int layerPosition, int neuronPosition){
 		SNeuron* currentNeuron = &(this->v_layers[layerPosition].neurons[neuronPosition]);
 
 
-		if (currentNeuron->removed != 2 && abs(currentNeuron->delta) < LOCKED){//Neuron is both not locked and needs to be locked
+		if (currentNeuron->removed != 2 && abs(this->v_layers[layerPosition].delta[neuronPosition]) < LOCKED){//Neuron is both not locked and needs to be locked
 			this->v_layers[layerPosition].neurons[neuronPosition].removed = 2;
 #ifdef DEBUG 
 			this->v_layers[layerPosition].num_locked += 1;
@@ -208,6 +218,8 @@ public:
 		//Delete the pointer
 		currentNeuron = NULL;
 	}
+
+
 private:
 	//Checks if the current neuron is designated as temporarily removed
 	bool checkNeuronRemoved(SNeuron &neuron){
@@ -226,7 +238,8 @@ private:
 	}
 
 	bool isNeuronActivated(SNeuron &neuron){
-		return neuron.output > this->neuron_activated ? true : false;
+		//return neuron.output > this->neuron_activated ? true : false;
+		return false;
 	}
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -297,6 +310,27 @@ public:
 	//Get And Set 
 	//-----------------------------------------------------------------------------------------------------------
 
+	//Return the Mean Square Error
+	double getMeanSquareError(double **in, double **tgt, int size){
+		double sum = 0; //Stores the sum
+		double* output;
+
+
+		for (int i = 0; i < size; i++){
+			//Feed the input value in to get the output
+			this->feedForward(in[i]);
+			output = getOutputArray<double>();
+			for (int j = 0; j < this->I_output;j++){
+				//Add the sum of the (target - output)^2 
+
+				sum += square_means_sums<double>(tgt[i],output,this->I_output);
+			}
+		}
+		free(output);
+		//Return (1/number of total ouputs) * sum
+		return ((1.0/(size*this->I_output)) * sum);
+
+	}
 
 	//Return the Success percentage
 	double getSuccessRate(){
@@ -330,7 +364,7 @@ public:
 		//Get number of neurons
 		for (int i = 1; i < this->v_num_layers; i++){
 			numberNeurons += this->v_layers[i].number_per_layer;
-			for (int j = 0; j < this->v_layers[i].delta.size(); j++){
+			for (int j = 0; j < (int) this->v_layers[i].delta.size(); j++){
 				sum += abs(this->v_layers[i].delta[j]);
 			}
 		}
@@ -360,6 +394,25 @@ public:
 	//Retrieve the number of neurons in a given layer
 	int getNumNeuronsInLayer(int layerPosition){
 		return this->v_layers[layerPosition].number_per_layer;
+	}
+
+	//Get the outputs of the current run
+	vector<double> getOutput(){
+		vector<double> results = vector<double>();
+
+		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
+			results.push_back(this->v_layers.back().output[i]);
+		}
+
+		return results;
+	}
+	template<typename T>
+	T* getOutputArray(){
+		T* results = new T[this->I_output];
+		for (int i = 0; i < this->v_layers.back().number_per_layer; i++){
+			results[i] = (T) this->v_layers.back().output[i];
+		}
+		return results;
 	}
 
 };

@@ -459,8 +459,8 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CGraphicNetwork.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda.h
@@ -866,7 +866,10 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl

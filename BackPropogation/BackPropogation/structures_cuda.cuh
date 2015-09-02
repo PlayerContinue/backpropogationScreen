@@ -6,49 +6,10 @@
 #include <vector>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <iostream>
+#include "SNeuron.cuh"
 #include "util.h"
 using namespace std;
-
-//Structure containing the neuron
-struct SNeuron{
-	//Bias for the neuron
-	double bias = 0;
-
-	//Previous Bias
-	double previousBias = 0;
-
-	//The change for the current layer
-	double delta = 0;
-
-	//List of weights for outgoing neurons
-	thrust::host_vector<double> weights;
-
-	//Store the previously stored weight
-	thrust::host_vector<double> previousWeight;
-
-	//The current output
-	double output = 0;
-
-	
-
-
-	//Store how many times the neuron was activated
-	int activated = 0;
-
-	//Neuron is either removed (1) or active (0)
-	//If 1, the neuron will be skipped during feedback
-	short removed = 0;
-
-	//Creates an empty Neuron
-	SNeuron(){
-
-	}
-	//Create a neuron with a bias and weight
-	SNeuron(double bias, thrust::host_vector<double> weights) : bias(bias), weights(weights){
-
-	}
-
-};
 
 //Structure for the neuron layer
 struct SNeuronLayer{
@@ -73,15 +34,24 @@ struct SNeuronLayer{
 	int num_locked = 0;
 #endif
 
+
+	//***************************************
+	//Constructors
+	//***************************************
+
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
 
+
+	//***************************************
+	//Weight Modifiers
+	//***************************************
 
 	//Add new weights to the current layer
 	void addNewWeights(int numberOfNeuronsAdded){
 		for (int i = 0; i < this->number_per_layer; i++){
 			for (int k = 0; k < numberOfNeuronsAdded; k++){
-				this->neurons[i].weights.push_back(this->neurons[i].weights[k]/2);//Set the new weight to half the previous weight
+				this->neurons[i].weights.push_back(this->neurons[i].weights[k] / 2);//Set the new weight to half the previous weight
 				this->neurons[i].weights[k] = this->neurons[i].weights[k] / 2;//Set the divided weight to the same as the new weights
 				//REASON: ((n/2)*k) + ((n/2)*l) = ((n) * k) approximately 
 				this->neurons[i].previousWeight.push_back(0);
@@ -96,6 +66,73 @@ struct SNeuronLayer{
 			this->neurons[i].previousWeight.resize(X);
 		}
 	}
+
+	//Remove all weights which are connected to a neuron in the previous layer
+	//at position y
+	//Primarily used when removing a neuron for testing
+	void removeWeightsAtY(int y){
+		for (int i = 0; i < this->number_per_layer; i++){
+			this->neurons[i].weights.erase(this->neurons[i].weights.begin() + y);//Remove the neuron
+		}
+	}
+
+
+	//***************************************
+	//Overload Operators
+	//***************************************
+	friend ostream& operator<<(ostream& os, const SNeuronLayer layer){
+		//Output number of neurons
+		os << layer.number_per_layer << endl;
+		//Print number of weights per neuron
+		os << layer.neurons[0].weights.size() << endl;
+		//Print the values of each neuron
+		for (int i = 0; i < layer.number_per_layer; i++){
+			os << layer.neurons[i] << endl;
+		}
+		return os;
+	}
+
+	friend istream& operator>>(istream& is, SNeuronLayer& layer){
+		int number_of_weights;
+		char next;
+		//Retrieve number of neurons
+		is >> layer.number_per_layer;
+
+		//Retrieve the number of weights
+		is >> number_of_weights;
+
+		//Create the delta holder
+		layer.delta = thrust::host_vector<double>(layer.number_per_layer);
+
+		//Create the output holder
+		layer.output = thrust::host_vector<double>(layer.number_per_layer);
+
+		//Create the neurons
+		layer.neurons = vector<SNeuron>(layer.number_per_layer);
+
+		for (int i = 0; i < layer.number_per_layer; i++){
+			layer.neurons[i] = SNeuron(number_of_weights);
+			//Set the weights
+			for (int j = 0; j < number_of_weights; j++){
+				is >> layer.neurons[i].weights[j];
+			}
+			//Read in the next value to check for correct formatting of file
+			//Should be a /
+			is >> next;
+			if (next != '/'){
+				throw new exception("File not formatted correctly");
+			}
+			//Set the bias
+			is >> layer.neurons[i].bias;
+		}
+
+
+		return is;
+	}
+
+
+
+
 	//***************************************
 	//Get and set
 	//***************************************
@@ -112,8 +149,8 @@ struct SNeuronLayer{
 	thrust::host_vector<double> getOutput(int expand, double value){
 		thrust::host_vector<double> y(this->number_per_layer + expand);
 		//for (int i = 0; i < this->number_per_layer; i++){
-			//Store the weight in the vector
-			//y[i] = this->neurons[i].output;
+		//Store the weight in the vector
+		//y[i] = this->neurons[i].output;
 		//}
 		//Copy the output into the expanded array
 		thrust::copy(this->output.begin(), this->output.end(), y.begin());
@@ -154,10 +191,10 @@ struct SNeuronLayer{
 	void setOutput(thrust::device_vector<double> new_output){
 		if (new_output.size() != this->number_per_layer){
 			throw new exception("To many Outputs");
-		} 
+		}
 
 		//Error causing size change 
-		if (this->output.size() < this->number_per_layer){
+		if ((int)this->output.size() < this->number_per_layer){
 			this->output.resize(this->number_per_layer);
 		}
 
@@ -171,7 +208,7 @@ struct SNeuronLayer{
 		}
 
 		//Error causing size change 
-		if (this->output.size() < this->number_per_layer){
+		if ((int)this->output.size() < this->number_per_layer){
 			this->output.resize(this->number_per_layer);
 		}
 		//Set the output
@@ -180,4 +217,100 @@ struct SNeuronLayer{
 
 
 };
+
+
+
+//Structure containing information to create a checkpoint
+struct SCheckpoint{
+
+	//Count the total number of loops which have occured
+	int i_number_of_loops_checkpoint = 0;
+	
+	//Count the number of current loops traveled through before reaching a reset
+	int i_number_of_loops = 0;
+
+	//Count the number of times left for the mean to be larger than the previous mean before trying to add new neurons
+	int i_times_lowest_mean_square_error_to_large;
+
+	// Store the mean square error
+	double d_mean_square_error = (double)INT_MAX;
+
+	//Store the previous round mean_square_error to test if the value changed between rounds
+	double d_previous_mean_square_error = 0;
+
+	//Store the lowest mean_square_error found
+	double d_lowest_mean_square_error = (double)INT_MAX;
+
+	//Store the most recent d_row_distance_threshold
+	double d_row_distance_threshold;
+
+	//store the most recent d_neuron_distance_threshold
+	double d_neuron_distance_threshold;
+
+	//store the most recently recorded network file
+	string s_network_file_name;
+
+	//***************************************
+	//Overload Operators
+	//***************************************
+	//Save to file
+	friend ostream& operator<<(ostream& os, const SCheckpoint checkpoint){
+		
+		os << "i_number_of_loops_checkpoint " << checkpoint.i_number_of_loops_checkpoint << endl;
+		
+		os << "i_times_lowest_mean_square_error_to_large " << checkpoint.i_times_lowest_mean_square_error_to_large << endl;
+
+		os << "d_mean_square_error " << checkpoint.d_mean_square_error << endl;
+		
+		os << "d_previous_mean_square_error " << checkpoint.d_previous_mean_square_error << endl;
+		
+		os << "i_number_of_loops " << checkpoint.i_number_of_loops << endl;
+
+		os << "d_lowest_mean_square_error " << checkpoint.d_lowest_mean_square_error << endl;
+
+		os << "d_row_distance_threshold " << checkpoint.d_row_distance_threshold << endl;
+
+		os << "d_neuron_distance_threshold " << checkpoint.d_neuron_distance_threshold << endl;
+
+		os << "s_network_file_name " << checkpoint.s_network_file_name << endl;
+
+		return os;
+	}
+
+	//Load from file
+	friend istream& operator>>(istream& is, SCheckpoint& checkpoint){
+		string next;
+		is >> next;
+		is >> checkpoint.i_number_of_loops_checkpoint;
+
+		is >> next;
+		is >> checkpoint.i_times_lowest_mean_square_error_to_large;
+
+		is >> next;
+		is >> checkpoint.d_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.d_previous_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.i_number_of_loops;
+
+		is >> next;
+		is >> checkpoint.d_lowest_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.d_row_distance_threshold;
+
+		is >> next;
+		is >> checkpoint.d_neuron_distance_threshold;
+
+		is >> next;
+		is >> checkpoint.s_network_file_name;
+
+		return is;
+	}
+
+
+};
+
 
