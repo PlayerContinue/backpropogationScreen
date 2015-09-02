@@ -196,7 +196,7 @@ inline thrust::host_vector<double> findNewHiddenDelta(thrust::device_vector<doub
 
 //input current layer to be modified and the next layer
 //Retrieve the deltas for the current layer
-
+//Equation is w_1 * d_11 + ... w_1 * d_n1 where w is current is the output of the current neuron and d is the delta of the neuron in the level above it 
 inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous_layer){
 	size_t availableMemory = getCurrentGPUMemory();
 	int size_available = 0;
@@ -454,6 +454,7 @@ inline void applyCorrection(SNeuronLayer &currentLayer, thrust::host_vector<doub
 
 
 		//Weights, Previous Weights, Output, Delta
+		//Apply the correction
 		thrust::for_each(thrust::make_zip_iterator(thrust::make_tuple(weights.begin(),
 			previousWeights.begin(),
 			thrust::make_permutation_iterator(output.begin(), map.begin()),

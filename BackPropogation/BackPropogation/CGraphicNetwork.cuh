@@ -312,7 +312,7 @@ public:
 
 	//Return the Mean Square Error
 	double getMeanSquareError(double **in, double **tgt, int size){
-		 double sum = 0; //Stores the sum
+		double sum = 0; //Stores the sum
 		double* output;
 
 
@@ -327,7 +327,7 @@ public:
 			}
 		}
 		free(output);
-		//Return half the results
+		//Return (1/number of total ouputs) * sum
 		return ((1.0/(size*this->I_output)) * sum);
 
 	}

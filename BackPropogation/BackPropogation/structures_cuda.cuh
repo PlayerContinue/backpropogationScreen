@@ -51,7 +51,7 @@ struct SNeuronLayer{
 	void addNewWeights(int numberOfNeuronsAdded){
 		for (int i = 0; i < this->number_per_layer; i++){
 			for (int k = 0; k < numberOfNeuronsAdded; k++){
-				this->neurons[i].weights.push_back(this->neurons[i].weights[k]/2);//Set the new weight to half the previous weight
+				this->neurons[i].weights.push_back(this->neurons[i].weights[k] / 2);//Set the new weight to half the previous weight
 				this->neurons[i].weights[k] = this->neurons[i].weights[k] / 2;//Set the divided weight to the same as the new weights
 				//REASON: ((n/2)*k) + ((n/2)*l) = ((n) * k) approximately 
 				this->neurons[i].previousWeight.push_back(0);
@@ -75,7 +75,7 @@ struct SNeuronLayer{
 			this->neurons[i].weights.erase(this->neurons[i].weights.begin() + y);//Remove the neuron
 		}
 	}
-	
+
 
 	//***************************************
 	//Overload Operators
@@ -94,7 +94,7 @@ struct SNeuronLayer{
 
 	friend istream& operator>>(istream& is, SNeuronLayer& layer){
 		int number_of_weights;
-		char next; 
+		char next;
 		//Retrieve number of neurons
 		is >> layer.number_per_layer;
 
@@ -149,8 +149,8 @@ struct SNeuronLayer{
 	thrust::host_vector<double> getOutput(int expand, double value){
 		thrust::host_vector<double> y(this->number_per_layer + expand);
 		//for (int i = 0; i < this->number_per_layer; i++){
-			//Store the weight in the vector
-			//y[i] = this->neurons[i].output;
+		//Store the weight in the vector
+		//y[i] = this->neurons[i].output;
 		//}
 		//Copy the output into the expanded array
 		thrust::copy(this->output.begin(), this->output.end(), y.begin());
@@ -191,7 +191,7 @@ struct SNeuronLayer{
 	void setOutput(thrust::device_vector<double> new_output){
 		if (new_output.size() != this->number_per_layer){
 			throw new exception("To many Outputs");
-		} 
+		}
 
 		//Error causing size change 
 		if ((int)this->output.size() < this->number_per_layer){
@@ -213,6 +213,101 @@ struct SNeuronLayer{
 		}
 		//Set the output
 		this->output = new_output;
+	}
+
+
+};
+
+
+
+//Structure containing information to create a checkpoint
+struct SCheckpoint{
+
+	//Count the total number of loops which have occured
+	int i_number_of_loops_checkpoint = 0;
+	
+	//Count the number of current loops traveled through before reaching a reset
+	int i_number_of_loops = 0;
+
+	//Count the number of times left for the mean to be larger than the previous mean before trying to add new neurons
+	int i_times_lowest_mean_square_error_to_large;
+
+	// Store the mean square error
+	double d_mean_square_error = (double)INT_MAX;
+
+	//Store the previous round mean_square_error to test if the value changed between rounds
+	double d_previous_mean_square_error = 0;
+
+	//Store the lowest mean_square_error found
+	double d_lowest_mean_square_error = (double)INT_MAX;
+
+	//Store the most recent d_row_distance_threshold
+	double d_row_distance_threshold;
+
+	//store the most recent d_neuron_distance_threshold
+	double d_neuron_distance_threshold;
+
+	//store the most recently recorded network file
+	string s_network_file_name;
+
+	//***************************************
+	//Overload Operators
+	//***************************************
+	//Save to file
+	friend ostream& operator<<(ostream& os, const SCheckpoint checkpoint){
+		
+		os << "i_number_of_loops_checkpoint " << checkpoint.i_number_of_loops_checkpoint << endl;
+		
+		os << "i_times_lowest_mean_square_error_to_large " << checkpoint.i_times_lowest_mean_square_error_to_large << endl;
+
+		os << "d_mean_square_error " << checkpoint.d_mean_square_error << endl;
+		
+		os << "d_previous_mean_square_error " << checkpoint.d_previous_mean_square_error << endl;
+		
+		os << "i_number_of_loops " << checkpoint.i_number_of_loops << endl;
+
+		os << "d_lowest_mean_square_error " << checkpoint.d_lowest_mean_square_error << endl;
+
+		os << "d_row_distance_threshold " << checkpoint.d_row_distance_threshold << endl;
+
+		os << "d_neuron_distance_threshold " << checkpoint.d_neuron_distance_threshold << endl;
+
+		os << "s_network_file_name " << checkpoint.s_network_file_name << endl;
+
+		return os;
+	}
+
+	//Load from file
+	friend istream& operator>>(istream& is, SCheckpoint& checkpoint){
+		string next;
+		is >> next;
+		is >> checkpoint.i_number_of_loops_checkpoint;
+
+		is >> next;
+		is >> checkpoint.i_times_lowest_mean_square_error_to_large;
+
+		is >> next;
+		is >> checkpoint.d_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.d_previous_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.i_number_of_loops;
+
+		is >> next;
+		is >> checkpoint.d_lowest_mean_square_error;
+
+		is >> next;
+		is >> checkpoint.d_row_distance_threshold;
+
+		is >> next;
+		is >> checkpoint.d_neuron_distance_threshold;
+
+		is >> next;
+		is >> checkpoint.s_network_file_name;
+
+		return is;
 	}
 
 

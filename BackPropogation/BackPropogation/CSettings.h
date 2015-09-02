@@ -52,15 +52,23 @@ public:
 	//Stores the name of the file containing the training set
 	bool b_trainingFromFile = false;
 	string s_trainingSet;
+	string s_outputTrainingFile;
 
 	//Stores the name of the file containing the test set
 	bool b_testingFromFile = false;
 	string s_testSet;
 
+	
 	//Number of pieces from the testing set per round
 	int i_number_of_training;
 
+	//Stores the name of the file to load a checkpoint from
+	bool b_loadFromCheckpoint;
+	string s_checkpoint_file;
 
+
+	//Number of allowed output matches to allow a layer in
+	int i_number_allowed_same;
 	//Load From File
 	bool b_loadNetworkFromFile = false;
 	string s_loadNetworkFile;
@@ -85,6 +93,9 @@ public:
 
 		is >> next;
 		is >> settings.i_number_before_growth_potential;
+
+		is >> next;
+		is >> settings.i_number_allowed_same;
 
 		is >> next;
 		is >> settings.i_input;
@@ -123,19 +134,34 @@ public:
 		is >> settings.s_trainingSet;
 
 		is >> next;
+		is >> settings.s_outputTrainingFile;
+
+		is >> next;
 		is >> settings.b_testingFromFile;
 
 		is >> next;
 		is >> settings.s_testSet;
 
+		//Load number in each training set
 		is >> next;
 		is >> settings.i_number_of_training;
+
+
+		//Load from checkpoint 
+		is >> next;
+		is >> settings.b_loadFromCheckpoint;
+
+		is >> next;
+		is >> settings.s_checkpoint_file;
 		
+		//Load network file
 		is >> next;
 		is >> settings.b_loadNetworkFromFile;
 
 		is >> next;
 		is >> settings.s_loadNetworkFile;
+
+	
 
 		return is;
 	}
