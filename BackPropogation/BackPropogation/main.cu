@@ -235,7 +235,8 @@ void signal_handler(int signal)
 //Use mean square error to check distance
 void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, double* testSetIn[], double* testSetOut[], int testLength, CSettings settings, SCheckpoint& checkpoint){
 	
-	int number_of_rounds_returned;
+	int number_of_rounds_returned[2];
+	int new_end = end;
 	do{
 
 		//Pause the program and perform one of the following options
@@ -288,19 +289,27 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 		checkpoint.i_number_of_loops++;
 		checkpoint.i_number_of_loops_checkpoint++;
 
-		if (checkpoint.i_number_of_loops >= end){
-			//checkpoint.i_number_of_loops = start;
+		if (checkpoint.i_number_of_loops >= new_end){
+			checkpoint.i_number_of_loops = start;
+
+			if (new_end < end){
+				//Add ask for new file later
+				exit(0);
+			}
 
 			if (settings.b_trainingFromFile){
 
 				//Store training set
-				getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint*settings.i_input, settings.i_number_of_training, settings.i_input, value);
+				number_of_rounds_returned[0] = getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint*settings.i_input, settings.i_number_of_training, settings.i_input, value);
 
 			}
 
 			if (settings.b_testingFromFile){
-				getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint*settings.i_output, settings.i_number_of_training, settings.i_output, results);
+				number_of_rounds_returned[1] = getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint*settings.i_output, settings.i_number_of_training, settings.i_output, results);
 			}
+
+			new_end = (number_of_rounds_returned[0] < number_of_rounds_returned[1] ? number_of_rounds_returned[0] : number_of_rounds_returned[1]);
+
 		}
 		//Get the mean_square_error when the number of loops reaches a user defined values
 		if (checkpoint.i_number_of_loops_checkpoint%settings.i_number_before_growth_potential == 0){
@@ -574,9 +583,9 @@ int getDataFromFile(string fileName, int start, int numberOfRounds, int numberRe
 		std::cout << "Unable to read from file." << endl;
 		std::cout << "continue?";
 		if (cin.get() == 'n'){
-
 			exit(0);
 		}
+		return numberOfRounds;
 	}
 }
 

@@ -1,4 +1,4 @@
-s_network_name word_network_3
+s_network_name word_network_4
 i_loops 3000
 i_number_allowed_failures 3
 i_number_before_growth_potential 5000
@@ -21,6 +21,6 @@ s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
 i_number_of_training 1000
 b_loadFromCheckpoint 1
-s_checkpoint_file checkpoints/word_network_3_checkpoint_6.txt
+s_checkpoint_file checkpoints/word_network_4_checkpoint_1.txt
 b_loadNetworkFromFile 0
-s_loadNetworkFile networks/word_network_2204.txt
+s_loadNetworkFile networks/word_network_44.txt

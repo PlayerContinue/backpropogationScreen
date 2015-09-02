@@ -246,8 +246,12 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 		thrust::transform(weights.begin(), weights.end(), thrust::make_permutation_iterator(deltas.begin(), map2.begin()),
 			weights.begin(), thrust::multiplies<double>());
 #ifdef TRIAL2
-		printValues(map2);
-		printValues(weights);
+		for (int j = 0; j < map2.size(); j++){
+			cout << map2[j] << " " << map[j] << " " << weights[j] << endl;
+		}
+		for (int j = 0; j < map2.size(); j++){
+			cout << map2[j] << " " << deltas[map2[j]] << endl;
+		}
 		cout << "_____________________" << endl;
 #endif
 		if (i == 0){
@@ -255,7 +259,9 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 			thrust::reduce_by_key(map.begin(), map.end(), weights.begin(), thrust::make_discard_iterator(), gpu_sums.begin());
 
 #ifdef TRIAL2
-			printValues(gpu_sums);
+			for (int j = 0; j < gpu_sums.size(); j++){
+				cout << j << " " << gpu_sums[j] << endl;
+			}
 			cout << "_____________________" << endl;
 #endif
 		}
@@ -325,7 +331,6 @@ inline void applyMomentum(SNeuronLayer &currentLayer, double alpha){
 		getWeights(currentLayer, weights, previousWeights, i);
 		//Transform the weights using saxpy
 		thrust::transform(previousWeights.begin(), previousWeights.end(), weights.begin(), weights.begin(), saxpy_functor<double>(alpha));
-
 		//Set the weights back from memory
 		setWeights(currentLayer, weights, previousWeights, i, i + available_slots);
 	}

@@ -61,10 +61,21 @@ struct SNeuronLayer{
 
 	//Remove all except X weights from the neurons
 	void keepXWeights(int X){
+		int i_previous_number_weights = this->neurons[0].weights.size();
 		for (int i = 0; i < this->number_per_layer; i++){
 			this->neurons[i].weights.resize(X);
 			this->neurons[i].previousWeight.resize(X);
 		}
+
+		if (X > i_previous_number_weights){
+			for (int i = 0; i < this->number_per_layer; i++){
+				for (int j = i_previous_number_weights; j < X; j++){
+					//Set a new weight
+					this->neurons[i].weights[j] = RandomClamped();
+				}
+			}
+		}
+		
 	}
 
 	//Remove all weights which are connected to a neuron in the previous layer

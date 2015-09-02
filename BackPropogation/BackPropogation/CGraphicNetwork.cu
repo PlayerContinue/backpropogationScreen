@@ -551,7 +551,7 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 		}
 		else{
 			//Remove uneeded weights
-			this->v_layers[position + 1].keepXWeights(1);
+			this->v_layers[position + 1].keepXWeights(neuronPerLayer);
 			//Add the bias (Random Number between 0 and 1)
 			tempNeuron.bias = RandomClamped();
 		}
