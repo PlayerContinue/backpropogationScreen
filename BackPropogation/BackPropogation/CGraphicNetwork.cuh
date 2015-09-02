@@ -332,6 +332,14 @@ public:
 
 	}
 
+	int getI_input(){
+		return this->I_input;
+	}
+
+	int getI_output(){
+		return this->I_output;
+	}
+
 	//Return the Success percentage
 	double getSuccessRate(){
 		return ((double)this->success / (((double)this->success + (double)this->failure)));

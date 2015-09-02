@@ -7,6 +7,7 @@
 
 //#define PROBLEMS 5
 #define FIRST_TEST
+#define PAUSE
 #pragma once
 #include <vector>
 #include <stdlib.h>
@@ -15,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <csignal>
 #include "CSettings.h"
 #include "CGraphicNetwork.cuh"
 #ifdef WINDOWS_COMPUTER
@@ -23,11 +25,15 @@
 
 using namespace std;
 
+
+static volatile bool pause;
+
+
 //PROTOTYPES
 int writeToFile(CGraphicsNetwork &network, CSettings settings);
 void testOutput2(double** value, CGraphicsNetwork &test, int size);
 bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& checkpoint, double** testSet, double mean_square_error);
-void getDataFromFile(string fileName, int start, int end, int numberResults, double** input);
+int getDataFromFile(string fileName, int start, int end, int numberResults, double** input);
 
 void printVectorOutput(vector<double> vectorA){
 	int size = vectorA.size();
@@ -40,11 +46,34 @@ void printVectorOutput(vector<double> vectorA){
 
 		pos = pos << 1;
 	}
-	cout << value << endl;
+	std::cout << value << endl;
 	if (value <= 255 & value > 0){
-		cout << (char)value << endl;
+		std::cout << (char)value << endl;
 	}
-	
+
+}
+
+int printVectorOutputChar(vector<double> vectorA){
+	int size = vectorA.size();
+	int value = 0;//Store a int with 32 0
+	int pos = 1;
+	for (int i = vectorA.size() - 1; i >= 0; i--){
+
+		//Either add one at the current position or add zero
+		value = value | (vectorA[i] > .5 ? pos : 0);
+
+		pos = pos << 1;
+	}
+
+	if (value <= 255 & value > 0){
+		std::cout << (char)value;
+	}
+	else{
+		std::cout << value;
+	}
+
+	return value;
+
 }
 
 void printVectorOutput2(vector<double> vectorA){
@@ -58,13 +87,13 @@ void printVectorOutput2(vector<double> vectorA){
 
 		pos = pos << 1;
 	}
-	cout << value;
+	std::cout << value;
 }
 
 void printArray(double* arrayA, int size){
 	for (int i = 0; i < size; i++){
-		cout << (char)arrayA[i];
-		cout << endl;
+		std::cout << (char)arrayA[i];
+		std::cout << endl;
 	}
 }
 
@@ -129,7 +158,7 @@ int numberFullSame(CGraphicsNetwork test, double** in, int size){
 		}
 	}
 
-	return (size-count_success);
+	return (size - count_success);
 }
 
 //******************************
@@ -137,7 +166,7 @@ int numberFullSame(CGraphicsNetwork test, double** in, int size){
 //******************************
 
 //Create a checkpoint containing all the current values of the system
-void createCheckpoint(CGraphicsNetwork test,SCheckpoint& checkpoint,CSettings settings){
+void createCheckpoint(CGraphicsNetwork test, SCheckpoint& checkpoint, CSettings settings){
 	int checkpoint_number = writeToFile(test, settings);
 	checkpoint.s_network_file_name = "networks/" + settings.s_network_name + std::to_string(checkpoint_number) + ".txt";
 	//Write the checkpoint to a file
@@ -150,13 +179,13 @@ void createCheckpoint(CGraphicsNetwork test,SCheckpoint& checkpoint,CSettings se
 		outputfile.close();
 	}
 	else{
-		cout << "Unable to write checkpoint to file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to write checkpoint to file." << endl;
+		std::cout << "continue?";
 	}
 
 }
 
-void LoadCheckpointFromFile(SCheckpoint& checkpoint,string s_file_name){
+void LoadCheckpointFromFile(SCheckpoint& checkpoint, string s_file_name){
 	std::ifstream inputfile;
 
 	inputfile.open(s_file_name, ios_base::beg);
@@ -165,8 +194,8 @@ void LoadCheckpointFromFile(SCheckpoint& checkpoint,string s_file_name){
 		inputfile.close();
 	}
 	else{
-		cout << "Unable to read checkpoint from file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to read checkpoint from file." << endl;
+		std::cout << "continue?";
 		if (cin.get() == 'n'){
 
 			exit(0);
@@ -186,6 +215,17 @@ void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings){
 	checkpoint.d_neuron_distance_threshold = settings.d_neuron_distance_threshold;
 }
 
+//*********************************
+//Signal Handlers
+//*********************************
+
+void signal_handler(int signal)
+{
+	if (signal == SIGINT){
+		pause = true;
+	}
+}
+
 //******************************
 //Training the Network
 //******************************
@@ -194,22 +234,62 @@ void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings){
 //Check if the limit has been reached as the stopping point
 //Use mean square error to check distance
 void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &test, int start, int end, double* testSetIn[], double* testSetOut[], int testLength, CSettings settings, SCheckpoint& checkpoint){
+	
+	int number_of_rounds_returned;
 	do{
+
+		//Pause the program and perform one of the following options
+#ifdef PAUSE
+		if (pause){
+			std::cout << "1) print output " << endl;;
+			std::cout << "2) run same check " << endl;
+			std::cout << "3) get mean square " << endl;
+			std::cout << "4) Save Checkpoint " << endl;
+			std::cout << "5) continue " << endl;
+			std::cout << "6) exit " << endl;
+			cin.clear();
+			std::cout << " loop " << checkpoint.i_number_of_loops_checkpoint << endl;
+			std::cout.precision(30);
+			switch (cin.get()){
+			case '1':
+				//Test the output
+				testOutput2(testSetIn, test, testLength);
+
+				break;
+			case '2':
+				std::cout << numberFullSame(test, testSetIn, settings.i_number_of_training) << endl;
+				break;
+			case '3':
+				std::cout << test.getMeanSquareError(testSetIn, testSetOut, testLength) << endl;
+				break;
+			case '4':
+				createCheckpoint(test, checkpoint, settings);
+				break;
+			case '5':
+				break;
+			case '6':
+				exit(0);
+				break;
+			}
+
+			pause = false;
+			//Attach the signal handler
+			std::signal(SIGINT, signal_handler);
+			std::cout << "finished" << endl;
+		}
+#endif
 
 		test.backprop(value[checkpoint.i_number_of_loops], results[checkpoint.i_number_of_loops]);
 
 
 		if (checkpoint.i_number_of_loops_checkpoint % settings.i_loops == 0){
-			createCheckpoint(test,checkpoint, settings);
-			//Test the output
-			testOutput2(testSetIn, test, testLength);
-			cout << " loop " << checkpoint.i_number_of_loops_checkpoint << endl;
+			createCheckpoint(test, checkpoint, settings);
 		}
 		checkpoint.i_number_of_loops++;
 		checkpoint.i_number_of_loops_checkpoint++;
 
 		if (checkpoint.i_number_of_loops >= end){
-			checkpoint.i_number_of_loops = start;
+			//checkpoint.i_number_of_loops = start;
 
 			if (settings.b_trainingFromFile){
 
@@ -224,17 +304,17 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 		}
 		//Get the mean_square_error when the number of loops reaches a user defined values
 		if (checkpoint.i_number_of_loops_checkpoint%settings.i_number_before_growth_potential == 0){
-			
+
 			//Set the current mean_square_error as the previous error
 			checkpoint.d_previous_mean_square_error = checkpoint.d_mean_square_error;
 
 			//Retrieve the new mean_square_error
 			checkpoint.d_mean_square_error = test.getMeanSquareError(testSetIn, testSetOut, testLength);
-			
+
 			//Set the current lowest
 			if (checkpoint.d_mean_square_error < checkpoint.d_lowest_mean_square_error && checkpoint.d_mean_square_error != checkpoint.d_previous_mean_square_error){
 				checkpoint.d_lowest_mean_square_error = checkpoint.d_mean_square_error;
-				
+
 				//Reset value since error was lowered
 				checkpoint.i_times_lowest_mean_square_error_to_large = settings.i_number_allowed_failures;
 			}
@@ -243,7 +323,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 				//If the below is true, something close to the limit has been reached, the network needs to change size 
 				if (checkpoint.i_times_lowest_mean_square_error_to_large == 0){
 					//Add new nodes to the network
-					if (addToNetwork(test, settings,checkpoint, testSetIn, checkpoint.d_mean_square_error)){
+					if (addToNetwork(test, settings, checkpoint, testSetIn, checkpoint.d_mean_square_error)){
 						//Reset the number allowed
 						//Since new ones may have been
 						checkpoint.i_times_lowest_mean_square_error_to_large = settings.i_number_allowed_failures + 10;
@@ -254,7 +334,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 					}
 				}
 			}
-			
+
 		}
 
 		//Loop until the error is smaller than the threshold
@@ -262,7 +342,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 }
 
 //Returns true if a neuron was added
-bool addToNetwork(CGraphicsNetwork &test,CSettings settings,SCheckpoint& checkpoint, double** testSet, double mean_square_error){
+bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& checkpoint, double** testSet, double mean_square_error){
 
 	//Get delta in success
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
@@ -273,14 +353,14 @@ bool addToNetwork(CGraphicsNetwork &test,CSettings settings,SCheckpoint& checkpo
 	double full_success = test.getFullSuccessRate() - test.getFullPreviousSuccessRate();
 #endif
 	//Get the number of test sets returning the exact same values
-	int numberSame = numberFullSame(test,testSet, settings.i_number_of_training);
+	int numberSame = numberFullSame(test, testSet, settings.i_number_of_training);
 
 	//Add a new layer if the success is too low and the threshold has not been reached
 	if (success <= settings.d_row_success_threshold && mean_square_error_dif > 0 && mean_square_error_dif >= checkpoint.d_row_distance_threshold && numberSame < settings.i_number_allowed_same){
 		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) * 5);
 		//Increment the size of the need mean distance to get a new layer
 		//And decrease the size of the needed mean distance to get a new neuron
-		if (checkpoint.d_neuron_distance_threshold > 0 ){
+		if (checkpoint.d_neuron_distance_threshold > 0){
 			checkpoint.d_row_distance_threshold += settings.d_row_distance_threshold * .1;
 			checkpoint.d_neuron_distance_threshold -= settings.d_neuron_distance_threshold * .1;
 		}
@@ -309,7 +389,7 @@ bool addToNetwork(CGraphicsNetwork &test,CSettings settings,SCheckpoint& checkpo
 		test.resetNetwork();
 		return true;
 	}
-	
+
 	return false;
 
 
@@ -317,48 +397,48 @@ bool addToNetwork(CGraphicsNetwork &test,CSettings settings,SCheckpoint& checkpo
 
 void testOutput(double* value_1, double* value_3, CGraphicsNetwork &test){
 	vector<double> temp2;
-	cout << "input";
-	cout << endl;
+	std::cout << "input";
+	std::cout << endl;
 	printArray(value_1, 2);
 	test.feedForward(value_1);
 	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
+	std::cout << "output";
+	std::cout << endl;
 	printVectorOutput(temp2);
-	cout << endl;
+	std::cout << endl;
 
 
 	test.feedForward(value_3);
 	temp2 = test.getOutput();
 
-	cout << "input";
-	cout << endl;
+	std::cout << "input";
+	std::cout << endl;
 	printArray(value_3, 2);
 
 	temp2 = test.getOutput();
-	cout << "output";
-	cout << endl;
+	std::cout << "output";
+	std::cout << endl;
 	printVectorOutput(temp2);
-	cout << endl;
+	std::cout << endl;
 }
 
 void testOutput2(double** value, CGraphicsNetwork &test, int size){
 	vector<double> temp2;
 
 	for (int i = 0; i < size; i++){
-		cout << "input";
-		cout << endl;
-		
-			printArray(value[i], 6);
-		
+		std::cout << "input";
+		std::cout << endl;
+
+		printArray(value[i], 6);
+
 		test.feedForward(value[i]);
-		
-			temp2 = test.getOutput();
-		
-		cout << "output";
-		cout << endl;
+
+		temp2 = test.getOutput();
+
+		std::cout << "output";
+		std::cout << endl;
 		printVectorOutput(temp2);
-		cout << endl;
+		std::cout << endl;
 	}
 }
 
@@ -374,12 +454,11 @@ int writeToFile(CGraphicsNetwork &network, CSettings settings){
 		outputfile.close();
 	}
 	else{
-		cout << "Unable to write checkpoint to file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to write checkpoint to file." << endl;
+		std::cout << "continue?";
 	}
 
 	return file_number;
-
 
 }
 
@@ -393,8 +472,8 @@ bool loadFromFile(CGraphicsNetwork& network, string fileName){
 		return true;
 	}
 	else{
-		cout << "Unable to read from file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to read from file." << endl;
+		std::cout << "continue?";
 		if (cin.get() == 'n'){
 
 			exit(0);
@@ -414,8 +493,8 @@ CSettings loadSettings(string fileName){
 		return settings;
 	}
 	else{
-		cout << "Unable to read from file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to read from file." << endl;
+		std::cout << "continue?";
 		if (cin.get() == 'n'){
 
 			exit(0);
@@ -441,7 +520,7 @@ BOOL WINAPI ConsoleHandlerRoutine(DWORD dwCtrlType)
 void initialize(){
 	if (SetConsoleCtrlHandler(ConsoleHandlerRoutine, TRUE) == false){
 		printf("Unable to attach Handler");
-		cout << "continue? ";
+		std::cout << "continue? ";
 		if (cin.get() == 'n'){
 			exit(0);
 		}
@@ -455,7 +534,7 @@ void initialize(){
 //numberOfRounds: The number of character sets which are needed to be retrieve
 //numberResults: How many characters should be retrieved for a single round
 //input : the storage container for the input
-void getDataFromFile(string fileName, int start, int numberOfRounds, int numberResults, double** input){
+int getDataFromFile(string fileName, int start, int numberOfRounds, int numberResults, double** input){
 	std::ifstream inputfile;
 
 	inputfile.open(fileName);
@@ -479,7 +558,9 @@ void getDataFromFile(string fileName, int start, int numberOfRounds, int numberR
 				input[k][letterPosition] = .9;
 			}
 #endif
-
+			if (inputfile.eof()){
+				return k;
+			}
 
 			letterPosition++;
 
@@ -487,10 +568,11 @@ void getDataFromFile(string fileName, int start, int numberOfRounds, int numberR
 
 		}
 		inputfile.close();
+		return numberOfRounds;
 	}
 	else{
-		cout << "Unable to read from file." << endl;
-		cout << "continue?";
+		std::cout << "Unable to read from file." << endl;
+		std::cout << "continue?";
 		if (cin.get() == 'n'){
 
 			exit(0);
@@ -498,80 +580,143 @@ void getDataFromFile(string fileName, int start, int numberOfRounds, int numberR
 	}
 }
 
+void recursiveTestInput(CGraphicsNetwork network){
+	char userchoice;
+	double* input = new double[network.getI_input()];
+	while (true){
+		if (pause){
+			std::cout << endl << "Would you like to quit? ";
+			userchoice = cin.get();
+			if (userchoice == 'y'){
+				exit(0);
+			}
+			else{
+				pause = false;
+				//Attach the signal handler
+				std::signal(SIGINT, signal_handler);
+				continue;
+			}
+		}
+		network.feedForward(input);
+		//Move all in the array to the left by one
+		for (int i = 0; i < network.getI_input() - 1; i++){
+			input[i] = input[i + 1];
+		}
+
+		input[network.getI_input() - 1] = printVectorOutputChar(network.getOutput());
+
+
+	}
+}
+
+//
+//
+
 void initialize_loops(int argc, char** argv){
 	CGraphicsNetwork test;
 	CSettings settings;
 	if (argc > 1){
+		std::cout << "loading settings " << endl;
 		settings = loadSettings(argv[1]);
 	}
+
+	std::cout << "Would you like to train?";
+	char in = cin.get();
 
 	int PROBLEMS = std::stoi(argv[2]);
 	SCheckpoint checkpoint = SCheckpoint();
 	if (settings.b_loadFromCheckpoint){
+		std::cout << "loading checkpoint " << endl;
 		//Load the checkpoint from a file
-		LoadCheckpointFromFile(checkpoint,settings.s_checkpoint_file);
+		LoadCheckpointFromFile(checkpoint, settings.s_checkpoint_file);
 		//Load the information from the checkpoint
+		std::cout << "loading network " << endl;
 		test = CGraphicsNetwork();
 		loadFromFile(test, checkpoint.s_network_file_name);
 	}
 	else if (settings.b_loadNetworkFromFile){//Load only the network from file
+		std::cout << "loading network " << endl;
 		test = CGraphicsNetwork();
-		createNewCheckpoint(checkpoint,settings);
+		createNewCheckpoint(checkpoint, settings);
 		loadFromFile(test, settings.s_loadNetworkFile);
 	}
 	else{//Start with a brand new network
-
+		std::cout << "creating new network " << endl;
 		vector<int> temp = vector<int>();
-		createNewCheckpoint(checkpoint,settings);
+		createNewCheckpoint(checkpoint, settings);
 		temp.push_back(settings.i_input);
 		temp.push_back(settings.i_output);
 		vector<double> temp2 = vector<double>(settings.i_output);
 
 		test = CGraphicsNetwork(temp, settings.d_beta, settings.d_alpha);
 	}
-	double **value;
-	double **results;
-	double **testIn;
-	double **testOut;
-	
-	value = new double*[settings.i_number_of_training];
-	results = new double*[settings.i_number_of_training];
-	testIn = new double*[settings.i_number_of_training];
-	testOut = new double*[settings.i_number_of_training];
+	if (in == 'y'){
+		double **value;
+		double **results;
+		double **testIn;
+		double **testOut;
 
+		value = new double*[settings.i_number_of_training];
+		results = new double*[settings.i_number_of_training];
+		testIn = new double*[settings.i_number_of_training];
+		testOut = new double*[settings.i_number_of_training];
 
-	//Store training set
-	getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_input, value);
-	getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_output, results);
+		if (settings.b_trainingFromFile){
+			//Store training set
+			std::cout << "loading training set " << endl;
+			getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_input, value);
+			getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_output, results);
 
-	if (settings.b_trainingFromFile){
-		//Store the data to test the neural network
-		getDataFromFile(settings.s_testSet, 0, settings.i_number_of_training, settings.i_input, testIn);
-		getDataFromFile(settings.s_outputTestSet, 0, settings.i_number_of_training, settings.i_output, testOut);
+			if (settings.b_testingFromFile){
+				std::cout << "loading testing data " << endl;
+				//Store the data to test the neural network
+				getDataFromFile(settings.s_testSet, 0, settings.i_number_of_training, settings.i_input, testIn);
+				getDataFromFile(settings.s_outputTestSet, 0, settings.i_number_of_training, settings.i_output, testOut);
+			}
+			else{
+				std::cout << "loading testing data " << endl;
+				//If no test file is given, use some from the training set
+				//Store the testing set
+				getDataFromFile(settings.s_trainingSet, 0, settings.i_number_of_training, settings.i_input, testIn);
+				getDataFromFile(settings.s_outputTrainingFile, 0, settings.i_number_of_training, settings.i_output, testOut);
+
+			}
+		}
+		std::cout << "training start " << endl;
+		trainNetworkDelta(value, results, test, 0, settings.i_number_of_training, testIn, testOut, settings.i_number_of_training, settings, checkpoint);
+
+		for (int i = 0; i < settings.i_number_of_training; i++){
+			delete value[i];
+			delete results[i];
+		}
+
+		//Clean up memory
+		delete value;
+		delete results;
 	}
 	else{
-		//If no test file is given, use some from the training set
-		//Store the testing set
-		getDataFromFile(settings.s_trainingSet, 0, settings.i_number_of_training, settings.i_input, testIn);
-		getDataFromFile(settings.s_outputTrainingFile, 0, settings.i_number_of_training, settings.i_output, testOut);
-
+		std::cout << "Starting output Loops" << endl;
+		recursiveTestInput(test);
 	}
-	trainNetworkDelta(value, results, test, 0, settings.i_number_of_training, testIn, testOut, settings.i_number_of_training, settings, checkpoint);
-
-	for (int i = 0; i < settings.i_number_of_training; i++){
-		delete value[i];
-		delete results[i];
-	}
-
-	//Clean up memory
-	delete value;
-	delete results;
 }
+
+
+
+//*********************************
+//Main Function
+//*********************************
 
 int main(int argc, char** argv){
 #ifdef WINDOWS_COMPUTER
 	initialize();
 #endif
+
+	pause = false;
+
+	std::cout << "Starting Program... " << endl;
+	//Attach the signal handler
+	std::signal(SIGINT, signal_handler);
+
 	initialize_loops(argc, argv);
 
 	return 0;
