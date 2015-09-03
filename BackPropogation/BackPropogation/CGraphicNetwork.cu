@@ -80,6 +80,10 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes, double beta, double alpha
 	this->alpha = alpha;
 }
 
+CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes, CSettings* settings) : CGraphicsNetwork(sizes, settings->d_beta, settings->d_alpha){
+	this->settings = settings;
+}
+
 //Needs Testing
 //TODO Use up a tiny bit of memory to create a pointer to the different objects which are used multiple times
 

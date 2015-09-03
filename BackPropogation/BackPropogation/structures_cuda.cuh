@@ -30,6 +30,12 @@ struct SNeuronLayer{
 
 	//Holds the delta for the current row
 	thrust::host_vector<double> delta;
+
+	//Contains a list stating which nodes are locked
+	//When marked as 1 and a node exists at position, the node is locked.
+	//Locked nodes do not change weight or width
+	thrust::host_vector<double> locked_nodes;
+
 #ifdef DEBUG
 	int num_locked = 0;
 #endif
@@ -42,6 +48,12 @@ struct SNeuronLayer{
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
 
+	//Create a neuron layer containing n nodes
+	SNeuronLayer(int number_nodes){
+		this->output.resize(number_nodes);
+		this->delta.resize(number_nodes);
+		this->locked_nodes.resize(number_nodes);
+	}
 
 	//***************************************
 	//Weight Modifiers

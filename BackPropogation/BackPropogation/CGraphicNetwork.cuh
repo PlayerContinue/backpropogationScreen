@@ -15,6 +15,7 @@
 #include "util.h"
 #include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
+#include "CSettings.h"
 #if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4) || defined(TRIAL5)
 #include <iostream>
 #endif
@@ -62,6 +63,11 @@ private:
 
 	double average_delta=0;
 
+	//Store a settings object
+	CSettings* settings;
+
+
+
 #ifdef FULL_SUCCESS
 	//Temporary current, may remove
 	//Keep track of all full successes
@@ -94,6 +100,8 @@ public:
 	//i.e. 3 inputs, first hidden layer 2, second 4 would, output 1 is [3,2,4,1]
 	CGraphicsNetwork(vector<int> &sizes, double beta, double alpha);
 
+	//Develop a initial network from a settings object
+	CGraphicsNetwork(vector<int> &sizes, CSettings* settings);
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Overloaded Operators
@@ -205,18 +213,7 @@ public:
 
 	//Lock the current neuron from further changes
 	void lockNeuron(int layerPosition, int neuronPosition){
-		SNeuron* currentNeuron = &(this->v_layers[layerPosition].neurons[neuronPosition]);
-
-
-		if (currentNeuron->removed != 2 && abs(this->v_layers[layerPosition].delta[neuronPosition]) < LOCKED){//Neuron is both not locked and needs to be locked
-			this->v_layers[layerPosition].neurons[neuronPosition].removed = 2;
-#ifdef DEBUG 
-			this->v_layers[layerPosition].num_locked += 1;
-#endif
-		}
-
-		//Delete the pointer
-		currentNeuron = NULL;
+	
 	}
 
 

@@ -73,7 +73,11 @@ public:
 	bool b_loadNetworkFromFile = false;
 	string s_loadNetworkFile;
 
-	
+	//Allow the nodes to be locked
+	//Node locking involves nodes being unable to change weights or bias after a certain point is reached
+	//Current concept is working from the delta becoming low enough
+	bool b_allow_node_locking;
+	double d_lock_node_level;
 
 	CSettings();
 
@@ -86,7 +90,6 @@ public:
 
 		is >> next;
 		is >> settings.i_loops;
-
 
 		is >> next;
 		is >> settings.i_number_allowed_failures;
@@ -121,6 +124,15 @@ public:
 		is >> next;
 		is >> settings.d_fluctuate_square_mean;
 
+
+		//Allow locked nodes
+		is >> next;
+		is >> b_allow_node_locking;
+
+		is >> next;
+		is >> d_lock_node_level;
+
+		//Set Alpha and Beta
 		is >> next;
 		is >> settings.d_alpha;
 
@@ -168,6 +180,7 @@ public:
 		is >> next;
 		is >> settings.s_loadNetworkFile;
 
+		
 	
 
 		return is;

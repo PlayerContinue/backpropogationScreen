@@ -572,6 +572,13 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 }
 
 
+//*******************************************************
+//Locking Nodes
+//*******************************************************
+
+void checkLockNodes(){
+
+}
 
 
 //*******************************************************

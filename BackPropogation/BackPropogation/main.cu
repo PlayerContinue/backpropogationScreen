@@ -224,6 +224,7 @@ void signal_handler(int signal)
 	if (signal == SIGINT){
 		pause = true;
 	}
+	std::signal(SIGINT, signal_handler);
 }
 
 //******************************
@@ -275,7 +276,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 
 			pause = false;
 			//Attach the signal handler
-			std::signal(SIGINT, signal_handler);
+			//std::signal(SIGINT, signal_handler);
 			std::cout << "finished" << endl;
 		}
 #endif
@@ -602,7 +603,7 @@ void recursiveTestInput(CGraphicsNetwork network){
 			else{
 				pause = false;
 				//Attach the signal handler
-				std::signal(SIGINT, signal_handler);
+				//std::signal(SIGINT, signal_handler);
 				continue;
 			}
 		}
