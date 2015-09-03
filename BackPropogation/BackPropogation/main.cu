@@ -641,12 +641,12 @@ void initialize_loops(int argc, char** argv){
 		LoadCheckpointFromFile(checkpoint, settings.s_checkpoint_file);
 		//Load the information from the checkpoint
 		std::cout << "loading network " << endl;
-		test = CGraphicsNetwork();
+		test = CGraphicsNetwork(&settings);
 		loadFromFile(test, checkpoint.s_network_file_name);
 	}
 	else if (settings.b_loadNetworkFromFile){//Load only the network from file
 		std::cout << "loading network " << endl;
-		test = CGraphicsNetwork();
+		test = CGraphicsNetwork(&settings);
 		createNewCheckpoint(checkpoint, settings);
 		loadFromFile(test, settings.s_loadNetworkFile);
 	}
@@ -658,7 +658,7 @@ void initialize_loops(int argc, char** argv){
 		temp.push_back(settings.i_output);
 		vector<double> temp2 = vector<double>(settings.i_output);
 
-		test = CGraphicsNetwork(temp, settings.d_beta, settings.d_alpha);
+		test = CGraphicsNetwork(temp, &settings);
 	}
 	if (in == 'y'){
 		double **value;

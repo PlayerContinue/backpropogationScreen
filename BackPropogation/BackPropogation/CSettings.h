@@ -127,10 +127,10 @@ public:
 
 		//Allow locked nodes
 		is >> next;
-		is >> b_allow_node_locking;
+		is >> settings.b_allow_node_locking;
 
 		is >> next;
-		is >> d_lock_node_level;
+		is >> settings.d_lock_node_level;
 
 		//Set Alpha and Beta
 		is >> next;

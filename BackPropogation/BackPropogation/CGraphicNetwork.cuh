@@ -63,8 +63,7 @@ private:
 
 	double average_delta=0;
 
-	//Store a settings object
-	CSettings* settings;
+
 
 
 
@@ -83,7 +82,9 @@ private:
 	//Number of inputs
 	int I_input;
 
-
+public:
+	//Store a settings object
+	CSettings* settings;
 
 
 public:
@@ -91,6 +92,10 @@ public:
 	//Constructors
 	//-----------------------------------------------------------------------------------------------------------
 	CGraphicsNetwork();
+
+	//Create only with a link to settings
+	CGraphicsNetwork(CSettings* settings);
+
 	//Constructor 
 	//sizes - The number of neurons per layer
 	//i.e. 3 inputs, first hidden layer 2, second 4 would, output 1 is [3,2,4,1]
@@ -210,11 +215,6 @@ public:
 	void removeNeuron(int layerPosition, int neuronPosition);
 
 	void reloadNetwork();
-
-	//Lock the current neuron from further changes
-	void lockNeuron(int layerPosition, int neuronPosition){
-	
-	}
 
 
 private:
@@ -360,7 +360,6 @@ public:
 		return ((double)this->prev_full_success / (((double)this->prev_full_success + (double)this->prev_full_failure)));
 	}
 #endif
-
 
 	//Return the average change
 	double getAverageDelta(){

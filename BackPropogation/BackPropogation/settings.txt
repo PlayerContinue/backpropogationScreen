@@ -23,6 +23,6 @@ s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
 i_number_of_training 1000
 b_loadFromCheckpoint 0
-s_checkpoint_file checkpoints/word_network_4_checkpoint_80.txt
+s_checkpoint_file checkpoints/word_network_4_checkpoint_1.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt

@@ -7,6 +7,7 @@
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <iostream>
+#include "CSettings.h"
 #include "SNeuron.cuh"
 #include "util.h"
 using namespace std;
@@ -34,8 +35,10 @@ struct SNeuronLayer{
 	//Contains a list stating which nodes are locked
 	//When marked as 1 and a node exists at position, the node is locked.
 	//Locked nodes do not change weight or width
-	thrust::host_vector<double> locked_nodes;
+	thrust::host_vector<bool> locked_nodes;
 
+	//Pointer to the settings object
+	CSettings *settings;
 #ifdef DEBUG
 	int num_locked = 0;
 #endif
@@ -49,10 +52,41 @@ struct SNeuronLayer{
 	SNeuronLayer() : input_output_layer(0){}
 
 	//Create a neuron layer containing n nodes
-	SNeuronLayer(int number_nodes){
-		this->output.resize(number_nodes);
-		this->delta.resize(number_nodes);
-		this->locked_nodes.resize(number_nodes);
+	//The bias and weights are random
+	SNeuronLayer(int number_nodes, int number_nodes_previous_layer){
+		this->output = thrust::host_vector<double>(number_nodes);
+		this->delta = thrust::host_vector<double>(number_nodes);
+		this->locked_nodes = thrust::host_vector<bool>(number_nodes);
+		this->number_per_layer = number_nodes;
+
+		//Randomly create a bias for each of the neurons
+		for (int j = 0; j < number_nodes; j++){//Travel through neurons
+			this->neurons.push_back(SNeuron());
+
+
+			//Add the bias (Random Number between 0 and 1)
+			this->neurons[j].bias = RandomClamped();
+
+
+			if (number_nodes_previous_layer > 0){//Only add weights to non-input layers
+				//Add the weights
+				for (int k = 0; k < number_nodes_previous_layer; k++){//Number of neurons in next layer used as number of outgoing outputs
+					this->neurons[j].weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+					this->neurons[j].previousWeight.push_back(0);//Set previous weight to 0
+				}
+			}
+			else{//The input layer
+				this->neurons[j].weights.push_back(RandomClamped());//Add a random weight between 0 and 1
+				this->neurons[j].previousWeight.push_back(0);//Set previous weight to 0
+			}
+
+			//Set the initial previousbias to 0
+			this->neurons[j].previousBias = 0;
+		}
+	}
+
+	SNeuronLayer(int number_nodes, int number_nodes_previous_layer, CSettings *settings):SNeuronLayer(number_nodes,number_nodes_previous_layer){
+		this->settings = settings;
 	}
 
 	//***************************************

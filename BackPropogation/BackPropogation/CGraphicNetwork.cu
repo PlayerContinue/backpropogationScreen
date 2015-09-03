@@ -5,6 +5,10 @@ CGraphicsNetwork::CGraphicsNetwork()
 {
 }
 
+CGraphicsNetwork::CGraphicsNetwork(CSettings* settings){
+	this->settings = settings;
+}
+
 CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 {
 	//Set the number of inputs
@@ -15,8 +19,6 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 
 	//Get the number of layers
 	this->v_num_layers = sizes.size();
-
-
 
 	//Set the number of layers
 	this->v_layers.resize(this->v_num_layers);
@@ -29,49 +31,18 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes)
 
 	//Assign the number of Neuron Layers
 
-	//Create each layer
-	for (int i = 0; i < this->v_num_layers; i++){//Travel through layers
+	//Create the intial layer
+	this->v_layers[0] = SNeuronLayer(sizes.at(0), 0);
+	this->total_num_nodes += sizes.at(0);
+	//Create every other layer
+	for (int i = 1; i < this->v_num_layers; i++){//Travel through layers
 
+		
+		this->v_layers[i] = SNeuronLayer(sizes.at(i), sizes.at(i - 1));
+		//Increase the count on the total number of nodes
+		this->total_num_nodes+=sizes.at(i);
 
-		//Create a new Layer
-		this->v_layers[i] = SNeuronLayer();
-
-		//Create area to store delta values
-		this->v_layers[i].delta = thrust::host_vector<double>(sizes.at(i));
-
-		//Set the number nuerons in the current layer
-		this->v_layers[i].number_per_layer = sizes.at(i);
-
-		//Set the size of the output array
-		this->v_layers[i].output.resize(sizes.at(i));
-
-		//Randomly create a bias for each of the neurons
-		for (int j = 0; j < sizes.at(i); j++){//Travel through neurons
-			this->v_layers[i].neurons.push_back(SNeuron());
-
-			//Increase the count on the total number of nodes
-			this->total_num_nodes++;
-
-			//Add the bias (Random Number between 0 and 1)
-			this->v_layers[i].neurons[j].bias = RandomClamped();
-
-
-			if (i > 0){//Only add weights to non-input layers
-				//Add the weights
-				for (int k = 0; k < sizes.at(i - 1); k++){//Number of neurons in next layer used as number of outgoing outputs
-					this->v_layers[i].neurons[j].weights.push_back(RandomClamped());//Add a random weight between 0 and 1
-					this->v_layers[i].neurons[j].previousWeight.push_back(0);//Set previous weight to 0
-				}
-			}
-			else{//The input layer
-				this->v_layers[i].neurons[j].weights.push_back(RandomClamped());//Add a random weight between 0 and 1
-				this->v_layers[i].neurons[j].previousWeight.push_back(0);//Set previous weight to 0
-			}
-
-			//Set the initial previousbias to 0
-			this->v_layers[i].neurons[j].previousBias = 0;
-
-		}
+		
 	}
 }
 
@@ -82,7 +53,16 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes, double beta, double alpha
 
 CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes, CSettings* settings) : CGraphicsNetwork(sizes, settings->d_beta, settings->d_alpha){
 	this->settings = settings;
+
+	//Add settings to the children
+	//Since this only occurs at the beginning of the program, adding a bit of time to startup
+	//and keeping the pieces seperate is more efficient and better for later changes than
+	//copying
+	for (int i = 0; i < this->v_num_layers; i++){
+		this->v_layers[i].settings = this->settings;
+	}
 }
+
 
 //Needs Testing
 //TODO Use up a tiny bit of memory to create a pointer to the different objects which are used multiple times
@@ -216,7 +196,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 #endif
 
 	//Find the delta of the output layer
-	findOutputDelta(this->v_layers[this->v_num_layers - 1].getOutput(), target_vector);
+	findOutputDelta(this->v_layers[this->v_num_layers - 1].getOutput(), target_vector, this->v_layers[this->v_num_layers - 1]);
 
 #ifdef TRIAL1
 
@@ -228,7 +208,7 @@ void CGraphicsNetwork::backprop(double *in, double *tgt){
 	cout << count_fail << endl;
 #endif
 
-	this->v_layers[this->v_num_layers - 1].delta = target_vector;
+	//this->v_layers[this->v_num_layers - 1].delta = target_vector;
 
 	//Find the delta for the hidden layers
 	for (int layerPosition = this->v_num_layers - 2; layerPosition > 0; layerPosition--){
@@ -504,7 +484,7 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 	it = this->v_layers.begin() + position;
 
 	//Insert the new layer
-	this->v_layers.insert(it, SNeuronLayer());
+	this->v_layers.insert(it, SNeuronLayer(neuronPerLayer, this->v_layers[position - 1].number_per_layer));
 
 	//Create area to store delta values
 	this->v_layers[position].delta = thrust::host_vector<double>(neuronPerLayer);
@@ -634,6 +614,7 @@ void CGraphicsNetwork::removeNeuron(int layerPosition, int neuronPosition){
 		//Shorten the output/input such that the nuerons information is ignored
 		this->v_layers[layerPosition].delta.resize(this->v_layers[layerPosition].number_per_layer);
 		this->v_layers[layerPosition].output.resize(this->v_layers[layerPosition].number_per_layer);
+		this->v_layers[layerPosition].locked_nodes.resize(this->v_layers[layerPosition].number_per_layer);
 
 	}
 
@@ -697,6 +678,14 @@ istream& operator>>(istream& is, CGraphicsNetwork& network){
 		if (next != '/'){//Check if the file is formatted correctly
 			throw new exception("Text file not formatted correctly");
 		}
+	}
+
+	//Add settings to the children
+	//Since this only occurs at the beginning of the program, adding a bit of time to startup
+	//and keeping the pieces seperate is more efficient and better for later changes than
+	//copying
+	for (int i = 0; i < network.v_num_layers; i++){
+		network.v_layers[i].settings = network.settings;
 	}
 
 	//Add function to check if network was created correctly
