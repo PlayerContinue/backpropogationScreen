@@ -81,7 +81,7 @@ struct dot_product_special : public unary_function < T, T >
 	__host__ __device__
 		T operator()(const T &x, const T &y) const{
 		//Output * (1-output) * (sum)
-		return (x * (1 - x) * y);
+		return (x * (1 - x) * (y-x));
 	}
 
 };
@@ -133,12 +133,14 @@ struct sigmoid_functor : public unary_function < T, T > {
 
 template <typename T>
 struct square_means_sum_functor : public unary_function < T, T > {
-	square_means_sum_functor(){};
+	const double alpha;
+
+	square_means_sum_functor(double alpha):alpha(alpha){};
 	
 	template <typename Tuple>
 	__host__ __device__
 	T operator()(Tuple &x){
-		return ((thrust::get<0>(x) - thrust::get<1>(x)) * (thrust::get<0>(x) - thrust::get<1>(x)));
+		return alpha*((thrust::get<0>(x) - thrust::get<1>(x)) * (thrust::get<0>(x) - thrust::get<1>(x)));
 	}
 
 };
@@ -157,6 +159,7 @@ void printValues(thrust::device_vector<T> out){
 //*******************************************************
 
 //Find the delta of the output layer
+//Utilize the Delta Rules -(target - out) * (out)(1-out)
 inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vector<double> &target,SNeuronLayer &layer){
 	thrust::device_vector<double> X = output;
 	thrust::device_vector<double> Y = target;
@@ -183,7 +186,8 @@ inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vec
 //Perform secondary part of operation to find the new delta (output * (1- output) * sum
 inline void findNewHiddenDelta(thrust::device_vector<double> sum, thrust::device_vector<double> output, SNeuronLayer &layer){
 
-	thrust::transform(output.begin(), output.end(), sum.begin(), sum.begin(), dot_product_special<double>());
+	//Find the new delta for the hidden layer
+	thrust::transform(output.begin(), output.end(), sum.begin(), sum.begin(), _1 * (1 - _1) * _2);
 	//Retrieve the networks which are locked
 		check_locks(sum, layer);
 	
@@ -191,8 +195,10 @@ inline void findNewHiddenDelta(thrust::device_vector<double> sum, thrust::device
 	printValues(output);
 	cout << "_____________________" << endl;
 #endif
+	thrust::host_vector<double> deltas(layer.delta.size());
 	//Store the deltas in the layer delta object
-	thrust::copy(sum.begin(), sum.end(), layer.delta.begin());
+	thrust::copy(sum.begin(), sum.end(), deltas.begin());
+	layer.delta = deltas;
 }
 
 
@@ -262,6 +268,9 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 			thrust::reduce_by_key(map.begin(), map.end(), weights.begin(), thrust::make_discard_iterator(), gpu_sums.begin());
 
 #ifdef TRIAL2
+			for (int j = 0; j < map2.size(); j++){
+				cout << map[j] << ", ";
+			}
 			for (int j = 0; j < gpu_sums.size(); j++){
 				cout << j << " " << gpu_sums[j] << endl;
 			}
@@ -287,7 +296,23 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 
 	gpu_sums_temp = previous_layer.getOutput();
 
-	findNewHiddenDelta(gpu_sums, gpu_sums_temp, previous_layer);
+
+
+	//Find the new delta for the hidden layer
+	//Output * sum_of_weights * delta
+	thrust::transform(gpu_sums_temp.begin(), gpu_sums_temp.end(), gpu_sums.begin(), gpu_sums.begin(), _1 * (1 - _1) * _2);
+	//Retrieve the networks which are locked
+	check_locks(gpu_sums, previous_layer);
+
+#ifdef TRIAL2
+	printValues(gpu_sums);
+	cout << "_____________________" << endl;
+#endif
+	thrust::host_vector<double> deltas2(previous_layer.delta.size());
+	//Store the deltas in the layer delta object
+	thrust::copy(gpu_sums.begin(), gpu_sums.end(), deltas2.begin());
+	previous_layer.delta = deltas2;
+
 
 	//Free the memory
 
@@ -581,12 +606,17 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 //*******************************************************
 //Locking Nodes
 //*******************************************************
+//Locks the neuron if it's delta is small enough to assume limit has been reached
 inline void check_locks(thrust::device_vector<double> deltas, SNeuronLayer &layers){
 
 	if (layers.settings->b_allow_node_locking){
-		thrust::device_vector<double> temp_locked(layers.locked_nodes.size());
-		thrust::copy_if(thrust::make_constant_iterator(true), thrust::make_constant_iterator(true) + deltas.size(), deltas.begin(), temp_locked.begin(), -layers.settings->d_lock_node_level > _1 < layers.settings->d_lock_node_level);
-		thrust::copy(temp_locked.begin(), temp_locked.end(), layers.locked_nodes.begin());
+		thrust::host_vector<double> temp_locked_host(layers.locked_nodes.size());
+		thrust::device_vector<bool> temp_locked(layers.locked_nodes.size());
+		thrust::copy_if(thrust::make_constant_iterator((bool)true), thrust::make_constant_iterator((bool)true) + temp_locked.size(), deltas.begin(), temp_locked.begin(), _1 < layers.settings->d_lock_node_level && _1 > (-1 * layers.settings->d_lock_node_level));
+		thrust::copy(temp_locked.begin(), temp_locked.end(), temp_locked_host.begin());
+		layers.locked_nodes = temp_locked_host;
+		vector_free::free(temp_locked);
+
 	}
 }
 
@@ -606,11 +636,11 @@ template<typename T>
 inline T square_means_sums(T* target, T* output, int size){
 	thrust::device_vector<T> tgt(target, target + size);
 	thrust::device_vector<T> out(output, output + size);
-	double temp = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(), 0.0, thrust::plus<double>());
+	double temp = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(1), 0.0, thrust::plus<double>());
 	
 	vector_free::free(tgt);
 	vector_free::free(out);
-	return temp;
+	return (temp / (double)size);
 }
 
 

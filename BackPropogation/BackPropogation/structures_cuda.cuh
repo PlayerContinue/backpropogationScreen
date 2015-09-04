@@ -51,13 +51,18 @@ struct SNeuronLayer{
 	//Create empty Neuron Layer
 	SNeuronLayer() : input_output_layer(0){}
 
+	//Used when the number/value of the weights is not random
+	SNeuronLayer(int number_nodes){
+		//Resize the network
+		new_resizeNetwork(number_nodes);
+	}
+
 	//Create a neuron layer containing n nodes
 	//The bias and weights are random
 	SNeuronLayer(int number_nodes, int number_nodes_previous_layer){
-		this->output = thrust::host_vector<double>(number_nodes);
-		this->delta = thrust::host_vector<double>(number_nodes);
-		this->locked_nodes = thrust::host_vector<bool>(number_nodes);
-		this->number_per_layer = number_nodes;
+		
+		//Resize the network
+		new_resizeNetwork(number_nodes);
 
 		//Randomly create a bias for each of the neurons
 		for (int j = 0; j < number_nodes; j++){//Travel through neurons
@@ -89,6 +94,24 @@ struct SNeuronLayer{
 		this->settings = settings;
 	}
 
+	//***************************************
+	//Resize Network
+	//***************************************
+private:
+	void new_resizeNetwork(int number_nodes){
+		this->output = thrust::host_vector<double>(number_nodes);
+		this->delta = thrust::host_vector<double>(number_nodes);
+		this->locked_nodes = thrust::host_vector<bool>(number_nodes);
+		this->number_per_layer = number_nodes;
+	}
+public:
+	void resizeNetwork(int number_nodes){
+		this->output.resize(number_nodes);
+		this->delta.resize(number_nodes);
+		this->locked_nodes.resize(number_nodes);
+		this->neurons.resize(number_nodes);
+		this->number_per_layer = number_nodes;
+	}
 	//***************************************
 	//Weight Modifiers
 	//***************************************
@@ -144,8 +167,9 @@ struct SNeuronLayer{
 		os << layer.neurons[0].weights.size() << endl;
 		//Print the values of each neuron
 		for (int i = 0; i < layer.number_per_layer; i++){
-			os << layer.neurons[i] << endl;
+			os << layer.neurons[i] << " / " << layer.locked_nodes[i] << endl;
 		}
+		os << endl;
 		return os;
 	}
 
@@ -158,14 +182,7 @@ struct SNeuronLayer{
 		//Retrieve the number of weights
 		is >> number_of_weights;
 
-		//Create the delta holder
-		layer.delta = thrust::host_vector<double>(layer.number_per_layer);
-
-		//Create the output holder
-		layer.output = thrust::host_vector<double>(layer.number_per_layer);
-
-		//Create the neurons
-		layer.neurons = vector<SNeuron>(layer.number_per_layer);
+		layer.resizeNetwork(layer.number_per_layer);
 
 		for (int i = 0; i < layer.number_per_layer; i++){
 			layer.neurons[i] = SNeuron(number_of_weights);
@@ -181,7 +198,16 @@ struct SNeuronLayer{
 			}
 			//Set the bias
 			is >> layer.neurons[i].bias;
+
+			//Read in the next value to check for correct formatting of file
+			//Should be a /
+			is >> next;
+			if (next != '/'){
+				throw new exception("File not formatted correctly");
+			}
+			is >> layer.locked_nodes[i];
 		}
+
 
 
 		return is;
@@ -289,6 +315,9 @@ struct SCheckpoint{
 	//Count the number of times left for the mean to be larger than the previous mean before trying to add new neurons
 	int i_times_lowest_mean_square_error_to_large;
 
+	//Count the number of times which the current d_mean_square_error == d_previous_mean_square_error
+	int i_equal_square_errors;
+
 	// Store the mean square error
 	double d_mean_square_error = (double)INT_MAX;
 
@@ -317,6 +346,8 @@ struct SCheckpoint{
 		
 		os << "i_times_lowest_mean_square_error_to_large " << checkpoint.i_times_lowest_mean_square_error_to_large << endl;
 
+		os << "i_equal_square_errors " << checkpoint.i_equal_square_errors << endl;
+
 		os << "d_mean_square_error " << checkpoint.d_mean_square_error << endl;
 		
 		os << "d_previous_mean_square_error " << checkpoint.d_previous_mean_square_error << endl;
@@ -342,6 +373,14 @@ struct SCheckpoint{
 
 		is >> next;
 		is >> checkpoint.i_times_lowest_mean_square_error_to_large;
+
+		is >> next;
+		if (next.compare("i_equal_square_errors") == 0){
+			is >> checkpoint.i_equal_square_errors;
+		}
+		else{
+			checkpoint.i_equal_square_errors = 0;
+		}
 
 		is >> next;
 		is >> checkpoint.d_mean_square_error;

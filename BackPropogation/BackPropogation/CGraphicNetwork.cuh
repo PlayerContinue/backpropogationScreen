@@ -307,25 +307,35 @@ public:
 	//Get And Set 
 	//-----------------------------------------------------------------------------------------------------------
 
+	//Set the settings object
+	void setSettings(CSettings *settings){
+		this->settings = settings;
+		//Add settings to the children
+		//Since this only occurs at the beginning of the program, adding a bit of time to startup
+		//and keeping the pieces seperate is more efficient and better for later changes than
+		//copying
+		for (int i = 0; i < this->v_num_layers; i++){
+			this->v_layers[i].settings = this->settings;
+		}
+	}
+
 	//Return the Mean Square Error
 	double getMeanSquareError(double **in, double **tgt, int size){
 		double sum = 0; //Stores the sum
-		double* output;
-
-
 		for (int i = 0; i < size; i++){
 			//Feed the input value in to get the output
-			this->feedForward(in[i]);
-			output = getOutputArray<double>();
-			for (int j = 0; j < this->I_output;j++){
-				//Add the sum of the (target - output)^2 
-
-				sum += square_means_sums<double>(tgt[i],output,this->I_output);
-			}
+			//Add the sum of the 1/N(target - output)^2 
+			sum += this->getSingleMeanSquareError(in[i], tgt[i], size);
 		}
-		free(output);
-		//Return (1/number of total ouputs) * sum
-		return ((1.0/(size*this->I_output)) * sum);
+		//Return average MSE
+		return ((sum / (double)size));
+
+	}
+
+	//Get the MSE for a single input
+	double getSingleMeanSquareError(double *in, double *tgt, int size){
+		this->feedForward(in);
+		return square_means_sums<double>(tgt, this->getOutputArray<double>(), this->I_output);
 
 	}
 
