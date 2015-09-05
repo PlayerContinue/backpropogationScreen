@@ -34,11 +34,11 @@ private:
 	vector<SNeuronLayer> v_layers;
 
 	//Keep track of total number of nodes
-	int total_num_nodes=0;
+	int total_num_nodes = 0;
 
 	//The learning threshold for the current network
 	double threshold;
-	
+
 	//Learning rate (look up)
 	double beta;
 
@@ -50,18 +50,18 @@ private:
 
 	//Success Rate
 	int success = 0;
-	int previousSuccess=0;
+	int previousSuccess = 0;
 
 	//Failure Rate
 	int failure = 0;
-	int previousFailure=1;
+	int previousFailure = 1;
 
 	//Average distance 
 	double total_distance;
 
-	double previous_average_distance=0;
+	double previous_average_distance = 0;
 
-	double average_delta=0;
+	double average_delta = 0;
 
 
 
@@ -129,7 +129,7 @@ public:
 	//-----------------------------------------------------------------------------------------------------------
 	//Main Learning And Teaching Functions
 	//-----------------------------------------------------------------------------------------------------------
-	
+
 
 	//Feed Forward one set of inputs 
 	void feedForward(double *in);
@@ -195,7 +195,7 @@ private:
 
 	//-----------------------------------------------------------------------------------------------------------
 public:
-	
+
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Add New Layers and Neurons
@@ -204,7 +204,7 @@ public:
 	void addLayer(int position, int numberPerLayer);
 
 	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layerPosition, int layerPositionEnd,int numToAdd);
+	void addNeuronToLayer(int layerPosition, int layerPositionEnd, int numToAdd);
 
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -283,7 +283,7 @@ public:
 				this->v_layers[layerNum].neurons[neuronNum].activated = 0;
 			}
 		}
-		
+
 		//Grab previous distance
 		this->previous_average_distance = (this->total_distance / ((((double)this->success + (double)this->failure))));
 		//Reset Previous Distance
@@ -338,9 +338,58 @@ public:
 		return square_means_sums<double>(tgt, this->getOutputArray<double>(), this->I_output);
 	}
 
-	double getRootMeanSquareErrorFromOutput(){
+	//Get the rootMeanSquareError for the given layer
+	double* getRootMeanSquareErrorForAllLayer(double *in){
+		double* root_mean_square_error = new double[this->v_num_layers];
+		//Run a new data set in order for the output to be unbiased
+		this->feedForward(in);
+
+		for (int i = 1; i < this->v_num_layers; i++){
+			root_mean_square_error[i] = getRootMeanSquareErrorForLayer(i);
+		}
+		return root_mean_square_error;
 
 	}
+
+	//Allows for feedforward to not be run, as it will run it
+	double getRootMeanSquareErrorForLayer(int layer, double *in){
+		this->feedForward(in);
+		return getRootMeanSquareErrorForLayer(layer);
+	}
+
+
+	//Version which does require the feedforward to be run before being called
+	double getRootMeanSquareErrorForLayer(int layer){
+		if (layer >= 0 && layer < this->v_num_layers){
+			double toReturn = 0.0; //Return this value
+			thrust::device_vector<double> temp_output = this->v_layers[layer].getOutput();
+			thrust::device_vector<double> temp_results(temp_output.size());
+			for (int i = 0; i < temp_output.size(); i++){
+				thrust::transform(
+					temp_output.begin() + i, temp_output.end(),
+					thrust::make_constant_iterator<double>(temp_output[i]),
+					temp_results.begin(),
+					(_1 - _2) * (_1 - _2));
+				//Reduce and retrieve the answer
+				toReturn += thrust::reduce(temp_results.begin(), temp_results.end());
+			}
+
+
+			
+			
+			//Clean up Used GPU Memory
+			vector_free::free(temp_output);
+			vector_free::free(temp_results);
+
+			//Return the value
+			return sqrt(toReturn);
+
+		}
+		else{
+			throw new exception("Out of bounds");
+		}
+	}
+
 
 	int getI_input(){
 		return this->I_input;
@@ -391,7 +440,7 @@ public:
 	//Return the average distance
 	double getAverageDistance(){
 		return (this->total_distance / (((double)this->success + (double)this->failure)));
-		
+
 	}
 
 	int getTotalDistance(){

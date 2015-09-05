@@ -75,4 +75,7 @@
       <Filter>ini</Filter>
     </Text>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\UnitTesting\UnitTesting.vcxproj.filters" />
+  </ItemGroup>
 </Project>
