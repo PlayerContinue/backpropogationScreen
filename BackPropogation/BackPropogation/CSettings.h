@@ -124,7 +124,6 @@ public:
 		is >> next;
 		is >> settings.d_fluctuate_square_mean;
 
-
 		//Allow locked nodes
 		is >> next;
 		is >> settings.b_allow_node_locking;

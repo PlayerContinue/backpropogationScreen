@@ -865,9 +865,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl
@@ -1362,3 +1359,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/uninitialized_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh

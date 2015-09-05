@@ -11,10 +11,11 @@
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <thrust/transform.h>
 #include <fstream>
 #include "util.h"
-#include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
+#include "structures_cuda.cuh"
 #include "CSettings.h"
 #if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4) || defined(TRIAL5)
 #include <iostream>
@@ -24,7 +25,7 @@ using namespace std;
 
 class CGraphicsNetwork
 {
-
+friend class modifyNetwork;
 private:
 	//Networks Variables
 	//The number of layers
@@ -340,12 +341,12 @@ public:
 
 	//Get the rootMeanSquareError for the given layer
 	double* getRootMeanSquareErrorForAllLayer(double *in){
-		double* root_mean_square_error = new double[this->v_num_layers];
+		double* root_mean_square_error = new double[this->v_num_layers-1];
 		//Run a new data set in order for the output to be unbiased
 		this->feedForward(in);
 
 		for (int i = 1; i < this->v_num_layers; i++){
-			root_mean_square_error[i] = getRootMeanSquareErrorForLayer(i);
+			root_mean_square_error[i-1] = getRootMeanSquareErrorForLayer(i);
 		}
 		return root_mean_square_error;
 
@@ -378,11 +379,10 @@ public:
 			
 			
 			//Clean up Used GPU Memory
-			vector_free::free(temp_output);
 			vector_free::free(temp_results);
 
 			//Return the value
-			return sqrt(toReturn);
+			return sqrt(toReturn / (this->v_layers[layer].number_per_layer* (this->v_layers[layer].number_per_layer - 1)));
 
 		}
 		else{

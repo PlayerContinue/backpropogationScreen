@@ -7,11 +7,12 @@
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <iostream>
+#include <thrust/execution_policy.h>
 #include "CSettings.h"
 #include "SNeuron.cuh"
 #include "util.h"
 using namespace std;
-
+using namespace thrust::placeholders;
 //Structure for the neuron layer
 struct SNeuronLayer{
 	//number of neurons in layer
@@ -229,6 +230,7 @@ public:
 		return this->output;
 	}
 
+
 	//Retrieve a list of the current output in the form
 	//|out_11, out_21, out_31, ... , out_n1|
 	//Input expand - include extra values, value - value to add
@@ -309,6 +311,8 @@ public:
 //Structure containing information to create a checkpoint
 struct SCheckpoint{
 
+
+
 	//Count the total number of loops which have occured
 	int i_number_of_loops_checkpoint = 0;
 	
@@ -336,12 +340,71 @@ struct SCheckpoint{
 	//store the most recent d_neuron_distance_threshold
 	double d_neuron_distance_threshold;
 
+	//Store the threshold for whether a neuron or a layer is added
+	double d_neuron_or_layer_threshold;
+
 	//store the most recently recorded network file
 	string s_network_file_name;
 
+
+
+	//*********************************
+	//Constructors
+	//*********************************
+	//Empty Constructor
+	SCheckpoint(){};
+
+	//Create a checkpoint containing a distance based on how far apart the output is meant to be
+	//The numbers can be used to test whether a new row or a new neuron should be added
+	//Closer to the distance means it should add a new layer, otherwise a neuron should be added
+	//Adding a neuron increases the spread of the output
+	SCheckpoint(double** objects, int row_size,int col_size){
+		get_layer_or_row(objects, row_size, col_size);
+	}
+
+	//*********************************
+	//Functions
+	//*********************************
+	void get_layer_or_row(double** objects, int row_size, int col_size){
+		//Seed the random
+		srand((unsigned)(time(NULL)));
+		int size = (row_size < 100 ? row_size : row_size / 100);
+		int randomPosition;
+		this->d_neuron_or_layer_threshold = 0;
+		thrust::device_vector<double> temp_output(col_size);
+		thrust::device_vector<double> temp_results(col_size);
+		for (int k = 0; k < size; k++){
+			randomPosition = RandInt(0, row_size);
+			for (int j = 0; j < col_size; j++){
+				temp_output[j] = objects[randomPosition][j];
+			}
+
+			randomPosition = 0;
+			//Get the total distance between all possible points
+			for (int i = 0; i < col_size; i++){
+				thrust::transform(
+					temp_output.begin() + i, temp_output.end(),
+					thrust::make_constant_iterator<double>(temp_output[i]),
+					temp_results.begin(),
+					(_1 - _2) * (_1 - _2));
+				//Reduce and retrieve the answer
+				randomPosition += thrust::reduce(temp_results.begin(), temp_results.end());
+			}
+			this->d_neuron_or_layer_threshold += sqrt(randomPosition / (double)(col_size * (col_size-1)) );
+		}
+		temp_output.clear();
+		temp_output.shrink_to_fit();
+		temp_results.clear();
+		temp_results.shrink_to_fit();
+
+		//Get the average
+		this->d_neuron_distance_threshold /= size;
+	}
+		
 	//***************************************
 	//Overload Operators
 	//***************************************
+public:
 	//Save to file
 	friend ostream& operator<<(ostream& os, const SCheckpoint checkpoint){
 		
@@ -362,6 +425,8 @@ struct SCheckpoint{
 		os << "d_row_distance_threshold " << checkpoint.d_row_distance_threshold << endl;
 
 		os << "d_neuron_distance_threshold " << checkpoint.d_neuron_distance_threshold << endl;
+
+		os << "d_neuron_or_layer_threshold " << checkpoint.d_neuron_or_layer_threshold << endl;
 
 		os << "s_network_file_name " << checkpoint.s_network_file_name << endl;
 
@@ -394,6 +459,7 @@ struct SCheckpoint{
 		is >> next;
 		is >> checkpoint.i_number_of_loops;
 
+
 		is >> next;
 		is >> checkpoint.d_lowest_mean_square_error;
 
@@ -402,6 +468,14 @@ struct SCheckpoint{
 
 		is >> next;
 		is >> checkpoint.d_neuron_distance_threshold;
+
+		is >> next;
+		if (next.compare("d_neuron_or_layer_threshold") == 0){
+			is >> checkpoint.d_neuron_or_layer_threshold;
+		}
+		else{
+			checkpoint.d_neuron_or_layer_threshold = 10;
+		}
 
 		is >> next;
 		is >> checkpoint.s_network_file_name;

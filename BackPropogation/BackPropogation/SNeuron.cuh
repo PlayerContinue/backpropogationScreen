@@ -8,6 +8,7 @@ using namespace std;
 
 //Structure containing the neuron
 struct SNeuron{
+	friend class modifyNetwork;
 	//Bias for the neuron
 	double bias = 0;
 

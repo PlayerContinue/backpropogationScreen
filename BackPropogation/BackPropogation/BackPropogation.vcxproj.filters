@@ -16,6 +16,9 @@
     <Filter Include="ini">
       <UniqueIdentifier>{82bc2ed7-7335-4a20-a1f9-f681a91ce9a8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="testing">
+      <UniqueIdentifier>{54b63617-2ff5-4d2e-8e6f-3828620271b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">

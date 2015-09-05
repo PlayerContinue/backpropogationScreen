@@ -412,7 +412,8 @@ void CGraphicsNetwork::addNeuronToLayer(int layerPositionStart, int layerPositio
 	}
 
 	this->v_layers[layerPosition].resizeNetwork(this->v_layers[layerPosition].number_per_layer + numToAdd);
-
+	//Seed the random
+	srand((unsigned)(time(NULL)));
 	//Add the new Neuron
 	for (int i = minNeurons; i < minNeurons + numToAdd; i++){
 		//Add the weights
@@ -469,9 +470,10 @@ void CGraphicsNetwork::addLayer(int position, int neuronPerLayer){
 
 	//Insert the new layer
 	if (!replaceOutput){
-		this->v_layers.insert(it, SNeuronLayer(neuronPerLayer, this->v_layers[position - 1].number_per_layer));
+		this->v_layers.insert(it, SNeuronLayer(neuronPerLayer, this->v_layers[position - 1].number_per_layer, this->settings));
 	}else{
 		this->v_layers.insert(it, SNeuronLayer(neuronPerLayer));
+		this->v_layers.back().settings = this->settings;
 	}
 
 

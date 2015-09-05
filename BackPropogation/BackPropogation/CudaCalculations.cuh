@@ -33,6 +33,7 @@ int setWeights(SNeuronLayer &currentLayer, thrust::device_vector<double> &weight
 int setWeights(SNeuronLayer &currentLayer, thrust::device_vector<double> &weights,
 	thrust::device_vector<double> &previousWeight, int startPosition, int neuronPosition, bool include_previous);
 void check_locks(thrust::device_vector<double> deltas, SNeuronLayer &layers);
+
 namespace vector_free{
 	//Function to free memory from GPU
 	template<class T> void free(T &V) {

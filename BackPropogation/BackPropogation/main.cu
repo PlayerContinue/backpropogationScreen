@@ -227,6 +227,7 @@ void signal_handler(int signal)
 	std::signal(SIGINT, signal_handler);
 }
 
+
 //******************************
 //Training the Network
 //******************************
@@ -394,7 +395,19 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 //Returns true if a neuron was added
 bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& checkpoint, double** testSet, double mean_square_error){
 
-	//Get delta in success
+	
+	double* differencePerLayer = test.getRootMeanSquareErrorForAllLayer(testSet[0]);
+
+	//Get the average difference per layer between the outputs in the layers
+	double averageDifferencePerLayer = 0;
+
+	for (int i = 0; i < test.getNumLayers()-1; i++){
+		averageDifferencePerLayer += differencePerLayer[i];
+	}
+
+	averageDifferencePerLayer /= (test.getNumLayers() - 1);
+	
+
 	double success = test.getSuccessRate() - test.getPreviousSuccessRate();
 	double mean_square_error_dif = mean_square_error - settings.d_threshold;
 #ifdef FULL_SUCCESS
@@ -406,18 +419,18 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 	//Add a new layer if the success is too low and the threshold has not been reached
 	//A layer should be added if the mean square error remains constant as the current layer has been fully trained to give a particular output
 	//Therefore a function should be added to deal with that particular output
-	if (success <= settings.d_row_success_threshold && mean_square_error_dif > 0 && mean_square_error_dif >= checkpoint.d_row_distance_threshold){ //&& numberSame < settings.i_number_allowed_same){
+	if (averageDifferencePerLayer > checkpoint.d_neuron_or_layer_threshold){ //&& numberSame < settings.i_number_allowed_same){
 		test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) * 5);
 		//Increment the size of the need mean distance to get a new layer
 		//And decrease the size of the needed mean distance to get a new neuron
-		if (checkpoint.d_neuron_distance_threshold > 0){
+		/*if (checkpoint.d_neuron_distance_threshold > 0){
 			checkpoint.d_row_distance_threshold += settings.d_row_distance_threshold * .1;
 			checkpoint.d_neuron_distance_threshold -= settings.d_neuron_distance_threshold * .1;
-		}
+		}*/
 		test.resetNetwork();
 		return true;
 	}
-	else if (success <= settings.d_neuron_success_threshold && mean_square_error_dif > 0 && mean_square_error_dif >= checkpoint.d_neuron_distance_threshold){
+	else if (averageDifferencePerLayer < checkpoint.d_neuron_or_layer_threshold){
 		if (test.getNumLayers() == 2){
 			//Since neurons cannot be added, if only the input/output layer exists, and new neuron is chosen, than a new layer is added instead
 			test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) * 5);
@@ -431,10 +444,11 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 			}
 			//Increment the size of the need mean distance to get a new neuron
 			//And decrease the size of the needed mean distance to get a new row
-			if (checkpoint.d_row_distance_threshold > 0){
+			
+			/*if (checkpoint.d_row_distance_threshold > 0){
 				checkpoint.d_row_distance_threshold -= settings.d_row_distance_threshold * .1;
 				checkpoint.d_neuron_distance_threshold += settings.d_neuron_distance_threshold * .1;
-			}
+			}*/
 		}
 		test.resetNetwork();
 		return true;
@@ -442,10 +456,10 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 	//If both fail, but a large gap still exists between the threshold and the set distances, decrease them both.
 	//This is to allow the system to grow further when needed.
 	//However, only occur when the network is fully trained
-	else if (checkpoint.i_equal_square_errors >= settings.i_number_allowed_failures){
+	/*else if (checkpoint.i_equal_square_errors >= settings.i_number_allowed_failures){
 		checkpoint.d_row_distance_threshold -= settings.d_row_distance_threshold * .1;
 		checkpoint.d_neuron_distance_threshold -= settings.d_neuron_distance_threshold * .1;
-	}
+	}*/
 	return false;
 
 
@@ -644,6 +658,10 @@ int getDataFromFile(string fileName, int start, int numberOfRounds, int numberRe
 	}
 }
 
+//*********************************
+//Running The Network
+//*********************************
+
 void recursiveTestInput(CGraphicsNetwork network){
 	char userchoice;
 	string userstartentry;
@@ -750,6 +768,9 @@ void initialize_loops(int argc, char** argv){
 			std::cout << "loading training set " << endl;
 			getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_input, value);
 			getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_output, results);
+
+			std::cout << "Getting Layer Or Row Number " << endl;
+			checkpoint.get_layer_or_row(results, settings.i_number_of_training, settings.i_output);
 
 			if (settings.b_testingFromFile){
 				std::cout << "loading testing data " << endl;
