@@ -336,6 +336,9 @@ public:
 	double getSingleMeanSquareError(double *in, double *tgt, int size){
 		this->feedForward(in);
 		return square_means_sums<double>(tgt, this->getOutputArray<double>(), this->I_output);
+	}
+
+	double getRootMeanSquareErrorFromOutput(){
 
 	}
 

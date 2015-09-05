@@ -98,6 +98,7 @@ struct SNeuronLayer{
 	//Resize Network
 	//***************************************
 private:
+	//Initilize the size of the network when creating a new layer
 	void new_resizeNetwork(int number_nodes){
 		this->output = thrust::host_vector<double>(number_nodes);
 		this->delta = thrust::host_vector<double>(number_nodes);
@@ -105,6 +106,8 @@ private:
 		this->number_per_layer = number_nodes;
 	}
 public:
+
+	//Resizes the network to accomadate more/less nodes
 	void resizeNetwork(int number_nodes){
 		this->output.resize(number_nodes);
 		this->delta.resize(number_nodes);

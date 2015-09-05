@@ -306,15 +306,17 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 		}
 #endif
 
+		//Run the backpropogation algorithm to both get the current output and train the network
 		test.backprop(value[checkpoint.i_number_of_loops], results[checkpoint.i_number_of_loops]);
 
-
+		//Create a checkpoint when X number of iterations have occured, where X is defined by the user
 		if (checkpoint.i_number_of_loops_checkpoint % settings.i_loops == 0){
 			createCheckpoint(test, checkpoint, settings);
 		}
 		checkpoint.i_number_of_loops++;
 		checkpoint.i_number_of_loops_checkpoint++;
 
+		//Grab more training data when the current list of training data has been exhausted
 		if (checkpoint.i_number_of_loops >= new_end){
 			checkpoint.i_number_of_loops = start;
 
@@ -417,6 +419,7 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 	}
 	else if (success <= settings.d_neuron_success_threshold && mean_square_error_dif > 0 && mean_square_error_dif >= checkpoint.d_neuron_distance_threshold){
 		if (test.getNumLayers() == 2){
+			//Since neurons cannot be added, if only the input/output layer exists, and new neuron is chosen, than a new layer is added instead
 			test.addLayer(-1, test.getNumNeuronsInLayer(test.getNumLayers() - 1) * 5);
 		}
 		else{
