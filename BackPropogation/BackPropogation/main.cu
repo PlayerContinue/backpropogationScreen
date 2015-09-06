@@ -204,7 +204,7 @@ void LoadCheckpointFromFile(SCheckpoint& checkpoint, string s_file_name){
 }
 
 //Create a new checkpoint object from the created settings
-void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings){
+void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings,double** in){
 	checkpoint.i_number_of_loops_checkpoint = 0;
 	checkpoint.i_number_of_loops = 0;
 	checkpoint.i_times_lowest_mean_square_error_to_large = settings.i_number_allowed_failures;
@@ -213,6 +213,8 @@ void createNewCheckpoint(SCheckpoint& checkpoint, CSettings settings){
 	checkpoint.d_previous_mean_square_error = 0;
 	checkpoint.d_row_distance_threshold = settings.d_row_distance_threshold;
 	checkpoint.d_neuron_distance_threshold = settings.d_neuron_distance_threshold;
+	std::cout << "Getting Layer Or Row Number " << endl;
+	checkpoint.get_layer_or_row(in, settings.i_number_of_training, settings.i_output);
 }
 
 //*********************************
@@ -239,6 +241,11 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 
 	int number_of_rounds_returned[2];
 	int new_end = end;
+#ifdef PAUSE
+	double* tempDistanceHolderForPause;
+	double tempDistanceHolderForPauseSingle;
+#endif
+
 	do{
 
 		//Pause the program and perform one of the following options
@@ -250,8 +257,9 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 			std::cout << "3) get mean square " << endl;
 			std::cout << "4) Save Checkpoint " << endl;
 			std::cout << "5) check MSE on current input " << endl;
-			std::cout << "6) continue " << endl;
-			std::cout << "7) exit " << endl;
+			std::cout << "6) get distance check " << endl;
+			std::cout << "7) continue " << endl;
+			std::cout << "8) exit " << endl;
 
 			std::cout << " loop " << checkpoint.i_number_of_loops_checkpoint << endl;
 			std::cout.precision(30);
@@ -261,8 +269,8 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 				if (userin != 'l'){
 					std::cout << "Anything else? ";
 				}
-				cin.sync();
-				userin = cin.get();
+				std::cin.sync();
+				userin = std::cin.get();
 				switch (userin){
 				case '1':
 					//Test the output
@@ -288,11 +296,22 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 					std::cout << test.getSingleMeanSquareError(value[checkpoint.i_number_of_loops-1], results[checkpoint.i_number_of_loops-1], testLength) << endl;
 					break;
 				case '6':
+					std::cout << "Getting Distance Measure " << endl;
+					tempDistanceHolderForPause = test.getRootMeanSquareErrorForAllLayer(value[checkpoint.i_number_of_loops]);
+					tempDistanceHolderForPauseSingle = 0;
+					for (int i = 0; i < test.getNumLayers() -1; i++){
+						std::cout << i  << ") " << tempDistanceHolderForPause[i] << endl;
+						tempDistanceHolderForPauseSingle += tempDistanceHolderForPause[i];
+					}
+					tempDistanceHolderForPauseSingle /= (test.getNumLayers()-1);
+					std::cout << tempDistanceHolderForPauseSingle << endl;
 					break;
 				case '7':
+					break;
+				case '8':
 					std::wcout << "Would you like to create a checkpoint?";
-					cin.sync();
-					if (cin.get() == 'y'){
+					std::cin.sync();
+					if (std::cin.get() == 'y'){
 						std::cout << "Creating Checkpoint " << endl;
 						createCheckpoint(test, checkpoint, settings);
 						std::cout << "Checkpoint created " << endl;
@@ -300,7 +319,7 @@ void trainNetworkDelta(double* value[], double* results[], CGraphicsNetwork &tes
 					exit(0);
 					break;
 				}
-			} while (userin != '6' && userin != 'n');
+			} while (userin != '7' && userin != 'n');
 
 			pause = false;
 			std::cout << "finished" << endl;
@@ -440,7 +459,9 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 			//Keeps size of each row equivalent
 			//Good for initial growth
 			for (int i = 1; i < test.getNumLayers() - 1; i++){
-				test.addNeuronToLayer(i, i, test.getNumNeuronsInLayer(i));
+				if (differencePerLayer[i] < checkpoint.d_neuron_or_layer_threshold){
+					test.addNeuronToLayer(i, i, test.getNumNeuronsInLayer(i));
+				}
 			}
 			//Increment the size of the need mean distance to get a new neuron
 			//And decrease the size of the needed mean distance to get a new row
@@ -722,7 +743,7 @@ void initialize_loops(int argc, char** argv){
 	std::cout << "Would you like to train?";
 	cin.sync();
 	char in = cin.get();
-
+	bool loadCheckFromFile = false;
 	int PROBLEMS = std::stoi(argv[2]);
 	SCheckpoint checkpoint = SCheckpoint();
 	if (settings.b_loadFromCheckpoint){
@@ -734,18 +755,17 @@ void initialize_loops(int argc, char** argv){
 		test = CGraphicsNetwork(&settings);
 		loadFromFile(test, checkpoint.s_network_file_name);
 		test.setSettings(&settings);
+		loadCheckFromFile = true;
 	}
 	else if (settings.b_loadNetworkFromFile){//Load only the network from file
 		std::cout << "loading network " << endl;
 		test = CGraphicsNetwork(&settings);
-		createNewCheckpoint(checkpoint, settings);
 		loadFromFile(test, settings.s_loadNetworkFile);
 		test.setSettings(&settings);
 	}
 	else{//Start with a brand new network
 		std::cout << "creating new network " << endl;
 		vector<int> temp = vector<int>();
-		createNewCheckpoint(checkpoint, settings);
 		temp.push_back(settings.i_input);
 		temp.push_back(settings.i_output);
 		vector<double> temp2 = vector<double>(settings.i_output);
@@ -769,8 +789,9 @@ void initialize_loops(int argc, char** argv){
 			getDataFromFile(settings.s_trainingSet, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_input, value);
 			getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_number_of_loops_checkpoint, settings.i_number_of_training, settings.i_output, results);
 
-			std::cout << "Getting Layer Or Row Number " << endl;
-			checkpoint.get_layer_or_row(results, settings.i_number_of_training, settings.i_output);
+			if (!loadCheckFromFile){//Create a new checkpoint
+				createNewCheckpoint(checkpoint, settings,results);
+			}
 
 			if (settings.b_testingFromFile){
 				std::cout << "loading testing data " << endl;

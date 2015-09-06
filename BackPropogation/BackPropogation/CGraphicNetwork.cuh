@@ -372,7 +372,7 @@ public:
 					temp_results.begin(),
 					(_1 - _2) * (_1 - _2));
 				//Reduce and retrieve the answer
-				toReturn += thrust::reduce(temp_results.begin(), temp_results.end());
+				toReturn += thrust::reduce(temp_results.begin(), temp_results.end()-i);
 			}
 
 

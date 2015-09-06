@@ -8,6 +8,8 @@
 #include <thrust/device_vector.h>
 #include <iostream>
 #include <thrust/execution_policy.h>
+#include <math.h>
+#include <time.h>
 #include "CSettings.h"
 #include "SNeuron.cuh"
 #include "util.h"
@@ -359,7 +361,7 @@ struct SCheckpoint{
 	//Closer to the distance means it should add a new layer, otherwise a neuron should be added
 	//Adding a neuron increases the spread of the output
 	SCheckpoint(double** objects, int row_size,int col_size){
-		get_layer_or_row(objects, row_size, col_size);
+		this->get_layer_or_row(objects, row_size, col_size);
 	}
 
 	//*********************************
@@ -370,6 +372,8 @@ struct SCheckpoint{
 		srand((unsigned)(time(NULL)));
 		int size = (row_size < 100 ? row_size : row_size / 100);
 		int randomPosition;
+		double results;
+		double temp = 0;
 		this->d_neuron_or_layer_threshold = 0;
 		thrust::device_vector<double> temp_output(col_size);
 		thrust::device_vector<double> temp_results(col_size);
@@ -379,18 +383,21 @@ struct SCheckpoint{
 				temp_output[j] = objects[randomPosition][j];
 			}
 
-			randomPosition = 0;
+			results = 0;
 			//Get the total distance between all possible points
 			for (int i = 0; i < col_size; i++){
+				
+
 				thrust::transform(
 					temp_output.begin() + i, temp_output.end(),
 					thrust::make_constant_iterator<double>(temp_output[i]),
 					temp_results.begin(),
 					(_1 - _2) * (_1 - _2));
 				//Reduce and retrieve the answer
-				randomPosition += thrust::reduce(temp_results.begin(), temp_results.end());
+				results += thrust::reduce(temp_results.begin(), temp_results.end()-i);
 			}
-			this->d_neuron_or_layer_threshold += sqrt(randomPosition / (double)(col_size * (col_size-1)) );
+
+			temp += std::sqrt((results / (double)(col_size * (col_size - 1))));
 		}
 		temp_output.clear();
 		temp_output.shrink_to_fit();
@@ -398,13 +405,13 @@ struct SCheckpoint{
 		temp_results.shrink_to_fit();
 
 		//Get the average
-		this->d_neuron_distance_threshold /= size;
+		temp/= size;
+		this->d_neuron_or_layer_threshold = temp;
 	}
 		
 	//***************************************
 	//Overload Operators
 	//***************************************
-public:
 	//Save to file
 	friend ostream& operator<<(ostream& os, const SCheckpoint checkpoint){
 		
