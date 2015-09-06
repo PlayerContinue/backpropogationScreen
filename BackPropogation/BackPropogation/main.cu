@@ -459,7 +459,7 @@ bool addToNetwork(CGraphicsNetwork &test, CSettings settings, SCheckpoint& check
 			//Keeps size of each row equivalent
 			//Good for initial growth
 			for (int i = 1; i < test.getNumLayers() - 1; i++){
-				if (differencePerLayer[i] < checkpoint.d_neuron_or_layer_threshold){
+				if (differencePerLayer[i-1] < checkpoint.d_neuron_or_layer_threshold){
 					test.addNeuronToLayer(i, i, test.getNumNeuronsInLayer(i));
 				}
 			}
