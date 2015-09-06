@@ -29,9 +29,12 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unittest1.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="unittest1.cu">
+    <CudaCompile Include="modifyNetwork.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

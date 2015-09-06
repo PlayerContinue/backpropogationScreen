@@ -5,9 +5,25 @@
 
 class modifyNetwork{
 public:
-	CGraphicsNetwork testNetwork;
+	
 	
 	modifyNetwork(){
+		this->buildNetwork();
+		
+
+	}
+
+	double* getLayerOutputUse(){
+		return this->getLayerOutput();
+	}
+
+	double getLayerForValue(int i){
+		return this->getValueForLayer(i);
+	}
+
+private:
+	CGraphicsNetwork testNetwork;
+	void buildNetwork(){
 		CSettings settings = CSettings();
 		modifyNetwork temp1 = modifyNetwork();
 		settings.d_alpha = 0;
@@ -17,10 +33,10 @@ public:
 		vec.push_back(3);
 		vec.push_back(3);
 		vec.push_back(3);
-		testNetwork = CGraphicsNetwork(vec, &settings);
-		
-
+		this->testNetwork = CGraphicsNetwork(vec, &settings);
 	}
+
+	
 
 	double* getLayerOutput(){
 		double* temp = new double(2);
@@ -28,7 +44,7 @@ public:
 		temp[1] = 1;
 		double* output1 = new double[3];
 		//Modify the layer values
-		output1 = testNetwork.getRootMeanSquareErrorForAllLayer(temp);
+		output1 = this->testNetwork.getRootMeanSquareErrorForAllLayer(temp);
 		return output1;
 	}
 
