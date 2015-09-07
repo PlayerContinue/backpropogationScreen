@@ -15,14 +15,14 @@ public:
 
 	//Contains the number of times to loop if loop is set as choice
 	int i_loops = 0;
-	
+
 	//Allowable number of failures
 	int i_number_allowed_failures = 0;
 
 	//Number of inputs/outpus
 	int i_input = 1;
 	int i_output = 1;
-	
+
 	//Number of rounds before a check occurs
 	int i_number_before_growth_potential = 0;
 
@@ -52,13 +52,18 @@ public:
 	//Stores the name of the file containing the training set
 	bool b_trainingFromFile = false;
 	string s_trainingSet;
+	//Stores an int stating what type the data is (i.e. 0 double/int, 1 char, 2 string) 
+	int i_trainingSetType;
+
 	string s_outputTrainingFile;
 
+	//Stores an int stating what type the data is (i.e. 0 double/int, 1 char, 2 string) 
+	int i_outputTrainingSetType;
 	//Stores the name of the file containing the test set
 	bool b_testingFromFile = false;
 	string s_testSet;
 	string s_outputTestSet;
-	
+
 	//Number of pieces from the testing set per round
 	int i_number_of_training;
 
@@ -81,10 +86,28 @@ public:
 
 	CSettings();
 
-	friend istream& operator>>(istream& is, CSettings& settings){
+
+	//Take a user defined type and return the int representing that type
+	int getTypeOfInput(string input_type){
+		if (input_type.compare("double") == 0){
+			return 0;
+		}
+		else if (input_type.compare("char") == 0){
+			return 1;
+		}
+		else if (input_type.compare("string") == 0){
+			return 2;
+		}
+	}
+
+	//****************************
+	//Overloaded Operators
+	//****************************
+	//Read in a new settings object
+	friend std::istream& operator>>(std::istream& is, CSettings& settings){
 		//Storage for the name of the operator
 		string next;
-		
+
 		is >> next;
 		is >> settings.s_network_name;
 
@@ -142,18 +165,29 @@ public:
 		is >> next;
 		is >> settings.b_trainingFromFile;
 
-	
+
 		is >> next;
 		is >> settings.s_trainingSet;
 
 		is >> next;
 		is >> settings.s_outputTrainingFile;
-		
+
+		//Get training type
+		is >> next;
+		is >> next;
+
+		settings.i_trainingSetType = getTypeOfInput(next);
+
+		is >> next;
+		is >> next;
+
+		settings.i_outputTrainingSetType = getTypeOfInput(next);
+
 		//Set the test set
 		is >> next;
 		is >> settings.b_testingFromFile;
 
-		
+
 		is >> next;
 		is >> settings.s_testSet;
 
@@ -171,7 +205,7 @@ public:
 
 		is >> next;
 		is >> settings.s_checkpoint_file;
-		
+
 		//Load network file
 		is >> next;
 		is >> settings.b_loadNetworkFromFile;
@@ -179,8 +213,8 @@ public:
 		is >> next;
 		is >> settings.s_loadNetworkFile;
 
-		
-	
+
+
 
 		return is;
 	}

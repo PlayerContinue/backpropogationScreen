@@ -97,6 +97,7 @@ struct SNeuronLayer{
 		this->settings = settings;
 	}
 
+
 	//***************************************
 	//Resize Network
 	//***************************************
@@ -455,9 +456,10 @@ struct SCheckpoint{
 		}
 		else{
 			checkpoint.i_equal_square_errors = 0;
+			is >> next;
 		}
 
-		is >> next;
+		//is>> next
 		is >> checkpoint.d_mean_square_error;
 
 		is >> next;

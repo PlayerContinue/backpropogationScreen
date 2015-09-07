@@ -45,6 +45,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation</IncludePath>
+    <CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,8 +86,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CudaCompile Include="modifyNetwork.cu" />
-    <ClInclude Include="modifyNetwork.cuh" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -101,8 +100,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BackPropogation\BackPropogation.vcxproj">
-      <Project>{7b01a621-bba9-4b2d-bb67-6a72438301b9}</Project>
+    <ProjectReference Include="..\Project1\Project1.vcxproj">
+      <Project>{99714d05-5e0c-4a76-89bc-aceb155c1134}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

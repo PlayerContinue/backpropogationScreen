@@ -64,6 +64,9 @@
     <CudaCompile Include="main.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="structures_cuda.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">

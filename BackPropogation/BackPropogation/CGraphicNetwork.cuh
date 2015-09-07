@@ -109,6 +109,8 @@ public:
 	//Develop a initial network from a settings object
 	CGraphicsNetwork(vector<int> &sizes, CSettings* settings);
 
+	CGraphicsNetwork(const CGraphicsNetwork& other);
+
 	//-----------------------------------------------------------------------------------------------------------
 	//Overloaded Operators
 	//-----------------------------------------------------------------------------------------------------------
@@ -118,6 +120,7 @@ public:
 
 	CGraphicsNetwork& operator=(const CGraphicsNetwork& network){
 		this->v_num_layers = network.v_num_layers;
+		this->settings = network.settings;
 		this->alpha = network.alpha;
 		this->beta = network.beta;
 		this->I_input = network.I_input;
@@ -246,7 +249,9 @@ private:
 
 	//Check if the target and results match
 	inline void updateSuccess(double *target){
+#ifdef FULL_SUCCESS
 		bool fail = false;
+#endif
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
@@ -254,7 +259,9 @@ private:
 				this->failure += 1;
 				//Add the average distance
 				total_distance += abs(target[i] - this->v_layers.back().output[i]);
+#ifdef FULL_SUCCESS
 				fail = true;
+#endif
 			}
 			else{
 				//They all match so it was a success

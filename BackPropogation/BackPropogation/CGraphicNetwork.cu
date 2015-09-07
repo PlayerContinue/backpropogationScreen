@@ -57,6 +57,20 @@ CGraphicsNetwork::CGraphicsNetwork(vector<int> &sizes, CSettings* settings) : CG
 	this->setSettings(settings);
 }
 
+CGraphicsNetwork::CGraphicsNetwork(const CGraphicsNetwork& other){
+		this->v_num_layers = other.v_num_layers;
+		this->settings = other.settings;
+		this->alpha = other.alpha;
+		this->beta =  other.beta;
+		this->I_input = other.I_input;
+		this->I_output = other.I_output;
+		this->v_layers = vector<SNeuronLayer>();
+		for (int i = 0; i < other.v_layers.size(); i++){
+			this->v_layers.push_back(SNeuronLayer(other.v_layers[i]));
+		}
+		this->total_num_nodes = other.total_num_nodes;
+}
+
 
 //Needs Testing
 //TODO Use up a tiny bit of memory to create a pointer to the different objects which are used multiple times

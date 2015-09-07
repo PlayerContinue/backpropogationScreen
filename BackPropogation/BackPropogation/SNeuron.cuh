@@ -44,6 +44,17 @@ struct SNeuron{
 
 	}
 
+	/*SNeuron(const SNeuron& other):bias(other.bias),weights(other.weights){
+
+	}*/
+
+	/*SNeuron& operator=(const SNeuron other){
+		this->bias = other.bias;
+		this->previousBias = other.previousBias;
+		std::copy(other.weights.begin(), other.weights.end(), this->weights.begin());
+		return *this;
+	}*/
+
 	friend ostream& operator<<(ostream& os, const SNeuron& neuron){
 		//Output the weights
 		for (int i = 0; i < (int)neuron.weights.size(); i++){

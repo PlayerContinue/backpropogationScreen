@@ -237,6 +237,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="CSettings.cpp" />
+    <CudaCompile Include="structures_cuda.cu">
+      <FileType>CppCode</FileType>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="settings.txt" />

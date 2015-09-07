@@ -463,6 +463,22 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\csignal
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\signal.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thread
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xfunctional
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\chrono
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ratio
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xtimec.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthrcommon.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\concrt.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Windows Kits\8.1\Include\shared\guiddef.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthread
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xtime
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthreads.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CGraphicNetwork.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
@@ -481,8 +497,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/co
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/hd_warning_disable.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/global_workarounds.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/normal_iterator.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_adaptor.h
@@ -536,9 +550,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tag.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/functional.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xfunctional
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tuple
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/placeholder.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/actor.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/tuple.h
