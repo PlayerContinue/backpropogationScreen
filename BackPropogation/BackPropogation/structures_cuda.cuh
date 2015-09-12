@@ -349,7 +349,11 @@ struct SCheckpoint{
 	//store the most recently recorded network file
 	string s_network_file_name;
 
+	//Input file current pos
+	int i_current_position_in_input_file;
 
+	//Output file current pos
+	int i_current_position_in_output_file;
 
 	//*********************************
 	//Constructors
@@ -436,7 +440,15 @@ struct SCheckpoint{
 
 		os << "d_neuron_or_layer_threshold " << checkpoint.d_neuron_or_layer_threshold << endl;
 
+		//Input file current pos
+		os << "i_current_position_in_input_file " << checkpoint.i_current_position_in_input_file << endl;
+
+		//Output file current pos
+		os << "i_current_position_in_output_file " << checkpoint.i_current_position_in_output_file << endl;
+
 		os << "s_network_file_name " << checkpoint.s_network_file_name << endl;
+
+		
 
 		return os;
 	}
@@ -456,10 +468,10 @@ struct SCheckpoint{
 		}
 		else{
 			checkpoint.i_equal_square_errors = 0;
-			is >> next;
+			
 		}
 
-		//is>> next
+		is >> next;
 		is >> checkpoint.d_mean_square_error;
 
 		is >> next;
@@ -486,9 +498,19 @@ struct SCheckpoint{
 			checkpoint.d_neuron_or_layer_threshold = 10;
 		}
 
+		//Input file current pos
+		is >> next;
+		is >> checkpoint.i_current_position_in_input_file;
+
+		//Output file current pos
+		is >> next;
+		is >> checkpoint.i_current_position_in_output_file;
+
 		is >> next;
 		is >> checkpoint.s_network_file_name;
 
+		
+		
 		return is;
 	}
 

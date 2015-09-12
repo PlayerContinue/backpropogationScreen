@@ -98,7 +98,11 @@ public:
 		else if (input_type.compare("string") == 0){
 			return 2;
 		}
+		else{//Unsupported Type
+			return -1;
+		}
 	}
+
 
 	//****************************
 	//Overloaded Operators
@@ -172,17 +176,7 @@ public:
 		is >> next;
 		is >> settings.s_outputTrainingFile;
 
-		//Get training type
-		is >> next;
-		is >> next;
-
-		settings.i_trainingSetType = getTypeOfInput(next);
-
-		is >> next;
-		is >> next;
-
-		settings.i_outputTrainingSetType = getTypeOfInput(next);
-
+		
 		//Set the test set
 		is >> next;
 		is >> settings.b_testingFromFile;
@@ -198,6 +192,16 @@ public:
 		is >> next;
 		is >> settings.i_number_of_training;
 
+		//Get training type
+		is >> next;
+		is >> next;
+
+		settings.i_trainingSetType = settings.getTypeOfInput(next);
+
+		is >> next;
+		is >> next;
+
+		settings.i_outputTrainingSetType = settings.getTypeOfInput(next);
 
 		//Load from checkpoint 
 		is >> next;

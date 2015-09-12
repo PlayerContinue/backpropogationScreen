@@ -48,6 +48,9 @@
     <ClInclude Include="CSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RecurrentNeuralNetwork.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -67,6 +70,7 @@
     <CudaCompile Include="structures_cuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="RecurrentNeuralNetwork.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">

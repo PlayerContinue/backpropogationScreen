@@ -207,6 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="RecurrentNeuralNetwork.cuh" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CSettings.h" />
     <ClInclude Include="SNeuron.cuh" />
@@ -237,6 +238,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="CSettings.cpp" />
+    <CudaCompile Include="RecurrentNeuralNetwork.cu" />
     <CudaCompile Include="structures_cuda.cu">
       <FileType>CppCode</FileType>
     </CudaCompile>
