@@ -51,6 +51,9 @@
     <ClInclude Include="RecurrentNeuralNetwork.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ReccurentLoops.cuh">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -70,7 +73,12 @@
     <CudaCompile Include="structures_cuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="RecurrentNeuralNetwork.cu" />
+    <CudaCompile Include="RecurrentNeuralNetwork.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="ReccurentLoops.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">

@@ -71,7 +71,7 @@ struct OutputDelta_functor
 
 
 template <typename T>
-struct dot_product_special : public unary_function < T, T >
+struct dot_product_special : public thrust::unary_function < T, T >
 {
 
 
@@ -120,7 +120,7 @@ struct saxpy_functor
 
 
 template <typename T>
-struct sigmoid_functor : public unary_function < T, T > {
+struct sigmoid_functor : public thrust::unary_function < T, T > {
 	sigmoid_functor(){};
 
 	__host__ __device__
@@ -133,7 +133,7 @@ struct sigmoid_functor : public unary_function < T, T > {
 };
 
 template <typename T>
-struct square_means_sum_functor : public unary_function < T, T > {
+struct square_means_sum_functor : public thrust::unary_function < T, T > {
 	const double alpha;
 
 	square_means_sum_functor(double alpha):alpha(alpha){};

@@ -17,9 +17,10 @@
 #include <fstream>
 #include <string>
 #include <csignal>
-#include <thread>
 #include "CSettings.h"
+#include "ReccurentLoops.cuh"
 #include "CGraphicNetwork.cuh"
+
 #ifdef WINDOWS_COMPUTER
 #include <wincon.h>
 #endif
@@ -697,10 +698,10 @@ int getDataFromFile(string fileName, int start, int numberOfRounds, int numberRe
 		int letterPosition = 0;
 		for (int i = 0; i < (numberOfRounds); i++){
 			//Reset Everything
-				input[i] = new double[numberResults];
-				current_char = '1';
-				current_string = "";
-				letterPosition = 0;
+			input[i] = new double[numberResults];
+			current_char = '1';
+			current_string = "";
+			letterPosition = 0;
 			//While not at the end of a group, retrieve the current dataset
 			while (current_char != group_delimiter){
 				if (inputfile.eof()){
@@ -710,17 +711,17 @@ int getDataFromFile(string fileName, int start, int numberOfRounds, int numberRe
 				current_char = inputfile.get();
 
 				if (current_char == individual_delimiter){//Reached the end of the current set
-					
+
 
 					if (type_of_input == 0){
 						//The type is double, convert to double
 						input[i][letterPosition] = stod(current_string);
-						
+
 					}
 					else if (type_of_input == 1){
 						//Is a char, get the first and only letter and make a double
-						input[i][letterPosition] = (double) current_string.at(0);
-						
+						input[i][letterPosition] = (double)current_string.at(0);
+
 					}
 					else if (type_of_input == 2){
 						//Is a string, work on conversion later
@@ -802,23 +803,10 @@ void recursiveTestInput(CGraphicsNetwork network){
 	}
 }
 
-//
-//
 
-void initialize_loops(int argc, char** argv){
+
+void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 	CGraphicsNetwork test;
-	CSettings settings;
-	if (argc > 1){
-		std::cout << "loading settings " << endl;
-		settings = loadSettings(argv[1]);
-	}
-	else{
-		string settingsLocation;
-		std::cout << "Where are the settings? " << endl;
-		std::getline(std::cin, settingsLocation);
-		settings = loadSettings(settingsLocation);
-	}
-
 	std::cout << "Would you like to train?";
 	cin.sync();
 	char in = cin.get();
@@ -866,8 +854,8 @@ void initialize_loops(int argc, char** argv){
 		if (settings.b_trainingFromFile){
 			//Store training set
 			std::cout << "loading training set " << endl;
-			start_Input= getDataFromFile(settings.s_trainingSet, checkpoint.i_current_position_in_input_file, settings.i_number_of_training, settings.i_input, value, settings.i_trainingSetType);
-			start_output= getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_current_position_in_output_file, settings.i_number_of_training, settings.i_output, results, settings.i_outputTrainingSetType);
+			start_Input = getDataFromFile(settings.s_trainingSet, checkpoint.i_current_position_in_input_file, settings.i_number_of_training, settings.i_input, value, settings.i_trainingSetType);
+			start_output = getDataFromFile(settings.s_outputTrainingFile, checkpoint.i_current_position_in_output_file, settings.i_number_of_training, settings.i_output, results, settings.i_outputTrainingSetType);
 
 			if (!loadCheckFromFile){//Create a new checkpoint
 				createNewCheckpoint(checkpoint, settings, results);
@@ -906,6 +894,46 @@ void initialize_loops(int argc, char** argv){
 	}
 }
 
+//
+//
+
+void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
+	ReccurentLoops RLoops = ReccurentLoops(settings);
+	RLoops.startTraining();
+}
+
+void initialize_loops(int argc, char** argv){
+
+	CSettings settings;
+	if (argc > 1){
+		std::cout << "loading settings " << endl;
+		settings = loadSettings(argv[1]);
+	}
+	else{
+		string settingsLocation;
+		std::cout << "Where are the settings? " << endl;
+		std::getline(std::cin, settingsLocation);
+		settings = loadSettings(settingsLocation);
+	}
+	std::cout << "1) Recurrent Neural Network" << endl;
+	std::cout << "2) Feedforward Neural Network" << endl;
+	switch (cin.get()){
+	case '1':
+		initializeRecurrentNetwork(argc, argv, settings);
+		break;
+	case '2':
+		pause = false;
+		//Attach the signal handler
+		std::signal(SIGINT, signal_handler);
+		initializeFeedForwardNetwork(argc, argv, settings);
+		break;
+
+
+	}
+
+
+}
+
 
 
 //*********************************
@@ -917,13 +945,16 @@ int main(int argc, char** argv){
 	initialize();
 #endif
 
+
 	pause = false;
 
 	std::cout << "Starting Program... " << endl;
-	//Attach the signal handler
-	std::signal(SIGINT, signal_handler);
+
 
 	initialize_loops(argc, argv);
+
+
+
 
 	return 0;
 }
