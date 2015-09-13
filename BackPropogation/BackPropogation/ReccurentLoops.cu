@@ -46,6 +46,7 @@ void ReccurentLoops::startTraining(){
 	do{
 
 		this->load_training_data_from_file();
+		VISUALIZE
 		this->mainNetwork.addNeuron(1);
 		VISUALIZE
 		this->mainNetwork.addNeuron(1);

@@ -31,7 +31,7 @@ void RecurrentNeuralNetwork::initialize_network(){
 	}
 	this->numberNonWeights = this->settings.i_input + this->settings.i_output;
 	//This set will also change over time and contains all the output values
-	for (int i = 0; i < this->settings.i_output; i++){
+	for (int i = this->settings.i_input; i < this->numberNonWeights; i++){
 		//Map a weight from each of the input to each of the outputs
 		for (int j = 0; j < this->settings.i_input; j++){
 			//Each one starts with a random value as the output weight
@@ -39,6 +39,7 @@ void RecurrentNeuralNetwork::initialize_network(){
 			this->mapFrom.push_back(j);
 			this->mapTo.push_back(i);
 		}
+		this->positionOfLastWeightToNode.push_back(((i - this->settings.i_input)*this->settings.i_input)+this->settings.i_input - 1);
 	}
 	this->numberOfNodes = this->settings.i_output;
 	this->input_weights = this->weights.size();
@@ -77,9 +78,9 @@ void RecurrentNeuralNetwork::addWeight(int numberWeightsToAdd){
 		//Add one weight from any current node to the new nodes
 		decideTo = this->decideNodeToAttachTo();
 		decideFrom = this->decideNodeToAttachTo();
-		itWeights = this->weights.begin() + (this->positionOfLastWeightToNode[decideTo - numberNonWeights]);
-		itMapFrom = this->mapFrom.begin() + (this->positionOfLastWeightToNode[decideTo - numberNonWeights]);
-		itMapTo = this->mapTo.begin() + (this->positionOfLastWeightToNode[decideTo - this->settings.i_output]);
+		itWeights = this->weights.begin() + (this->positionOfLastWeightToNode[decideTo]);
+		itMapFrom = this->mapFrom.begin() + (this->positionOfLastWeightToNode[decideTo]);
+		itMapTo = this->mapTo.begin() + (this->positionOfLastWeightToNode[decideTo]);
 
 		this->weights.insert(itWeights,this->getNewWeight());
 		this->mapTo.insert(itMapTo,decideTo);
@@ -87,16 +88,17 @@ void RecurrentNeuralNetwork::addWeight(int numberWeightsToAdd){
 		//Add one weight from the new node to any other node
 
 		//Increment the position
-		for (int j = decideTo - this->settings.i_output; j < this->positionOfLastWeightToNode.size(); j++){
+		for (int j = decideTo; j < this->positionOfLastWeightToNode.size(); j++){
 			this->positionOfLastWeightToNode[j] += 1;
 		}
-		this->input_weights += 1;
+		this->input_weights++;
 
 	}
 }
 
 void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 	int addNewNeuron = 0;//Count the number of neurons to add. Multiple insertions at one time are easier than a single insertion
+	
 	//Add the new nodes defined by the numberofNodesToAdd
 	for (int i = 0; i < numberNeuronsToAdd; i++){
 		if (this->numberOfNodes == this->settings.i_output){
@@ -112,11 +114,10 @@ void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 					this->mapTo[k] = this->output_values.size() - 1;
 				}
 				this->positionOfLastWeightToNode.push_back((long)((this->settings.i_input*j)) + this->settings.i_input - 1);
-
 			}
 			//Add new weights from the new nodes to the output nodes
-			for (int j = 0; j < this->settings.i_output; j++){
-				for (int k = this->settings.i_output; k < this->output_values.size() - this->numberNonWeights; k++){
+			for (int j = this->settings.i_input; j < this->numberNonWeights; j++){
+				for (int k = this->numberNonWeights; k < this->output_values.size(); k++){
 					//Create a new weight from the current node to the weight
 					//Create a new weight
 					this->weights.push_back(RandomClamped());
@@ -125,7 +126,7 @@ void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 					//Map the new weights to the output
 					this->mapTo.push_back(j);
 				}
-				
+				this->positionOfLastWeightToNode[j - this->settings.i_input] = this->weights.size()-1;
 			}
 			this->numberOfNodes += this->settings.i_output;
 
@@ -133,7 +134,6 @@ void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 		else if (true){
 			//A new neuron is added
 			addNewNeuron++;
-
 		}
 
 
@@ -141,40 +141,48 @@ void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 	}
 
 	if (addNewNeuron > 0){
-		host_vector<weight_type>::iterator it = this->weights.begin() + this->input_weights;
-		host_vector<int>::iterator itInt = this->mapFrom.begin() + this->input_weights;
+		host_vector<weight_type>::iterator it = this->weights.begin() + input_weights;
+		host_vector<int>::iterator itInt = this->mapFrom.begin() + input_weights;
 		host_vector<int>::iterator itInt2 = this->mapTo.begin() + this->input_weights;
+		int total_nodes_weights_before_output_added = 0;//Count the number of weights which are added before the to output nodes are found
 		//Insert any new Neurons which were chosen to be created
+		//Create connection from input to new node
 		for (int i = addNewNeuron - 1; i > -1; i--){
 			//Add the new neuron
 			this->output_values.push_back(0);
-			for (int j = this->input_weights; j > -1; j--){
+			for (int j = 0; j < this->settings.i_input; j++){
 				//Insert the connections to the input
 				this->weights.insert(it, getNewWeight());
-				this->mapFrom.insert(itInt, j);
-				this->mapTo.insert(itInt2, this->numberOfNodes + i);
+				this->mapFrom.insert(itInt, this->settings.i_input - j - 1);
+				this->mapTo.insert(itInt2, this->output_values.size()-1);
 				this->input_weights++;//Increase input_weights end position
+				total_nodes_weights_before_output_added++;//Increment the number of weights added
 			}
 			this->positionOfLastWeightToNode.push_back(this->input_weights);
 		}
 		
 		
-		it = this->weights.begin() + this->input_weights + this->numberOfNodes - this->settings.i_output;
-		itInt = this->mapFrom.begin() + this->input_weights + this->numberOfNodes - this->settings.i_output;
-		itInt2 = this->mapTo.begin() + this->input_weights + this->numberOfNodes - this->settings.i_output;
+		it = this->weights.begin() + this->positionOfLastWeightToNode[0] + total_nodes_weights_before_output_added + 1;
+		itInt = this->mapFrom.begin() + this->positionOfLastWeightToNode[0] + total_nodes_weights_before_output_added + 1;
+		itInt2 = this->mapTo.begin() + this->positionOfLastWeightToNode[0] + total_nodes_weights_before_output_added + 1;
+		//Create connection from new node to output node
 		for (int i = 0; i < this->settings.i_output; i++){
 			for (int j = addNewNeuron - 1; j > -1; j--){
 				//Insert a connection to the output
 				this->weights.insert(it, getNewWeight());
-				
-				this->mapFrom.insert(itInt, this->numberOfNodes + j);
-				this->mapTo.insert(itInt2, i);
+				this->mapFrom.insert(itInt, this->output_values.size()-1);
+				this->mapTo.insert(itInt2, i + this->settings.i_input);
 			}
 			it += addNewNeuron + numberOfNodes - this->settings.i_output;
 			itInt += addNewNeuron + numberOfNodes - this->settings.i_output;
 			itInt2 += addNewNeuron + numberOfNodes - this->settings.i_output;
 		}
 		this->numberOfNodes += addNewNeuron;
+
+		//Increment the stored position of the last weight
+		for (int i = 0; i < this->settings.i_output; i++){
+			this->positionOfLastWeightToNode[i] += total_nodes_weights_before_output_added + i + 1;
+		}
 	}
 
 
