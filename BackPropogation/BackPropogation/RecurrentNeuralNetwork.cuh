@@ -9,8 +9,13 @@
 #include <vector>
 #include <time.h>
 #include "util.h"
+#ifdef __X_H_INCLUDED__
+
+#else
+#define __X_H_INCLUDED__
 #include "CSettings.h"
 #include "NetworkBase.cuh"
+#endif
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better

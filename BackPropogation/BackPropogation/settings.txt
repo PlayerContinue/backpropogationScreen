@@ -1,5 +1,5 @@
 s_network_name new_word_network_1
-i_loops 1000
+i_loops 1
 i_number_allowed_failures 3
 i_number_before_growth_potential 5000
 i_number_allowed_same 100
@@ -21,7 +21,7 @@ s_outputTrainingFile datasets/binout.txt
 b_testingFromFile 1
 s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
-i_number_of_training 10000
+i_number_of_training 10
 i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3

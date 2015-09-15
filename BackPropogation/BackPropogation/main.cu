@@ -898,7 +898,7 @@ void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 //
 
 void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
-	ReccurentLoops RLoops = ReccurentLoops(settings);
+	ReccurentLoops RLoops = ReccurentLoops(settings,ReccurentLoops::LongTermShortTerm);
 	
 	double* temp = new double[settings.i_input];
 #ifdef _DEBUG

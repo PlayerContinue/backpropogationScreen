@@ -66,6 +66,9 @@
     <ClInclude Include="ReccurentLoops.cuh">
       <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="LongTermShortTermNetwork.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -92,6 +95,9 @@
       <Filter>Source Files\RecurrentNetwork</Filter>
     </CudaCompile>
     <CudaCompile Include="NetworkBase.cu">
+      <Filter>Source Files\RecurrentNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="LongTermShortTermNetwork.cu">
       <Filter>Source Files\RecurrentNetwork</Filter>
     </CudaCompile>
   </ItemGroup>

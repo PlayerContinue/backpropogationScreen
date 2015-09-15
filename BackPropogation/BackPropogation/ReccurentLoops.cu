@@ -10,12 +10,32 @@ ReccurentLoops::ReccurentLoops()
 
 ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->settings = settings;
-	this->mainNetwork = new RecurrentNeuralNetwork(settings);
-	this->checkpoint = CRecurrentCheckpoint();
 	this->InitializeNetwork();
+	this->checkpoint = CRecurrentCheckpoint();
+	this->mainNetwork = new RecurrentNeuralNetwork(settings);
+
 }
 
+ReccurentLoops::ReccurentLoops(CSettings settings, int type){
+	this->settings = settings;
 
+	switch (type){
+	case ReccurentLoops::RealTimeTraining:
+		//Train the network using real time recurrent
+		//this->train_network_RealTimeRecurrentTraining();
+		break;
+	case ReccurentLoops::HessianFreeOptimization:
+		this->mainNetwork = new RecurrentNeuralNetwork(settings);
+		break;
+	case ReccurentLoops::LongTermShortTerm:
+		this->mainNetwork = new LongTermShortTermNetwork(settings);
+		break;
+	}
+
+	
+	this->InitializeNetwork();
+	this->checkpoint = CRecurrentCheckpoint();
+}
 
 ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint) :ReccurentLoops(settings){
 	this->checkpoint = checkpoint;

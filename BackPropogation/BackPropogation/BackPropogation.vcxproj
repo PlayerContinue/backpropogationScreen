@@ -202,6 +202,7 @@
   <ItemGroup>
     <ClInclude Include="CGraphicNetwork.cuh" />
     <ClInclude Include="CudaCalculations.cuh" />
+    <ClInclude Include="LongTermShortTermNetwork.cuh" />
     <ClInclude Include="Network.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>
@@ -227,6 +228,7 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CGraphicNetwork.cu" />
+    <CudaCompile Include="LongTermShortTermNetwork.cu" />
     <CudaCompile Include="main.cu" />
     <CudaCompile Include="main2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>

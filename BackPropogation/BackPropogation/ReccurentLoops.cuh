@@ -1,9 +1,15 @@
 #pragma once
 #include <string.h>
 #include <vector>
+#ifdef __X_H_INCLUDED__
+
+#else
+#define __X_H_INCLUDED__
 #include "CSettings.h"
-//#include "NetworkBase.cuh"
+#include "NetworkBase.cuh"
+#endif
 #include "RecurrentNeuralNetwork.cuh"
+#include "LongTermShortTermNetwork.cuh"
 #include "CRecurrentCheckpoint.h"
 #include <thrust/complex.h>
 #define weight_type thrust::complex<double>
@@ -24,6 +30,7 @@ class ReccurentLoops
 public:
 	static const int RealTimeTraining=0;
 	static const int HessianFreeOptimization = 1;
+	static const int LongTermShortTerm = 2;
 	//*********************
 	//Class Variables
 	//*********************
@@ -45,6 +52,8 @@ public:
 
 	//Constructor for an network created from user settings
 	ReccurentLoops(CSettings settings);
+
+	ReccurentLoops(CSettings settings, int type);
 
 	//Constructor for an object with settings and a checkpoint
 	ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint);
