@@ -1,10 +1,10 @@
 s_network_name new_word_network_1
-i_loops 2000
+i_loops 1000
 i_number_allowed_failures 3
 i_number_before_growth_potential 5000
 i_number_allowed_same 100
-i_input 6
-i_output 8
+i_input 3
+i_output 3
 d_threshold .1
 d_distance_threshold .7
 d_neuron_distance_threshold .2
@@ -13,7 +13,7 @@ d_neuron_success_threshold .6
 d_fluctuate_square_mean 0
 b_allow_node_locking 1
 d_lock_node_level .3e-70
-d_alpha .5
+d_alpha .01
 d_beta .5
 b_trainingFromFile 1
 s_trainingSet datasets/input.txt
@@ -21,9 +21,10 @@ s_outputTrainingFile datasets/binout.txt
 b_testingFromFile 1
 s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
-i_number_of_training 3000
+i_number_of_training 10000
 i_trainingSetType char
 i_outputTrainingSetType double
+i_recurrent_flip_flop 3
 b_loadFromCheckpoint 1
 s_checkpoint_file checkpoints/new_word_network_1_checkpoint_194.txt
 b_loadNetworkFromFile 0
