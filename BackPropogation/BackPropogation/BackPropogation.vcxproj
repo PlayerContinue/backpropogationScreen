@@ -207,6 +207,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="NetworkBase.cuh" />
     <ClInclude Include="ReccurentLoops.cuh" />
     <ClInclude Include="CRecurrentCheckpoint.h" />
     <ClInclude Include="RecurrentNeuralNetwork.cuh" />
@@ -241,6 +242,7 @@
     </ClCompile>
     <ClCompile Include="CSettings.cpp" />
     <ClCompile Include="CRecurrentCheckpoint.cpp" />
+    <CudaCompile Include="NetworkBase.cu" />
     <CudaCompile Include="ReccurentLoops.cu">
       <FileType>CppCode</FileType>
     </CudaCompile>

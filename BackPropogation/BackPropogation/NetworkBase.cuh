@@ -27,88 +27,24 @@ class NetworkBase {
 	//*********************
 	//Class Variables
 	//*********************
-private:
-
-	vector<long> positionOfLastWeightToNode;
-	long numberOfNodes; //The number of nodes currently in the system which can be linked to
-	long numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
-	long input_weights;
-	//Stores the weights between neurons
-	host_vector<weight_type> weights;
-	//Stores the weights in GPU Memory
-	thrust::device_vector<weight_type> GPUWeights;
-
-	//Stores the values of the neurons
-	host_vector<weight_type> output_values;
-
-	//Stores the values of the neuron in GPU Memory
-	thrust::device_vector<weight_type> GPUOutput_values;
-	thrust::device_vector<weight_type> GPUPreviousOutput_Values;
-
-	//Stores the delta in GPU Memory
-	host_vector<weight_type> host_deltas;
-	thrust::device_vector<weight_type> device_deltas;
-
-	//Stores the total error
-	weight_type total_error;
-
-	//Contains whuch weight is connected to which neuron
-	host_vector<int> mapTo;
-	host_vector<int> mapFrom;
-
-	//Stores it in gpu_memory
-	thrust::device_vector<int> GPUMapTo;
-	thrust::device_vector<int> GPUMapFrom;
-
-
-	CSettings settings;
-public:
-	//*********************
-	//Constructors
-	//*********************
-	//Default Constructor
-	//Creates a network with 1 input and 1 output
-	NetworkBase();
-
-	//Constructor which asks for a settings object 
-	//The settings object contains all the information required to perform a function
-	NetworkBase(CSettings& settings);
-	//*********************
-	//Initialization
-	//*********************
-private:
-	//Initialize the network from the settings object if possible
-	void initialize_network();
 
 public:
 	//*********************
 	//Run The Network
 	//*********************
-	device_vector<weight_type> runNetwork(weight_type* in);
+	virtual device_vector<weight_type> runNetwork(weight_type* in) = 0;
 
 	//***************************
 	//Train the Network
 	//***************************
 
+	//Initilialize the network for training
+	virtual void InitializeTraining() = 0;
+	//Run a round of training
+	virtual void StartTraining(weight_type* in, weight_type* out) = 0;
+	//Apply the error to the network
+	virtual void ApplyError() = 0;
 
-
-	void LongShortTermMemoryTraining(device_vector<weight_type> in, weight_type* out);
-
-	//Set up for HessianFreeoptimization
-	void InitializeHessianFreeOptimizationTraining();
-	void HessianFreeOptimizationTraining(weight_type* in, weight_type* out);
-	void HessianFreeOptimizationApplyError();
-
-	//Set up for Real Time Training
-	void InitializeRealTimeRecurrentTraining();
-	void RealTimeRecurrentLearningTraining(weight_type* in, weight_type* out);
-	//Modify the weights of a RealTimeRecurrentLearning Algorithm
-	void RealTimeRecurrentLearningApplyError();
-private:
-	//Retrieve the error of a single step
-	weight_type RealTimeRecurrentLearningTraining(weight_type* in, weight_type* out, weight_type total_error, thrust::device_vector<int> &GPUMapTo,
-		thrust::device_vector<int> &GPUMapFrom, thrust::device_vector<weight_type> &GPUWeights, thrust::device_vector<weight_type> &GPUOutput_values, thrust::device_vector<weight_type> &GPUPreviousOutput_Values,
-		thrust::device_vector<weight_type> &deltas);
 public:
 
 	//*********************
@@ -116,49 +52,28 @@ public:
 	//*********************
 
 	//Only used for dubug. Outputs a simple example of what the network looks like
-	void VisualizeNetwork();
+	virtual void VisualizeNetwork() = 0;
 
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************
-	void addNeuron(int numberNeuronsToAdd);
+	virtual void addNeuron(int numberNeuronsToAdd) = 0;
 
 	//Add a new weight between neurons
-	void addWeight(int numberWeightsToAdd);
-private:
-	//Decide which node the new weight should be attached to 
-	int decideNodeToAttachTo();
-	//Decide which node the new weight should be attached from
-	//Requires knowing which node it will be attaching to in order to avoid double connections
-	int decideNodeToAttachFrom(int attachTo);
-
-	//Get a new weight
-	weight_type getNewWeight();
-
-	//***************************
-	//Perform Functionality
-	//***************************
-	//Finds the sum of the current values in the network
-	//Updates the network values
-	void sumNetworkValues(device_vector<weight_type> &GPUOutput_values,//Copy the output_nodes
-		device_vector<weight_type> &GPUPreviousOutput_Values,
-		device_vector<int> &GPUMapFrom,//Copy the map from
-		device_vector<int> &GPUMapTo, //Copy the mapTo
-		device_vector<weight_type> &GPUWeights, int number_of_rounds
-		);
+	virtual void addWeight(int numberWeightsToAdd) = 0;
 
 public:
-	void ResetSequence();
+	virtual void ResetSequence() = 0;
 
 	//Copies the information stored on the GPU into main memory
-	void CopyToHost();
+	virtual void CopyToHost() = 0;
 
 	//Copies the information stored in Main Memory into GPU Memory
-	void CopyToDevice();
+	virtual void CopyToDevice() = 0;
 
 	//Copies information stored on the GPU memory into the Main Memory
 	//Removes the GPU Memory copies
-	void cleanNetwork();
+	virtual void cleanNetwork()= 0;
 };
 
 //*********************
@@ -174,5 +89,4 @@ namespace clear_vector{
 	template void free<thrust::device_vector<int> >(thrust::device_vector<int>& V);
 	template void free<thrust::device_vector<double> >(
 		thrust::device_vector<double>& V);
-
 }

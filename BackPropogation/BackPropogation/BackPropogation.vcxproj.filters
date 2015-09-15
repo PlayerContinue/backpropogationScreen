@@ -19,6 +19,12 @@
     <Filter Include="testing">
       <UniqueIdentifier>{54b63617-2ff5-4d2e-8e6f-3828620271b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RecurrentNetwork">
+      <UniqueIdentifier>{4884cb18-a386-43b1-98ee-96151d821bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RecurrentNetwork">
+      <UniqueIdentifier>{53ed9f67-c1fb-497a-96c7-e97e46f6f871}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -49,13 +55,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RecurrentNeuralNetwork.cuh">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ReccurentLoops.cuh">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
     <ClInclude Include="CRecurrentCheckpoint.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkBase.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="ReccurentLoops.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -77,10 +86,13 @@
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="RecurrentNeuralNetwork.cu">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\RecurrentNetwork</Filter>
     </CudaCompile>
     <CudaCompile Include="ReccurentLoops.cu">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\RecurrentNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="NetworkBase.cu">
+      <Filter>Source Files\RecurrentNetwork</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,7 +103,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CRecurrentCheckpoint.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\RecurrentNetwork</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

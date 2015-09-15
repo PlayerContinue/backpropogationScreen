@@ -431,6 +431,7 @@ void RecurrentNeuralNetwork::RealTimeRecurrentLearningApplyError(){
 //*********************
 //Hessian Free
 //*********************
+
 void RecurrentNeuralNetwork::InitializeHessianFreeOptimizationTraining(){
 
 	//Store all the values in the device

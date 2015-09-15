@@ -2,6 +2,7 @@
 #include <string.h>
 #include <vector>
 #include "CSettings.h"
+//#include "NetworkBase.cuh"
 #include "RecurrentNeuralNetwork.cuh"
 #include "CRecurrentCheckpoint.h"
 #include <thrust/complex.h>
@@ -28,7 +29,7 @@ public:
 	//*********************
 private:
 	//typedef float weight_type;
-	RecurrentNeuralNetwork mainNetwork;
+	NetworkBase* mainNetwork;
 	CSettings settings;
 	CRecurrentCheckpoint checkpoint;
 	weight_type** input;

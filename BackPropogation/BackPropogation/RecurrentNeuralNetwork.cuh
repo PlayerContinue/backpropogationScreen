@@ -10,6 +10,7 @@
 #include <time.h>
 #include "util.h"
 #include "CSettings.h"
+#include "NetworkBase.cuh"
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
@@ -24,7 +25,7 @@ using namespace thrust::placeholders;
 
 
 //Contains the methods
-class RecurrentNeuralNetwork {
+class RecurrentNeuralNetwork:public NetworkBase {
 	//*********************
 	//Class Variables
 	//*********************
@@ -93,8 +94,20 @@ public:
 	//Train the Network
 	//***************************
 
-	
+	//Initilialize the network for training
+	virtual void InitializeTraining(){
+		this->InitializeHessianFreeOptimizationTraining();
+	}
+	//Run a round of training
+	virtual void StartTraining(weight_type* in, weight_type* out){
+		this->HessianFreeOptimizationTraining(in, out);
+	}
+	//Apply the error to the network
+	virtual void ApplyError(){
+		this->HessianFreeOptimizationApplyError();
+	}
 
+private:
 	void LongShortTermMemoryTraining(device_vector<weight_type> in, weight_type* out);
 
 	//Set up for HessianFreeoptimization
@@ -163,19 +176,3 @@ public:
 	//Removes the GPU Memory copies
 	void cleanNetwork();
 };
-
-//*********************
-//Contains Functions to empty a vector
-//*********************
-namespace clear_vector{
-	//Function to free memory from GPU
-	template<class T> void free(T &V) {
-		V.clear();
-		V.shrink_to_fit();
-	}
-
-	template void free<thrust::device_vector<int> >(thrust::device_vector<int>& V);
-	template void free<thrust::device_vector<double> >(
-		thrust::device_vector<double>& V);
-
-}

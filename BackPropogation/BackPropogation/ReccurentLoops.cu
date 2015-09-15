@@ -10,7 +10,7 @@ ReccurentLoops::ReccurentLoops()
 
 ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->settings = settings;
-	this->mainNetwork = RecurrentNeuralNetwork(settings);
+	this->mainNetwork = new RecurrentNeuralNetwork(settings);
 	this->checkpoint = CRecurrentCheckpoint();
 	this->InitializeNetwork();
 }
@@ -60,7 +60,7 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(double* in){
 
 
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
-	device_vector<weight_type> temp_device = this->mainNetwork.runNetwork(in);
+	device_vector<weight_type> temp_device = this->mainNetwork->runNetwork(in);
 	vector<RETURN_WEIGHT_TYPE> to_return = vector <RETURN_WEIGHT_TYPE>(temp_device.size());
 	for (int i = 0; i < temp_device.size(); i++){
 		to_return[i] = temp_device[i];
@@ -101,39 +101,39 @@ void ReccurentLoops::startTraining(int type){
 }
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
-	this->mainNetwork.addNeuron(1);
-	this->mainNetwork.VisualizeNetwork();
-	this->mainNetwork.addNeuron(2);
-	this->mainNetwork.VisualizeNetwork();
+	this->mainNetwork->addNeuron(1);
+	this->mainNetwork->VisualizeNetwork();
+	this->mainNetwork->addNeuron(2);
+	this->mainNetwork->VisualizeNetwork();
 
-	this->mainNetwork.addWeight(5);
-	this->mainNetwork.VisualizeNetwork();
-	this->mainNetwork.InitializeRealTimeRecurrentTraining();
+	this->mainNetwork->addWeight(5);
+	this->mainNetwork->VisualizeNetwork();
+	this->mainNetwork->InitializeTraining();
 	do{
 
 
 
-		this->mainNetwork.HessianFreeOptimizationTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
+		this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
 		if (this->checkpoint.i_number_of_loops % this->settings.i_loops == 0){
-			this->mainNetwork.VisualizeNetwork();
-			this->mainNetwork.HessianFreeOptimizationApplyError();//Apply the error gained from the last steps
-			this->mainNetwork.CopyToHost();
-			this->mainNetwork.VisualizeNetwork();
+			this->mainNetwork->VisualizeNetwork();
+			this->mainNetwork->ApplyError();//Apply the error gained from the last steps
+			this->mainNetwork->CopyToHost();
+			this->mainNetwork->VisualizeNetwork();
 			this->train_network_RealTimeRecurrentTraininguserControlOutput();
-			this->mainNetwork.ResetSequence();
+			this->mainNetwork->ResetSequence();
 		}
 
 		this->checkpoint.i_number_of_loops_checkpoint++;
 		this->checkpoint.i_number_of_loops++;
 	} while (checkpoint.i_number_of_loops_checkpoint < this->settings.i_number_of_training);
-	this->mainNetwork.cleanNetwork();
+	this->mainNetwork->cleanNetwork();
 	return true;
 }
 
 bool ReccurentLoops::train_network_RealTimeRecurrentTraining(){
 	//Initialize the network
 	
-		this->mainNetwork.addNeuron(1);
+		/*this->mainNetwork.addNeuron(1);
 		this->mainNetwork.VisualizeNetwork();
 		this->mainNetwork.addNeuron(10);
 		this->mainNetwork.VisualizeNetwork();
@@ -158,7 +158,7 @@ bool ReccurentLoops::train_network_RealTimeRecurrentTraining(){
 		this->checkpoint.i_number_of_loops_checkpoint++;
 		this->checkpoint.i_number_of_loops++;
 	} while (checkpoint.i_number_of_loops_checkpoint < this->settings.i_number_of_training);
-	this->mainNetwork.cleanNetwork();
+	this->mainNetwork.cleanNetwork();*/
 	return true;
 }
 
