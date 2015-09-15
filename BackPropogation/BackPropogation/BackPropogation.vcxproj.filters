@@ -54,6 +54,9 @@
     <ClInclude Include="ReccurentLoops.cuh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CRecurrentCheckpoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -85,6 +88,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CRecurrentCheckpoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

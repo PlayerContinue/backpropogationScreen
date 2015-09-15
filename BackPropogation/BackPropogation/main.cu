@@ -899,7 +899,17 @@ void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 
 void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	ReccurentLoops RLoops = ReccurentLoops(settings);
+	
+	double* temp = new double[settings.i_input];
+#ifdef _DEBUG
+	for (int i = 0; i < settings.i_input; i++){
+		temp[i] = i;
+	}
+	RLoops.startTraining(ReccurentLoops::HessianFreeOptimization);
+#else
 	RLoops.startTraining();
+#endif
+	
 }
 
 void initialize_loops(int argc, char** argv){

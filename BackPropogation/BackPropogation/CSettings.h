@@ -84,6 +84,9 @@ public:
 	bool b_allow_node_locking;
 	double d_lock_node_level;
 
+	//Number Of Rounds before providing output from an input
+	int i_recurrent_flip_flop = 3;
+
 	CSettings();
 
 
@@ -203,6 +206,11 @@ public:
 
 		settings.i_outputTrainingSetType = settings.getTypeOfInput(next);
 
+
+		//Recurrent Network Info
+		is >> next;
+		is >> settings.i_recurrent_flip_flop;
+
 		//Load from checkpoint 
 		is >> next;
 		is >> settings.b_loadFromCheckpoint;
@@ -217,7 +225,7 @@ public:
 		is >> next;
 		is >> settings.s_loadNetworkFile;
 
-
+		
 
 
 		return is;
