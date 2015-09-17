@@ -85,7 +85,7 @@ int RecurrentNeuralNetwork::decideNodeToAttachFrom(int attachTo){
 	bool containsValue = false;
 	int start = (this->settings.i_output != attachTo ? this->positionOfLastWeightToNode[attachTo-1] : 0);
 	int end = (this->settings.i_output != attachTo ? this->positionOfLastWeightToNode[attachTo] : this->positionOfLastWeightToNode[attachTo]);
-	for (int k = this->numberNonWeights; k < this->output_values.size(); k++){
+	for (unsigned int k = this->numberNonWeights; k < this->output_values.size(); k++){
 		for (int i = start; i<=end; i++){
 			if (this->mapFrom[i] == k){
 				//The value is already contained in the system
@@ -150,7 +150,7 @@ void RecurrentNeuralNetwork::addWeight(int numberWeightsToAdd){
 				this->mapFrom.insert(itMapFrom, decideFrom);
 
 				//Increment the position for any following the current node
-				for (int j = decideTo - this->settings.i_input; j < this->positionOfLastWeightToNode.size(); j++){
+				for (unsigned int j = decideTo - this->settings.i_input; j < this->positionOfLastWeightToNode.size(); j++){
 					this->positionOfLastWeightToNode[j] += 1;
 				}
 				this->input_weights++;
@@ -188,7 +188,7 @@ void RecurrentNeuralNetwork::addNeuron(int numberNeuronsToAdd){
 			}
 			//Add new weights from the new nodes to the output nodes
 			for (int j = this->settings.i_input; j < this->numberNonWeights; j++){
-				for (int k = this->numberNonWeights; k < this->output_values.size(); k++){
+				for (unsigned int k = this->numberNonWeights; k < this->output_values.size(); k++){
 					//Create a new weight from the current node to the weight
 					//Create a new weight
 					this->weights.push_back(RandomClamped());
@@ -581,16 +581,20 @@ void  RecurrentNeuralNetwork::cleanNetwork(){
 //*********************
 //Misc
 //*********************
+ostream& RecurrentNeuralNetwork::OutputNetwork(ostream &os){
+	return os;
+}
+
 void RecurrentNeuralNetwork::VisualizeNetwork(){
 	cout.precision(20);
 	std::cout << "Weight" << "\t" << "In" << "\t" << "Out" << endl;
-	for (int i = 0; i < this->weights.size(); i++){
+	for (unsigned int i = 0; i < this->weights.size(); i++){
 		std::cout << i << ") " << this->weights[i] << "\t" << this->mapFrom[i] << "\t" << this->mapTo[i] << endl;
 	}
 	std::cout << endl;
 	cout << "Neuron Values" << endl;
 	
-	for (int i = this->settings.i_input; i < this->output_values.size(); i++){
+	for (unsigned int i = this->settings.i_input; i < this->output_values.size(); i++){
 		std::cout << i << ") " << this->output_values[i] << endl;
 	}
 
@@ -598,7 +602,7 @@ void RecurrentNeuralNetwork::VisualizeNetwork(){
 
 	std::cout << endl;
 	cout << "deltas" << endl;
-	for (int i = 0; i < this->host_deltas.size(); i++){
+	for (unsigned int i = 0; i < this->host_deltas.size(); i++){
 		std::cout << i << ") " << this->host_deltas[i] << endl;
 	}
 

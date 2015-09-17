@@ -372,7 +372,7 @@ public:
 			double toReturn = 0.0; //Return this value
 			thrust::device_vector<double> temp_output = this->v_layers[layer].getOutput();
 			thrust::device_vector<double> temp_results(temp_output.size());
-			for (int i = 0; i < temp_output.size(); i++){
+			for (unsigned int i = 0; i < temp_output.size(); i++){
 				thrust::transform(
 					temp_output.begin() + i, temp_output.end(),
 					thrust::make_constant_iterator<double>(temp_output[i]),

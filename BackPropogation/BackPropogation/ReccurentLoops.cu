@@ -80,12 +80,22 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(double* in){
 
 
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
+	this->mainNetwork->InitializeTraining();
+#ifdef _DEBUG
+	train_network_RealTimeRecurrentTraininguserControlOutput();
+#endif
 	device_vector<weight_type> temp_device = this->mainNetwork->runNetwork(in);
+#ifdef _DEBUG
+	train_network_RealTimeRecurrentTraininguserControlOutput();
+#endif
 	vector<RETURN_WEIGHT_TYPE> to_return = vector <RETURN_WEIGHT_TYPE>(temp_device.size());
-	for (int i = 0; i < temp_device.size(); i++){
+
+	for (unsigned int i = 0; i < temp_device.size(); i++){
 		to_return[i] = temp_device[i];
 	}
+	this->mainNetwork->cleanNetwork();
 	clear_vector::free(temp_device);
+
 	return to_return;
 }
 //*****************************
@@ -121,18 +131,15 @@ void ReccurentLoops::startTraining(int type){
 }
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
-	this->mainNetwork->addNeuron(1);
-	this->mainNetwork->VisualizeNetwork();
-	this->mainNetwork->addNeuron(2);
-	this->mainNetwork->VisualizeNetwork();
+	//this->mainNetwork->addNeuron(1);
+	//this->mainNetwork->VisualizeNetwork();
+	//this->mainNetwork->addNeuron(2);
+	//this->mainNetwork->VisualizeNetwork();
 
-	this->mainNetwork->addWeight(5);
-	this->mainNetwork->VisualizeNetwork();
+	//this->mainNetwork->addWeight(5);
+	//this->mainNetwork->VisualizeNetwork();
 	this->mainNetwork->InitializeTraining();
 	do{
-
-
-
 		this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
 		if (this->checkpoint.i_number_of_loops % this->settings.i_loops == 0){
 			this->mainNetwork->VisualizeNetwork();
@@ -151,34 +158,6 @@ bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
 }
 
 bool ReccurentLoops::train_network_RealTimeRecurrentTraining(){
-	//Initialize the network
-	
-		/*this->mainNetwork.addNeuron(1);
-		this->mainNetwork.VisualizeNetwork();
-		this->mainNetwork.addNeuron(10);
-		this->mainNetwork.VisualizeNetwork();
-
-		this->mainNetwork.addWeight(5);
-		this->mainNetwork.VisualizeNetwork();
-		this->mainNetwork.InitializeRealTimeRecurrentTraining();
-	do{
-
-
-
-		this->mainNetwork.RealTimeRecurrentLearningTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
-		this->mainNetwork.RealTimeRecurrentLearningApplyError();//Apply the error gained from the last steps
-		if (this->checkpoint.i_number_of_loops % this->settings.i_loops == 0){
-			this->mainNetwork.VisualizeNetwork();
-			this->mainNetwork.CopyToHost();
-			this->mainNetwork.VisualizeNetwork();
-			this->train_network_RealTimeRecurrentTraininguserControlOutput();
-			this->mainNetwork.ResetSequence();
-		}
-
-		this->checkpoint.i_number_of_loops_checkpoint++;
-		this->checkpoint.i_number_of_loops++;
-	} while (checkpoint.i_number_of_loops_checkpoint < this->settings.i_number_of_training);
-	this->mainNetwork.cleanNetwork();*/
 	return true;
 }
 
@@ -205,19 +184,37 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 void ReccurentLoops::train_network_RealTimeRecurrentTraininguserControlOutput(){
 	static int temp = 1;
 	if (temp == 1){
-		for (int i = 0; i < this->settings.i_input; i++){
-			cout << i << ") " << this->input[0][i] << endl;
+		std::ofstream outputfile;
+		outputfile.open("networks/" + settings.s_network_name + std::to_string(0) + ".txt", ios::trunc);
+		if (outputfile.is_open()){
+			for (int i = 0; i < this->settings.i_input; i++){
+				//cout << i << ") " << this->input[0][i] << endl;
+			}
+
+
+			for (int i = 0; i < this->settings.i_input; i++){
+				//cout << i << ") " << this->output[0][i] << endl;
+			}
+			//Output the network
+			outputfile << *this << flush;
+			outputfile << endl;
+			cout << *this << endl;
+			//vector<weight_type> vect = this->runNetwork(this->input[0]);
+
+			for (int i = 0; i < this->settings.i_input; i++){
+				//cout << i << ") " << vect[i] << endl;
+			}
+			outputfile.close();
 		}
+		else{
+			std::cout << "Unable to write checkpoint to file." << endl;
+			std::cout << "continue?";
+		}
+		
+
+		
+	}
+
 	
 
-		for (int i = 0; i < this->settings.i_input; i++){
-			cout << i << ") " << this->output[0][i] << endl;
-		}
-
-		vector<weight_type> vect = this->runNetwork(this->input[0]);
-
-		for (int i = 0; i < this->settings.i_input; i++){
-			cout << i << ") " << vect[i] << endl;
-		}
-	}
 }

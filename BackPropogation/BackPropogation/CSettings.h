@@ -87,6 +87,9 @@ public:
 	//Number Of Rounds before providing output from an input
 	int i_recurrent_flip_flop = 3;
 
+	//Number layers unrolled when performing backpropogation through time
+	int i_backprop_unrolled = 3;
+
 	CSettings();
 
 
@@ -225,7 +228,10 @@ public:
 		is >> next;
 		is >> settings.s_loadNetworkFile;
 
-		
+		//LongTermShortTerm_items
+		is >> next; //States data is for special kind of network
+		is >> next;
+		is >> settings.i_backprop_unrolled;
 
 
 		return is;

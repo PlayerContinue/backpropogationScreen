@@ -203,6 +203,7 @@
     <ClInclude Include="CGraphicNetwork.cuh" />
     <ClInclude Include="CudaCalculations.cuh" />
     <ClInclude Include="LongTermShortTermNetwork.cuh" />
+    <ClInclude Include="memory_block.cuh" />
     <ClInclude Include="Network.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>
@@ -244,6 +245,7 @@
     </ClCompile>
     <ClCompile Include="CSettings.cpp" />
     <ClCompile Include="CRecurrentCheckpoint.cpp" />
+    <CudaCompile Include="memory_block.cu" />
     <CudaCompile Include="NetworkBase.cu" />
     <CudaCompile Include="ReccurentLoops.cu">
       <FileType>CppCode</FileType>

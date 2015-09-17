@@ -153,7 +153,7 @@ int numberFullSame(CGraphicsNetwork test, double** in, int size){
 		}
 		output = test.getOutput();
 		if (i != 0){
-			for (int j = 0; j < output.size(); j++){
+			for (unsigned int j = 0; j < output.size(); j++){
 				if (output[j] != output2[j]){
 					count_success++;
 					break;
@@ -905,7 +905,9 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	for (int i = 0; i < settings.i_input; i++){
 		temp[i] = i;
 	}
+	//RLoops.runNetwork(temp);
 	RLoops.startTraining(ReccurentLoops::HessianFreeOptimization);
+
 #else
 	RLoops.startTraining();
 #endif
@@ -930,12 +932,14 @@ void initialize_loops(int argc, char** argv){
 	switch (cin.get()){
 	case '1':
 		initializeRecurrentNetwork(argc, argv, settings);
+		exit(0);
 		break;
 	case '2':
 		pause = false;
 		//Attach the signal handler
 		std::signal(SIGINT, signal_handler);
 		initializeFeedForwardNetwork(argc, argv, settings);
+		exit(0);
 		break;
 
 

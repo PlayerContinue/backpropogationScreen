@@ -1,6 +1,7 @@
 #pragma once
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <thrust/functional.h>
 #include <thrust/transform.h>
 #include <thrust/transform_reduce.h>
 #include <thrust/iterator/zip_iterator.h>
@@ -8,8 +9,19 @@
 #include <thrust/copy.h>
 #include <thrust/complex.h>
 #include <vector>
+#ifndef __TIME_H_INCLUDED__
 #include <time.h>
+#define __TIME_H_INCLUDED__
+#endif
+#include "memory_block.cuh"
 #include "util.h"
+
+#ifdef __IOSTREAM_H_INCLUDED__
+
+#else
+#include <iostream>
+#define  __IOSTREAM_H_INCLUDED__
+#endif
 
 #ifdef __X_H_INCLUDED__
 
@@ -40,7 +52,6 @@ private:
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
 	long numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
-	long input_weights;
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
@@ -50,22 +61,22 @@ private:
 	thrust::device_vector<weight_type> GPUWeights;
 
 	//Vectors for the inputs
-	vector<weight_type> input_bias;
-	vector<weight_type> input_weights;
-	vector<int> input_mapTo;
-	vector<int> input_mapFrom;
+	host_vector<weight_type> input_bias;
+	host_vector<weight_type> input_weights;
+	host_vector<int> input_mapTo;
+	host_vector<int> input_mapFrom;
 
 	//Vectors for the inputs
-	vector<weight_type> output_bias;
-	vector<weight_type> output_weights;
-	vector<int> output_mapTo;
-	vector<int> output_mapFrom;
+	host_vector<weight_type> output_bias;
+	host_vector<weight_type> output_weights;
+	host_vector<int> output_mapTo;
+	host_vector<int> output_mapFrom;
 
 	//Vectors for the inputs
-	vector<weight_type> memory_cell_bias;
-	vector<weight_type> memory_cell_weights;
-	vector<int> memory_cell_mapTo;
-	vector<int> memory_cell_mapFrom;
+	host_vector<weight_type> memory_cell_bias;
+	host_vector<weight_type> memory_cell_weights;
+	host_vector<int> memory_cell_mapTo;
+	host_vector<int> memory_cell_mapFrom;
 
 	//Stores the values of the neurons
 	host_vector<weight_type> bias;
@@ -89,15 +100,8 @@ private:
 	thrust::device_vector<int> GPUMapTo;
 	thrust::device_vector<int> GPUMapFrom;
 
-	 
-
-	//Contains a list of iterators for the position of the last weight for a node
-	vector<thrust::host_vector<weight_type>::iterator> weight_position;
-	vector<thrust::host_vector<int>::iterator> mapTo_position;
-	vector<thrust::host_vector<int>::iterator> mapFrom_position;
-
 	//Vector Containing Layer Info
-	vector<long> layerPosition;
+	vector<vector<Memory_Block>> mBlocksLayers;
 
 	CSettings settings;
 public:
@@ -142,9 +146,23 @@ public:
 	}
 
 private:
+	//Add the input into the GPU_Weight_objects
+	void setInput(weight_type* in);
+	//Inititalize the Network For training
 	void InitializeLongShortTermMemory();
+	//Unroll the network into a multilayer representation
+	void UnrollNetwork(int numLayers);
+	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
+	//Apply the error
 	void ApplyLongTermShortTermMemoryError();
+
+	//Combine these two function, they do the same thing
+	template <typename T>
+	void specialCopyToNodes(int start_output, int number_output, device_vector<T> &GPUWeightVector, device_vector<int> &toPosition, device_vector<int> &fromPosition, host_vector<T> &weights, host_vector<int> map);
+	
+	template <typename T>
+	void copyNodesToDevice(device_vector<T> &GPU_Vector, device_vector<int> &fromPosition, host_vector<T> &local_host_Vector, host_vector<int> host_from_vector);
 public:
 
 	//*********************
@@ -153,7 +171,7 @@ public:
 
 	//Only used for dubug. Outputs a simple example of what the network looks like
 	void VisualizeNetwork();
-
+	ostream& OutputNetwork(ostream &os);
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************
@@ -168,13 +186,10 @@ private:
 	//Decide which node the new weight should be attached from
 	//Requires knowing which node it will be attaching to in order to avoid double connections
 	int decideNodeToAttachFrom(int attachTo);
-	
+
 	//Creates a new memory block with connections to all inputs
 	void InitialcreateMemoryBlock(int numberMemoryCells);
 	void createMemoryBlock(int numberMemoryCells);
-
-	void addNewNeuron(int store,int position, weight_type weight, int mapFrom, int mapTo);
-	void addNewPositionInList();
 
 	//Get a new weight
 	weight_type getNewWeight();
@@ -182,14 +197,6 @@ private:
 	//***************************
 	//Perform Functionality
 	//***************************
-	//Finds the sum of the current values in the network
-	//Updates the network values
-	void sumNetworkValues(device_vector<weight_type> &GPUOutput_values,//Copy the output_nodes
-		device_vector<weight_type> &GPUPreviousOutput_Values,
-		device_vector<int> &GPUMapFrom,//Copy the map from
-		device_vector<int> &GPUMapTo, //Copy the mapTo
-		device_vector<weight_type> &GPUWeights, int number_of_rounds
-		);
 
 public:
 	void ResetSequence();
@@ -204,5 +211,54 @@ public:
 	//Removes the GPU Memory copies
 	void cleanNetwork();
 
+	//Empty all data from memory
+	void emptyGPUMemory();
+private:
+	void loadLayerToDevice(unsigned int j);
+	//Unroll a row into the network
+	void loadUnrolledToDevice(int unrolled, unsigned int layer);
+	//***************************
+	//Overload Functions
+	//***************************
+
+	friend ostream& operator<<(ostream &os, const LongTermShortTermNetwork &network){
+		cout.precision(20);
+		std::cout << "Weight" << "\t" << "In" << "\t" << "Out" << endl;
+		for (unsigned int j = 0; j < network.mBlocksLayers.size(); j++){
+			for (unsigned int i = 0; i < network.mBlocksLayers[j].size(); i++){
+				os << network.mBlocksLayers[j][i] << endl;
+			}
+			os << "layer " << j << endl;
+		}
+		os << endl;
+		os << endl;
+		os << network.GPUWeights.size() << endl;
+		for (unsigned int i = 0; i < network.GPUWeights.size(); i++){
+			os << (weight_type)network.GPUWeights[i] << ", ";
+		}
+		os << endl;
+		os << endl;
+
+		os << network.GPUOutput_values.size() << endl;
+		//Output the current output values
+		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
+			os << i << ") " << "( " << (weight_type)network.GPUOutput_values[i] << ", " << (weight_type)network.GPUPreviousOutput_Values[i] << " )" << ", ";
+		}
+
+		os << endl;
+		os << endl;
+
+		os << network.GPUMapFrom.size() << endl;
+		for (unsigned int i = 0; i < network.GPUMapFrom.size(); i++){
+			os << "( " << network.GPUMapFrom[i] << ", " << network.GPUMapTo[i] << ")" << ", ";
+		}
+		os << "______________" << endl;
+		os << endl;
+		os << endl;
+
+
+
+		return os;
+	}
 
 };

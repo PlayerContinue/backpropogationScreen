@@ -1,6 +1,13 @@
 #pragma once
 #include <string.h>
 #include <vector>
+#include <fstream>
+#ifdef __IOSTREAM_H_INCLUDED__
+
+#else
+#include <iostream>
+#endif
+
 #ifdef __X_H_INCLUDED__
 
 #else
@@ -100,5 +107,13 @@ private:
 	weight_type* createTestInputOutput(int numberOfInput, int input_output);
 	void train_network_RealTimeRecurrentTraininguserControlOutput();
 
+	//*********************
+	//Override Operators
+	//*********************
+
+	friend ostream& operator<<(ostream &os, const ReccurentLoops &loop){
+		loop.mainNetwork->OutputNetwork(os);
+		return os;
+	}
 };
 
