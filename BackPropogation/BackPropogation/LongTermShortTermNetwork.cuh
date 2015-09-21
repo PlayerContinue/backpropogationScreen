@@ -55,28 +55,29 @@ private:
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
+	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL};
 	//Stores the weights between neurons
 	host_vector<weight_type> weights;
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 
 	//Vectors for the inputs
-	host_vector<weight_type> input_bias;
-	host_vector<weight_type> input_weights;
-	host_vector<int> input_mapTo;
-	host_vector<int> input_mapFrom;
+	//host_vector<weight_type> input_bias;
+	//host_vector<weight_type> input_weights;
+	//host_vector<int> input_mapTo;
+	//host_vector<int> input_mapFrom;
 
 	//Vectors for the inputs
 	host_vector<weight_type> output_bias;
-	host_vector<weight_type> output_weights;
-	host_vector<int> output_mapTo;
-	host_vector<int> output_mapFrom;
+	//host_vector<weight_type> output_weights;
+	//host_vector<int> output_mapTo;
+	//host_vector<int> output_mapFrom;
 
 	//Vectors for the inputs
-	host_vector<weight_type> memory_cell_bias;
-	host_vector<weight_type> memory_cell_weights;
-	host_vector<int> memory_cell_mapTo;
-	host_vector<int> memory_cell_mapFrom;
+	//host_vector<weight_type> memory_cell_bias;
+	//host_vector<weight_type> memory_cell_weights;
+	//host_vector<int> memory_cell_mapTo;
+	//host_vector<int> memory_cell_mapFrom;
 
 	//Stores the values of the neurons
 	host_vector<weight_type> bias;
@@ -99,6 +100,13 @@ private:
 	//Stores it in gpu_memory
 	thrust::device_vector<int> GPUMapTo;
 	thrust::device_vector<int> GPUMapFrom;
+
+	//Stores the order of the values such that they can be added together by reduce by key
+	thrust::device_vector<int> positionToSum;
+	thrust::device_vector<int> count;
+
+	//Container for output values
+	thrust::device_vector<weight_type> RealOutput;
 
 	//Vector Containing Layer Info
 	vector<vector<Memory_Block>> mBlocksLayers;
@@ -154,6 +162,9 @@ private:
 	void UnrollNetwork(int numLayers);
 	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
+	//Find the delta values of the current output from the expected gradiant
+	void FindBackPropDelta(weight_type* out);
+
 	//Apply the error
 	void ApplyLongTermShortTermMemoryError();
 
@@ -217,6 +228,14 @@ private:
 	void loadLayerToDevice(unsigned int j);
 	//Unroll a row into the network
 	void loadUnrolledToDevice(int unrolled, unsigned int layer);
+	//Get Number Memory Cells In A Layer
+	unsigned int getNumberMemoryCells(unsigned int layer);
+	//Number weights in a cell
+	unsigned int getNumberWeightsInLayer(unsigned int layer);
+	//number weights of a certain type in a layer
+	unsigned int getNumberTypeWeightsInLayer(unsigned int layer, cell_type cell);
+	//Get the permutation of the order for summing the layers
+	void getSumPermutation();
 	//***************************
 	//Overload Functions
 	//***************************
@@ -234,25 +253,44 @@ private:
 		os << endl;
 		os << network.GPUWeights.size() << endl;
 		for (unsigned int i = 0; i < network.GPUWeights.size(); i++){
-			os << (weight_type)network.GPUWeights[i] << ", ";
+			os << i <<") " <<(weight_type)network.GPUWeights[i] << ", " << endl;
 		}
 		os << endl;
 		os << endl;
 
+		os << network.device_deltas.size() << endl;
+		for (unsigned int i = 0; i < network.device_deltas.size(); i++){
+			os << i << ") " << (weight_type)network.device_deltas[i] << ", " << endl;
+		}
+
+		os << endl;
+		os << endl;
+
+		os << "GPU_Values" << endl;
 		os << network.GPUOutput_values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
-			os << i << ") " << "( " << (weight_type)network.GPUOutput_values[i] << ", " << (weight_type)network.GPUPreviousOutput_Values[i] << " )" << ", ";
+			os << i << ") "  << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
 		}
 
 		os << endl;
 		os << endl;
 
+		os << "GPUPrevious_Values" << endl;
+		os << network.GPUOutput_values.size() << endl;
+		//Output the current output values
+		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
+			os << i << ") " << (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
+		}
+
+		os << endl;
+		os << endl;
+
+		os << "(to, from)" << endl;
 		os << network.GPUMapFrom.size() << endl;
 		for (unsigned int i = 0; i < network.GPUMapFrom.size(); i++){
-			os << "( " << network.GPUMapFrom[i] << ", " << network.GPUMapTo[i] << ")" << ", ";
+			os << i << ") " << "(" << network.GPUMapFrom[i] << ", " << network.GPUMapTo[i] << ")" << ", " << endl;
 		}
-		os << "______________" << endl;
 		os << endl;
 		os << endl;
 

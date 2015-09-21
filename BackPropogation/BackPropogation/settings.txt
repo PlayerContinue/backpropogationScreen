@@ -1,4 +1,4 @@
-s_network_name new_word_network_1
+s_network_name recurrentNetwork1
 i_loops 1
 i_number_allowed_failures 3
 i_number_before_growth_potential 5000
@@ -21,7 +21,7 @@ s_outputTrainingFile datasets/binout.txt
 b_testingFromFile 1
 s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
-i_number_of_training 10
+i_number_of_training 20
 i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
@@ -29,3 +29,5 @@ b_loadFromCheckpoint 1
 s_checkpoint_file checkpoints/new_word_network_1_checkpoint_194.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
+Type:LongTermShortTerm_items
+i_backprop_unrolled 3

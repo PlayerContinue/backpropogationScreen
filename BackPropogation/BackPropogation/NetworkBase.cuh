@@ -76,6 +76,10 @@ public:
 	//Copies information stored on the GPU memory into the Main Memory
 	//Removes the GPU Memory copies
 	virtual void cleanNetwork()= 0;
+
+	//Empty all of the GPU memory currently used
+	//Primarily used when finished training or running the network
+	virtual void emptyGPUMemory() = 0;
 };
 
 //*********************

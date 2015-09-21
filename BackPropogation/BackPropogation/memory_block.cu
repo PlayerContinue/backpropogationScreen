@@ -11,6 +11,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput){
 	this->forget_weights = host_vector<weight_type>();
 	this->potential_memory_cell_value = host_vector<weight_type>();
 	this->memory_cell_weights = this->getNewWeight();
+	this->number_memory_cells = 1;
 	this->mapFrom = host_vector<int>();
 
 	//Make the input weights

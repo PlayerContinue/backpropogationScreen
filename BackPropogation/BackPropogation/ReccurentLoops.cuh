@@ -92,6 +92,10 @@ public:
 public:
 	void startTraining(int type);
 
+#ifdef _DEBUG 
+	void testTraining();
+#endif
+
 private:
 	//Training data is passed in
 	bool train_network_RealTimeRecurrentTraining();
@@ -105,7 +109,7 @@ private:
 	//Testing Methods
 	//*********************
 	weight_type* createTestInputOutput(int numberOfInput, int input_output);
-	void train_network_RealTimeRecurrentTraininguserControlOutput();
+	void createCheckpoint();
 
 	//*********************
 	//Override Operators

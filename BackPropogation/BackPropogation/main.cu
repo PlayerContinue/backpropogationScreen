@@ -906,7 +906,7 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 		temp[i] = i;
 	}
 	//RLoops.runNetwork(temp);
-	RLoops.startTraining(ReccurentLoops::HessianFreeOptimization);
+	RLoops.testTraining();
 
 #else
 	RLoops.startTraining();

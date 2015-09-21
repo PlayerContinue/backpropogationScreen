@@ -180,4 +180,6 @@ public:
 	//Copies information stored on the GPU memory into the Main Memory
 	//Removes the GPU Memory copies
 	void cleanNetwork();
+
+	void emptyGPUMemory();
 };

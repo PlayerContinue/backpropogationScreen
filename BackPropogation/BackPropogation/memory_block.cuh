@@ -33,6 +33,9 @@ public:
 	//Contains the information about the memory cell
 	weight_type memory_cell_weights;
 
+	//Number of cells in the memory_block
+	unsigned int number_memory_cells;
+
 public:
 	Memory_Block();
 	Memory_Block(unsigned int input);

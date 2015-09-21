@@ -578,6 +578,10 @@ void  RecurrentNeuralNetwork::cleanNetwork(){
 	clear_vector::free(this->GPUOutput_values);
 	clear_vector::free(this->GPUPreviousOutput_Values);
 }
+
+void  RecurrentNeuralNetwork::emptyGPUMemory(){
+
+}
 //*********************
 //Misc
 //*********************

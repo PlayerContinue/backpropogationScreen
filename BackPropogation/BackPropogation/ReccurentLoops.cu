@@ -82,11 +82,11 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(double* in){
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 	this->mainNetwork->InitializeTraining();
 #ifdef _DEBUG
-	train_network_RealTimeRecurrentTraininguserControlOutput();
+	this->createCheckpoint();
 #endif
 	device_vector<weight_type> temp_device = this->mainNetwork->runNetwork(in);
 #ifdef _DEBUG
-	train_network_RealTimeRecurrentTraininguserControlOutput();
+	this->createCheckpoint();
 #endif
 	vector<RETURN_WEIGHT_TYPE> to_return = vector <RETURN_WEIGHT_TYPE>(temp_device.size());
 
@@ -130,6 +130,27 @@ void ReccurentLoops::startTraining(int type){
 	}
 }
 
+#ifdef _DEBUG 
+void ReccurentLoops::testTraining(){
+	try{
+		this->load_training_data_from_file();
+		this->mainNetwork->InitializeTraining();
+		for (int i = 0; i < this->settings.i_loops; i++){
+
+			this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
+			this->createCheckpoint();
+			this->checkpoint.i_number_of_loops_checkpoint += 1;
+		}
+		this->mainNetwork->emptyGPUMemory();
+	}
+	catch (exception e){//Edit to write the problems to file later
+		cout << e.what();
+		cin.sync();
+		cin.get();
+	}
+}
+#endif
+
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
 	//this->mainNetwork->addNeuron(1);
 	//this->mainNetwork->VisualizeNetwork();
@@ -146,7 +167,7 @@ bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
 			this->mainNetwork->ApplyError();//Apply the error gained from the last steps
 			this->mainNetwork->CopyToHost();
 			this->mainNetwork->VisualizeNetwork();
-			this->train_network_RealTimeRecurrentTraininguserControlOutput();
+			this->createCheckpoint();
 			this->mainNetwork->ResetSequence();
 		}
 
@@ -171,7 +192,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	weight_type* temp = new weight_type[numberOfInput];
 	for (int i = position; i < position + numberOfInput; i++){
 		if (input_output == 0){
-			temp[i - position] = (weight_type)1;
+			temp[i - position] = (weight_type)i;
 		}
 		else{
 			temp[i - position] = (weight_type).1;
@@ -181,11 +202,11 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	return  temp;
 }
 
-void ReccurentLoops::train_network_RealTimeRecurrentTraininguserControlOutput(){
-	static int temp = 1;
-	if (temp == 1){
+void ReccurentLoops::createCheckpoint(){
+	static int count = 0 ;
+
 		std::ofstream outputfile;
-		outputfile.open("networks/" + settings.s_network_name + std::to_string(0) + ".txt", ios::trunc);
+		outputfile.open("networks/" + settings.s_network_name + std::to_string(count) + ".txt", ios::trunc);
 		if (outputfile.is_open()){
 			for (int i = 0; i < this->settings.i_input; i++){
 				//cout << i << ") " << this->input[0][i] << endl;
@@ -211,9 +232,8 @@ void ReccurentLoops::train_network_RealTimeRecurrentTraininguserControlOutput(){
 			std::cout << "continue?";
 		}
 		
-
+		count++;
 		
-	}
 
 	
 
