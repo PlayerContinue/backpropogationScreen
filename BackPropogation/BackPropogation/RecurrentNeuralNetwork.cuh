@@ -94,7 +94,9 @@ public:
 	//Run The Network
 	//*********************
 	device_vector<weight_type> runNetwork(weight_type* in);
-
+	void InitializeRun(){
+		this->InitializeTraining();
+	}
 	//***************************
 	//Train the Network
 	//***************************

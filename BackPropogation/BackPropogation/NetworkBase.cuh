@@ -33,11 +33,10 @@ public:
 	//Run The Network
 	//*********************
 	virtual device_vector<weight_type> runNetwork(weight_type* in) = 0;
-
+	virtual void InitializeRun() = 0;
 	//***************************
 	//Train the Network
 	//***************************
-
 	//Initilialize the network for training
 	virtual void InitializeTraining() = 0;
 	//Run a round of training

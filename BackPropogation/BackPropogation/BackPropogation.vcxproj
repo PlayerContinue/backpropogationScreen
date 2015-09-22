@@ -222,6 +222,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="structures_cuda.cuh" />
+    <ClInclude Include="TestCode.cuh" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>

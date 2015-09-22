@@ -72,6 +72,9 @@
     <ClInclude Include="memory_block.cuh">
       <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="TestCode.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">

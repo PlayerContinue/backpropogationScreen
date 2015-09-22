@@ -76,6 +76,10 @@ private:
 		}
 		os << endl;
 
+		os << block.memory_cell_weights;
+
+		os << endl;
+
 		
 
 		for (unsigned int i = 0; i < block.mapFrom.size(); i++){

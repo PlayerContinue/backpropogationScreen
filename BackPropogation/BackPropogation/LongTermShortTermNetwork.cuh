@@ -31,6 +31,12 @@
 #include "NetworkBase.cuh"
 #endif
 
+//#define TEST_DEBUG
+
+#ifdef TEST_DEBUG
+#include "TestCode.cuh"
+#endif
+
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
@@ -135,7 +141,10 @@ public:
 	//Run The Network
 	//*********************
 	device_vector<weight_type> runNetwork(weight_type* in);
-
+	void InitializeLongShortTermMemoryForRun();
+	void InitializeRun(){
+		this->InitializeLongShortTermMemoryForRun();
+	}
 	//***************************
 	//Train the Network
 	//***************************

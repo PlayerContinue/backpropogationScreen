@@ -13,7 +13,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput){
 	this->memory_cell_weights = this->getNewWeight();
 	this->number_memory_cells = 1;
 	this->mapFrom = host_vector<int>();
-
+	srand(time(NULL));
 	//Make the input weights
 	for (int i = 0; i < numberInput; i++){
 		this->input_weights.push_back(this->getNewWeight());

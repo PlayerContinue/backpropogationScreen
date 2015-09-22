@@ -1,6 +1,8 @@
 #include "LongTermShortTermNetwork.cuh"
 #define NUMBER_NODES_IN_MEMORY_CELL 5
+#define TEST_DEBUG
 
+//#define _DEBUG_WEIGHTS
 LongTermShortTermNetwork::LongTermShortTermNetwork(){
 	this->settings = CSettings();
 	LongTermShortTermNetwork(this->settings);
@@ -178,10 +180,19 @@ struct run_memory_block_functon : public::unary_function < T, T > {
 	template <typename Tuple>
 	__host__ __device__
 		void operator()(Tuple &x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
-		thrust::get<3>(x) = thrust::get<0>(x)*thrust::get<3>(x);//Multiply the input by the potential_memory_value
-		thrust::get<2>(x) = thrust::get<2>(x) * thrust::get<4>(x); //Multiply the forget * the old memory cell value
-		thrust::get<4>(x) = thrust::get<2>(x) +thrust::get<3>(x) +thrust::get<4>(x); //Sum the forget,input, and old cell value to get the new vaue the new potential memory cell value
-		thrust::get<1>(x) = thrust::get<4>(x) * thrust::get<1>(x); //Multiply the new memory_cell value by the new output value 
+		weight_type memory_value = sigmoid_function(thrust::get<0>(x) * thrust::get<3>(x));//Multiply the input by the potential_memory_value
+
+		weight_type forget = (weight_type)thrust::get<2>(x);
+
+		thrust::get<2>(x) = sigmoid_function((weight_type)thrust::get<2>(x) * (weight_type)thrust::get<4>(x)); //Multiply the forget * the old memory cell value
+		thrust::get<4>(x) = thrust::get<4>(x) + memory_value + forget; //Sum the forget,input, and old cell value to get the new value the new potential memory cell value
+		thrust::get<1>(x) = sigmoid_function((weight_type)thrust::get<4>(x) * (weight_type)thrust::get<1>(x)); //Multiply the new memory_cell value by the new output value 
+
+	}
+
+	__host__ __device__
+	weight_type sigmoid_function(weight_type value){
+		return (weight_type)1 / ((weight_type)1 + thrust::exp(((weight_type)-1 * value)));
 	}
 
 };
@@ -266,7 +277,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 		//The values in the GPU weights are in the order input, output, forget, memory cells
 		//Subtracting this->mBlocksLayers[i].size() from the end will remove the memory cells from doing anything
 		//Output to Previous
-		thrust::reduce_by_key(this->GPUMapTo.begin(), this->GPUMapTo.end(), make_transform_iterator(
+		thrust::reduce_by_key(this->GPUMapTo.begin(), this->GPUMapTo.end(), thrust::make_transform_iterator(
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
 			this->GPUWeights.begin() + this->numberNonWeights + previousnumberMBlocks, // We don't want to multiply the actual input/out values, so we skip them
@@ -275,36 +286,49 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 			this->GPUMapFrom.begin())
 			)
 			),
-			sigmoid_tuple_functor<weight_type>()), //Multiply the two values then run them through a sigmoid function
+			multiply<weight_type>()), //Multiply the two values then run them through a sigmoid function
 			thrust::make_discard_iterator(), // Discard the retrieved order, the order should be constant
 			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks//Store in the previous in order to not overwrite the saved values
 			);
+
+		thrust::transform(this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + (5 * numberMBlocks),
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
+			sigmoid_functor<weight_type>());
 
 		//Create a input/output/forget/potential_memory_cell_values/memory_cell_value value
 		//Essentially run the gate and get the output value
 		thrust::for_each(
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks, //input values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks,//output values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks,//forget values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks,//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + this->settings.i_input, //input values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input,//output values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
 			)),
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks, //input values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks,//output values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks,//forget values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks,//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (5 * numberMBlocks) + previousnumberMBlocks
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input, //input values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//output values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (5 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
 			)),
 			run_memory_block_functon<weight_type>());
+		thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->GPUOutput_values.begin());
+		
 	}
 
+	device_vector<weight_type> toReturn = device_vector<weight_type>(this->settings.i_output);
+	//Transform the output of the current
+	thrust::transform(this->GPUOutput_values.end() - 
+		(5 * this->mBlocksLayers[this->mBlocksLayers.size() - 1].size()) + this->settings.i_output,
+		this->GPUOutput_values.end() - 
+		(5 * this->mBlocksLayers[this->mBlocksLayers.size() - 1].size())+ this->settings.i_output + this->settings.i_output,
+		toReturn.begin(), _1 * (weight_type)1);
 
-
-	return device_vector<weight_type>();
+	return toReturn;
 }
 //*********************
 //Training the Network
@@ -374,6 +398,22 @@ struct add_when_greater_than : public thrust::unary_function < T, T > {
 
 };
 
+//Apply the error from the delta and the weight
+template <typename T>
+struct apply_error: public thrust::binary_function<T,T,T>{
+	const T alpha;
+	const T beta;
+	const T divide;
+	apply_error(T _alpha, T _beta, T _divide) : alpha(_alpha), beta(_beta),divide(_divide){
+
+	}
+
+	//w = weight, d = delta, beta * (d/(number summed) + (w + (w*alpha)
+	__host__ __device__
+		T operator()(const T &d, const T &w)const{
+		return (beta * (d / divide)) + (w + (w*alpha));
+	}
+};
 
 template <typename T>
 struct find_non_output_delta : public thrust::unary_function < T, T > {
@@ -390,14 +430,16 @@ struct find_non_output_delta : public thrust::unary_function < T, T > {
 
 };
 
+void LongTermShortTermNetwork::InitializeLongShortTermMemoryForRun(){
+	//Form the delta objects
+	this->CopyToDevice();
+}
 
 void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 	//Store all the values in the device
 	//Will later add option for too little memory
 	//Copy the information to the device
 	this->UnrollNetwork(3);
-
-	//Form the delta objects
 	this->host_deltas = host_vector<weight_type>(this->GPUOutput_values.size());
 	this->device_deltas = device_vector<weight_type>(this->GPUOutput_values.size());
 	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
@@ -460,6 +502,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 
 }
 
+//Find the delta gradiant for each of the "layers" of the network
 void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 	//Retrieve the length of the output
 	unsigned int numberCellsInLayers = this->mBlocksLayers[this->mBlocksLayers.size() - 1].size();
@@ -477,10 +520,18 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 
 	//Find the output delta
 	//Start from the begining + the number of input nodes
-	thrust::transform(this->RealOutput.begin(), this->RealOutput.end(), this->GPUOutput_values.end() - lengthOfOutput + numberNodesOfSingleType, this->device_deltas.end() - lengthOfOutput + numberNodesOfSingleType, _2 * (((weight_type)1) - _2) * (_1 - _2));//Output * (1- output) * (target-output)
+	thrust::transform(this->RealOutput.begin(), this->RealOutput.end(), 
+		this->GPUOutput_values.end() - lengthOfOutput + numberNodesOfSingleType, 
+		this->device_deltas.end() - lengthOfOutput + numberNodesOfSingleType,
+		_2 * (((weight_type)1) - _2) * (_1 - _2));//Output * (1- output) * (target-output)
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), 0);
+	
+	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), 1);
 
-
+	//n,k used to form the sequence
+	//placed here to make the function easier to read
+	unsigned int n = numberCellsInLayers;
+	unsigned int k = numberOfWeightsOfOutputType;
 	//Backpropogate to the input of the output memory cells
 
 	//Multiply the output weights by their deltas
@@ -498,6 +549,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
 		this->GPUWeights.end() - numberOfWeightsInLayer + numberOfWeightsOfInputType,//Beginning of the output of the output layer memory cells
+		
 		thrust::make_permutation_iterator(
 		this->device_deltas.begin(), //Beginning of the deltas of the output
 		this->GPUMapTo.end() - numberOfWeightsInLayer + numberOfWeightsOfInputType
@@ -506,9 +558,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 		),
 		multiply<weight_type>()
 		),
-		thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
-		(_1 % (numberOfWeightsOfOutputType / numberCellsInLayers))
-		+ (_1 / (numberOfWeightsOfOutputType / numberCellsInLayers)))),
+		thrust::make_transform_iterator(thrust::make_counting_iterator((int)0), (((_1%n)*k) + (_1/n)))),
 		thrust::make_discard_iterator(),
 		this->GPUPreviousOutput_Values.begin()
 		);
@@ -565,73 +615,23 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 	unsigned int numberOfWeightsInNextLayer = numberOfWeightsInLayer;
 	unsigned int numberCellsInNextLayer = numberCellsInLayers;
 
-	//numberCellsInLayers = this->mBlocksLayers[this->mBlocksLayers.size() - 2].size();
-	//Reset information about the layer
-	//This information helps understand the position of the nodes in the layers
-	numberOfWeightsOfInputType = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, INPUT_CELL);
-	numberOfWeightsOfOutputType = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, OUTPUT_CELL);
-	numberOfWeightsOfForgetType = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, FORGET_CELL);
-	numberOfWeightsOfPotentialMemoryCellType = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, POTENTIAL_MEMORY_CELL);
-	numberOfWeightsOfMemoryCellType = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, MEMORY_CELL);
-	numberOfWeightsInLayer = numberOfWeightsOfInputType + numberOfWeightsOfOutputType + numberOfWeightsOfForgetType + numberOfWeightsOfPotentialMemoryCellType + numberOfWeightsOfMemoryCellType;
-
-	unsigned int numberNodesOfSingleTypeInCurrentLayer = this->mBlocksLayers[this->mBlocksLayers.size() - 2].size();//Number of non memory cells in a node
 
 	//Rempty the delta * weight holder
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), 0);
-	
-	
-
-	numberNodesOfSingleTypeInCurrentLayer = this->mBlocksLayers[this->mBlocksLayers.size() - 2].size();//Number of non memory cells in a node
-
-
-	/*thrust::reduce_by_key(
-		this->count.end() - numberOfWeightsInNextLayer,
-		this->count.end() - numberOfWeightsInNextLayer + numberOfWeightsOfInputTypeInNextLayer,
-		
-		thrust::make_permutation_iterator(
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		//Permute the Output_values such that each one occurs with it's particular weight
-		thrust::make_permutation_iterator(
-		this->GPUOutput_values.begin(),
-		this->GPUMapFrom.end() - lengthOfOutput),
-
-		//Weight x Delta
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		this->GPUWeights.end() - numberOfWeightsInNextLayer,//End - number of weights in next layer + the number of values which have no weight
-		thrust::make_permutation_iterator(
-		this->device_deltas.end() - lengthOfOutput, //Start from the beginning of the previous layer
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
-		),
-		multiply<weight_type>()
-		)//Permute the deltas such that it matches the weights
-		)), 
-		find_non_output_delta<weight_type>()),
-		this->positionToSum.end() - numberOfWeightsInNextLayer),
-		thrust::make_discard_iterator(),
-		this->GPUPreviousOutput_Values.begin()
-		);
-	
-	thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.begin() + numberNodesOfSingleTypeInCurrentLayer, this->device_deltas.end() - lengthOfOutput - this->numberOfNodes + numberNodesOfSingleTypeInCurrentLayer);
-	*/
 
 	numberCellsInLayers = this->mBlocksLayers[this->mBlocksLayers.size() - 2].size();
-	unsigned int number_in_layer[6];
-	unsigned int length_to_previous_output = lengthOfOutput + this->numberOfNodes;
+	unsigned int length_to_previous_output = lengthOfOutput;
 	unsigned int length_to_previous_weight = numberOfWeightsInNextLayer;
+	unsigned int delta_start = lengthOfOutput;
+	unsigned int end_of_count = numberOfWeightsInNextLayer;
 	//Find the delta from the gradiant of each other layer in the unrolled network
-	for (int i = this->settings.i_backprop_unrolled - 1; i > -1; i--){
+	for (int i = this->settings.i_backprop_unrolled; i > 0; i--){
 		
 		//Lengths of weights in the next layer. I.e. output layer if second layer from top
 		
 		thrust::reduce_by_key(
-			this->count.end() - length_to_previous_output,
-			this->count.end() - length_to_previous_output + this->numberOfNodes,//Sum over start of layer to end of layer
+			this->count.end() - length_to_previous_weight,
+			this->count.end() - length_to_previous_weight + end_of_count,//Sum over start of layer to end of layer
 
 			thrust::make_permutation_iterator(
 			thrust::make_transform_iterator(
@@ -639,16 +639,16 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 			thrust::make_tuple(
 			//Permute the Output_values such that each one occurs with it's particular weight
 			thrust::make_permutation_iterator(
-			this->GPUOutput_values.begin(),
-			this->GPUMapFrom.begin()),
+			this->GPUOutput_values.end(),
+			this->GPUMapFrom.end() - length_to_previous_weight - this->numberOfNodes),
 
 			//Weight x Delta
 			thrust::make_transform_iterator(
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
-			this->GPUWeights.begin(),//End - number of weights in next layer + the number of values which have no weight
+			this->GPUWeights.end() - length_to_previous_weight,//End - number of weights in next layer + the number of values which have no weight
 			thrust::make_permutation_iterator(
-			this->device_deltas.end() - lengthOfOutput - (this->numberOfNodes * (this->settings.i_backprop_unrolled - i)), //Start from the beginning of the previous layer
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
 			thrust::make_transform_iterator(
 			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
 			),
@@ -660,36 +660,162 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 			thrust::make_discard_iterator(),
 			this->GPUPreviousOutput_Values.begin()
 			);
-		
+
+
+
+#ifdef _DEBUG_WEIGHTS		
 		thrust::copy(thrust::make_permutation_iterator(
-			this->device_deltas.end() - lengthOfOutput - (this->numberOfNodes * (this->settings.i_backprop_unrolled - i)), //Start from the beginning of the previous layer
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
 			thrust::make_transform_iterator(
 			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)), 
 			
 			thrust::make_permutation_iterator(
-			this->device_deltas.end() - lengthOfOutput - (this->numberOfNodes * (this->settings.i_backprop_unrolled - i)), //Start from the beginning of the previous layer
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
 			thrust::make_transform_iterator(
-			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)) + this->numberOfNodes, std::ostream_iterator<weight_type>(std::cout, "\n"));
+			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)) + end_of_count, std::ostream_iterator<weight_type>(std::cout, "\n"));
+		
+		std::cout << "______________________";
+
+		//Weight x Delta
+		thrust::copy(thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.end() - length_to_previous_weight,//End - number of weights in next layer + the number of values which have no weight
+			thrust::make_permutation_iterator(
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
+			thrust::make_transform_iterator(
+			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
+			),
+			multiply<weight_type>()
+			), thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.end() - length_to_previous_weight,//End - number of weights in next layer + the number of values which have no weight
+			thrust::make_permutation_iterator(
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
+			thrust::make_transform_iterator(
+			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
+			),
+			multiply<weight_type>()
+			) + end_of_count, std::ostream_iterator<weight_type>(std::cout, "\n"));
+
+		std::cout << "______________________";
+
+		//Weight x Delta
+		thrust::copy(
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			//Permute the Output_values such that each one occurs with it's particular weight
+			thrust::make_permutation_iterator(
+			this->GPUOutput_values.end() - length_to_previous_weight + this->numberOfNodes,
+			this->GPUMapFrom.end() - length_to_previous_weight + this->numberOfNodes),
+
+			//Weight x Delta
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.end() - length_to_previous_weight,//End - number of weights in next layer + the number of values which have no weight
+			thrust::make_permutation_iterator(
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
+			thrust::make_transform_iterator(
+			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
+			),
+			multiply<weight_type>()
+			)//Permute the deltas such that it matches the weights
+			)),
+			find_non_output_delta<weight_type>()),
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			//Permute the Output_values such that each one occurs with it's particular weight
+			thrust::make_permutation_iterator(
+			this->GPUOutput_values.end() - length_to_previous_weight + this->numberOfNodes,
+			this->GPUMapFrom.end() - length_to_previous_weight + this->numberOfNodes),
+
+			//Weight x Delta
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.end() - length_to_previous_weight,//End - number of weights in next layer + the number of values which have no weight
+			thrust::make_permutation_iterator(
+			this->device_deltas.end() - delta_start, //Start from the beginning of the previous layer
+			thrust::make_transform_iterator(
+			thrust::make_counting_iterator((int)0), _1 / numberCellsInLayers)))
+			),
+			multiply<weight_type>()
+			)//Permute the deltas such that it matches the weights
+			)),
+			find_non_output_delta<weight_type>()) + end_of_count, std::ostream_iterator<weight_type>(std::cout, "\n"));
+
+#endif
+
+		//Increase the position of the weights
 		length_to_previous_output += this->numberOfNodes;
 		length_to_previous_weight += numberOfWeightsInLayer;
-		
-		
-		thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.begin() + this->numberOfNodes, this->device_deltas.end() -  lengthOfOutput - (this->numberOfNodes * (this->settings.i_backprop_unrolled - i)));
-
-		
-		
-
-
-		
-
+		delta_start += this->numberOfNodes;
+		end_of_count = this->numberOfNodes;
+		thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.begin() + this->numberOfNodes, this->device_deltas.end() - delta_start);
 
 	}
 
 
 }
 
-
+//Apply the error
 void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
+	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	unsigned int lengthOfOutput = (this->mBlocksLayers[this->mBlocksLayers.size() - 1].size() * 4) + this->getNumberMemoryCells(this->mBlocksLayers.size() - 1);
+
+
+	unsigned int numberOfWeightsInLayer = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 1, MEMORY_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 1, POTENTIAL_MEMORY_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 1, FORGET_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 1, OUTPUT_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 1, INPUT_CELL);
+	unsigned int numberOfWeightsInCurrentLayer = getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, MEMORY_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, POTENTIAL_MEMORY_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, FORGET_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, OUTPUT_CELL) + getNumberTypeWeightsInLayer(this->mBlocksLayers.size() - 2, INPUT_CELL);
+	unsigned int numberMemoryCellsOutput = this->getNumberMemoryCells(this->mBlocksLayers.size() - 1);
+	unsigned int numberMemoryCellsLayers = this->getNumberMemoryCells(this->mBlocksLayers.size() - 2);
+	//Average the deltas
+	thrust::reduce_by_key(
+		thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
+		_1 / this->settings.i_backprop_unrolled
+		),
+		thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
+		_1 / this->settings.i_backprop_unrolled
+		) + this->device_deltas.size() - lengthOfOutput,
+
+		make_permutation_iterator(this->device_deltas.begin() + this->numberNonWeights,
+		thrust::make_transform_iterator(thrust::make_counting_iterator((int)0),
+		((_1%this->settings.i_backprop_unrolled) * this->numberOfNodes) + (_1/this->settings.i_backprop_unrolled))
+		),
+
+		thrust::make_discard_iterator(),
+		this->GPUPreviousOutput_Values.begin()
+		);
+
+	//Subtract the deltas from the weights from each non-output nodes
+	thrust::transform(
+		this->GPUWeights.begin() + this->numberNonWeights,
+		this->GPUWeights.begin() + this->numberNonWeights + numberOfWeightsInCurrentLayer - numberMemoryCellsLayers,
+		make_permutation_iterator(
+		this->GPUPreviousOutput_Values.begin(), 
+		this->GPUMapTo.begin() + this->numberNonWeights
+		),
+		this->GPUWeights.begin() + this->numberNonWeights,
+		//Beta * (average of delta) + (weights + (weights * alpha))
+		apply_error<weight_type>((weight_type)this->settings.d_alpha, (weight_type)this->settings.d_beta, (weight_type)this->settings.i_backprop_unrolled)
+		);
+
+
+	//Subtract the deltas from the weights of the output
+	thrust::transform(
+		this->GPUWeights.end() - numberOfWeightsInLayer ,
+		this->GPUWeights.end() - numberMemoryCellsOutput,
+		make_permutation_iterator(this->device_deltas.begin(),
+		this->GPUMapTo.end() - numberOfWeightsInLayer),
+		this->GPUWeights.end() - numberOfWeightsInLayer, 
+		apply_error<weight_type>((weight_type)this->settings.d_alpha, (weight_type) this->settings.d_beta, (weight_type)1)
+		);
+
+
+
 
 }
 
@@ -770,7 +896,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 	thrust::copy(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), this->output_bias.begin());
 	//Copy the secondary output
 	thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->bias.begin());
-	int start = 0;
+	int start = this->settings.i_input;
 	for (int j = 0; j < this->mBlocksLayers.size(); j++){
 		//Copy back the input
 		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
@@ -797,7 +923,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 
 		//Get the new memory_cell_weight
 		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
-			this->mBlocksLayers[j][i].memory_cell_weights = this->GPUOutput_values[this->GPUOutput_values.size() - i - this->mBlocksLayers[j].size()];
+			this->mBlocksLayers[j][i].memory_cell_weights = 0;//this->GPUOutput_values[this->GPUOutput_values.size() - i - this->mBlocksLayers[j].size()];
 		}
 	}
 }
@@ -931,6 +1057,13 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 
 
 void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
+
+	//Add a place for the input
+	if (j == 0){
+		this->GPUOutput_values.push_back(0);
+		this->GPUPreviousOutput_Values.push_back(0);
+	}
+
 	//Set all the input values
 	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		copyNodesToDevice<weight_type>(this->GPUWeights, this->GPUMapFrom, this->mBlocksLayers[j][i].input_weights, this->mBlocksLayers[j][i].mapFrom);
@@ -1056,7 +1189,7 @@ void LongTermShortTermNetwork::getSumPermutation(){
 	unsigned int weights[5];
 	unsigned int start = 0;
 	unsigned int counter = 0;
-	unsigned int smallest = 0;
+	unsigned int length = 0;
 #ifdef  _DEBUG
 	vector<int> temp = vector<int>();
 #endif
@@ -1067,14 +1200,18 @@ void LongTermShortTermNetwork::getSumPermutation(){
 		weights[3] = getNumberTypeWeightsInLayer(k, POTENTIAL_MEMORY_CELL);
 		weights[4] = getNumberTypeWeightsInLayer(k, MEMORY_CELL);
 		if (k == this->mBlocksLayers.size() - 1){
+			length = (weights[0] + weights[1] + weights[2] + weights[3] + weights[4]);
 			start = this->GPUMapFrom.size() - (weights[0] + weights[1] + weights[2] + weights[3] + weights[4]);
 		}
+		else{
+			length = this->numberOfNodes;
+		}
 
-		for (int p = 0; p < 5; p++){//Go through each kind of node
-			for (int i = start; i < start + weights[p]; i++){
-				for (int j = i; j < start + weights[p]; j++){
+		
+			for (int i = start; i < start + length ; i++){
+				for (int j = i; j < start + length ; j++){
 					if (this->GPUMapFrom[i] == this->GPUMapFrom[j]){
-						this->positionToSum.push_back(j-start);
+						this->positionToSum.push_back(j - start);
 						this->count.push_back(counter);
 #ifdef _DEBUG
 						temp.push_back(j - start);
@@ -1085,10 +1222,10 @@ void LongTermShortTermNetwork::getSumPermutation(){
 				
 				counter++;
 			}
-			start += weights[p];
+			start += length;
 		}
 		
-	}
+	
 
 }
 

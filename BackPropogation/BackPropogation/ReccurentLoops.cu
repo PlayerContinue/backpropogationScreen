@@ -80,7 +80,7 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(double* in){
 
 
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
-	this->mainNetwork->InitializeTraining();
+	this->mainNetwork->InitializeRun();
 #ifdef _DEBUG
 	this->createCheckpoint();
 #endif
@@ -93,7 +93,7 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 	for (unsigned int i = 0; i < temp_device.size(); i++){
 		to_return[i] = temp_device[i];
 	}
-	this->mainNetwork->cleanNetwork();
+	this->mainNetwork->emptyGPUMemory();
 	clear_vector::free(temp_device);
 
 	return to_return;
@@ -138,10 +138,26 @@ void ReccurentLoops::testTraining(){
 		for (int i = 0; i < this->settings.i_loops; i++){
 
 			this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
-			this->createCheckpoint();
+			//Apply the error
+			this->mainNetwork->ApplyError();
+			if (i%this->settings.i_number_allowed_same == 0){
+				this->createCheckpoint();
+			}
 			this->checkpoint.i_number_of_loops_checkpoint += 1;
+			this->mainNetwork->ResetSequence();
+			
 		}
-		this->mainNetwork->emptyGPUMemory();
+		try{
+			this->createCheckpoint();
+			this->mainNetwork->cleanNetwork();
+			this->runNetwork(this->input[0]);
+
+		}
+		catch (exception e){
+			this->mainNetwork->emptyGPUMemory();
+		}
+
+		
 	}
 	catch (exception e){//Edit to write the problems to file later
 		cout << e.what();
@@ -192,7 +208,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	weight_type* temp = new weight_type[numberOfInput];
 	for (int i = position; i < position + numberOfInput; i++){
 		if (input_output == 0){
-			temp[i - position] = (weight_type)i;
+			temp[i - position] = (weight_type)1;
 		}
 		else{
 			temp[i - position] = (weight_type).1;
