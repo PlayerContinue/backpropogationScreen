@@ -136,21 +136,23 @@ void ReccurentLoops::testTraining(){
 		this->load_training_data_from_file();
 		this->mainNetwork->InitializeTraining();
 		for (int i = 0; i < this->settings.i_loops; i++){
-
 			this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
 			//Apply the error
-			this->mainNetwork->ApplyError();
+			//this->mainNetwork->ApplyError();
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
 			this->checkpoint.i_number_of_loops_checkpoint += 1;
-			this->mainNetwork->ResetSequence();
+			
+			if (i%this->settings.i_number_in_sequence == 0){//Reset the sequence once the sequence has finished
+				this->mainNetwork->ResetSequence();
+			}
 			
 		}
 		try{
 			this->createCheckpoint();
 			this->mainNetwork->cleanNetwork();
-			this->runNetwork(this->input[0]);
+			//this->runNetwork(this->input[0]);
 
 		}
 		catch (exception e){
@@ -208,7 +210,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	weight_type* temp = new weight_type[numberOfInput];
 	for (int i = position; i < position + numberOfInput; i++){
 		if (input_output == 0){
-			temp[i - position] = (weight_type)1;
+			temp[i - position] = (weight_type)i;
 		}
 		else{
 			temp[i - position] = (weight_type).1;

@@ -57,6 +57,7 @@ private:
 
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
+	long numberOfWeightsInLayer;
 	long numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
@@ -67,23 +68,12 @@ private:
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 
-	//Vectors for the inputs
-	//host_vector<weight_type> input_bias;
-	//host_vector<weight_type> input_weights;
-	//host_vector<int> input_mapTo;
-	//host_vector<int> input_mapFrom;
+	
 
 	//Vectors for the inputs
 	host_vector<weight_type> output_bias;
-	//host_vector<weight_type> output_weights;
-	//host_vector<int> output_mapTo;
-	//host_vector<int> output_mapFrom;
 
-	//Vectors for the inputs
-	//host_vector<weight_type> memory_cell_bias;
-	//host_vector<weight_type> memory_cell_weights;
-	//host_vector<int> memory_cell_mapTo;
-	//host_vector<int> memory_cell_mapFrom;
+
 
 	//Stores the values of the neurons
 	host_vector<weight_type> bias;

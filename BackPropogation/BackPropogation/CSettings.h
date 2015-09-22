@@ -90,6 +90,9 @@ public:
 	//Number layers unrolled when performing backpropogation through time
 	int i_backprop_unrolled = 3;
 
+	//Number of inputs in a sequence
+	int i_number_in_sequence = 1;
+
 	CSettings();
 
 
@@ -233,6 +236,8 @@ public:
 		is >> next;
 		is >> settings.i_backprop_unrolled;
 
+		is >> next;
+		is >> settings.i_number_in_sequence;
 
 		return is;
 	}
