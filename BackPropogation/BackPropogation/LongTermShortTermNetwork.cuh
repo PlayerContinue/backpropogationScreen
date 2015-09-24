@@ -8,6 +8,11 @@
 #include <thrust/iterator/permutation_iterator.h>
 #include <thrust/copy.h>
 #include <thrust/complex.h>
+
+
+#ifndef __FUNCTORS__H__INCLUDED__
+#include "Recurrent_Functors.cuh"
+#endif
 #include <vector>
 #ifndef __TIME_H_INCLUDED__
 #include <time.h>
@@ -67,7 +72,7 @@ private:
 	host_vector<weight_type> weights;
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
-
+	thrust::device_vector<weight_type> GPUPreviousWeights;
 	
 
 	//Vectors for the inputs
@@ -276,10 +281,21 @@ private:
 		os << endl;
 
 		os << "GPUPrevious_Values" << endl;
-		os << network.GPUOutput_values.size() << endl;
+		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
 			os << i << ") " << (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
+		}
+
+		os << endl;
+		os << endl;
+
+
+		os << "GPUPreviousWeights" << endl;
+		os << network.GPUPreviousOutput_Values.size() << endl;
+		//Output the current output values
+		for (unsigned int i = 0; i < network.GPUPreviousWeights.size(); i++){
+			os << i << ") " << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -293,7 +309,16 @@ private:
 		os << endl;
 		os << endl;
 
+		os << "SumOrder" << endl;
+		thrust::copy(network.positionToSum.begin(), network.positionToSum.end(), std::ostream_iterator<int>(os, ","));
 
+		os << endl;
+
+		thrust::copy(network.count.begin(), network.count.end(), std::ostream_iterator<int>(os, ","));
+
+
+		os << endl;
+		os << endl;
 
 		return os;
 	}

@@ -213,6 +213,7 @@
     <ClInclude Include="ReccurentLoops.cuh" />
     <ClInclude Include="CRecurrentCheckpoint.h" />
     <ClInclude Include="RecurrentNeuralNetwork.cuh" />
+    <ClInclude Include="Recurrent_Functors.cuh" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="CSettings.h" />
     <ClInclude Include="SNeuron.cuh" />

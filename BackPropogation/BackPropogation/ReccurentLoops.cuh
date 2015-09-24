@@ -116,6 +116,7 @@ private:
 	//*********************
 
 	friend ostream& operator<<(ostream &os, const ReccurentLoops &loop){
+		os.precision(30);
 		loop.mainNetwork->OutputNetwork(os);
 		return os;
 	}

@@ -1,10 +1,10 @@
 s_network_name recurrentNetwork1
-i_loops 5
+i_loops 40000
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
-i_number_allowed_same 1
-i_input 1
-i_output 1
+i_number_allowed_same 1000
+i_input 2
+i_output 2
 d_threshold .1
 d_distance_threshold .7
 d_neuron_distance_threshold .2
@@ -14,14 +14,14 @@ d_fluctuate_square_mean 0
 b_allow_node_locking 1
 d_lock_node_level .3e-70
 d_alpha .01
-d_beta .5
+d_beta .01
 b_trainingFromFile 0
 s_trainingSet datasets/input.txt
 s_outputTrainingFile datasets/binout.txt
 b_testingFromFile 0
 s_testSet datasets/input.txt
 s_outputTestSet datasets/binout.txt
-i_number_of_training 5
+i_number_of_training 40000
 i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
@@ -30,5 +30,5 @@ s_checkpoint_file checkpoints/new_word_network_1_checkpoint_194.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
 Type:LongTermShortTerm_items
-i_backprop_unrolled 3
+i_backprop_unrolled 8
 i_number_in_sequence 5
