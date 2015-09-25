@@ -144,24 +144,25 @@ void ReccurentLoops::testTraining(){
 			//Apply the error
 			this->mainNetwork->ApplyError();
 			if (i%this->settings.i_number_allowed_same == 0){
-				//this->createCheckpoint();
+				this->createCheckpoint();
 			}
 			if (i%this->settings.i_number_in_sequence == 0){//Reset the sequence once the sequence has finished
-				this->mainNetwork->ResetSequence();
+				//this->mainNetwork->ResetSequence();
 			}
 			this->checkpoint.i_number_of_loops_checkpoint += 1;
 			
 		}
 		try{
 			this->createCheckpoint();
-			//this->mainNetwork->cleanNetwork();
+			
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
 				cout << i << ") " << endl;
 				thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->input[0]);
 				thrust::copy(temp.begin(), temp.end(), std::ostream_iterator<weight_type>(std::cout, "\n"));
 			}
-			this->mainNetwork->emptyGPUMemory();
-			//this->runNetwork(this->input[0]);
+			//this->mainNetwork->emptyGPUMemory();
+			this->mainNetwork->cleanNetwork();
+			this->runNetwork(this->input[0]);
 
 		}
 		catch (exception e){
@@ -219,7 +220,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	weight_type* temp = new weight_type[numberOfInput];
 	for (int i = position; i < position + numberOfInput; i++){
 		if (input_output == 0){
-			temp[i - position] = (weight_type)1;
+			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence);
 		}
 		else{
 			temp[i - position] = (weight_type).1;

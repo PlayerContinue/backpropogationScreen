@@ -232,10 +232,15 @@ namespace functors{
 		__host__ __device__ //previousWeight, weight
 			T operator()(Tuple &x,T &y){
 			thrust::get<1>(x) *= alpha;
-			T toReturn = thrust::get<1>(x) + y;
+			if (y != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
+				T toReturn = thrust::get<1>(x) +y;
+				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);
+				return toReturn + thrust::get<1>(x);
+			}
+			else{
+				return (T)y;
+			}
 			
-			thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);
-			return toReturn + thrust::get<1>(x);
 		}
 
 	};

@@ -30,7 +30,7 @@ void LongTermShortTermNetwork::initialize_network(){
 	positionOfLastWeightToNode = vector<long>();
 	this->numberNonWeights = this->settings.i_input;
 	srand(time(NULL));
-	this->createMemoryBlock(2);
+	this->createMemoryBlock(5);
 
 }
 

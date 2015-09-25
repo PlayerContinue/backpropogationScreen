@@ -31,4 +31,4 @@ b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
 Type:LongTermShortTerm_items
 i_backprop_unrolled 8
-i_number_in_sequence 5
+i_number_in_sequence 2
