@@ -240,6 +240,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="LongTermShortTermTraining.cu" />
     <ClCompile Include="Network.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>

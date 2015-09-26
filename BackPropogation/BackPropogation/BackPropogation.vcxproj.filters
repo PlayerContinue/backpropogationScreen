@@ -25,6 +25,12 @@
     <Filter Include="Source Files\RecurrentNetwork">
       <UniqueIdentifier>{53ed9f67-c1fb-497a-96c7-e97e46f6f871}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RecurrentNetwork\LongTermShortTermNetwork">
+      <UniqueIdentifier>{d77b0e29-4653-4a20-a92e-753651048e11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RecurrentNetwork\LongTermShortTermNetwork">
+      <UniqueIdentifier>{67bf8fe1-eafd-4f8e-9180-d8bd410633a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -66,17 +72,17 @@
     <ClInclude Include="ReccurentLoops.cuh">
       <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
-    <ClInclude Include="LongTermShortTermNetwork.cuh">
-      <Filter>Header Files\RecurrentNetwork</Filter>
-    </ClInclude>
     <ClInclude Include="memory_block.cuh">
       <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
     <ClInclude Include="TestCode.cuh">
       <Filter>Header Files\RecurrentNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="LongTermShortTermNetwork.cuh">
+      <Filter>Header Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </ClInclude>
     <ClInclude Include="Recurrent_Functors.cuh">
-      <Filter>Header Files\RecurrentNetwork</Filter>
+      <Filter>Header Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -106,11 +112,14 @@
     <CudaCompile Include="NetworkBase.cu">
       <Filter>Source Files\RecurrentNetwork</Filter>
     </CudaCompile>
-    <CudaCompile Include="LongTermShortTermNetwork.cu">
-      <Filter>Source Files\RecurrentNetwork</Filter>
-    </CudaCompile>
     <CudaCompile Include="memory_block.cu">
       <Filter>Source Files\RecurrentNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="LongTermShortTermNetwork.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="LongTermShortTermTraining.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>

@@ -73,16 +73,18 @@ private:
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 	thrust::device_vector<weight_type> GPUPreviousWeights;
-	
+
+
 
 	//Vectors for the inputs
 	host_vector<weight_type> output_bias;
 
-
-
 	//Stores the values of the neurons
 	host_vector<weight_type> bias;
 
+	//Stores the bias in the GPU
+	thrust::device_vector<weight_type> GPUBias;
+	thrust::device_vector<weight_type> GPUPreviousBias;
 	//Stores the values of the neuron in GPU Memory
 	thrust::device_vector<weight_type> GPUOutput_values;
 	thrust::device_vector<weight_type> GPUPreviousOutput_Values;
@@ -164,6 +166,9 @@ private:
 	void InitializeLongShortTermMemory();
 	//Unroll the network into a multilayer representation
 	void UnrollNetwork(int numLayers);
+	//Load the bias into the system
+	void moveBiasToGPU();
+
 	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
 	//Find the delta values of the current output from the expected gradiant
@@ -319,6 +324,29 @@ private:
 
 		os << endl;
 		os << endl;
+
+
+		os << endl;
+		for (int i = 0; i < network.GPUBias.size(); i++){
+			os << i << ") " << (weight_type)network.GPUBias[i] << ",";
+		}
+	
+
+
+		os << endl;
+		os << endl;
+
+		os << endl;
+
+		for (int i = 0; i < network.GPUPreviousBias.size(); i++){
+			os << i << ") " << (weight_type)network.GPUPreviousBias[i] << ",";
+		}
+
+
+
+		os << endl;
+		os << endl;
+
 
 		return os;
 	}

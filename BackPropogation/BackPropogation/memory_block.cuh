@@ -33,6 +33,9 @@ public:
 	//Contains the information about the memory cell
 	host_vector<weight_type> memory_cell_weights;
 
+	//Contains Bias Information For Each Node
+	host_vector<weight_type> bias;
+
 	//Number of cells in the memory_block
 	unsigned int number_memory_cells;
 
@@ -91,14 +94,15 @@ private:
 
 		os << endl;
 
-
-
 		for (unsigned int i = 0; i < block.mapFrom.size(); i++){
 			os << block.mapFrom[i] << ",";
 		}
 
 		os << endl;
 
+		std::copy(block.bias.begin(), block.bias.end(), std::ostream_iterator<weight_type>(os, ", "));
+
+		os << endl;
 
 		return os;
 	}

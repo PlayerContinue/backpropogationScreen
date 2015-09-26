@@ -29,6 +29,51 @@ namespace functors{
 
 	};
 
+	//Multiply two values
+	template <typename T>
+	struct multiply_by_constant : public thrust::unary_function < T, T > {
+		const T constant;
+
+		multiply_by_constant(T _constant) : constant(_constant){};
+
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &x) const{
+			return constant * x;
+		}
+
+	};
+
+	
+
+	template <typename T>
+	struct add_bias : public thrust::binary_function < T,T, T > {
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const T &bias, const Tuple &x){
+			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
+		}
+	};
+
+	template <typename T>
+	struct apply_error_to_bias : public thrust::binary_function < T, T, T > {
+		const T beta;
+		const T alpha;
+
+		apply_error_to_bias(const T _beta, const T _alpha) :beta(_beta), alpha(_alpha){};
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__ //Delta, Bias
+			T operator()(const Tuple &x){
+			thrust::get<1>(x) += (T)(thrust::get<0>(x));
+			return (bias * thrust::get<1>(x)) + thrust::get<0>(x);
+		}
+	};
+
 	template <typename T>
 	struct subtract_tuple : public thrust::unary_function < T, T > {
 
