@@ -10,7 +10,10 @@ Global
 		Debug|Win32 = Debug|Win32
 		DebugBasedOnCuda|Win32 = DebugBasedOnCuda|Win32
 		DebugWithDebug|Win32 = DebugWithDebug|Win32
+		DebugWithDebugAndTest|Win32 = DebugWithDebugAndTest|Win32
 		Release|Win32 = Release|Win32
+		ReleaseWithCude|Win32 = ReleaseWithCude|Win32
+		ReleaseWithCude2|Win32 = ReleaseWithCude2|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -19,8 +22,14 @@ Global
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.DebugBasedOnCuda|Win32.Build.0 = DebugBasedOnCuda|Win32
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.DebugWithDebug|Win32.ActiveCfg = DebugWithDebug|Win32
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.DebugWithDebug|Win32.Build.0 = DebugWithDebug|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.DebugWithDebugAndTest|Win32.ActiveCfg = DebugWithDebugAndTest|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.DebugWithDebugAndTest|Win32.Build.0 = DebugWithDebugAndTest|Win32
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.Release|Win32.ActiveCfg = Release|Win32
 		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.Release|Win32.Build.0 = Release|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.ReleaseWithCude|Win32.ActiveCfg = ReleaseWithCude|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.ReleaseWithCude|Win32.Build.0 = ReleaseWithCude|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.ReleaseWithCude2|Win32.ActiveCfg = ReleaseWithCude2|Win32
+		{7B01A621-BBA9-4B2D-BB67-6A72438301B9}.ReleaseWithCude2|Win32.Build.0 = ReleaseWithCude2|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

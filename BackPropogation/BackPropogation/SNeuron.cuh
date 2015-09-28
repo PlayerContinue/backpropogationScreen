@@ -8,6 +8,7 @@ using namespace std;
 
 //Structure containing the neuron
 struct SNeuron{
+	friend class modifyNetwork;
 	//Bias for the neuron
 	double bias = 0;
 
@@ -42,6 +43,17 @@ struct SNeuron{
 	SNeuron(double bias, thrust::host_vector<double> weights) : bias(bias), weights(weights){
 
 	}
+
+	/*SNeuron(const SNeuron& other):bias(other.bias),weights(other.weights){
+
+	}*/
+
+	/*SNeuron& operator=(const SNeuron other){
+		this->bias = other.bias;
+		this->previousBias = other.previousBias;
+		std::copy(other.weights.begin(), other.weights.end(), this->weights.begin());
+		return *this;
+	}*/
 
 	friend ostream& operator<<(ostream& os, const SNeuron& neuron){
 		//Output the weights

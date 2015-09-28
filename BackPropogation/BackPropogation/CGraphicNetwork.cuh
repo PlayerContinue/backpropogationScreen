@@ -11,10 +11,12 @@
 #include <cuda.h>
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
+#include <thrust/transform.h>
 #include <fstream>
 #include "util.h"
-#include "structures_cuda.cuh"
 #include "CudaCalculations.cuh"
+#include "structures_cuda.cuh"
+#include "CSettings.h"
 #if defined(TRIAL2) || defined(TRIAL1)|| defined(TRIAL3) || defined(TRIAL4) || defined(TRIAL5)
 #include <iostream>
 #endif
@@ -23,7 +25,7 @@ using namespace std;
 
 class CGraphicsNetwork
 {
-
+friend class modifyNetwork;
 private:
 	//Networks Variables
 	//The number of layers
@@ -33,11 +35,11 @@ private:
 	vector<SNeuronLayer> v_layers;
 
 	//Keep track of total number of nodes
-	int total_num_nodes=0;
+	int total_num_nodes = 0;
 
 	//The learning threshold for the current network
 	double threshold;
-	
+
 	//Learning rate (look up)
 	double beta;
 
@@ -49,18 +51,22 @@ private:
 
 	//Success Rate
 	int success = 0;
-	int previousSuccess=0;
+	int previousSuccess = 0;
 
 	//Failure Rate
 	int failure = 0;
-	int previousFailure=1;
+	int previousFailure = 1;
 
 	//Average distance 
 	double total_distance;
 
-	double previous_average_distance=0;
+	double previous_average_distance = 0;
 
-	double average_delta=0;
+	double average_delta = 0;
+
+
+
+
 
 #ifdef FULL_SUCCESS
 	//Temporary current, may remove
@@ -77,7 +83,9 @@ private:
 	//Number of inputs
 	int I_input;
 
-
+public:
+	//Store a settings object
+	CSettings* settings;
 
 
 public:
@@ -85,6 +93,10 @@ public:
 	//Constructors
 	//-----------------------------------------------------------------------------------------------------------
 	CGraphicsNetwork();
+
+	//Create only with a link to settings
+	CGraphicsNetwork(CSettings* settings);
+
 	//Constructor 
 	//sizes - The number of neurons per layer
 	//i.e. 3 inputs, first hidden layer 2, second 4 would, output 1 is [3,2,4,1]
@@ -94,6 +106,10 @@ public:
 	//i.e. 3 inputs, first hidden layer 2, second 4 would, output 1 is [3,2,4,1]
 	CGraphicsNetwork(vector<int> &sizes, double beta, double alpha);
 
+	//Develop a initial network from a settings object
+	CGraphicsNetwork(vector<int> &sizes, CSettings* settings);
+
+	CGraphicsNetwork(const CGraphicsNetwork& other);
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Overloaded Operators
@@ -104,6 +120,7 @@ public:
 
 	CGraphicsNetwork& operator=(const CGraphicsNetwork& network){
 		this->v_num_layers = network.v_num_layers;
+		this->settings = network.settings;
 		this->alpha = network.alpha;
 		this->beta = network.beta;
 		this->I_input = network.I_input;
@@ -116,7 +133,7 @@ public:
 	//-----------------------------------------------------------------------------------------------------------
 	//Main Learning And Teaching Functions
 	//-----------------------------------------------------------------------------------------------------------
-	
+
 
 	//Feed Forward one set of inputs 
 	void feedForward(double *in);
@@ -182,7 +199,7 @@ private:
 
 	//-----------------------------------------------------------------------------------------------------------
 public:
-	
+
 
 	//-----------------------------------------------------------------------------------------------------------
 	//Add New Layers and Neurons
@@ -191,7 +208,7 @@ public:
 	void addLayer(int position, int numberPerLayer);
 
 	//Add a new neuron to a particular layer
-	void addNeuronToLayer(int layerPosition, int layerPositionEnd,int numToAdd);
+	void addNeuronToLayer(int layerPosition, int layerPositionEnd, int numToAdd);
 
 
 	//-----------------------------------------------------------------------------------------------------------
@@ -202,22 +219,6 @@ public:
 	void removeNeuron(int layerPosition, int neuronPosition);
 
 	void reloadNetwork();
-
-	//Lock the current neuron from further changes
-	void lockNeuron(int layerPosition, int neuronPosition){
-		SNeuron* currentNeuron = &(this->v_layers[layerPosition].neurons[neuronPosition]);
-
-
-		if (currentNeuron->removed != 2 && abs(this->v_layers[layerPosition].delta[neuronPosition]) < LOCKED){//Neuron is both not locked and needs to be locked
-			this->v_layers[layerPosition].neurons[neuronPosition].removed = 2;
-#ifdef DEBUG 
-			this->v_layers[layerPosition].num_locked += 1;
-#endif
-		}
-
-		//Delete the pointer
-		currentNeuron = NULL;
-	}
 
 
 private:
@@ -248,7 +249,9 @@ private:
 
 	//Check if the target and results match
 	inline void updateSuccess(double *target){
+#ifdef FULL_SUCCESS
 		bool fail = false;
+#endif
 		for (int i = 0; i < this->I_output; i++){
 
 			//Unless all results equal the target result, it is a failure
@@ -256,7 +259,9 @@ private:
 				this->failure += 1;
 				//Add the average distance
 				total_distance += abs(target[i] - this->v_layers.back().output[i]);
+#ifdef FULL_SUCCESS
 				fail = true;
+#endif
 			}
 			else{
 				//They all match so it was a success
@@ -286,7 +291,7 @@ public:
 				this->v_layers[layerNum].neurons[neuronNum].activated = 0;
 			}
 		}
-		
+
 		//Grab previous distance
 		this->previous_average_distance = (this->total_distance / ((((double)this->success + (double)this->failure))));
 		//Reset Previous Distance
@@ -310,26 +315,95 @@ public:
 	//Get And Set 
 	//-----------------------------------------------------------------------------------------------------------
 
+	//Set the settings object
+	void setSettings(CSettings *settings){
+		this->settings = settings;
+		//Add settings to the children
+		//Since this only occurs at the beginning of the program, adding a bit of time to startup
+		//and keeping the pieces seperate is more efficient and better for later changes than
+		//copying
+		for (int i = 0; i < this->v_num_layers; i++){
+			this->v_layers[i].settings = this->settings;
+		}
+	}
+
 	//Return the Mean Square Error
 	double getMeanSquareError(double **in, double **tgt, int size){
 		double sum = 0; //Stores the sum
-		double* output;
-
-
 		for (int i = 0; i < size; i++){
 			//Feed the input value in to get the output
-			this->feedForward(in[i]);
-			output = getOutputArray<double>();
-			for (int j = 0; j < this->I_output;j++){
-				//Add the sum of the (target - output)^2 
-
-				sum += square_means_sums<double>(tgt[i],output,this->I_output);
-			}
+			//Add the sum of the 1/N(target - output)^2 
+			sum += this->getSingleMeanSquareError(in[i], tgt[i], size);
 		}
-		free(output);
-		//Return (1/number of total ouputs) * sum
-		return ((1.0/(size*this->I_output)) * sum);
+		//Return average MSE
+		return ((sum / (double)size));
 
+	}
+
+	//Get the MSE for a single input
+	double getSingleMeanSquareError(double *in, double *tgt, int size){
+		this->feedForward(in);
+		return square_means_sums<double>(tgt, this->getOutputArray<double>(), this->I_output);
+	}
+
+	//Get the rootMeanSquareError for the given layer
+	double* getRootMeanSquareErrorForAllLayer(double *in){
+		double* root_mean_square_error = new double[this->v_num_layers-1];
+		//Run a new data set in order for the output to be unbiased
+		this->feedForward(in);
+
+		for (int i = 1; i < this->v_num_layers; i++){
+			root_mean_square_error[i-1] = getRootMeanSquareErrorForLayer(i);
+		}
+		return root_mean_square_error;
+
+	}
+
+	//Allows for feedforward to not be run, as it will run it
+	double getRootMeanSquareErrorForLayer(int layer, double *in){
+		this->feedForward(in);
+		return getRootMeanSquareErrorForLayer(layer);
+	}
+
+
+	//Version which does require the feedforward to be run before being called
+	double getRootMeanSquareErrorForLayer(int layer){
+		if (layer >= 0 && layer < this->v_num_layers){
+			double toReturn = 0.0; //Return this value
+			thrust::device_vector<double> temp_output = this->v_layers[layer].getOutput();
+			thrust::device_vector<double> temp_results(temp_output.size());
+			for (unsigned int i = 0; i < temp_output.size(); i++){
+				thrust::transform(
+					temp_output.begin() + i, temp_output.end(),
+					thrust::make_constant_iterator<double>(temp_output[i]),
+					temp_results.begin(),
+					(_1 - _2) * (_1 - _2));
+				//Reduce and retrieve the answer
+				toReturn += thrust::reduce(temp_results.begin(), temp_results.end()-i);
+			}
+
+
+			
+			
+			//Clean up Used GPU Memory
+			vector_free::free(temp_results);
+
+			//Return the value
+			return sqrt(toReturn / (this->v_layers[layer].number_per_layer* (this->v_layers[layer].number_per_layer - 1)));
+
+		}
+		else{
+			throw new exception("Out of bounds");
+		}
+	}
+
+
+	int getI_input(){
+		return this->I_input;
+	}
+
+	int getI_output(){
+		return this->I_output;
 	}
 
 	//Return the Success percentage
@@ -356,7 +430,6 @@ public:
 	}
 #endif
 
-
 	//Return the average change
 	double getAverageDelta(){
 		double numberNeurons = 0;
@@ -374,7 +447,7 @@ public:
 	//Return the average distance
 	double getAverageDistance(){
 		return (this->total_distance / (((double)this->success + (double)this->failure)));
-		
+
 	}
 
 	int getTotalDistance(){

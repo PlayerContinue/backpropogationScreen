@@ -17,6 +17,7 @@
 #include <thrust/copy.h>
 #include <thrust/fill.h>
 #include <thrust/complex.h>
+#include <thrust/execution_policy.h>
 #include <iostream>
 #include "structures_cuda.cuh"
 
@@ -31,6 +32,7 @@ int getWeights(SNeuronLayer currentLayer, thrust::device_vector<double> &weights
 int setWeights(SNeuronLayer &currentLayer, thrust::device_vector<double> &weights, thrust::device_vector<double> &previousWeight, int startPosition, int neuronPosition);
 int setWeights(SNeuronLayer &currentLayer, thrust::device_vector<double> &weights,
 	thrust::device_vector<double> &previousWeight, int startPosition, int neuronPosition, bool include_previous);
+void check_locks(thrust::device_vector<double> deltas, SNeuronLayer &layers);
 
 namespace vector_free{
 	//Function to free memory from GPU
@@ -69,7 +71,7 @@ struct OutputDelta_functor
 
 
 template <typename T>
-struct dot_product_special : public unary_function < T, T >
+struct dot_product_special : public thrust::unary_function < T, T >
 {
 
 
@@ -80,7 +82,7 @@ struct dot_product_special : public unary_function < T, T >
 	__host__ __device__
 		T operator()(const T &x, const T &y) const{
 		//Output * (1-output) * (sum)
-		return (x * (1 - x) * y);
+		return (x * (1 - x) * (y-x));
 	}
 
 };
@@ -118,7 +120,7 @@ struct saxpy_functor
 
 
 template <typename T>
-struct sigmoid_functor : public unary_function < T, T > {
+struct sigmoid_functor : public thrust::unary_function < T, T > {
 	sigmoid_functor(){};
 
 	__host__ __device__
@@ -131,13 +133,15 @@ struct sigmoid_functor : public unary_function < T, T > {
 };
 
 template <typename T>
-struct square_means_sum_functor : public unary_function < T, T > {
-	square_means_sum_functor(){};
+struct square_means_sum_functor : public thrust::unary_function < T, T > {
+	const double alpha;
+
+	square_means_sum_functor(double alpha):alpha(alpha){};
 	
 	template <typename Tuple>
 	__host__ __device__
 	T operator()(Tuple &x){
-		return ((thrust::get<0>(x) - thrust::get<1>(x)) * (thrust::get<0>(x) - thrust::get<1>(x)));
+		return alpha*((thrust::get<0>(x) - thrust::get<1>(x)) * (thrust::get<0>(x) - thrust::get<1>(x)));
 	}
 
 };
@@ -156,14 +160,18 @@ void printValues(thrust::device_vector<T> out){
 //*******************************************************
 
 //Find the delta of the output layer
-inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vector<double> &target){
+//Utilize the Delta Rules -(target - out) * (out)(1-out)
+inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vector<double> &target,SNeuronLayer &layer){
 	thrust::device_vector<double> X = output;
 	thrust::device_vector<double> Y = target;
 
 	//Transform the target vector
 	thrust::transform(X.begin(), X.end(), Y.begin(), Y.begin(), OutputDelta_functor());
 
-	thrust::copy(Y.begin(), Y.end(), target.begin());
+	//Retrieve the networks which are locked
+	check_locks(Y, layer);
+
+	thrust::copy(Y.begin(), Y.end(), layer.delta.begin());
 
 	//Free the GPU memory
 	vector_free::free(X);
@@ -177,19 +185,21 @@ inline void findOutputDelta(thrust::host_vector<double> output, thrust::host_vec
 //Input sum - the sums of all the delta * weight, output - The output of the current layer
 //output - results
 //Perform secondary part of operation to find the new delta (output * (1- output) * sum
-inline thrust::host_vector<double> findNewHiddenDelta(thrust::device_vector<double> sum, thrust::device_vector<double> output){
+inline void findNewHiddenDelta(thrust::device_vector<double> sum, thrust::device_vector<double> output, SNeuronLayer &layer){
 
-	thrust::host_vector<double> results(sum.size());
-
-	thrust::transform(output.begin(), output.end(), sum.begin(), sum.begin(), dot_product_special<double>());
+	//Find the new delta for the hidden layer
+	thrust::transform(output.begin(), output.end(), sum.begin(), sum.begin(), _1 * (1 - _1) * _2);
+	//Retrieve the networks which are locked
+		check_locks(sum, layer);
+	
 #ifdef TRIAL2
 	printValues(output);
 	cout << "_____________________" << endl;
 #endif
-	//Return the product as a host_copy
-	thrust::copy(sum.begin(), sum.end(), results.begin());
-
-	return results;
+	thrust::host_vector<double> deltas(layer.delta.size());
+	//Store the deltas in the layer delta object
+	thrust::copy(sum.begin(), sum.end(), deltas.begin());
+	layer.delta = deltas;
 }
 
 
@@ -246,8 +256,12 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 		thrust::transform(weights.begin(), weights.end(), thrust::make_permutation_iterator(deltas.begin(), map2.begin()),
 			weights.begin(), thrust::multiplies<double>());
 #ifdef TRIAL2
-		printValues(map2);
-		printValues(weights);
+		for (int j = 0; j < map2.size(); j++){
+			cout << map2[j] << " " << map[j] << " " << weights[j] << endl;
+		}
+		for (int j = 0; j < map2.size(); j++){
+			cout << map2[j] << " " << deltas[map2[j]] << endl;
+		}
 		cout << "_____________________" << endl;
 #endif
 		if (i == 0){
@@ -255,7 +269,12 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 			thrust::reduce_by_key(map.begin(), map.end(), weights.begin(), thrust::make_discard_iterator(), gpu_sums.begin());
 
 #ifdef TRIAL2
-			printValues(gpu_sums);
+			for (int j = 0; j < map2.size(); j++){
+				cout << map[j] << ", ";
+			}
+			for (int j = 0; j < gpu_sums.size(); j++){
+				cout << j << " " << gpu_sums[j] << endl;
+			}
 			cout << "_____________________" << endl;
 #endif
 		}
@@ -278,7 +297,23 @@ inline void findHiddenDelta(SNeuronLayer neurons_weights, SNeuronLayer &previous
 
 	gpu_sums_temp = previous_layer.getOutput();
 
-	previous_layer.delta = findNewHiddenDelta(gpu_sums, gpu_sums_temp);
+
+
+	//Find the new delta for the hidden layer
+	//Output * sum_of_weights * delta
+	thrust::transform(gpu_sums_temp.begin(), gpu_sums_temp.end(), gpu_sums.begin(), gpu_sums.begin(), _1 * (1 - _1) * _2);
+	//Retrieve the networks which are locked
+	check_locks(gpu_sums, previous_layer);
+
+#ifdef TRIAL2
+	printValues(gpu_sums);
+	cout << "_____________________" << endl;
+#endif
+	thrust::host_vector<double> deltas2(previous_layer.delta.size());
+	//Store the deltas in the layer delta object
+	thrust::copy(gpu_sums.begin(), gpu_sums.end(), deltas2.begin());
+	previous_layer.delta = deltas2;
+
 
 	//Free the memory
 
@@ -325,7 +360,6 @@ inline void applyMomentum(SNeuronLayer &currentLayer, double alpha){
 		getWeights(currentLayer, weights, previousWeights, i);
 		//Transform the weights using saxpy
 		thrust::transform(previousWeights.begin(), previousWeights.end(), weights.begin(), weights.begin(), saxpy_functor<double>(alpha));
-
 		//Set the weights back from memory
 		setWeights(currentLayer, weights, previousWeights, i, i + available_slots);
 	}
@@ -394,11 +428,14 @@ inline int setWeights(SNeuronLayer &currentLayer, thrust::device_vector<double> 
 	//Transfer the neurons back if it doesn't work
 	for (int i = startPosition; i < neuronPosition; i += size){
 		position = i / size;
-		thrust::copy(weights.begin() + (i), weights.begin() + (i + size - 1), currentLayer.neurons[position].weights.begin());
-		currentLayer.neurons[position].bias = weights[i + size - 1];
-		if (include_previous){//Also modify the previousWeight
-			thrust::copy(previousWeight.begin() + (i), previousWeight.begin() + (i + size - 1), currentLayer.neurons[position].previousWeight.begin());
-			currentLayer.neurons[position].previousBias = previousWeight[i + size - 1];
+		//Only add the weight if either node locking is not allowed or the current neuron is unlocked
+		if (!currentLayer.settings->b_allow_node_locking || !currentLayer.locked_nodes[position]){
+			thrust::copy(weights.begin() + (i), weights.begin() + (i + size - 1), currentLayer.neurons[position].weights.begin());
+			currentLayer.neurons[position].bias = weights[i + size - 1];
+			if (include_previous){//Also modify the previousWeight
+				thrust::copy(previousWeight.begin() + (i), previousWeight.begin() + (i + size - 1), currentLayer.neurons[position].previousWeight.begin());
+				currentLayer.neurons[position].previousBias = previousWeight[i + size - 1];
+			}
 		}
 	}
 	return 0;
@@ -567,7 +604,22 @@ inline void feedForwardGPU(SNeuronLayer &currentLayer, SNeuronLayer previousLaye
 }
 
 
+//*******************************************************
+//Locking Nodes
+//*******************************************************
+//Locks the neuron if it's delta is small enough to assume limit has been reached
+inline void check_locks(thrust::device_vector<double> deltas, SNeuronLayer &layers){
 
+	if (layers.settings->b_allow_node_locking){
+		thrust::host_vector<double> temp_locked_host(layers.locked_nodes.size());
+		thrust::device_vector<bool> temp_locked(layers.locked_nodes.size());
+		thrust::copy_if(thrust::make_constant_iterator((bool)true), thrust::make_constant_iterator((bool)true) + temp_locked.size(), deltas.begin(), temp_locked.begin(), _1 < layers.settings->d_lock_node_level && _1 > (-1 * layers.settings->d_lock_node_level));
+		thrust::copy(temp_locked.begin(), temp_locked.end(), temp_locked_host.begin());
+		layers.locked_nodes = temp_locked_host;
+		vector_free::free(temp_locked);
+
+	}
+}
 
 //*******************************************************
 //Misc
@@ -585,11 +637,11 @@ template<typename T>
 inline T square_means_sums(T* target, T* output, int size){
 	thrust::device_vector<T> tgt(target, target + size);
 	thrust::device_vector<T> out(output, output + size);
-	double temp = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(), 0.0, thrust::plus<double>());
+	double temp = thrust::transform_reduce(thrust::make_zip_iterator(thrust::make_tuple(tgt.begin(), out.begin())), thrust::make_zip_iterator(thrust::make_tuple(tgt.end(), out.end())), square_means_sum_functor<double>(1), 0.0, thrust::plus<double>());
 	
 	vector_free::free(tgt);
 	vector_free::free(out);
-	return temp;
+	return (temp / (double)size);
 }
 
 

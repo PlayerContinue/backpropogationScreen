@@ -15,7 +15,7 @@ using namespace std;
 // Random Number Functions
 //*******************************************
 
-//Returns
+//Returns a random int between x and y
 inline int RandInt(int x, int y){
 	return rand() % (y - x + 1) + x;
 }
