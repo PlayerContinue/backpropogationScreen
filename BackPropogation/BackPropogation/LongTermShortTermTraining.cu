@@ -1,14 +1,12 @@
 #include "LongTermShortTermNetwork.cuh"
-#include "TestCode.cuh"
+//#define TRAININGTEST
+//#define TRAININGTEST2
+
 //*********************
 //Training the Network
 //*********************
 
 
-void LongTermShortTermNetwork::InitializeLongShortTermMemoryForRun(){
-	//Form the delta objects
-	this->CopyToDevice();
-}
 
 void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 	//Store all the values in the device
@@ -217,84 +215,409 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out){
 
 //Apply the error
 void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
-	thrust::reduce_by_key(
+#ifdef TRAININGTEST2
+	testing::outputToFile<weight_type>(this->device_deltas, "Delta");
+	testing::outputToFile<weight_type>(this->GPUOutput_values, "Output");
+#endif
+
+#ifdef TRAININGTEST
+	/*thrust::copy(
+		
+		thrust::make_permutation_iterator(
+
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUMapTo.begin(),
 		thrust::make_transform_iterator(
 		thrust::make_counting_iterator((int)0),
-		(_1 / this->settings.i_backprop_unrolled)
+		_1%this->GPUMapTo.size()
+		)
 		),
+		thrust::make_counting_iterator((int)0)
+		)
+		),
+		functors::extend_value<int>(this->GPUMapTo.size(), 1, this->numberOfNodes, false)
+
+		), thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		)),
+		thrust::make_permutation_iterator(
+		
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUMapTo.begin(),
 		thrust::make_transform_iterator(
 		thrust::make_counting_iterator((int)0),
-		(_1 / this->settings.i_backprop_unrolled)
-		) + this->device_deltas.size(),
+		_1%this->GPUMapTo.size()
+		)
+		),
+		thrust::make_counting_iterator((int)0)
+		)
+		),
+		functors::extend_value<int>(this->GPUMapTo.size(), 1, this->numberOfNodes, false)
 
-		thrust::make_permutation_iterator(
+		), thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		)) + this->GPUMapTo.size() * this->settings.i_backprop_unrolled, std::ostream_iterator<int>(std::cout, "\n"));*/
+
+	/*thrust::copy(
+
 		thrust::make_transform_iterator(
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
-		this->device_deltas.begin(),
-
-		thrust::make_permutation_iterator(
-		this->GPUOutput_values.begin(),
-
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		thrust::make_counting_iterator(int(0)),
 		thrust::make_permutation_iterator(
 		this->GPUMapFrom.begin(),
 		thrust::make_transform_iterator(
-		thrust::make_counting_iterator(int(0)),
-		_1 % this->GPUMapFrom.size()
-		)
-		)
-
-		)
-
-		),
-		functors::extend_value<int>(this->GPUMapFrom.size())
-		)
-		)
-
-		)
-		),
-		functors::find_previous_weight<weight_type>(this->settings.d_beta)),
-		thrust::make_transform_iterator(
-
 		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapFrom.size()
+		)
+		),
+		thrust::make_counting_iterator((int)0)
+		)
+		)
+		,
+		functors::extend_value<int>(this->GPUMapFrom.size(), 0, this->numberOfNodes, true)
 
-		((1 + this->numberOfNodes)*(_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
-		)),
 
+		),
+		
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUMapFrom.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapFrom.size()
+		)
+		),
+		thrust::make_counting_iterator((int)0)
+		)
+		)
+		,
+		functors::extend_value<int>(this->GPUMapFrom.size(), 0, this->numberOfNodes, true)
+
+
+		) + this->GPUMapTo.size() * this->settings.i_backprop_unrolled, std::ostream_iterator<int>(std::cout, "\n"));*/
+
+/*thrust::copy(
+	thrust::make_transform_iterator(
+	thrust::make_permutation_iterator(
+	thrust::make_permutation_iterator(
+	this->GPUMapTo.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapTo.size()
+	)
+	),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+	)
+	),
+	_1%this->numberOfNodes
+	)
+	,
+	thrust::make_transform_iterator(
+	thrust::make_permutation_iterator(
+	thrust::make_permutation_iterator(
+	this->GPUMapTo.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapTo.size()
+	)
+	),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+	)
+	),
+	_1%this->numberOfNodes
+	)
+	+ this->GPUMapTo.size() * this->settings.i_backprop_unrolled,
+	std::ostream_iterator<int>(std::cout, "\n")
+	);*/
+
+testing::outputToFile<weight_type>(thrust::make_permutation_iterator(
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->device_deltas.begin(),
+
+	thrust::make_permutation_iterator(
+
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->GPUMapTo.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapTo.size()
+	)
+	),
+	thrust::make_counting_iterator((int)0)
+	)
+	),
+	functors::extend_value<int>(this->GPUMapTo.size(), 1, this->numberOfNodes, false)
+
+	), thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+	))
+
+	),
+
+	thrust::make_permutation_iterator(
+	this->GPUOutput_values.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->GPUMapFrom.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapFrom.size()
+	)
+	),
+	thrust::make_counting_iterator((int)0)
+	)
+	)
+	,
+	functors::extend_value<int>(this->GPUMapFrom.size(), 0, this->numberOfNodes, true)
+
+
+	)
+
+	)
+	)
+	)
+	,
+	functors::find_previous_weight<weight_type>(this->settings.d_beta)
+	),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+
+	)
+	), this->GPUMapTo.size() * this->settings.i_backprop_unrolled,
+	"Sorted Results"
+	);
+
+testing::outputToFile<weight_type>(
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->device_deltas.begin(),
+
+	thrust::make_permutation_iterator(
+
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->GPUMapTo.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapTo.size()
+	)
+	),
+	thrust::make_counting_iterator((int)0)
+	)
+	),
+	functors::extend_value<int>(this->GPUMapTo.size(), 1, this->numberOfNodes, false)
+
+	), thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+	))
+
+	),
+
+	thrust::make_permutation_iterator(
+	this->GPUOutput_values.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_zip_iterator(
+	thrust::make_tuple(
+	thrust::make_permutation_iterator(
+	this->GPUMapFrom.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapFrom.size()
+	)
+	),
+	thrust::make_counting_iterator((int)0)
+	)
+	)
+	,
+	functors::extend_value<int>(this->GPUMapFrom.size(), 0, this->numberOfNodes, true)
+
+
+	)
+
+	)
+	)
+	)
+	,
+	functors::find_previous_weight<weight_type>(this->settings.d_beta)
+	), this->GPUMapTo.size() * this->settings.i_backprop_unrolled,
+	"OutputResults"
+
+
+
+	);
+
+testing::outputToFile<int>(thrust::make_transform_iterator(
+	thrust::make_permutation_iterator(
+	thrust::make_permutation_iterator(
+	this->GPUMapTo.begin(),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	_1%this->GPUMapTo.size()
+	)
+	),
+	thrust::make_transform_iterator(
+	thrust::make_counting_iterator((int)0),
+	((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+	)
+	),
+	_1%this->numberOfNodes
+	), this->GPUMapTo.size() * this->settings.i_backprop_unrolled, "Order");
+	int k = 0;
+
+#endif
+	thrust::reduce_by_key(
+		thrust::make_transform_iterator(
+		thrust::make_permutation_iterator(
+		thrust::make_permutation_iterator(
+		this->GPUMapTo.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapTo.size()
+		)
+		),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		)
+		),
+		_1%this->numberOfNodes
+		),
+		thrust::make_transform_iterator(
+		thrust::make_permutation_iterator(
+		thrust::make_permutation_iterator(
+		this->GPUMapTo.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapTo.size()
+		)
+		),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		)
+		),
+		_1%this->numberOfNodes
+		) + this->GPUMapTo.size() * this->settings.i_backprop_unrolled,
+		thrust::make_permutation_iterator(
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->device_deltas.begin(),
+		
+		thrust::make_permutation_iterator(
+
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUMapTo.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapTo.size()
+		)
+		),
+		thrust::make_counting_iterator((int)0)
+		)
+		),
+		functors::extend_value<int>(this->GPUMapTo.size(), 1, this->numberOfNodes, false)
+
+		), thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		))
+		
+		),
+		
+		thrust::make_permutation_iterator(
+		this->GPUOutput_values.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUMapFrom.begin(),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1%this->GPUMapFrom.size()
+		)
+		),
+		thrust::make_counting_iterator((int)0)
+		)
+		)
+		,
+		functors::extend_value<int>(this->GPUMapFrom.size(), 0, this->numberOfNodes, true)
+
+
+		)
+
+		)
+		)
+		)
+		,
+		functors::find_previous_weight<weight_type>(this->settings.d_beta)
+		),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		((this->GPUWeights.size())* (_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		
+		)
+		),
+		
 		thrust::make_discard_iterator(),
 		this->GPUPreviousOutput_Values.begin()
+
 		);
 
+#ifdef TRAININGTEST2
+	testing::outputToFile<weight_type>(this->device_deltas, "Delta");
+	testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values,"PrevGPUVal");
+#endif
+	
 
-	testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values);
-
-
+	
 	thrust::transform(
-
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
-		thrust::make_permutation_iterator(
 		this->GPUPreviousOutput_Values.begin(),
-		this->GPUMapFrom.begin()
-		),
 		this->GPUPreviousWeights.begin()
 		)
-		),
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		thrust::make_permutation_iterator(
-		this->GPUPreviousOutput_Values.begin(),
-		this->GPUMapFrom.begin()
-		),
-		this->GPUPreviousWeights.begin()
 		)
-		) + this->GPUPreviousWeights.size()
-
 		,
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		this->GPUPreviousOutput_Values.end(),
+		this->GPUPreviousWeights.end()
+		)
+		),
 		this->GPUWeights.begin(),
 		this->GPUWeights.begin(),
 		functors::apply_new_error<weight_type>(this->settings.d_alpha, this->settings.i_backprop_unrolled*this->settings.i_number_in_sequence)
@@ -313,6 +636,7 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 	}
 
 	//Retrieve the new previous Bias
+	//If I remove memory cells, remove permutation around device_delta so it doesn't skip
 	thrust::reduce_by_key(
 		thrust::make_transform_iterator(
 		thrust::make_counting_iterator((int)0),
@@ -331,12 +655,13 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 
 		thrust::make_transform_iterator(
 		thrust::make_counting_iterator((int)0),
-		((1 + this->numberOfNodes)*(_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
+		((this->numberOfNodes)*(_1%this->settings.i_backprop_unrolled)) + (_1 / this->settings.i_backprop_unrolled)
 		)
 		),
 		thrust::make_discard_iterator(),
 		this->GPUPreviousBias.begin()
 		);
+
 
 	//Apply the error
 	thrust::transform(
@@ -348,4 +673,155 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 		);
 
 	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
+}
+
+//*********************
+//Run The Network
+//*********************
+
+
+void LongTermShortTermNetwork::InitializeLongShortTermMemoryForRun(){
+	//Form the delta objects
+	this->CopyToDevice();
+	this->moveBiasToGPU(false);//Don't create a previous_bias
+}
+
+thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in){
+
+	this->setInput(in);
+	//Stores the numberofmblocks in a layer
+	unsigned int numberMBlocks;
+	//Number mBlocks in previous layer
+	unsigned int previousnumberMBlocks = 0;
+
+	//Perform the transformation on each layer
+	for (unsigned int i = 0; i < this->mBlocksLayers.size() - 1; i++){
+
+		if (i != 0){
+			previousnumberMBlocks = numberMBlocks;
+		}
+		numberMBlocks = this->mBlocksLayers[i].size();
+		//Sum the values of the input/output/forget/potential_memory_cell_values nodes
+		//The values in the GPU weights are in the order input, output, forget, memory cells
+		//Subtracting this->mBlocksLayers[i].size() from the end will remove the memory cells from doing anything
+		//Output to Previous
+		thrust::reduce_by_key(this->GPUMapTo.begin(), this->GPUMapTo.end(), thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.begin() + this->numberNonWeights + previousnumberMBlocks, // We don't want to multiply the actual input/out values, so we skip them
+			make_permutation_iterator( // Create an iterator which maps the values coming from to those going to
+			this->GPUOutput_values.begin(),
+			this->GPUMapFrom.begin())
+			)
+			),
+			functors::multiply<weight_type>()), //Multiply the two values then run them through a sigmoid function
+			thrust::make_discard_iterator(), // Discard the retrieved order, the order should be constant
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks//Store in the previous in order to not overwrite the saved values
+			);
+
+		thrust::transform(
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
+			this->GPUBias.begin() + previousnumberMBlocks
+			)
+			),
+			functors::add<weight_type>()
+			),
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + (5 * numberMBlocks),
+			this->GPUBias.begin() + previousnumberMBlocks
+			)
+			),
+			functors::add<weight_type>()
+			)
+
+			
+
+			,
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
+			functors::sigmoid_functor<weight_type>());
+
+		//Create a input/output/forget/potential_memory_cell_values/memory_cell_value value
+		//Essentially run the gate and get the output value
+		thrust::for_each(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + this->settings.i_input, //input values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input,//output values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
+			)),
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input, //input values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//output values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (5 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
+			)),
+			functors::run_memory_block_functon<weight_type>());
+		thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->GPUOutput_values.begin());
+
+	}
+
+	device_vector<weight_type> toReturn = device_vector<weight_type>(this->settings.i_output);
+
+	int output_weight_size = ((this->mBlocksLayers[this->mBlocksLayers.size() - 2].size()));
+
+	thrust::reduce_by_key(
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1 / output_weight_size // The number of output nodes in layer before the output layer
+		),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		_1 / output_weight_size // The number of output nodes in layer before the output layer
+		) + output_weight_size * this->settings.i_output,
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_permutation_iterator(
+		this->GPUOutput_values.begin(),
+		this->GPUMapFrom.end() - (output_weight_size * this->settings.i_output)),
+
+		thrust::make_permutation_iterator(
+		this->GPUWeights.begin(),
+		this->GPUMapTo.end() - (output_weight_size*this->settings.i_output)
+		)
+		)
+		),
+		functors::multiply<weight_type>()
+		),
+		thrust::make_discard_iterator(),
+		toReturn.begin()
+		);
+
+	thrust::transform(
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		toReturn.begin(),
+		this->GPUBias.end()-this->settings.i_output
+		)
+		),
+		functors::add<weight_type>()
+		),
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		toReturn.end(),
+		this->GPUBias.end()
+		)
+		),
+		functors::add<weight_type>()
+		),
+		toReturn.begin(),
+		functors::sigmoid_functor<weight_type>());
+
+	return toReturn;
 }

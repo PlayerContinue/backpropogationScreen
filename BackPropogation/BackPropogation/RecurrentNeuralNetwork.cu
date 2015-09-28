@@ -287,7 +287,7 @@ struct sigmoid_functor : public thrust::unary_function < T, T > {
 
 	__host__ __device__
 		T operator()(const T &x) const{
-		T z = thrust::exp(((T) -1) * x);
+		T z = thrust::exp((thrust::complex<T>)((T) -1 * x)).real();
 		return (T)1 / ((T)1 + z);
 	}
 
@@ -336,7 +336,7 @@ struct find_error : public thrust::unary_function < T, T > {
 	template <typename Tuple>
 	__host__ __device__
 		T operator()(Tuple &x) const{
-		return thrust::pow((thrust::get<0>(x) - thrust::get<1>(x)),(T)2);
+		return thrust::pow((thrust::complex<T>)(thrust::get<0>(x) -thrust::get<1>(x)), (thrust::complex<T>)2).real();
 	}
 
 };

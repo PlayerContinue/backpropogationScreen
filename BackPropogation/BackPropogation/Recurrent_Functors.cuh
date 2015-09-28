@@ -9,7 +9,7 @@
 #include <thrust/complex.h>
 #include <vector>
 #ifndef weight_type
-#define weight_type thrust::complex<double>
+#define weight_type double
 #endif
 
 using namespace thrust;
@@ -29,13 +29,23 @@ namespace functors{
 
 	};
 
+	template < typename T>
+	struct add : public thrust::unary_function < T, T > {
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+		}
+
+	};
+
 	//Multiply two values
 	template <typename T>
 	struct multiply_by_constant : public thrust::unary_function < T, T > {
 		const T constant;
-
 		multiply_by_constant(T _constant) : constant(_constant){};
-
+		
 
 		//Overload the function operator
 		__host__ __device__
@@ -43,17 +53,19 @@ namespace functors{
 			return constant * x;
 		}
 
+		
+
 	};
 
-	
+
 
 	template <typename T>
-	struct add_bias : public thrust::binary_function < T,T, T > {
+	struct add_bias : public thrust::binary_function < T, T, T > {
 
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const T &bias, const Tuple &x){
+			T operator()(T &bias, Tuple &x){
 			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
 		}
 	};
@@ -68,9 +80,9 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__ //Delta, Bias
-			T operator()(const Tuple &x){
+			T operator()(Tuple &x){
 			thrust::get<1>(x) += (T)(thrust::get<0>(x));
-			return (bias * thrust::get<1>(x)) + thrust::get<0>(x);
+			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
 		}
 	};
 
@@ -80,8 +92,8 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x){
-			return (thrust::get<0>(x) -thrust::get<1>(x));
+			T operator()(Tuple &x){
+			return ((T)thrust::get<0>(x) - (T)thrust::get<1>(x));
 		}
 	};
 
@@ -96,15 +108,16 @@ namespace functors{
 
 			weight_type forget = (weight_type)thrust::get<2>(x);
 
-			thrust::get<2>(x) = sigmoid_function((weight_type)thrust::get<2>(x) * (weight_type)thrust::get<4>(x)); //Multiply the forget * the old memory cell value
+			thrust::get<2>(x) = sigmoid_function((T)thrust::get<2>(x) * (T)thrust::get<4>(x)); //Multiply the forget * the old memory cell value
 			thrust::get<4>(x) = thrust::get<4>(x) +memory_value + forget; //Sum the forget,input, and old cell value to get the new value the new potential memory cell value
-			thrust::get<1>(x) = sigmoid_function((weight_type)thrust::get<4>(x) * (weight_type)thrust::get<1>(x)); //Multiply the new memory_cell value by the new output value 
+			thrust::get<1>(x) = sigmoid_function((T)thrust::get<4>(x) * (T)thrust::get<1>(x)); //Multiply the new memory_cell value by the new output value 
 
 		}
 
 		__host__ __device__
-			weight_type sigmoid_function(weight_type value){
-			return (weight_type)1 / ((weight_type)1 + thrust::exp(((weight_type)-1 * value)));
+			T sigmoid_function(T value){
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1.0 * (thrust::complex<T>)value)));
+			return (T)1 / ((T)1 + (T)exped.real());
 		}
 
 	};
@@ -119,7 +132,7 @@ namespace functors{
 		__host__ __device__
 			T operator()(Tuple x) const{
 			T z = (T)((T)thrust::get<0>(x)*(T)thrust::get<1>(x));
-			z = thrust::exp(((T)-1) * z);
+			z = (T)thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)z)).real();
 			return (T)1 / ((T)1 + z);
 		}
 
@@ -135,23 +148,33 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(const T &x) const{
-			return ((T)1 / ((T)1 + thrust::exp(((T)-1) * x)));
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
 		}
 
 	};
 
 
 
-	//Increase amount when beyond a certain numbers
+	//Increase amount when beyond the provided length
 	template <typename T>
-	struct extend_value : public thrust::unary_function < T, T > {
+	struct extend_value:public thrust::unary_function<T,T>{
 		const T length;
-		extend_value(T _length):length(_length){};
-
+		const T subtract;
+		const T add;
+		const bool keep;
+		extend_value(T _length) :length(_length),subtract((T)0),add(_length),keep(false){};
+		extend_value(T _length, T _subtract) :length(_length), subtract(_subtract),add(_length),keep(false){};
+		extend_value(T _length, T _subtract, T _add) :length(_length), subtract(_subtract),add(_add), keep(false){};
+		extend_value(T _length, T _subtract, T _add, bool _include_less) :length(_length), subtract(_subtract), add(_add), keep(_include_less){};
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x) const{
-			return ((thrust::get<0>(x)/length)*length) + thrust::get<1>(x);
+			T operator()(Tuple &x){
+			if (!keep || thrust::get<1>(x) >= length * 2){
+				return (((T)thrust::get<1>(x) / (T)length)* (T)add) + (T)thrust::get<0>(x) -(T)subtract;
+			}
+			else{
+				return (T)thrust::get<0>(x) -(T)subtract;
+			}
 		}
 
 	};
@@ -165,7 +188,7 @@ namespace functors{
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(Tuple &x) const{
-			return thrust::pow((thrust::get<0>(x) -thrust::get<1>(x)), (T)2);
+			return thrust::pow((thrust::complex<T>)((thrust::complex<T>)thrust::get<0>(x) -(thrust::complex<T>)thrust::get<1>(x)), (thrust::complex<T>)2).real();
 		}
 
 	};
@@ -183,11 +206,11 @@ namespace functors{
 		__host__ __device__
 			T operator()(const T &x)const{
 
-			if (x >= input){//The value is not an input
+			if (x >= (T)input){//The value is not an input
 				return ((T)x + (T)c);
 			}
 			else{//The value is an input
-				return x;
+				return (T)x;
 			}
 		}
 
@@ -222,9 +245,9 @@ namespace functors{
 		__host__ __device__
 			T operator()(const T &x){
 			if (x >= equal_to){
-				return  x;
+				return  (T)x;
 			}
-			return (x / divide_by);
+			return ((T)x / (T)divide_by);
 		}
 
 	};
@@ -247,11 +270,11 @@ namespace functors{
 
 	};
 
-
+	//Find the previous weight of the main loops
 	template <typename T>
 	struct find_previous_weight : public thrust::unary_function < T, T > {
 		const T beta;
-		find_previous_weight( T _beta) :  beta(_beta){
+		find_previous_weight(T _beta) : beta(_beta){
 
 		}
 
@@ -259,11 +282,12 @@ namespace functors{
 		__host__ __device__ //Delta,output
 			T operator()(Tuple &x){
 			//Multiply beta * output * delta
-			return beta * thrust::get<0>(x) * thrust::get<1>(x);
+			return (T)this->beta * (T)thrust::get<0>(x) * (T)thrust::get<1>(x);
 		}
 
 
 	};
+
 
 	//Apply the error from the delta and the weight
 	template <typename T>
@@ -276,14 +300,14 @@ namespace functors{
 		template <typename Tuple>
 		__host__ __device__ //previousWeight, weight
 			T operator()(Tuple &x,T &y){
-			thrust::get<1>(x) *= alpha;
+			thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
 			if (y != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
-				T toReturn = thrust::get<1>(x) +y;
-				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);
-				return toReturn + thrust::get<1>(x);
+				T toReturn = thrust::get<1>(x) +y;//Add the previous_weight to the return value, which is the new weight
+				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);//Find the new previous weight by dividing the deltas by the number of unrolled
+				return (T)toReturn + (T)thrust::get<1>(x); // Add the previous weight to the new weight to find the final weight
 			}
 			else{
-				return (T)y;
+				return (T)y;//Return the value if it is one
 			}
 			
 		}
@@ -303,7 +327,7 @@ namespace functors{
 		//w = weight, d = delta, beta * (d/(number summed) + (w + (w*alpha)
 		__host__ __device__
 			T operator()(const T &d, const T &w)const{
-			return (beta * (d / divide)) + (w + (w*alpha));
+			return ((T)beta * ((T)d / (T)divide)) + ((T)w + ((T)w*(T)alpha));
 		}
 
 		template <typename Tuple>
@@ -346,7 +370,7 @@ namespace functors{
 		find_output_delta(){};
 		__host__ __device__
 			T operator()(const T &target, const T &output)const{
-			return output*((T)1 - output)*(target - output);
+			return (T)output*((T)1 - (T)output)*((T)target - (T)output);
 		}
 	};
 }

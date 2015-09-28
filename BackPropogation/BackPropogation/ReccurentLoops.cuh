@@ -8,6 +8,8 @@
 #include <iostream>
 #endif
 
+
+
 #ifdef __X_H_INCLUDED__
 
 #else
@@ -17,10 +19,19 @@
 #endif
 #include "RecurrentNeuralNetwork.cuh"
 #include "LongTermShortTermNetwork.cuh"
+
+#ifndef __TESTCODE_CUH_INCLUDED___
+#include "testcode.cuh"
+#define __TESTCODE_CUH_INCLUDED___
+#endif
+
 #include "CRecurrentCheckpoint.h"
 #include <thrust/complex.h>
-#define weight_type thrust::complex<double>
-#define RETURN_WEIGHT_TYPE  thrust::complex<double>
+
+#ifndef weight_type
+#define weight_type double
+#endif
+#define RETURN_WEIGHT_TYPE  double
 //****************************************************************************************************
 //
 //Programmer: David Greenberg
@@ -80,7 +91,8 @@ private:
 	//Utilization
 	//*********************
 public:
-	vector<RETURN_WEIGHT_TYPE> runNetwork(double* in);
+	vector<RETURN_WEIGHT_TYPE> runNetwork(int* in);
+	
 	vector<RETURN_WEIGHT_TYPE> runNetwork(weight_type* in);
 
 	template <typename T>

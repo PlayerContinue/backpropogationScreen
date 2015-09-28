@@ -9,9 +9,14 @@
 #include <thrust/copy.h>
 #include <thrust/complex.h>
 
+#ifndef __TESTCODE_CUH_INCLUDED___
+#include "testcode.cuh"
+#define __TESTCODE_CUH_INCLUDED___
+#endif
 
 #ifndef __FUNCTORS__H__INCLUDED__
 #include "Recurrent_Functors.cuh"
+#define __FUNCTORS__H__INCLUDES__
 #endif
 #include <vector>
 #ifndef __TIME_H_INCLUDED__
@@ -45,7 +50,9 @@
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
-#define weight_type thrust::complex<double>
+#ifndef weight_type
+#define weight_type double
+#endif
 
 //****************************************************************************************************
 //
@@ -67,7 +74,7 @@ private:
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
-	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL};
+	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL,NONE_CELL};
 	//Stores the weights between neurons
 	host_vector<weight_type> weights;
 	//Stores the weights in GPU Memory
@@ -126,6 +133,11 @@ public:
 	//Constructor which asks for a settings object 
 	//The settings object contains all the information required to perform a function
 	LongTermShortTermNetwork(CSettings& settings);
+
+	//*********************
+	//Destructor
+	//*********************
+	~LongTermShortTermNetwork();
 	//*********************
 	//Initialization
 	//*********************
@@ -168,6 +180,7 @@ private:
 	void UnrollNetwork(int numLayers);
 	//Load the bias into the system
 	void moveBiasToGPU();
+	void moveBiasToGPU(bool add_memory_cells);
 
 	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
@@ -327,7 +340,7 @@ private:
 
 
 		os << endl;
-		for (int i = 0; i < network.GPUBias.size(); i++){
+		for (unsigned int i = 0; i < network.GPUBias.size(); i++){
 			os << i << ") " << (weight_type)network.GPUBias[i] << ",";
 		}
 	
@@ -338,7 +351,7 @@ private:
 
 		os << endl;
 
-		for (int i = 0; i < network.GPUPreviousBias.size(); i++){
+		for (unsigned int i = 0; i < network.GPUPreviousBias.size(); i++){
 			os << i << ") " << (weight_type)network.GPUPreviousBias[i] << ",";
 		}
 

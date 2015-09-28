@@ -19,7 +19,9 @@
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
-#define weight_type thrust::complex<double>
+#ifndef weight_type
+#define weight_type double
+#endif
 //****************************************************************************************************
 //
 //Programmer: David Greenberg

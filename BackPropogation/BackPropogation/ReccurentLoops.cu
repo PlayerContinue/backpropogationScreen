@@ -72,9 +72,9 @@ weight_type* ReccurentLoops::convert_array(T* in){
 	return temp;
 }
 
-vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(double* in){
+vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(int* in){
 
-	return this->runNetwork(this->convert_array<double>(in));
+	return this->runNetwork(this->convert_array<int>(in));
 
 }
 
@@ -142,12 +142,12 @@ void ReccurentLoops::testTraining(){
 			}
 			
 			//Apply the error
-			this->mainNetwork->ApplyError();
-			if (i%this->settings.i_number_allowed_same == 0){
-				this->createCheckpoint();
-			}
+			
+		
 			if (i%this->settings.i_number_in_sequence == 0){//Reset the sequence once the sequence has finished
-				//this->mainNetwork->ResetSequence();
+				this->mainNetwork->ApplyError();
+				this->createCheckpoint();
+				this->mainNetwork->ResetSequence();
 			}
 			this->checkpoint.i_number_of_loops_checkpoint += 1;
 			
@@ -158,12 +158,15 @@ void ReccurentLoops::testTraining(){
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
 				cout << i << ") " << endl;
 				thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->input[0]);
-				thrust::copy(temp.begin(), temp.end(), std::ostream_iterator<weight_type>(std::cout, "\n"));
+				testing::outputToFile<weight_type>(temp, "results", "tests/results.txt");
 			}
 			//this->mainNetwork->emptyGPUMemory();
 			this->mainNetwork->cleanNetwork();
-			this->runNetwork(this->input[0]);
-
+			
+			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
+				std::vector<weight_type> temp2 = this->runNetwork(this->input[0]);
+				testing::outputVectorToFile<weight_type>(temp2, "results", "tests/results2.txt");
+			}
 		}
 		catch (exception e){
 			this->mainNetwork->emptyGPUMemory();
@@ -180,13 +183,6 @@ void ReccurentLoops::testTraining(){
 #endif
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
-	//this->mainNetwork->addNeuron(1);
-	//this->mainNetwork->VisualizeNetwork();
-	//this->mainNetwork->addNeuron(2);
-	//this->mainNetwork->VisualizeNetwork();
-
-	//this->mainNetwork->addWeight(5);
-	//this->mainNetwork->VisualizeNetwork();
 	this->mainNetwork->InitializeTraining();
 	do{
 		this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
@@ -223,7 +219,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence);
 		}
 		else{
-			temp[i - position] = (weight_type).1;
+			temp[i - position] = (weight_type)(.1*(i%this->settings.i_number_in_sequence));
 		}
 	}
 	position += numberOfInput;

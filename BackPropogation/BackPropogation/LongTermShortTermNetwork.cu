@@ -1,5 +1,4 @@
 #include "LongTermShortTermNetwork.cuh"
-#define NUMBER_NODES_IN_MEMORY_CELL 5
 #define TEST_DEBUG
 
 //#define _DEBUG_WEIGHTS
@@ -11,6 +10,10 @@ LongTermShortTermNetwork::LongTermShortTermNetwork(){
 LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings){
 	this->settings = settings;
 	this->initialize_network();
+}
+
+LongTermShortTermNetwork::~LongTermShortTermNetwork(){
+	this->emptyGPUMemory();//Empty the GPU Memory
 }
 
 //***************************
@@ -42,7 +45,7 @@ int LongTermShortTermNetwork::decideNodeToAttachTo(){
 	vector<int> notFullyConnected = vector<int>();
 	int numberMBlocks = this->mBlocksLayers[0].size();
 	//Find how many nodes are not fully connected
-	for (int i = 0; i < numberMBlocks; i++){
+	for (unsigned int i = 0; i < numberMBlocks; i++){
 		//A node is considered not fully connected if it is not connected to at least one other memory block
 		if (this->mBlocksLayers[0][i].input_weights.size() < this->numberNonWeights + numberMBlocks){
 			notFullyConnected.push_back(i);
@@ -66,7 +69,7 @@ int LongTermShortTermNetwork::decideNodeToAttachFrom(int attachTo){
 	bool containsValue = false;
 	int start = (this->settings.i_output != attachTo ? this->positionOfLastWeightToNode[attachTo - 1] : 0);
 	int end = (this->settings.i_output != attachTo ? this->positionOfLastWeightToNode[attachTo] : this->positionOfLastWeightToNode[attachTo]);
-	for (int k = this->numberNonWeights; k < this->bias.size() - this->settings.i_output; k++){
+	for (unsigned int k = this->numberNonWeights; k < this->bias.size() - this->settings.i_output; k++){
 		for (int i = start; i <= end; i++){
 			if (this->mapFrom[i] == k){
 				//The value is already contained in the system
@@ -146,113 +149,7 @@ void LongTermShortTermNetwork::InitialcreateMemoryBlock(int numberMemoryCells){
 
 
 
-//*********************
-//Run The Network
-//*********************
 
-
-thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in){
-
-	this->setInput(in);
-	//Stores the numberofmblocks in a layer
-	unsigned int numberMBlocks;
-	unsigned int previousnumberMBlocks = 0;
-	//Perform the transformation on each layer
-	for (unsigned int i = 0; i < this->mBlocksLayers.size()-1; i++){
-
-		if (i != 0){
-			previousnumberMBlocks = numberMBlocks;
-		}
-		numberMBlocks = this->mBlocksLayers[i].size();
-		//Sum the values of the input/output/forget/potential_memory_cell_values nodes
-		//The values in the GPU weights are in the order input, output, forget, memory cells
-		//Subtracting this->mBlocksLayers[i].size() from the end will remove the memory cells from doing anything
-		//Output to Previous
-		thrust::reduce_by_key(this->GPUMapTo.begin(), this->GPUMapTo.end(), thrust::make_transform_iterator(
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			this->GPUWeights.begin() + this->numberNonWeights + previousnumberMBlocks, // We don't want to multiply the actual input/out values, so we skip them
-			make_permutation_iterator( // Create an iterator which maps the values coming from to those going to
-			this->GPUOutput_values.begin(),
-			this->GPUMapFrom.begin())
-			)
-			),
-			functors::multiply<weight_type>()), //Multiply the two values then run them through a sigmoid function
-			thrust::make_discard_iterator(), // Discard the retrieved order, the order should be constant
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks//Store in the previous in order to not overwrite the saved values
-			);
-
-		thrust::transform(this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + (5 * numberMBlocks),
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks,
-			functors::sigmoid_functor<weight_type>());
-
-		//Create a input/output/forget/potential_memory_cell_values/memory_cell_value value
-		//Essentially run the gate and get the output value
-		thrust::for_each(
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + previousnumberMBlocks + this->settings.i_input, //input values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input,//output values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
-			)),
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + numberMBlocks + previousnumberMBlocks + this->settings.i_input, //input values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (2 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//output values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (3 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//forget values
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (4 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input,//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + this->numberNonWeights + (5 * numberMBlocks) + previousnumberMBlocks + this->settings.i_input
-			)),
-			functors::run_memory_block_functon<weight_type>());
-		thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->GPUOutput_values.begin());
-		
-	}
-
-	device_vector<weight_type> toReturn = device_vector<weight_type>(this->settings.i_output);
-	//Transform the output of the current
-	/*thrust::transform(this->GPUOutput_values.end() - 
-		(5 * this->mBlocksLayers[this->mBlocksLayers.size() - 1].size()) + this->settings.i_output,
-		this->GPUOutput_values.end() - 
-		(5 * this->mBlocksLayers[this->mBlocksLayers.size() - 1].size())+ this->settings.i_output + this->settings.i_output,
-		toReturn.begin(), _1 * (weight_type)1);*/
-
-	int output_weight_size = ((this->mBlocksLayers[this->mBlocksLayers.size() - 2].size()));
-
-	thrust::reduce_by_key(
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0),
-		_1 / output_weight_size // The number of output nodes in layer before the output layer
-		), 
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0),
-		_1 / output_weight_size // The number of output nodes in layer before the output layer
-		) + output_weight_size * this->settings.i_output,
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		thrust::make_permutation_iterator(
-		this->GPUOutput_values.begin(),
-		this->GPUMapFrom.end() - (output_weight_size * this->settings.i_output)),
-
-		thrust::make_permutation_iterator(
-		this->GPUWeights.begin(),
-		this->GPUMapTo.end() -( output_weight_size*this->settings.i_output)
-		)
-		)
-		),
-		functors::multiply<weight_type>()
-		),
-		thrust::make_discard_iterator(),
-		toReturn.begin()
-		);
-
-	thrust::transform(toReturn.begin(), toReturn.end(), toReturn.begin(), functors::sigmoid_functor<weight_type>());
-
-	return toReturn;
-}
 
 
 //*********************
@@ -268,41 +165,54 @@ void LongTermShortTermNetwork::setInput(weight_type* in){
 
 }
 
-//Copies the bias on Main Memory to GPU Memory
-void LongTermShortTermNetwork::moveBiasToGPU(){
+void LongTermShortTermNetwork::moveBiasToGPU(bool add_memory_cells){
 	this->GPUBias = thrust::device_vector<weight_type>();
 
-	for (int j = 0; j < this->mBlocksLayers.size(); j++){
+	for (unsigned int j = 0; j < this->mBlocksLayers.size(); j++){
 		//Copy back the input
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				this->GPUBias.push_back(this->mBlocksLayers[j][i].bias[0]);
 			}
 		}
 
 		//Copy back to output
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				this->GPUBias.push_back(this->mBlocksLayers[j][i].bias[1]);
 			}
 		}
 
 		//Copy back to forget
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				this->GPUBias.push_back(this->mBlocksLayers[j][i].bias[2]);
 			}
 		}
 
 		//Copy back to potential memory cell
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			this->GPUBias.push_back(this->mBlocksLayers[j][i].bias[3]);
 		}
 
 		
+			//Add the memory cells
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
+				if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
+					this->GPUBias.push_back((weight_type)0);
+				}
+			}
+		
 	}
-	//Make the previous list of bias to the bias
-	this->GPUPreviousBias = thrust::device_vector<weight_type>(this->GPUBias.size());
+	if (add_memory_cells){
+		//Make the previous list of bias to the bias
+		this->GPUPreviousBias = thrust::device_vector<weight_type>(this->GPUBias.size());
+	}
+}
+
+//Copies the bias on Main Memory to GPU Memory
+void LongTermShortTermNetwork::moveBiasToGPU(){
+	this->moveBiasToGPU(true);
 }
 
 void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
@@ -341,9 +251,10 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 }
 
 void LongTermShortTermNetwork::ResetSequence(){
-	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), 0);
-	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), 0);
-	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), 0);
+	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type)0);
+	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), (weight_type)0);
+	thrust::fill(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), (weight_type)0);
 }
 
 template <typename T>
@@ -363,41 +274,51 @@ void LongTermShortTermNetwork::CopyToHost(){
 	//Copy the secondary output
 	thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->bias.begin());
 	int start = this->settings.i_input;
-	for (int j = 0; j < this->mBlocksLayers.size(); j++){
+	int biasCount = 0;//Keeps track of the position in the bias list
+	for (unsigned int j = 0; j < this->mBlocksLayers.size(); j++){
 		//Copy back the input
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].input_weights);
+				this->mBlocksLayers[j][i].bias[0] = this->GPUBias[biasCount];
+				biasCount++;
 				start += this->mBlocksLayers[j][i].input_weights.size();
 			}
 		}
 
 		//Copy back to output
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].output_weights);
+				this->mBlocksLayers[j][i].bias[1] = this->GPUBias[biasCount];
+				biasCount++;
 				start += this->mBlocksLayers[j][i].output_weights.size();
 			}
 		}
 
 		//Copy back to forget
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].forget_weights);
+				this->mBlocksLayers[j][i].bias[2] = this->GPUBias[biasCount];
+				biasCount++;
 				start += this->mBlocksLayers[j][i].forget_weights.size();
 			}
 		}
 
 		//Copy back to potential memory cell
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].potential_memory_cell_value);
+			this->mBlocksLayers[j][i].bias[3] = this->GPUBias[biasCount];
+			biasCount++;
 			start += this->mBlocksLayers[j][i].potential_memory_cell_value.size();
 		}
 
 		//Get the new memory_cell_weight
-		for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
-					this->mBlocksLayers[j][i].memory_cell_weights[0] = 0;
+					biasCount++;
+					this->mBlocksLayers[j][i].memory_cell_weights[0] = (weight_type)0;
 			}
 		}
 	}
@@ -427,7 +348,7 @@ void LongTermShortTermNetwork::specialCopyToNodes(int start_output, int number_o
 	thrust::copy(local_weights.begin(), local_weights.end(), GPUWeightVector.begin() + GPU_VecSize);
 	GPU_VecSize = GPU_VecSize + local_weights.size();
 
-	for (unsigned int i = start_output; i < start_output + number_output; i++){
+	for (int i = start_output; i < start_output + number_output; i++){
 		fromPosition.push_back(i);
 		GPUWeightVector.push_back(1);
 	}
@@ -462,20 +383,20 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 	}
 
 	//Set all the input values
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			specialCopyToNodes<weight_type>(start_output_position, number_output_to_add, this->GPUWeights, this->GPUMapTo, this->GPUMapFrom, this->mBlocksLayers[j][i].input_weights, this->mBlocksLayers[j][i].mapFrom);
 			input_nodes[i] = this->GPUOutput_values.size();//Get the position of an input node
 			if (type_of_row == 2){
 				this->numberOfNodes++;
 			}
-			this->GPUOutput_values.push_back(0);
+			this->GPUOutput_values.push_back((weight_type)0);
 		}
 	}
 
 
 	//Set all the outputs
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			specialCopyToNodes<weight_type>(start_output_position, number_output_to_add, this->GPUWeights, this->GPUMapTo, this->GPUMapFrom, this->mBlocksLayers[j][i].output_weights, this->mBlocksLayers[j][i].mapFrom);
 			//Add a connection to the memory cell
@@ -487,12 +408,12 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 			if (type_of_row == 2){
 				this->numberOfNodes++;
 			}
-			this->GPUOutput_values.push_back(0);
+			this->GPUOutput_values.push_back((weight_type)0);
 		}
 	}
 
 	//Set all the forget nodes
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			if (type_of_row == 2){
 				this->numberOfNodes++;
@@ -504,12 +425,12 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 			this->GPUMapTo.push_back(this->GPUOutput_values.size());
 			this->GPUWeights.push_back((weight_type)1);
 			input_nodes[i + this->mBlocksLayers[j].size()] = this->GPUOutput_values.size();//Set position of the forget blocks
-			this->GPUOutput_values.push_back(0);
+			this->GPUOutput_values.push_back((weight_type)0);
 		}
 	}
 
 	//Set all the potential_output nodes
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		
 		input_nodes[i + (this->mBlocksLayers[j].size() * 2)] = this->GPUOutput_values.size();//Store the position of the 
 		
@@ -523,7 +444,7 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 	}
 
 	//Set the values of the Memory Cells
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			memory_cell_from[0] = input_nodes[i];//Get input in
 			memory_cell_from[1] = input_nodes[i + this->mBlocksLayers[j].size()];//The potential input
@@ -553,7 +474,7 @@ void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 	}
 
 	//Set all the input values
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			copyNodesToDevice<weight_type>(this->GPUWeights, this->GPUMapFrom, this->mBlocksLayers[j][i].input_weights, this->mBlocksLayers[j][i].mapFrom);
 			this->GPUMapTo.resize(this->GPUMapTo.size() + this->mBlocksLayers[j][i].input_weights.size());
@@ -564,7 +485,7 @@ void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 
 
 	//Set all the outputs
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			copyNodesToDevice<weight_type>(this->GPUWeights, this->GPUMapFrom, this->mBlocksLayers[j][i].output_weights, this->mBlocksLayers[j][i].mapFrom);
 			this->GPUMapTo.resize(this->GPUMapTo.size() + this->mBlocksLayers[j][i].output_weights.size());
@@ -574,7 +495,7 @@ void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 	}
 
 	//Set all the forget nodes
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			copyNodesToDevice<weight_type>(this->GPUWeights, this->GPUMapFrom, this->mBlocksLayers[j][i].forget_weights, this->mBlocksLayers[j][i].mapFrom);
 			this->GPUMapTo.resize(this->GPUMapTo.size() + this->mBlocksLayers[j][i].forget_weights.size());
@@ -584,7 +505,7 @@ void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 	}
 
 	//Set all the potential_output nodes
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		copyNodesToDevice<weight_type>(this->GPUWeights, this->GPUMapFrom, this->mBlocksLayers[j][i].potential_memory_cell_value, this->mBlocksLayers[j][i].mapFrom);
 		this->GPUMapTo.resize(this->GPUMapTo.size() + this->mBlocksLayers[j][i].potential_memory_cell_value.size());
 		thrust::fill(this->GPUMapTo.end() - this->mBlocksLayers[j][i].potential_memory_cell_value.size(), this->GPUMapTo.end(), this->GPUOutput_values.size());
@@ -594,7 +515,7 @@ void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 
 	this->GPUPreviousOutput_Values.resize(this->GPUOutput_values.size());
 	//Set the values of the Memory Cells
-	for (int i = 0; i < this->mBlocksLayers[j].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			this->GPUOutput_values.push_back(this->mBlocksLayers[j][i].memory_cell_weights[0]);
 			this->GPUPreviousOutput_Values.push_back(this->mBlocksLayers[j][i].memory_cell_weights[0]);
@@ -623,7 +544,7 @@ unsigned int LongTermShortTermNetwork::getNumberMemoryCells(unsigned int layer){
 		throw new exception("Layer does not exist");
 	}
 	unsigned int memory_cell_count = 0;
-	for (int i = 0; i < this->mBlocksLayers[layer].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[layer].size(); i++){
 		memory_cell_count += this->mBlocksLayers[layer][i].number_memory_cells;
 	}
 	return memory_cell_count;
@@ -636,7 +557,7 @@ unsigned int LongTermShortTermNetwork::getNumberWeightsInLayer(unsigned int laye
 	}
 
 	unsigned int weights_count = 0;
-	for (int i = 0; i < this->mBlocksLayers[layer].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[layer].size(); i++){
 		weights_count += this->mBlocksLayers[layer][i].input_weights.size();
 		weights_count += this->mBlocksLayers[layer][i].forget_weights.size();
 		weights_count += this->mBlocksLayers[layer][i].output_weights.size();
@@ -653,7 +574,7 @@ unsigned int LongTermShortTermNetwork::getNumberTypeWeightsInLayer(unsigned int 
 	}
 	unsigned int number_types = 0;
 
-	for (int i = 0; i < this->mBlocksLayers[layer].size(); i++){
+	for (unsigned int i = 0; i < this->mBlocksLayers[layer].size(); i++){
 		switch (cell){
 		case MEMORY_CELL:
 			number_types += (this->mBlocksLayers[layer][i].number_memory_cells) * 3;

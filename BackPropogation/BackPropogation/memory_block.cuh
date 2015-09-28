@@ -14,7 +14,9 @@
 #endif
 
 #include "util.h"
-#define weight_type thrust::complex<double>
+#ifndef weight_type
+#define weight_type double
+#endif
 using namespace thrust;
 class Memory_Block{
 public:
