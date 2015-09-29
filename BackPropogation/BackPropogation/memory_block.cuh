@@ -41,7 +41,13 @@ public:
 	//Number of cells in the memory_block
 	unsigned int number_memory_cells;
 
+	//Number of weight in block
+	unsigned int number_weights;
+
 	enum memory_block_type { OUTPUT, LAYER };
+
+private:
+	memory_block_type type;
 
 public:
 	Memory_Block();

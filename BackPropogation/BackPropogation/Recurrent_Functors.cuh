@@ -40,7 +40,37 @@ namespace functors{
 
 	};
 
-	//Multiply two values
+	template < typename T>
+	struct add_and_store : public thrust::unary_function < T, T > {
+		const T divide;
+		add_and_store(T _divide):divide(_divide){};
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x){
+			thrust::get<1>(x) = thrust::get<1>(x) /divide; 
+			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+		}
+
+	};
+
+	
+
+	//Multiply the first two values in a tuple, then add the last one
+	template < typename T>
+	struct multiply_add : public thrust::unary_function < T, T > {
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x){
+			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x)) + (T)thrust::get<2>(x);
+		}
+
+	};
+
+
+
+	//Multiply a value by a constant
 	template <typename T>
 	struct multiply_by_constant : public thrust::unary_function < T, T > {
 		const T constant;
@@ -97,27 +127,38 @@ namespace functors{
 		}
 	};
 
+	//Uses the found input values in a memory cell function
+	//After running, stored values will be in sigmoid form for all but the memory cell
 	template <typename T>
 	struct run_memory_block_functon : public thrust::unary_function < T, T > {
 
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(Tuple &x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
-			weight_type memory_value = sigmoid_function(thrust::get<0>(x) * thrust::get<3>(x));//Multiply the input by the potential_memory_value
+			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
+			//Compute Logistic value of input,output,forget,and potential
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
 
-			weight_type forget = (weight_type)thrust::get<2>(x);
+			T memory_value_input = (T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<5>(x) * (T)thrust::get<2>(x);//Get the value of the forget gate
 
-			thrust::get<2>(x) = sigmoid_function((T)thrust::get<2>(x) * (T)thrust::get<4>(x)); //Multiply the forget * the old memory cell value
-			thrust::get<4>(x) = thrust::get<4>(x) +memory_value + forget; //Sum the forget,input, and old cell value to get the new value the new potential memory cell value
-			thrust::get<1>(x) = sigmoid_function((T)thrust::get<4>(x) * (T)thrust::get<1>(x)); //Multiply the new memory_cell value by the new output value 
+			thrust::get<4>(x) = memory_value_input + forget_gate; //Sum the input value and the forget value
+			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<4>(x),1,0) * thrust::get<1>(x), 1, 0);
 
 		}
 
 		__host__ __device__
 			T sigmoid_function(T value){
-			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1.0 * (thrust::complex<T>)value)));
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>)-1 * (thrust::complex<T>)value)));
 			return (T)1 / ((T)1 + (T)exped.real());
+		}
+
+		__host__ __device__
+			T  logistic_function(T value, T max_value, T midpoint){
+			return ((thrust::complex<T>)max_value / 
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)-1 * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
 
 	};
@@ -148,7 +189,19 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(const T &x) const{
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+		}
+
+	};
+
+	//Perform a sigmoid function
+	template <typename T>
+	struct changed_sigmoid_functor : public thrust::unary_function < T, T > {
+		changed_sigmoid_functor(){};
+
+		__host__ __device__
+			T operator()(T &x){
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
 		}
 
 	};
@@ -288,6 +341,23 @@ namespace functors{
 
 	};
 
+	template <typename T>
+	struct check_not_between : public thrust::unary_function < T, bool > {
+		const T start;
+		const T end;
+
+		check_not_between(T _start, T _end) : start(_start), end(_end){};
+
+		__host__ __device__
+		bool operator()(const T &x)const{
+			if (start > x && x < end){
+				return false;
+			}
+			else{
+				return true;
+			}
+		}
+	};
 
 	//Apply the error from the delta and the weight
 	template <typename T>
@@ -299,16 +369,17 @@ namespace functors{
 		}
 		template <typename Tuple>
 		__host__ __device__ //previousWeight, weight
-			T operator()(Tuple &x,T &y){
-			thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
-			if (y != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
-				T toReturn = thrust::get<1>(x) +y;//Add the previous_weight to the return value, which is the new weight
+			T operator()(Tuple &x){
+			
+			//if (thrust::get<1>(x) != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
+				thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
+				T toReturn = thrust::get<1>(x) +thrust::get<2>(x);//Add the previous_weight to the return value, which is the new weight
 				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);//Find the new previous weight by dividing the deltas by the number of unrolled
 				return (T)toReturn + (T)thrust::get<1>(x); // Add the previous weight to the new weight to find the final weight
-			}
-			else{
-				return (T)y;//Return the value if it is one
-			}
+			//}
+			//else{
+			//	return (T)y;//Return the value if it is one
+			//}
 			
 		}
 

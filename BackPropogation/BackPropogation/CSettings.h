@@ -93,6 +93,9 @@ public:
 	//Number of inputs in a sequence
 	int i_number_in_sequence = 1;
 
+	//Number of nodes to start with
+	int i_number_start_nodes;
+
 	CSettings();
 
 
@@ -238,6 +241,9 @@ public:
 
 		is >> next;
 		is >> settings.i_number_in_sequence;
+
+		is >> next;
+		is >> settings.i_number_start_nodes;
 
 		return is;
 	}

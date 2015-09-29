@@ -79,20 +79,13 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(int* in){
 }
 
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
-	this->mainNetwork->InitializeRun();
-#ifdef _DEBUG
-	this->createCheckpoint();
-#endif
+	//this->mainNetwork->InitializeRun();
 	device_vector<weight_type> temp_device = this->mainNetwork->runNetwork(in);
-#ifdef _DEBUG
-	this->createCheckpoint();
-#endif
 	vector<RETURN_WEIGHT_TYPE> to_return = vector <RETURN_WEIGHT_TYPE>(temp_device.size());
 
 	for (unsigned int i = 0; i < temp_device.size(); i++){
 		to_return[i] = temp_device[i];
 	}
-	this->mainNetwork->emptyGPUMemory();
 	clear_vector::free(temp_device);
 
 	return to_return;
@@ -103,8 +96,11 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 bool ReccurentLoops::load_training_data_from_file(){
 	for (int i = 0; i < this->settings.i_number_of_training; i++){
 		this->input[i] = this->createTestInputOutput(this->settings.i_input,0);
-		this->output[i] = this->createTestInputOutput(this->settings.i_output,1);
 	}
+	for (int i = 0; i < this->settings.i_number_of_training; i++){
+		this->output[i] = this->createTestInputOutput(this->settings.i_output, 1);
+	}
+	
 	return true;
 }
 
@@ -140,13 +136,17 @@ void ReccurentLoops::testTraining(){
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
+
+			this->mainNetwork->ApplyError();
+			if (i%this->settings.i_number_allowed_same == 0){
+				this->createCheckpoint();
+			}
 			
 			//Apply the error
 			
 		
 			if (i%this->settings.i_number_in_sequence == 0){//Reset the sequence once the sequence has finished
-				this->mainNetwork->ApplyError();
-				this->createCheckpoint();
+				
 				this->mainNetwork->ResetSequence();
 			}
 			this->checkpoint.i_number_of_loops_checkpoint += 1;
@@ -154,22 +154,31 @@ void ReccurentLoops::testTraining(){
 		}
 		try{
 			this->createCheckpoint();
-			
+			/*this->mainNetwork->ResetSequence();
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
 				cout << i << ") " << endl;
-				thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->input[0]);
+				thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->input[i]);
 				testing::outputToFile<weight_type>(temp, "results", "tests/results.txt");
-			}
-			//this->mainNetwork->emptyGPUMemory();
+			}*/
+			this->createCheckpoint("RunResultsInMemory");
 			this->mainNetwork->cleanNetwork();
-			
+			this->mainNetwork->InitializeRun();
+			this->mainNetwork->ResetSequence();
+			this->createCheckpoint("RunStart");
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
-				std::vector<weight_type> temp2 = this->runNetwork(this->input[0]);
+				testing::outputArrayToFile<weight_type>(this->input[i], this->settings.i_input, "tests/results2.txt");
+				testing::outputArrayToFile<weight_type>(this->output[i], this->settings.i_output, "tests/results2.txt");
+				std::vector<weight_type> temp2 = this->runNetwork(this->input[i]);
 				testing::outputVectorToFile<weight_type>(temp2, "results", "tests/results2.txt");
 			}
+			this->createCheckpoint("RunResultsFromHost");
+			this->mainNetwork->emptyGPUMemory();
 		}
 		catch (exception e){
-			this->mainNetwork->emptyGPUMemory();
+			cout << e.what();
+			cin.sync();
+			cin.get();
+			//this->mainNetwork->emptyGPUMemory();
 		}
 
 		
@@ -226,29 +235,21 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 	return  temp;
 }
 
+//Create a checkpoint with the network name
+//Default function
 void ReccurentLoops::createCheckpoint(){
+	this->createCheckpoint(this->settings.s_network_name);
+}
+
+//Create a Checkpoint with any name
+void ReccurentLoops::createCheckpoint(string file_name){
 	static int count = 0 ;
 
 		std::ofstream outputfile;
-		outputfile.open("networks/" + settings.s_network_name + std::to_string(count) + ".txt", ios::trunc);
+		outputfile.open("recurrent_networks/" + file_name + std::to_string(count) + ".txt", ios::trunc);
 		if (outputfile.is_open()){
-			for (int i = 0; i < this->settings.i_input; i++){
-				//cout << i << ") " << this->input[0][i] << endl;
-			}
-
-
-			for (int i = 0; i < this->settings.i_input; i++){
-				//cout << i << ") " << this->output[0][i] << endl;
-			}
-			//Output the network
 			outputfile << *this << flush;
 			outputfile << endl;
-			//cout << *this << endl;
-			//vector<weight_type> vect = this->runNetwork(this->input[0]);
-
-			for (int i = 0; i < this->settings.i_input; i++){
-				//cout << i << ") " << vect[i] << endl;
-			}
 			outputfile.close();
 		}
 		else{

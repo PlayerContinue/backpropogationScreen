@@ -122,6 +122,7 @@ private:
 	//*********************
 	weight_type* createTestInputOutput(int numberOfInput, int input_output);
 	void createCheckpoint();
+	void createCheckpoint(string file_name);
 
 	//*********************
 	//Override Operators
