@@ -35,6 +35,9 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->mapTo = host_vector<int>();
 	this->mapFrom = host_vector<int>();
 	this->bias = host_vector<weight_type>();
+
+	//this->addWeight(10);
+	
 }
 
 void LongTermShortTermNetwork::count_weights_in_layers(){
@@ -156,11 +159,14 @@ weight_type LongTermShortTermNetwork::getNewWeight(){
 
 void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	int decideTo = this->decideNodeToAttachTo();
-	if (decideTo != -1){
-		this->mBlocksLayers[0][decideTo].addNewConnection(this->numberNonWeights - 1, this->mBlocksLayers[0].size() + this->numberNonWeights);
-	}
-	else{
-
+	for (int i = 0; i < numberWeightsToAdd; i++){
+		if (decideTo != -1){
+			this->mBlocksLayers[0][decideTo].addNewConnection(0, this->mBlocksLayers[0].size());
+		}
+		else{
+			break;
+		}
+		decideTo = this->decideNodeToAttachTo();
 	}
 
 }
@@ -338,7 +344,12 @@ void LongTermShortTermNetwork::CopyToHost(){
 		//Copy back to potential memory cell
 		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].potential_memory_cell_value);
-			this->mBlocksLayers[j][i].bias[3] = this->GPUBias[biasCount];
+			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
+				this->mBlocksLayers[j][i].bias[3] = this->GPUBias[biasCount];
+			}
+			else if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::OUTPUT){
+				this->mBlocksLayers[j][i].bias[0] = this->GPUBias[biasCount];
+			}
 			biasCount++;
 			start += this->mBlocksLayers[j][i].potential_memory_cell_value.size();
 			
@@ -394,12 +405,12 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 	unsigned int start_output_position = 0;
 	unsigned int number_output_to_add = 0;
 	unsigned int* input_nodes = new unsigned int[this->mBlocksLayers[j].size() * 3];
-	host_vector<int> memory_cell_from = host_vector<int>(3);
-	host_vector<weight_type> memory_cell_weights = host_vector<weight_type>(3);
+	host_vector<int> memory_cell_from = host_vector<int>(4);
+	host_vector<weight_type> memory_cell_weights = host_vector<weight_type>(4);
 	memory_cell_weights[0] = 1;//From the input
 	memory_cell_weights[1] = 1;//From the potential
 	memory_cell_weights[2] = 1;//From the forget
-	//memory_cell_weights[3] = 1;//From itself
+	memory_cell_weights[3] = 1;//From itself
 
 	if (type_of_row == 0){//Is not an output row
 		number_output_to_add = this->mBlocksLayers[j].size();
@@ -479,7 +490,7 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 			memory_cell_from[0] = input_nodes[i];//Get input in
 			memory_cell_from[1] = input_nodes[i + this->mBlocksLayers[j].size()];//The potential input
 			memory_cell_from[2] = input_nodes[i + (this->mBlocksLayers[j].size() * 2)];
-			//memory_cell_from[3] = this->GPUOutput_values.size();//itself
+			memory_cell_from[3] = this->GPUOutput_values.size();//itself
 			
 			if (type_of_row == 2){
 				this->numberOfNodes++;
@@ -633,8 +644,8 @@ void LongTermShortTermNetwork::getSumPermutation(){
 #ifdef  _DEBUG
 	vector<int> temp = vector<int>();
 #endif
-	for (int i = 0; i < this->numberOfNodes; i++){
-			for (unsigned int j = 0; j < this->GPUMapTo.size(); j++){
+	for (int i = this->numberNonWeights; i <= this->numberOfNodes; i++){
+		for (unsigned int j = 0; j < this->GPUMapTo.size(); j++){
 				if (i == this->GPUMapFrom[j]){
 					//This is a position of one of the matching nodes
 					this->positionToSum.push_back(j);

@@ -184,7 +184,7 @@ private:
 	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
 	//Find the delta values of the current output from the expected gradiant
-	void FindBackPropDelta(weight_type* out);
+	void FindBackPropDelta(weight_type* out, int current_layer);
 
 	//Apply the error
 	void ApplyLongTermShortTermMemoryError();
@@ -280,14 +280,14 @@ private:
 		os << endl;
 		os << network.GPUWeights.size() << endl;
 		for (unsigned int i = 0; i < network.GPUWeights.size(); i++){
-			os << i <<") " <<(weight_type)network.GPUWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUWeights[i] << ", " << endl;
 		}
 		os << endl;
 		os << endl;
 
 		os << network.device_deltas.size() << endl;
 		for (unsigned int i = 0; i < network.device_deltas.size(); i++){
-			os << i << ") " << (weight_type)network.device_deltas[i] << ", " << endl;
+			os << (weight_type)network.device_deltas[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -297,7 +297,7 @@ private:
 		os << network.GPUOutput_values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
-			os << i << ") "  << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
+			os << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
 		}
 
 		os << endl;
@@ -307,7 +307,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
+			os <<  (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -318,7 +318,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousWeights.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -346,7 +346,7 @@ private:
 
 		os << endl;
 		for (unsigned int i = 0; i < network.GPUBias.size(); i++){
-			os << i << ") " << (weight_type)network.GPUBias[i] << ",";
+			os << (weight_type)network.GPUBias[i] << ",";
 		}
 	
 
@@ -357,7 +357,7 @@ private:
 		os << endl;
 
 		for (unsigned int i = 0; i < network.GPUPreviousBias.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousBias[i] << ",";
+			os << (weight_type)network.GPUPreviousBias[i] << ",";
 		}
 
 

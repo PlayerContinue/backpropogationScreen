@@ -50,7 +50,7 @@ namespace testing{
 
 	template <typename T, typename Iterator>
 	void outputToFile(Iterator begin, int length, string title){
-		outputToFile(begin, length, title, "test/test2.txt");
+		outputToFile<T>(begin, length, title, "test/test2.txt");
 	}
 
 	template <typename T, typename Iterator>

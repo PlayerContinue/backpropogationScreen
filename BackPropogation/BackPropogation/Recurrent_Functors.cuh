@@ -91,14 +91,21 @@ namespace functors{
 
 	template <typename T>
 	struct add_bias : public thrust::binary_function < T, T, T > {
-
+		const bool current_layer;
+		add_bias(bool _current_layer) : current_layer(_current_layer){};
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(T &bias, Tuple &x){
-			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
+			if (!current_layer || thrust::get<1>(x) != 0){
+				return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
+			}
+			else{
+				return 0;
+			}
 		}
 	};
+
 
 	template <typename T>
 	struct apply_error_to_bias : public thrust::binary_function < T, T, T > {
@@ -137,9 +144,10 @@ namespace functors{
 		__host__ __device__
 			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
 			//Compute Logistic value of input,output,forget,and potential
-			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
-			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 2, 0);
+			thrust::get<1>(x) = logistic_function(thrust::get<1>(x), 2, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 2, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 2, 0);
 
 			T memory_value_input = (T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
 			T forget_gate = (T)thrust::get<5>(x) * (T)thrust::get<2>(x);//Get the value of the forget gate
@@ -349,12 +357,12 @@ namespace functors{
 		check_not_between(T _start, T _end) : start(_start), end(_end){};
 
 		__host__ __device__
-		bool operator()(const T &x)const{
-			if (start > x && x < end){
-				return false;
+		bool operator()(T x){
+			if (start > x && x <= end){
+				return 0;
 			}
 			else{
-				return true;
+				return 1;
 			}
 		}
 	};
@@ -364,7 +372,9 @@ namespace functors{
 	struct apply_new_error : public thrust::binary_function < T, T, T > {
 		const T alpha;
 		const T divide;
-		apply_new_error(T _alpha, T _divide) :alpha(_alpha), divide(_divide){
+		const int start;
+		const int end;
+		apply_new_error(T _alpha, T _divide,int _start,int _end) :alpha(_alpha), divide(_divide),start(_start),end(_end){
 
 		}
 		template <typename Tuple>
@@ -372,14 +382,15 @@ namespace functors{
 			T operator()(Tuple &x){
 			
 			//if (thrust::get<1>(x) != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
+			if (!(thrust::get<3>(x) > start && thrust::get<3>(x) < end)){
 				thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
-				T toReturn = thrust::get<1>(x) +thrust::get<2>(x);//Add the previous_weight to the return value, which is the new weight
+				T toReturn = thrust::get<1>(x)+thrust::get<2>(x);//Add the previous_weight to the return value, which is the new weight
 				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);//Find the new previous weight by dividing the deltas by the number of unrolled
 				return (T)toReturn + (T)thrust::get<1>(x); // Add the previous weight to the new weight to find the final weight
-			//}
-			//else{
-			//	return (T)y;//Return the value if it is one
-			//}
+			}
+			else{
+				return (T)1;
+			}
 			
 		}
 

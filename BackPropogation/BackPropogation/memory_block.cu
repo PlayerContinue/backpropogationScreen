@@ -66,7 +66,24 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 
 
 void Memory_Block::addNewConnection(int min, int max){
-	
+	bool mappedFrom = false;
+	for (int i = min; i < max; i++){
+		mappedFrom = false;
+		for (int j = 0; j < this->mapFrom.size(); j++){
+			if (this->mapFrom[j] == (i*5)){
+				mappedFrom = true;
+			}
+		}
+
+		if (!mappedFrom){
+			this->mapFrom.push_back(i*5);
+			this->input_weights.push_back(this->getNewWeight());
+			this->output_weights.push_back(this->getNewWeight());
+			this->potential_memory_cell_value.push_back(this->getNewWeight());
+			this->forget_weights.push_back(this->getNewWeight());
+			break;
+		}
+	}
 }
 
 weight_type Memory_Block::getNewWeight(){

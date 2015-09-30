@@ -165,6 +165,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->InitializeRun();
 			this->mainNetwork->ResetSequence();
 			this->createCheckpoint("RunStart");
+			testing::outputArrayToFile<weight_type>(this->input[0], this->settings.i_input, "tests/results2.txt");
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
 				testing::outputArrayToFile<weight_type>(this->input[i], this->settings.i_input, "tests/results2.txt");
 				testing::outputArrayToFile<weight_type>(this->output[i], this->settings.i_output, "tests/results2.txt");
@@ -223,13 +224,16 @@ bool ReccurentLoops::train_network_RealTimeRecurrentTraining(){
 weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_output){
 	static int position = 0;
 	weight_type* temp = new weight_type[numberOfInput];
+	weight_type count = .1;
 	for (int i = position; i < position + numberOfInput; i++){
+
 		if (input_output == 0){
-			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence);
+			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence) + 1;
 		}
 		else{
-			temp[i - position] = (weight_type)(.1*(i%this->settings.i_number_in_sequence));
+			temp[i - position] = .5;//(weight_type)(.1*(i%this->settings.i_number_in_sequence)) + .1 + count;
 		}
+		count += .1;
 	}
 	position += numberOfInput;
 	return  temp;
