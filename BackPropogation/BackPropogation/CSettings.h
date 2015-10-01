@@ -96,6 +96,8 @@ public:
 	//Number of nodes to start with
 	int i_number_start_nodes;
 
+	//Number extra connections to add
+	int i_number_new_weights;
 	CSettings();
 
 
@@ -244,6 +246,9 @@ public:
 
 		is >> next;
 		is >> settings.i_number_start_nodes;
+
+		is >> next;
+		is >> settings.i_number_new_weights;
 
 		return is;
 	}

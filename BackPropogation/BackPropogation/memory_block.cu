@@ -21,6 +21,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	this->memory_cell_weights = host_vector<weight_type>();
 	this->bias = host_vector<weight_type>();
 	this->number_weights = 0;
+	this->number_inputs = numberInput;
 	this->type = type;//Set the type of memory block this is
 	if (type == LAYER){//Output layer does not require this, as it is only a set of input	
 		this->memory_cell_weights.push_back(this->getNewWeight());
@@ -70,13 +71,13 @@ void Memory_Block::addNewConnection(int min, int max){
 	for (int i = min; i < max; i++){
 		mappedFrom = false;
 		for (int j = 0; j < this->mapFrom.size(); j++){
-			if (this->mapFrom[j] == (i*5)){
+			if (this->mapFrom[j] == i){
 				mappedFrom = true;
 			}
 		}
 
 		if (!mappedFrom){
-			this->mapFrom.push_back(i*5);
+			this->mapFrom.push_back(i);
 			this->input_weights.push_back(this->getNewWeight());
 			this->output_weights.push_back(this->getNewWeight());
 			this->potential_memory_cell_value.push_back(this->getNewWeight());

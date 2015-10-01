@@ -29,6 +29,61 @@ namespace functors{
 
 	};
 
+	//Multiply two values
+	//0 <, 1 >, 2 <=, 3 >=, 4 ==
+	template <unsigned int pos_in_tuple,unsigned int return_on_fail_pos, typename T>
+	struct multiply_if : public thrust::unary_function < T, T > {
+		const int type_of_if;
+		const T compare_to;
+			multiply_if() :type_of_if(100),compare_to((T)0){};
+			multiply_if( int _type_of_if, T _compare_to) :type_of_if(_type_of_if),compare_to(_compare_to){};
+
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			if (perform_op){
+				return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
+			}
+			else{
+				return thrust::get<return_on_fail_pos>(x);
+			}
+		}
+
+	};
+
 	template < typename T>
 	struct add : public thrust::unary_function < T, T > {
 		//Overload the function operator
@@ -97,8 +152,8 @@ namespace functors{
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(T &bias, Tuple &x){
-			if (!current_layer || thrust::get<1>(x) != 0){
-				return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
+			if (thrust::get<1>(x) != 0){
+				return (bias * (T)thrust::get<0>(x)) + (T)thrust::get<1>(x);
 			}
 			else{
 				return 0;

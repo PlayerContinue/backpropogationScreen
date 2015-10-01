@@ -145,7 +145,7 @@ void ReccurentLoops::testTraining(){
 			//Apply the error
 			
 		
-			if (i%this->settings.i_number_in_sequence == 0){//Reset the sequence once the sequence has finished
+			if (i%this->settings.i_number_in_sequence == 0 && i!=0){//Reset the sequence once the sequence has finished
 				
 				this->mainNetwork->ResetSequence();
 			}
@@ -165,8 +165,11 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->InitializeRun();
 			this->mainNetwork->ResetSequence();
 			this->createCheckpoint("RunStart");
-			testing::outputArrayToFile<weight_type>(this->input[0], this->settings.i_input, "tests/results2.txt");
 			for (int i = 0; i < this->settings.i_number_in_sequence; i++){
+				if (i == 0){
+					testing::outputArrayToFile<weight_type>(this->input[i], this->settings.i_input, "tests/results2.txt");
+					testing::outputArrayToFile<weight_type>(this->output[i], this->settings.i_output, "tests/results2.txt");
+				}
 				testing::outputArrayToFile<weight_type>(this->input[i], this->settings.i_input, "tests/results2.txt");
 				testing::outputArrayToFile<weight_type>(this->output[i], this->settings.i_output, "tests/results2.txt");
 				std::vector<weight_type> temp2 = this->runNetwork(this->input[i]);
@@ -231,7 +234,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence) + 1;
 		}
 		else{
-			temp[i - position] = .5;//(weight_type)(.1*(i%this->settings.i_number_in_sequence)) + .1 + count;
+			temp[i - position] = (weight_type)(.1*(i%this->settings.i_number_in_sequence)) + .1 + count;
 		}
 		count += .1;
 	}

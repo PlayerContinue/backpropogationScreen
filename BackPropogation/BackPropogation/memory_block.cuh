@@ -44,6 +44,9 @@ public:
 	//Number of weight in block
 	unsigned int number_weights;
 
+	//Number Of Inputs
+	unsigned int number_inputs;
+
 	enum memory_block_type { OUTPUT, LAYER };
 
 private:

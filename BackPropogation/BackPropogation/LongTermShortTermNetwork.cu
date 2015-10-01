@@ -21,11 +21,6 @@ LongTermShortTermNetwork::~LongTermShortTermNetwork(){
 //***************************
 
 void LongTermShortTermNetwork::initialize_network(){
-	
-
-	
-
-
 	positionOfLastWeightToNode = vector<long>();
 	this->numberNonWeights = this->settings.i_input;
 	srand(time(NULL));
@@ -36,7 +31,7 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->mapFrom = host_vector<int>();
 	this->bias = host_vector<weight_type>();
 
-	//this->addWeight(10);
+	this->addWeight(this->settings.i_number_new_weights);
 	
 }
 
@@ -161,7 +156,7 @@ void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	int decideTo = this->decideNodeToAttachTo();
 	for (int i = 0; i < numberWeightsToAdd; i++){
 		if (decideTo != -1){
-			this->mBlocksLayers[0][decideTo].addNewConnection(0, this->mBlocksLayers[0].size());
+			this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), this->settings.i_input + (2*this->mBlocksLayers[0].size()));
 		}
 		else{
 			break;

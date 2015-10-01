@@ -70,7 +70,7 @@ private:
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
 	
-	long numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
+	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
@@ -175,6 +175,9 @@ public:
 private:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
+
+	//Set the training network such that the input is the sum of the results
+	void averageWeights();
 	//Inititalize the Network For training
 	void InitializeLongShortTermMemory();
 	//Unroll the network into a multilayer representation
