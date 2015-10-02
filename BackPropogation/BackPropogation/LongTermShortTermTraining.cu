@@ -17,7 +17,7 @@ void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 	this->UnrollNetwork(3);
 	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
 	this->host_deltas = host_vector<weight_type>(this->GPUOutput_values.size() - this->numberNonWeights);
-	this->device_deltas = device_vector<weight_type>(this->GPUOutput_values.size() - this->numberNonWeights);
+	this->device_deltas = device_vector<weight_type>(this->GPUOutput_values.size() - (this->settings.i_backprop_unrolled*this->numberNonWeights));
 	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
 }
 
@@ -75,7 +75,7 @@ void LongTermShortTermNetwork::averageWeights(){
 
 }
 
-void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTraining(weight_type* in, weight_type* out){
+void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTraining(weight_type** in, weight_type* out){
 	//Reset the weights to the sum of the weight
 	//this->averageWeights();
 
@@ -91,7 +91,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 
 	//The first row is only for input
 	//Thus we only sum the input
-	thrust::reduce_by_key(
+	/*thrust::reduce_by_key(
 		this->GPUMapTo.begin(),
 		this->GPUMapTo.end(),
 		//Multiply the weights x output
@@ -116,9 +116,9 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 	//Run the values through a sigmoid functor
 	thrust::transform(this->GPUPreviousOutput_Values.begin(),
 		this->GPUPreviousOutput_Values.begin() + this->numberOfNodes,
-		this->GPUOutput_values.begin() + this->numberNonWeights, functors::sigmoid_functor<weight_type>());
+		this->GPUOutput_values.begin() + this->numberNonWeights, functors::sigmoid_functor<weight_type>());*/
 
-	for (int i = 0; i < this->settings.i_backprop_unrolled; i++){
+	for (int i = 1; i < this->settings.i_backprop_unrolled; i++){
 		thrust::reduce_by_key(
 			this->GPUMapTo.begin(),
 			this->GPUMapTo.end(),
@@ -133,7 +133,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 			thrust::make_permutation_iterator(
 			this->GPUOutput_values.begin(),
 			thrust::make_transform_iterator(
-			this->GPUMapFrom.begin(), functors::add_constant_value<int>(number_nodes_to_beginning_of_layer, this->settings.i_input))
+			this->GPUMapFrom.begin(), functors::add_constant_value<int>(number_nodes_to_beginning_of_layer,0))
 			)
 			)
 			),
@@ -161,7 +161,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 		//Transfer all values from the current to the next row
 		thrust::transform(this->GPUPreviousOutput_Values.begin(),
 			this->GPUPreviousOutput_Values.end(),
-			this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->numberNonWeights, functors::sigmoid_functor<weight_type>());
+			this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->numberNonWeights + (i * this->numberNonWeights), functors::sigmoid_functor<weight_type>());
 
 
 
@@ -187,44 +187,39 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out, int current_l
 	
 	unsigned int number_nodes_to_end_of_layer = this->GPUOutput_values.size();
 	
-	unsigned int number_nodes_to_start_of_layer = number_nodes_to_end_of_layer - this->numberOfNodes;
-	
-	//Starts at the beginning of the weights for the output
-	unsigned int weights_to_start_of_next_layer = this->GPUWeights.size(); //(this->settings.i_output*this->mBlocksLayers[this->mBlocksLayers.size()-2].size()); //Stores info used only on the output
-	
-	unsigned int on_last_layer = this->numberOfNodes - (this->settings.i_output * this->settings.i_output*this->mBlocksLayers[this->mBlocksLayers.size() - 2].size());//Used to allow for a special situtation for the output without changing the code
-	
+	unsigned int number_nodes_to_start_of_layer = number_nodes_to_end_of_layer - this->numberOfNodes - this->numberNonWeights;
+	unsigned int number_to_output_of_layer;
 	//unsigned int number_nodes_to_end = this->settings.i_output;
-	
 	unsigned int end_of_succeeding_layer = number_nodes_to_end_of_layer;//Marks the end of the next layer in the sequence
-	
-	unsigned int number_weights_to_start_from_end =this->GPUMapTo.size();//this->settings.i_output * this->settings.i_output*this->mBlocksLayers[this->mBlocksLayers.size() - 2].size();
-	
-	unsigned int last_layer_bias = this->GPUBias.size() - this->settings.i_output;
+	unsigned int delta_next_start = this->device_deltas.size() - this->numberOfNodes;
+	unsigned int delta_next_end = this->device_deltas.size();
+	unsigned int number_from_delta_start = (this->settings.i_backprop_unrolled*this->numberNonWeights);
+
 	//Find the deltas of the output
-	for (int i = this->settings.i_backprop_unrolled; i >= 0; i--){
+	for (int i = this->settings.i_backprop_unrolled; i > 0; i--){
+	
+		number_to_output_of_layer = this->settings.i_output + ((this->numberOfNodes + this->numberNonWeights) * (this->settings.i_backprop_unrolled - i));//Number nodes from end of list to end of the layer
 		//Find the delta of the output for the current layer
 		//output * (1-output) * (target - output)
 		thrust::transform(
 			this->RealOutput.begin(),
 			this->RealOutput.end(),
-			this->GPUOutput_values.begin() + number_nodes_to_end_of_layer - this->settings.i_output,
-			this->device_deltas.begin() + number_nodes_to_end_of_layer - this->settings.i_output - this->numberNonWeights,
+			this->GPUOutput_values.end() - number_to_output_of_layer,
+			this->device_deltas.begin() + delta_next_end - this->settings.i_output,
 			functors::find_output_delta<weight_type>());
 
 		number_nodes_to_end_of_layer -= this->settings.i_output;
 #ifdef DELTA_TEST
 		testing::outputToFile<weight_type>(this->GPUBias.begin(), 1, "test", "test11");
 		testing::outputToFile<weight_type>(this->device_deltas, "PostOutput", "tests/testing.txt");
-		
+		//thrust::copy(thrust::make_counting_iterator(0), thrust::make_counting_iterator(0) + this->device_deltas.size(), this->device_deltas.begin());
 
-		testing::outputToFile<weight_type>(
+		/*testing::outputToFile<weight_type>(
 			thrust::make_permutation_iterator(
-			this->device_deltas.begin() + end_of_succeeding_layer - this->numberNonWeights - this->numberOfNodes,
+			this->device_deltas.begin() + end_of_succeeding_layer - number_from_delta_start - this->numberOfNodes,
 			thrust::make_transform_iterator(
 			this->GPUMapTo.begin(),
 			_1 - this->numberNonWeights
-
 			)
 			), this->GPUWeights.size(), "Results2", "tests/testing.txt");
 
@@ -235,9 +230,9 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out, int current_l
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
 			this->GPUWeights.begin(),
-			
+
 			thrust::make_permutation_iterator(
-			this->device_deltas.begin() + end_of_succeeding_layer - this->numberNonWeights - this->numberOfNodes,
+			this->device_deltas.begin() + end_of_succeeding_layer - number_from_delta_start - this->numberOfNodes,
 			thrust::make_transform_iterator(
 			this->GPUMapTo.begin(),
 			_1 - this->numberNonWeights
@@ -249,12 +244,10 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out, int current_l
 			),
 			this->positionToSum.begin()
 
-			)
-
-			, this->positionToSum.size(), "Results", "tests/testing.txt");
+			), this->positionToSum.size(), "Results", "tests/testing.txt");*/
 #endif
 		if (i != this->settings.i_backprop_unrolled){//Only perform this action when we've gone past the output layer
-		
+			
 			thrust::reduce_by_key(
 				this->count.begin(),
 				this->count.end(),
@@ -265,7 +258,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out, int current_l
 				this->GPUWeights.begin(),
 
 				thrust::make_permutation_iterator(
-				this->device_deltas.begin() + end_of_succeeding_layer - this->numberNonWeights - this->numberOfNodes,
+				this->device_deltas.begin() + delta_next_end,
 				thrust::make_transform_iterator(
 				this->GPUMapTo.begin(),
 				_1 - this->numberNonWeights
@@ -304,39 +297,31 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type* out, int current_l
 #endif
 			//Find the new deltas
 			thrust::transform(
-				this->device_deltas.begin() + number_nodes_to_start_of_layer - this->numberNonWeights,
-				this->device_deltas.begin() + number_nodes_to_end_of_layer + this->settings.i_output - this->numberNonWeights,
+				this->device_deltas.begin() + delta_next_start,
+				this->device_deltas.begin() + delta_next_start + this->numberOfNodes,
 				thrust::make_transform_iterator(
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
-				this->GPUOutput_values.begin() + number_nodes_to_start_of_layer,
+				this->GPUOutput_values.end() - number_to_output_of_layer + this->settings.i_output - this->numberOfNodes,
 				this->GPUPreviousOutput_Values.begin()
 				)), functors::find_non_output_delta<weight_type>()),
-				this->device_deltas.begin() + number_nodes_to_start_of_layer - this->numberNonWeights,
+				this->device_deltas.begin() + delta_next_start,
 				_1 + _2
 				);
 #ifdef DELTA_TEST
 			testing::outputToFile<weight_type>(this->device_deltas, "Device","tests/testing.txt");
 #endif
 		}
-
-		if (i == this->settings.i_backprop_unrolled - 1){
-			//Change the values to the width of every row besides the input
-			on_last_layer = 0;//No longer working on the last layer, so no longer needed
-			//number_nodes_to_end = this->count.size();//Need to go back the whole way now
-			last_layer_bias = 0;
-			//number_weights_to_start_from_end = this->GPUMapTo.size();
-			//weights_to_start_of_next_layer = this->numberOfWeightsInLayers[current_layer];//Set the weights back to the start
-		}
-
+		delta_next_end -= this->numberOfNodes;
+		
 		if (i < this->settings.i_backprop_unrolled){
 			end_of_succeeding_layer = number_nodes_to_end_of_layer + this->settings.i_output;
-			
 		}
-		
-			number_nodes_to_end_of_layer = (number_nodes_to_end_of_layer + this->settings.i_output) - this->numberOfNodes;
-			number_nodes_to_start_of_layer = number_nodes_to_end_of_layer - this->numberOfNodes;
+		delta_next_start -= this->numberOfNodes;
 			
+			number_nodes_to_end_of_layer = (number_nodes_to_end_of_layer + this->settings.i_output)  - this->numberOfNodes - this->numberNonWeights;
+			number_nodes_to_start_of_layer = number_nodes_to_end_of_layer - this->numberOfNodes;
+		
 		
 	}
 

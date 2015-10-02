@@ -163,8 +163,13 @@ public:
 	virtual void InitializeTraining(){
 		this->InitializeLongShortTermMemory();
 	}
-	//Run a round of training
+
 	virtual void StartTraining(weight_type* in, weight_type* out){
+		//Does nothing for the moment
+	}
+
+	//Run a round of training
+	virtual void StartTraining(weight_type** in, weight_type* out){
 		this->LongShortTermMemoryTraining(in, out);
 	}
 	//Apply the error to the network
@@ -175,7 +180,7 @@ public:
 private:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
-
+	void setInput(weight_type** in);
 	//Set the training network such that the input is the sum of the results
 	void averageWeights();
 	//Inititalize the Network For training
@@ -185,7 +190,7 @@ private:
 	
 
 	//Train the network using Backpropogation through time
-	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
+	void LongShortTermMemoryTraining(weight_type** in, weight_type* out);
 	//Find the delta values of the current output from the expected gradiant
 	void FindBackPropDelta(weight_type* out, int current_layer);
 

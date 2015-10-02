@@ -127,20 +127,35 @@ void ReccurentLoops::startTraining(int type){
 
 #ifdef _DEBUG 
 void ReccurentLoops::testTraining(){
+	weight_type** trainingInput = new weight_type*[this->settings.i_backprop_unrolled];
+	weight_type* trainingOutput;
 	try{
 		this->load_training_data_from_file();
 		this->mainNetwork->InitializeTraining();
-		for (int i = 0; i < this->settings.i_loops; i++){
-			this->mainNetwork->StartTraining(this->input[this->checkpoint.i_number_of_loops_checkpoint], this->output[this->checkpoint.i_number_of_loops_checkpoint]);
+		for (int i = 0; i < this->settings.i_loops; i+=this->settings.i_backprop_unrolled){
+
+			for (int j = i,k=0; j < i + this->settings.i_backprop_unrolled; j++,k++){
+				if (j < this->settings.i_number_of_training){
+					trainingInput[k] = this->input[j];
+					trainingOutput = this->output[j];
+				}
+				else{//Normally load more from the file
+					break;
+				}
+			}
+		
+
+			this->mainNetwork->StartTraining(trainingInput, trainingOutput);
 			
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
 
-			this->mainNetwork->ApplyError();
+			//this->mainNetwork->ApplyError();
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
+
 			
 			//Apply the error
 			

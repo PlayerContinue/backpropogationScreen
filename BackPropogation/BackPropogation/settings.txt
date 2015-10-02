@@ -30,7 +30,7 @@ s_checkpoint_file checkpoints/new_word_network_1_checkpoint_194.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
 Type:LongTermShortTerm_items
-i_backprop_unrolled 5
-i_number_in_sequence 1
-i_number_start_nodes 5
-i_number_new_weights 5
+i_backprop_unrolled 6
+i_number_in_sequence 5
+i_number_start_nodes 2
+i_number_new_weights 0

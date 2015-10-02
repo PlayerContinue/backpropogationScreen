@@ -190,6 +190,18 @@ void LongTermShortTermNetwork::setInput(weight_type* in){
 
 }
 
+//Add the input
+void LongTermShortTermNetwork::setInput(weight_type** in){
+	//Place the input into the GPU values matrix
+	
+	for (int j = 0; j < this->settings.i_backprop_unrolled; j++){
+		for (int i = 0; i < this->numberNonWeights; i++){
+			this->GPUOutput_values[i + (j*(this->numberNonWeights + this->numberOfNodes))] = in[j][i];
+		}
+	}
+
+}
+
 void LongTermShortTermNetwork::moveBiasToGPU(bool add_memory_cells){
 	this->GPUBias = thrust::device_vector<weight_type>();
 
@@ -249,8 +261,9 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	vector<vector<Memory_Block>> Unrolled_Layers = vector<vector<Memory_Block>>();//Storage of the memory blocks as new layers
 	this->numberOfNodes = 0;
 	//Add room for the intial input values
-	this->GPUOutput_values.resize(this->numberNonWeights);
+	
 	for (unsigned int i = 0; i < this->mBlocksLayers.size() - 1; i++){
+		this->GPUOutput_values.resize(this->GPUOutput_values.size() + this->numberNonWeights);
 		this->loadUnrolledToDevice(2, i);
 	}
 
@@ -265,7 +278,7 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	int GPUOutput_values_size = this->GPUOutput_values.size();
 
 	//Resize the network to contain locations for the other layer
-	this->GPUOutput_values.resize(this->GPUOutput_values.size() + ((this->settings.i_backprop_unrolled - 1)*(this->GPUOutput_values.size() - this->numberNonWeights)));
+	this->GPUOutput_values.resize(this->GPUOutput_values.size() + ((this->settings.i_backprop_unrolled - 1)*(this->GPUOutput_values.size())));
 	
 	this->getSumPermutation();
 

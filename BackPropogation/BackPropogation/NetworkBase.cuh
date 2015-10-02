@@ -43,6 +43,7 @@ public:
 	virtual void InitializeTraining() = 0;
 	//Run a round of training
 	virtual void StartTraining(weight_type* in, weight_type* out) = 0;
+	virtual void StartTraining(weight_type** in, weight_type* out) = 0;
 	//Apply the error to the network
 	virtual void ApplyError() = 0;
 
