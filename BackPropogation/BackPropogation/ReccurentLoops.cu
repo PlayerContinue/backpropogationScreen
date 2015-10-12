@@ -1,5 +1,5 @@
 #include "ReccurentLoops.cuh"
-
+//#define TESTING
 //*****************************
 //Constructor
 //*****************************
@@ -96,11 +96,16 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 bool ReccurentLoops::load_training_data_from_file(){
 	for (int i = 0; i < this->settings.i_number_of_training; i++){
 		this->input[i] = this->createTestInputOutput(this->settings.i_input,0);
+#ifdef TESTING 
+		testing::outputArrayToFile(this->input[i], this->settings.i_input, "tests/inout.txt");
+#endif
 	}
 	for (int i = 0; i < this->settings.i_number_of_training; i++){
 		this->output[i] = this->createTestInputOutput(this->settings.i_output, 1);
+#ifdef TESTING 
+		testing::outputArrayToFile(this->output[i], this->settings.i_output, "tests/inout.txt");
+#endif
 	}
-	
 	return true;
 }
 
@@ -128,18 +133,21 @@ void ReccurentLoops::startTraining(int type){
 #ifdef _DEBUG 
 void ReccurentLoops::testTraining(){
 	weight_type** trainingInput = new weight_type*[this->settings.i_backprop_unrolled];
-	weight_type* trainingOutput;
+	weight_type** trainingOutput = new weight_type*[this->settings.i_backprop_unrolled];
+
 	try{
 		this->load_training_data_from_file();
 		this->mainNetwork->InitializeTraining();
 		for (int i = 0; i < this->settings.i_loops; i+=this->settings.i_backprop_unrolled){
 
-			for (int j = i,k=0; j < i + this->settings.i_backprop_unrolled; j++,k++){
+			for (int j = i,k=0; k < this->settings.i_backprop_unrolled; j++,k++){
 				if (j < this->settings.i_number_of_training){
 					trainingInput[k] = this->input[j];
-					trainingOutput = this->output[j];
+					trainingOutput[k] = this->output[j];
 				}
-				else{//Normally load more from the file
+				else{
+					//Reached the end of the sequence, load the next sequence
+					//Normally load more from the file
 					break;
 				}
 			}
@@ -150,14 +158,14 @@ void ReccurentLoops::testTraining(){
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
-
-			//this->mainNetwork->ApplyError();
+			//Apply the error
+			this->mainNetwork->ApplyError();
 			if (i%this->settings.i_number_allowed_same == 0){
 				this->createCheckpoint();
 			}
 
 			
-			//Apply the error
+		
 			
 		
 			if (i%this->settings.i_number_in_sequence == 0 && i!=0){//Reset the sequence once the sequence has finished
@@ -241,19 +249,31 @@ bool ReccurentLoops::train_network_RealTimeRecurrentTraining(){
 //Creates a test input/output
 weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_output){
 	static int position = 0;
+	static int previous = input_output;
+	if (input_output != previous){
+		position = 0;
+		previous = input_output;
+	}
+	if (input_output == 0 && position >= (this->settings.i_input*this->settings.i_backprop_unrolled)){
+		position = 0;
+	}
+	else if (position >= (this->settings.i_output*this->settings.i_backprop_unrolled)){
+		position = 0;
+	}
 	weight_type* temp = new weight_type[numberOfInput];
 	weight_type count = .1;
-	for (int i = position; i < position + numberOfInput; i++){
+	for (int i = 0; i < numberOfInput; i++){
 
 		if (input_output == 0){
-			temp[i - position] = (weight_type)(i%this->settings.i_number_in_sequence) + 1;
+			temp[i] = (weight_type)(position);
 		}
 		else{
-			temp[i - position] = (weight_type)(.1*(i%this->settings.i_number_in_sequence)) + .1 + count;
+			temp[i] = (weight_type)(.1*(position));
 		}
 		count += .1;
+		position++;
 	}
-	position += numberOfInput;
+	
 	return  temp;
 }
 

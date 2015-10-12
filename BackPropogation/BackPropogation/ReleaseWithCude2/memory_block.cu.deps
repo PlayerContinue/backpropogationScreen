@@ -378,8 +378,41 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\host_defines.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_types.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/config.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/simple_defines.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/compiler.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/host_system.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/device_system.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/host_device.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/debug.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/compiler_fence.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\intrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\setjmp.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\immintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\wmmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\nmmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\smmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tmmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\pmmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\emmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mmintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\malloc.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ammintrin.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mm3dnow.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/forceinline.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/hd_warning_disable.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/global_workarounds.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory0
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\limits
@@ -401,8 +434,6 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\new
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\exception
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\eh.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\malloc.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xutility
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iosfwd
@@ -415,69 +446,9 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\type_traits
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xrefwrap
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xatomic0.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\intrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\setjmp.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\immintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\wmmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\nmmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\smmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tmmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\pmmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\emmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mmintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ammintrin.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mm3dnow.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdexcept
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstring
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ios
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocnum
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\streambuf
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xiosbase
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocale
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\typeinfo
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ctype.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\locale.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xdebug
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xfacet
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\system_error
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cerrno
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\errno.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/config.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/simple_defines.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/compiler.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/host_system.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/device_system.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/host_device.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/debug.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/compiler_fence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/forceinline.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/hd_warning_disable.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/global_workarounds.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\typeinfo
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/normal_iterator.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_adaptor.h
@@ -495,6 +466,29 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_categories.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_category_with_system_and_traversal.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_traversal_tags.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ios
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocnum
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\streambuf
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xiosbase
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocale
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdexcept
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstring
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ctype.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\locale.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xdebug
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xfacet
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\system_error
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cerrno
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\errno.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/universal_categories.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/is_iterator_category.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_category_to_traversal.h
@@ -597,10 +591,12 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system_error.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/error_code.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/errno.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_category.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_code.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_condition.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/system_error.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/system_error.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/error.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/guarded_driver_types.h
@@ -769,6 +765,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/al
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/destroy_range.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.inl
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/overlapped_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/equal.h
@@ -864,42 +861,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/internal/decompose.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cuda_launch_config.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/extern_shared_ptr.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/alignment.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/inclusive_scan.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/complex.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\complex
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ccomplex
@@ -929,9 +890,3 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/co
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/stream.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h

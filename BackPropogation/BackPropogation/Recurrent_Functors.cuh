@@ -23,7 +23,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
 		}
 
@@ -84,6 +84,198 @@ namespace functors{
 
 	};
 
+	template <unsigned int pos_in_tuple,  typename T>
+	struct compare_two : public thrust::unary_function < bool, T > {
+		const int type_of_if;
+		const T compare_to;
+		compare_two() :type_of_if(100), compare_to((T)0){};
+		compare_two(int _type_of_if, T _compare_to) :type_of_if(_type_of_if), compare_to(_compare_to){};
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (x < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (x > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (x <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (x >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (x == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (x != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &y,const T &x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (x < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (x > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (x <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (x >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (x == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (x != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (thrust::get<pos_in_tuple>(x) != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+	};
+	
+
+	//Add Two Values if true
+	//0 <, 1 >, 2 <=, 3 >=, 4 ==
+	template <unsigned int pos_in_tuple, unsigned int return_on_fail_pos, typename T>
+	struct add_if : public thrust::unary_function < T, T > {
+		const int type_of_if;
+		const T compare_to;
+		add_if() :type_of_if(100), compare_to((T)0){};
+		add_if(int _type_of_if, T _compare_to) :type_of_if(_type_of_if), compare_to(_compare_to){};
+
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			if (perform_op){
+				return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+			}
+			else{
+				return thrust::get<return_on_fail_pos>(x);
+			}
+		}
+
+	};
+
 	template < typename T>
 	struct add : public thrust::unary_function < T, T > {
 		//Overload the function operator
@@ -93,7 +285,21 @@ namespace functors{
 			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
 		}
 
+
 	};
+
+	template<typename T, typename M>
+	struct bin_add:public thrust::binary_function < T, M, T > {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const T &x,const M &y) const{
+			return ((T)x +(T)y);
+		}
+
+
+	};
+
 
 	template < typename T>
 	struct add_and_store : public thrust::unary_function < T, T > {
@@ -197,19 +403,18 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
+			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
 			//Compute Logistic value of input,output,forget,and potential
-			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 2, 0);
-			thrust::get<1>(x) = logistic_function(thrust::get<1>(x), 2, 0);
-			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 2, 0);
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 2, 0);
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
 
-			T memory_value_input = (T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
-			T forget_gate = (T)thrust::get<5>(x) * (T)thrust::get<2>(x);//Get the value of the forget gate
-
-			thrust::get<4>(x) = memory_value_input + forget_gate; //Sum the input value and the forget value
-			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<4>(x),1,0) * thrust::get<1>(x), 1, 0);
-
+			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
+			
+			
+			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<5>(x),1,0) + thrust::get<1>(x), 1, 0);
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Sum the input value and the forget value
 		}
 
 		__host__ __device__
@@ -221,7 +426,44 @@ namespace functors{
 		__host__ __device__
 			T  logistic_function(T value, T max_value, T midpoint){
 			return ((thrust::complex<T>)max_value / 
-				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)-1 * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
+		}
+
+	};
+
+	//Uses the found input values in a memory cell function
+	//After running, stored values will be in sigmoid form for all but the memory cell
+	template <typename T>
+	struct get_memory_cell_value : public thrust::unary_function < T, T > {
+
+
+		template <typename Tuple>
+		__host__ __device__
+			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
+			//Compute Logistic value of input,output,forget,and potential
+			//thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
+			//thrust::get<1>(x) = logistic_function(thrust::get<1>(x), 1, 0);
+			//thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
+			//thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
+
+			T memory_value_input =(T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<4>(x) + (T)thrust::get<2>(x);//Get the value of the forget gate
+
+
+			//thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<4>(x), 1, 0) * thrust::get<1>(x), 1, 0);
+			thrust::get<5>(x) = logistic_function(memory_value_input + forget_gate,0,1); //Sum the input value and the forget value
+		}
+
+		__host__ __device__
+			T sigmoid_function(T value){
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
+			return (T)1 / ((T)1 + (T)exped.real());
+		}
+
+		__host__ __device__
+			T  logistic_function(T value, T max_value, T midpoint){
+			return ((thrust::complex<T>)max_value /
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>) (-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
 
 	};
@@ -242,7 +484,22 @@ namespace functors{
 
 	};
 
+	template < typename T>
+	struct add_and_sigmoid : public thrust::binary_function < T, T,T > {
+		add_and_sigmoid(){
 
+		};
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &y1,const T &y2) const{
+			T x = ((T)y1+(T)y2);
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+			
+		}
+
+
+	};
 
 
 	//Perform a sigmoid function

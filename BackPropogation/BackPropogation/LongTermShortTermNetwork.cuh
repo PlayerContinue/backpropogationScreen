@@ -170,6 +170,10 @@ public:
 
 	//Run a round of training
 	virtual void StartTraining(weight_type** in, weight_type* out){
+		//this->LongShortTermMemoryTraining(in, out);
+	}
+
+	virtual void StartTraining(weight_type** in, weight_type** out){
 		this->LongShortTermMemoryTraining(in, out);
 	}
 	//Apply the error to the network
@@ -190,12 +194,15 @@ private:
 	
 
 	//Train the network using Backpropogation through time
-	void LongShortTermMemoryTraining(weight_type** in, weight_type* out);
+	void LongShortTermMemoryTraining(weight_type** in, weight_type** out);
 	//Find the delta values of the current output from the expected gradiant
-	void FindBackPropDelta(weight_type* out, int current_layer);
+	void FindBackPropDelta(weight_type** out, int current_layer);
 
 	//Apply the error
 	void ApplyLongTermShortTermMemoryError();
+
+	//Apply the error to the bias
+	void ApplyErrorToBias();
 
 	//Combine these two function, they do the same thing
 	template <typename T>

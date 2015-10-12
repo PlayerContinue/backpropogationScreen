@@ -82,6 +82,7 @@ void Memory_Block::addNewConnection(int min, int max){
 			this->output_weights.push_back(this->getNewWeight());
 			this->potential_memory_cell_value.push_back(this->getNewWeight());
 			this->forget_weights.push_back(this->getNewWeight());
+			this->number_weights+=4;
 			break;
 		}
 	}

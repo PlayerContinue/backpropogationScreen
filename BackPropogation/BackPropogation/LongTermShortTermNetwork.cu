@@ -32,7 +32,6 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->bias = host_vector<weight_type>();
 
 	this->addWeight(this->settings.i_number_new_weights);
-	
 }
 
 void LongTermShortTermNetwork::count_weights_in_layers(){
