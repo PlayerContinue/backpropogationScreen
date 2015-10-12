@@ -901,16 +901,14 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	ReccurentLoops RLoops = ReccurentLoops(settings,ReccurentLoops::LongTermShortTerm);
 	
 	double* temp = new double[settings.i_input];
-#ifdef _DEBUG
+
 	for (int i = 0; i < settings.i_input; i++){
 		temp[i] = i;
 	}
 	//RLoops.runNetwork(temp);
 	RLoops.testTraining();
 
-#else
-	RLoops.startTraining();
-#endif
+
 	
 }
 

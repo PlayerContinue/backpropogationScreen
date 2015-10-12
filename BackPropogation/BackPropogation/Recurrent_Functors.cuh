@@ -23,8 +23,255 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
+		}
+
+	};
+
+	//Multiply two values
+	//0 <, 1 >, 2 <=, 3 >=, 4 ==
+	template <unsigned int pos_in_tuple,unsigned int return_on_fail_pos, typename T>
+	struct multiply_if : public thrust::unary_function < T, T > {
+		const int type_of_if;
+		const T compare_to;
+			multiply_if() :type_of_if(100),compare_to((T)0){};
+			multiply_if( int _type_of_if, T _compare_to) :type_of_if(_type_of_if),compare_to(_compare_to){};
+
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			if (perform_op){
+				return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
+			}
+			else{
+				return thrust::get<return_on_fail_pos>(x);
+			}
+		}
+
+	};
+
+	template <unsigned int pos_in_tuple,  typename T>
+	struct compare_two : public thrust::unary_function < bool, T > {
+		const int type_of_if;
+		const T compare_to;
+		compare_two() :type_of_if(100), compare_to((T)0){};
+		compare_two(int _type_of_if, T _compare_to) :type_of_if(_type_of_if), compare_to(_compare_to){};
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (x < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (x > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (x <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (x >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (x == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (x != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &y,const T &x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (x < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (x > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (x <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (x >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (x == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (x != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			case 5:
+				if (thrust::get<pos_in_tuple>(x) != compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			return perform_op;
+		}
+
+	};
+	
+
+	//Add Two Values if true
+	//0 <, 1 >, 2 <=, 3 >=, 4 ==
+	template <unsigned int pos_in_tuple, unsigned int return_on_fail_pos, typename T>
+	struct add_if : public thrust::unary_function < T, T > {
+		const int type_of_if;
+		const T compare_to;
+		add_if() :type_of_if(100), compare_to((T)0){};
+		add_if(int _type_of_if, T _compare_to) :type_of_if(_type_of_if), compare_to(_compare_to){};
+
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x) const{
+			bool perform_op = false;
+			switch (type_of_if){
+			case 0:
+				if (thrust::get<pos_in_tuple>(x) < compare_to){
+					perform_op = true;
+				}
+				break;
+			case 1:
+				if (thrust::get<pos_in_tuple>(x) > compare_to){
+					perform_op = true;
+				}
+				break;
+			case 2:
+				if (thrust::get<pos_in_tuple>(x) <= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 3:
+				if (thrust::get<pos_in_tuple>(x) >= compare_to){
+					perform_op = true;
+				}
+				break;
+			case 4:
+				if (thrust::get<pos_in_tuple>(x) == compare_to){
+					perform_op = true;
+				}
+				break;
+			default:
+				perform_op = true;
+				break;
+			}
+			if (perform_op){
+				return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+			}
+			else{
+				return thrust::get<return_on_fail_pos>(x);
+			}
 		}
 
 	};
@@ -38,9 +285,53 @@ namespace functors{
 			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
 		}
 
+
 	};
 
-	//Multiply two values
+	template<typename T, typename M>
+	struct bin_add:public thrust::binary_function < T, M, T > {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const T &x,const M &y) const{
+			return ((T)x +(T)y);
+		}
+
+
+	};
+
+
+	template < typename T>
+	struct add_and_store : public thrust::unary_function < T, T > {
+		const T divide;
+		add_and_store(T _divide):divide(_divide){};
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x){
+			thrust::get<1>(x) = thrust::get<1>(x) /divide; 
+			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+		}
+
+	};
+
+	
+
+	//Multiply the first two values in a tuple, then add the last one
+	template < typename T>
+	struct multiply_add : public thrust::unary_function < T, T > {
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(Tuple x){
+			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x)) + (T)thrust::get<2>(x);
+		}
+
+	};
+
+
+
+	//Multiply a value by a constant
 	template <typename T>
 	struct multiply_by_constant : public thrust::unary_function < T, T > {
 		const T constant;
@@ -61,14 +352,21 @@ namespace functors{
 
 	template <typename T>
 	struct add_bias : public thrust::binary_function < T, T, T > {
-
+		const bool current_layer;
+		add_bias(bool _current_layer) : current_layer(_current_layer){};
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(T &bias, Tuple &x){
-			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
+			if (thrust::get<1>(x) != 0){
+				return (bias * (T)thrust::get<0>(x)) + (T)thrust::get<1>(x);
+			}
+			else{
+				return 0;
+			}
 		}
 	};
+
 
 	template <typename T>
 	struct apply_error_to_bias : public thrust::binary_function < T, T, T > {
@@ -97,27 +395,75 @@ namespace functors{
 		}
 	};
 
+	//Uses the found input values in a memory cell function
+	//After running, stored values will be in sigmoid form for all but the memory cell
 	template <typename T>
 	struct run_memory_block_functon : public thrust::unary_function < T, T > {
 
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(Tuple &x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
-			weight_type memory_value = sigmoid_function(thrust::get<0>(x) * thrust::get<3>(x));//Multiply the input by the potential_memory_value
+			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
+			//Compute Logistic value of input,output,forget,and potential
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
 
-			weight_type forget = (weight_type)thrust::get<2>(x);
-
-			thrust::get<2>(x) = sigmoid_function((T)thrust::get<2>(x) * (T)thrust::get<4>(x)); //Multiply the forget * the old memory cell value
-			thrust::get<4>(x) = thrust::get<4>(x) +memory_value + forget; //Sum the forget,input, and old cell value to get the new value the new potential memory cell value
-			thrust::get<1>(x) = sigmoid_function((T)thrust::get<4>(x) * (T)thrust::get<1>(x)); //Multiply the new memory_cell value by the new output value 
-
+			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
+			
+			
+			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<5>(x),1,0) + thrust::get<1>(x), 1, 0);
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Sum the input value and the forget value
 		}
 
 		__host__ __device__
 			T sigmoid_function(T value){
-			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1.0 * (thrust::complex<T>)value)));
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>)-1 * (thrust::complex<T>)value)));
 			return (T)1 / ((T)1 + (T)exped.real());
+		}
+
+		__host__ __device__
+			T  logistic_function(T value, T max_value, T midpoint){
+			return ((thrust::complex<T>)max_value / 
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
+		}
+
+	};
+
+	//Uses the found input values in a memory cell function
+	//After running, stored values will be in sigmoid form for all but the memory cell
+	template <typename T>
+	struct get_memory_cell_value : public thrust::unary_function < T, T > {
+
+
+		template <typename Tuple>
+		__host__ __device__
+			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
+			//Compute Logistic value of input,output,forget,and potential
+			//thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
+			//thrust::get<1>(x) = logistic_function(thrust::get<1>(x), 1, 0);
+			//thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
+			//thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
+
+			T memory_value_input =(T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<4>(x) + (T)thrust::get<2>(x);//Get the value of the forget gate
+
+
+			//thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<4>(x), 1, 0) * thrust::get<1>(x), 1, 0);
+			thrust::get<5>(x) = logistic_function(memory_value_input + forget_gate,0,1); //Sum the input value and the forget value
+		}
+
+		__host__ __device__
+			T sigmoid_function(T value){
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
+			return (T)1 / ((T)1 + (T)exped.real());
+		}
+
+		__host__ __device__
+			T  logistic_function(T value, T max_value, T midpoint){
+			return ((thrust::complex<T>)max_value /
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>) (-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
 
 	};
@@ -138,7 +484,22 @@ namespace functors{
 
 	};
 
+	template < typename T>
+	struct add_and_sigmoid : public thrust::binary_function < T, T,T > {
+		add_and_sigmoid(){
 
+		};
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &y1,const T &y2) const{
+			T x = ((T)y1+(T)y2);
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+			
+		}
+
+
+	};
 
 
 	//Perform a sigmoid function
@@ -148,7 +509,19 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(const T &x) const{
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+		}
+
+	};
+
+	//Perform a sigmoid function
+	template <typename T>
+	struct changed_sigmoid_functor : public thrust::unary_function < T, T > {
+		changed_sigmoid_functor(){};
+
+		__host__ __device__
+			T operator()(T &x){
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
 		}
 
 	};
@@ -288,26 +661,47 @@ namespace functors{
 
 	};
 
+	template <typename T>
+	struct check_not_between : public thrust::unary_function < T, bool > {
+		const T start;
+		const T end;
+
+		check_not_between(T _start, T _end) : start(_start), end(_end){};
+
+		__host__ __device__
+		bool operator()(T x){
+			if (start > x && x <= end){
+				return 0;
+			}
+			else{
+				return 1;
+			}
+		}
+	};
 
 	//Apply the error from the delta and the weight
 	template <typename T>
 	struct apply_new_error : public thrust::binary_function < T, T, T > {
 		const T alpha;
 		const T divide;
-		apply_new_error(T _alpha, T _divide) :alpha(_alpha), divide(_divide){
+		const int start;
+		const int end;
+		apply_new_error(T _alpha, T _divide,int _start,int _end) :alpha(_alpha), divide(_divide),start(_start),end(_end){
 
 		}
 		template <typename Tuple>
 		__host__ __device__ //previousWeight, weight
-			T operator()(Tuple &x,T &y){
-			thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
-			if (y != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
-				T toReturn = thrust::get<1>(x) +y;//Add the previous_weight to the return value, which is the new weight
+			T operator()(Tuple &x){
+			
+			//if (thrust::get<1>(x) != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
+			if (!(thrust::get<3>(x) > start && thrust::get<3>(x) < end)){
+				thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
+				T toReturn = thrust::get<1>(x)+thrust::get<2>(x);//Add the previous_weight to the return value, which is the new weight
 				thrust::get<1>(x) = ((T)thrust::get<0>(x) / (T)divide);//Find the new previous weight by dividing the deltas by the number of unrolled
 				return (T)toReturn + (T)thrust::get<1>(x); // Add the previous weight to the new weight to find the final weight
 			}
 			else{
-				return (T)y;//Return the value if it is one
+				return (T)1;
 			}
 			
 		}

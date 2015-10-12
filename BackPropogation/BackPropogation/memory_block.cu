@@ -20,8 +20,10 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	this->potential_memory_cell_value = host_vector<weight_type>();
 	this->memory_cell_weights = host_vector<weight_type>();
 	this->bias = host_vector<weight_type>();
-	if (type == LAYER){//Output layer does not require this, as it is only a set of input
-		
+	this->number_weights = 0;
+	this->number_inputs = numberInput;
+	this->type = type;//Set the type of memory block this is
+	if (type == LAYER){//Output layer does not require this, as it is only a set of input	
 		this->memory_cell_weights.push_back(this->getNewWeight());
 	}
 	this->number_memory_cells = 1;
@@ -40,12 +42,23 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 		//and a cell for containing the output
 		this->potential_memory_cell_value.push_back(this->getNewWeight());
 		this->mapFrom.push_back(i + start);
+		if (type == LAYER){
+			number_weights += 4;//Increment the number of weights in the list
+		}
+		else if (type == OUTPUT){
+			number_weights += 1;
+		}
 	}
 
 	//Create Biases for each node
 	//The biases are currently randomly chosen, but may change on future iterations
 	//4 is the number of non-memory-cell nodes, memory cells have a bias of 0
-	for (int i = 0; i < 4; i++){
+	if (type == LAYER){
+		for (int i = 0; i < 4; i++){
+			this->bias.push_back(this->getNewWeight());
+		}
+	}
+	else if (type == OUTPUT){
 		this->bias.push_back(this->getNewWeight());
 	}
 
@@ -54,19 +67,32 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 
 
 void Memory_Block::addNewConnection(int min, int max){
-	
+	bool mappedFrom = false;
+	for (int i = min; i < max; i++){
+		mappedFrom = false;
+		for (int j = 0; j < this->mapFrom.size(); j++){
+			if (this->mapFrom[j] == i){
+				mappedFrom = true;
+			}
+		}
+
+		if (!mappedFrom){
+			this->mapFrom.push_back(i);
+			this->input_weights.push_back(this->getNewWeight());
+			this->output_weights.push_back(this->getNewWeight());
+			this->potential_memory_cell_value.push_back(this->getNewWeight());
+			this->forget_weights.push_back(this->getNewWeight());
+			this->number_weights+=4;
+			break;
+		}
+	}
 }
 
 weight_type Memory_Block::getNewWeight(){
 	return RandomClamped();
 }
 
-
+//Return the type of node it is
 Memory_Block::memory_block_type Memory_Block::getTypeOfMemoryBlock(){
-	if (this->memory_cell_weights.size() > 0){
-		return LAYER;
-	}
-	else{
-		return OUTPUT;
-	}
+	return this->type;
 }

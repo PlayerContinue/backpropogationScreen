@@ -69,14 +69,15 @@ private:
 
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
-	long numberOfWeightsInLayer;
-	long numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
+	
+	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
 	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL,NONE_CELL};
 	//Stores the weights between neurons
 	host_vector<weight_type> weights;
+	vector<unsigned int> numberOfWeightsInLayers;
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 	thrust::device_vector<weight_type> GPUPreviousWeights;
@@ -144,7 +145,7 @@ public:
 private:
 	//Initialize the network from the settings object if possible
 	void initialize_network();
-
+	void count_weights_in_layers();
 public:
 	//*********************
 	//Run The Network
@@ -162,8 +163,17 @@ public:
 	virtual void InitializeTraining(){
 		this->InitializeLongShortTermMemory();
 	}
-	//Run a round of training
+
 	virtual void StartTraining(weight_type* in, weight_type* out){
+		//Does nothing for the moment
+	}
+
+	//Run a round of training
+	virtual void StartTraining(weight_type** in, weight_type* out){
+		//this->LongShortTermMemoryTraining(in, out);
+	}
+
+	virtual void StartTraining(weight_type** in, weight_type** out){
 		this->LongShortTermMemoryTraining(in, out);
 	}
 	//Apply the error to the network
@@ -174,21 +184,25 @@ public:
 private:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
+	void setInput(weight_type** in);
+	//Set the training network such that the input is the sum of the results
+	void averageWeights();
 	//Inititalize the Network For training
 	void InitializeLongShortTermMemory();
 	//Unroll the network into a multilayer representation
 	void UnrollNetwork(int numLayers);
-	//Load the bias into the system
-	void moveBiasToGPU();
-	void moveBiasToGPU(bool add_memory_cells);
+	
 
 	//Train the network using Backpropogation through time
-	void LongShortTermMemoryTraining(weight_type* in, weight_type* out);
+	void LongShortTermMemoryTraining(weight_type** in, weight_type** out);
 	//Find the delta values of the current output from the expected gradiant
-	void FindBackPropDelta(weight_type* out);
+	void FindBackPropDelta(weight_type** out, int current_layer);
 
 	//Apply the error
 	void ApplyLongTermShortTermMemoryError();
+
+	//Apply the error to the bias
+	void ApplyErrorToBias();
 
 	//Combine these two function, they do the same thing
 	template <typename T>
@@ -209,6 +223,10 @@ public:
 	//Modify Structure Of Neuron
 	//***************************
 
+	//Creates a new memory block with connections to all inputs
+	void InitialcreateMemoryBlock(int numberMemoryCells);
+	void createMemoryBlock(int numberMemoryCells,int layer_num);
+
 	void addNeuron(int numberNeuronsToAdd);
 
 	//Add a new weight between neurons
@@ -220,9 +238,7 @@ private:
 	//Requires knowing which node it will be attaching to in order to avoid double connections
 	int decideNodeToAttachFrom(int attachTo);
 
-	//Creates a new memory block with connections to all inputs
-	void InitialcreateMemoryBlock(int numberMemoryCells);
-	void createMemoryBlock(int numberMemoryCells);
+	
 
 	//Get a new weight
 	weight_type getNewWeight();
@@ -247,6 +263,10 @@ public:
 	//Empty all data from memory
 	void emptyGPUMemory();
 private:
+	//Load the bias into the system
+	void moveBiasToGPU();
+	void moveBiasToGPU(bool add_memory_cells);
+	//Load a single layer from Host memory to device memory
 	void loadLayerToDevice(unsigned int j);
 	//Unroll a row into the network
 	void loadUnrolledToDevice(int unrolled, unsigned int layer);
@@ -275,14 +295,14 @@ private:
 		os << endl;
 		os << network.GPUWeights.size() << endl;
 		for (unsigned int i = 0; i < network.GPUWeights.size(); i++){
-			os << i <<") " <<(weight_type)network.GPUWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUWeights[i] << ", " << endl;
 		}
 		os << endl;
 		os << endl;
 
 		os << network.device_deltas.size() << endl;
 		for (unsigned int i = 0; i < network.device_deltas.size(); i++){
-			os << i << ") " << (weight_type)network.device_deltas[i] << ", " << endl;
+			os << (weight_type)network.device_deltas[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -292,7 +312,7 @@ private:
 		os << network.GPUOutput_values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
-			os << i << ") "  << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
+			os << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
 		}
 
 		os << endl;
@@ -302,7 +322,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
+			os <<  (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -313,7 +333,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousWeights.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
 		}
 
 		os << endl;
@@ -341,7 +361,7 @@ private:
 
 		os << endl;
 		for (unsigned int i = 0; i < network.GPUBias.size(); i++){
-			os << i << ") " << (weight_type)network.GPUBias[i] << ",";
+			os << (weight_type)network.GPUBias[i] << ",";
 		}
 	
 
@@ -352,7 +372,7 @@ private:
 		os << endl;
 
 		for (unsigned int i = 0; i < network.GPUPreviousBias.size(); i++){
-			os << i << ") " << (weight_type)network.GPUPreviousBias[i] << ",";
+			os << (weight_type)network.GPUPreviousBias[i] << ",";
 		}
 
 

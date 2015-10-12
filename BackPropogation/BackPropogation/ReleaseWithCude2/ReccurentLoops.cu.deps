@@ -379,32 +379,8 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_functions
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_types.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ios
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocnum
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\climits
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstdio
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\swprintf.inl
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\streambuf
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xiosbase
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocale
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstring
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdexcept
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\exception
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstddef
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstddef
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\initializer_list
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\eh.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\malloc.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstring
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory0
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\limits
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ymath.h
@@ -413,13 +389,27 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\float.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtwrn.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\climits
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cwchar
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\wchar.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\swprintf.inl
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstddef
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstddef
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\initializer_list
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\new
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\exception
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\eh.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\malloc.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xutility
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\utility
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iosfwd
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstdio
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstring
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdbg.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\type_traits
@@ -442,6 +432,16 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ammintrin.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\mm3dnow.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdexcept
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xstring
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ios
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocnum
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\streambuf
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xiosbase
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocale
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\typeinfo
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocinfo.h
@@ -457,7 +457,10 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\errno.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/config.h
@@ -473,7 +476,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/co
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/hd_warning_disable.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/global_workarounds.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.h
@@ -767,7 +769,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/al
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/destroy_range.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.inl
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/overlapped_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/equal.h
@@ -863,74 +864,22 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/execution_policy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/execution_policy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/par.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/binary_search.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/binary_search.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/extrema.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/extrema.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/inner_product.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/logical.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reverse.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tabulate.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/insertion_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_backward.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/internal/decompose.h
@@ -951,386 +900,38 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/alignment.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/inclusive_scan.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_scan.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/uninitialized_copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/unique.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/unique.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/unique_by_key.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/unique_by_key.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/execution_policy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/par.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/integer_math.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/virtualized_smem_closure.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/temporary_indirect_permutation.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sequence.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/gather.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/util_namespace.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/cub.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_histogram.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_radix_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_exchange.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../util_ptx.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_type.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_macro.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_arch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_radix_rank.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\thread\../thread/thread_operators.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../block/block_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_raking.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_raking_layout.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_shfl.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_smem.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_load.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_store.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_warp_scans.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_discontinuity.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_atomic.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_load.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_shfl.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../util_debug.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_smem.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking_commutative_only.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_warp_reductions.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_store.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_shift.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_histogram.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_histogram_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_histogram_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_gatomic_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_satomic_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_sort_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_mapping.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_even_share.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_queue.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../util_device.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_partition.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_select_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\device_scan_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_scan_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\block_scan_prefix_operators.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../iterator/cache_modified_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_select_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_radix_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_radix_sort_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_upsweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_downsweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/constant_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/arg_index_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_by_key_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_by_key_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_select.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\host/spinlock.cuh
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\windows.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\winapifamily.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\sdkddkver.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\excpt.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdarg.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\windef.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\specstrings.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\specstrings_strict.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\specstrings_undef.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\driverspecs.h
-c:\program files (x86)\windows kits\8.1\include\shared\sdv_driverspecs.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winnt.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\kernelspecs.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\basetsd.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\guiddef.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack4.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack4.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack4.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack4.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack2.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\pshpack8.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\apiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\ktmtypes.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winbase.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\apisetcconv.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\minwinbase.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\processenv.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\fileapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\debugapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\utilapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\handleapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\errhandlingapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\fibersapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\namedpipeapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\profileapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\heapapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\ioapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\synchapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\interlockedapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\processthreadsapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\sysinfoapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\memoryapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\threadpoollegacyapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\threadpoolapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\bemapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\jobapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\wow64apiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\libloaderapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\securitybaseapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\namespaceapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\systemtopologyapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\processtopologyapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\securityappcontainer.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\realtimeapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\winerror.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\timezoneapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\wingdi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack4.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack4.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winuser.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\tvout.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winnls.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\datetimeapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\stringapiset.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winnls.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\wincon.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\consoleapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winver.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\verrsrc.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winreg.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\reason.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winnetwk.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\wnnc.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\cderr.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dde.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\ddeml.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dlgs.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\lzexpand.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsystem.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mciapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmiscapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmiscapi2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\playsoundapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmeapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\timeapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\joystickapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mmsyscom.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\nb30.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpc.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpcdce.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpcdcep.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\rpcnsi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpcnterr.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpcasync.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\shellapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winperf.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsock.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\inaddr.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\wincrypt.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\bcrypt.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\ncrypt.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\dpapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winefs.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winscard.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\wtypes.h
-c:\program files (x86)\windows kits\8.1\include\shared\rpcndr.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\rpcnsip.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\rpcsal.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-c:\program files (x86)\windows kits\8.1\include\shared\wtypesbase.h
-c:\program files (x86)\windows kits\8.1\include\shared\guiddef.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winioctl.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\winsmcrd.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winspool.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\prsht.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack4.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\ole2.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\objbase.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\combaseapi.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\unknwnbase.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\objidlbase.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\guiddef.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\cguid.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\objidl.h
-c:\program files (x86)\windows kits\8.1\include\um\unknwn.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\urlmon.h
-c:\program files (x86)\windows kits\8.1\include\um\oleidl.h
-c:\program files (x86)\windows kits\8.1\include\um\servprov.h
-c:\program files (x86)\windows kits\8.1\include\um\msxml.h
-c:\program files (x86)\windows kits\8.1\include\um\oaidl.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\propidl.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\oleauto.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack8.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\commdlg.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\prsht.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\pshpack1.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\poppack.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\shared\stralign.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsvc.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\mcx.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\imm.h
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\ime_cmodes.h
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/cache_modified_output_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/counting_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/tex_obj_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/tex_ref_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/transform_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_allocator.cuh
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\set
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xtree
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\map
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/complex.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\complex
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ccomplex
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\sstream
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xcomplex
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/complex.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/arithmetic.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/c99math.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/math_private.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cproj.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexp.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexpf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clog.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clogf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpow.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpowf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccosh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccoshf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinhf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanhf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrtf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrig.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrigf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/stream.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/partition.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/partition.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/remove.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/remove.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/remove.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/count.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/count.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/count.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/trivial_sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/adjacent_difference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/adjacent_difference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/adjacent_difference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/adjacent_difference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/binary_search.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/extrema.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/inner_product.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/logical.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/set_difference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/set_operations.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/set_operations.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/set_operations.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/set_operation.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/set_operation.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/balanced_path.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/exclusive_scan.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/uninitialized.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/set_intersection.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/set_symmetric_difference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/set_union.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_scan.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/uninitialized_copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h

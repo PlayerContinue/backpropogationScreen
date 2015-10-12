@@ -111,6 +111,15 @@ public:
 	virtual void StartTraining(weight_type* in, weight_type* out){
 		this->HessianFreeOptimizationTraining(in, out);
 	}
+
+	virtual void StartTraining(weight_type** in, weight_type* out){
+		this->HessianFreeOptimizationTraining(in[0], out);
+	}
+
+	virtual void StartTraining(weight_type** in, weight_type** out){
+		this->HessianFreeOptimizationTraining(in[0], out[0]);
+	}
+
 	//Apply the error to the network
 	virtual void ApplyError(){
 		this->HessianFreeOptimizationApplyError();
