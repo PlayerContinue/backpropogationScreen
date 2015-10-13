@@ -152,6 +152,9 @@ public:
 	//Only used for dubug. Outputs a simple example of what the network looks like
 	void VisualizeNetwork();
 	ostream& OutputNetwork(ostream &os);
+	virtual istream& LoadNetwork(istream& is){
+		return is;
+	};
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************

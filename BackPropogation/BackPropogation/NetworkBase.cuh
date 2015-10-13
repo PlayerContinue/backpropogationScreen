@@ -58,7 +58,7 @@ public:
 	virtual void VisualizeNetwork() = 0;
 
 	virtual ostream& OutputNetwork(ostream &os) = 0;
-
+	virtual istream& LoadNetwork(istream& is) = 0;
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************

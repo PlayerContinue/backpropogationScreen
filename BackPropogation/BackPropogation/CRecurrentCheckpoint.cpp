@@ -18,10 +18,12 @@ CRecurrentCheckpoint::CRecurrentCheckpoint(CSettings settings){
 	this->d_neuron_distance_threshold = settings.d_neuron_distance_threshold;
 	this->i_current_position_in_output_file = 0;
 	this->i_current_position_in_output_file = 0;
+	this->s_network_file_name = settings.s_network_name;
 }
 
 
 ostream& operator<<(ostream& os, const CRecurrentCheckpoint checkpoint){
+	os << "b_still_running " << checkpoint.b_still_running << endl;
 
 	os << "i_number_of_loops_checkpoint " << checkpoint.i_number_of_loops_checkpoint << endl;
 
@@ -59,6 +61,10 @@ ostream& operator<<(ostream& os, const CRecurrentCheckpoint checkpoint){
 //Load from file
 istream& operator>>(istream& is, CRecurrentCheckpoint& checkpoint){
 	string next;
+
+	is >> next;
+	is >> checkpoint.b_still_running;
+
 	is >> next;
 	is >> checkpoint.i_number_of_loops_checkpoint;
 

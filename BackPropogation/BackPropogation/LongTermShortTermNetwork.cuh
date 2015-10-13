@@ -135,6 +135,8 @@ public:
 	//The settings object contains all the information required to perform a function
 	LongTermShortTermNetwork(CSettings& settings);
 
+	//Create a LongTermShortTermNetwork from a checkpoint
+	LongTermShortTermNetwork(CSettings& settings,bool checkpoint);
 	//*********************
 	//Destructor
 	//*********************
@@ -218,7 +220,8 @@ public:
 
 	//Only used for dubug. Outputs a simple example of what the network looks like
 	void VisualizeNetwork();
-	ostream& OutputNetwork(ostream &os);
+	virtual ostream& OutputNetwork(ostream &os);
+	virtual istream& LoadNetwork(istream& is);
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************
@@ -284,25 +287,38 @@ private:
 
 	friend ostream& operator<<(ostream &os, const LongTermShortTermNetwork &network){
 		cout.precision(20);
-		std::cout << "Weight" << "\t" << "In" << "\t" << "Out" << endl;
+		os << network.numberOfNodes << endl;
+		os << network.numberNonWeights << endl;
+
+		os << "number_weights_in_layers" << endl;
+		os << network.numberOfWeightsInLayers.size() << endl;
+		for (int i = 0; i < network.numberOfWeightsInLayers.size(); i++){
+			os << network.numberOfWeightsInLayers[i] << endl;
+		}
+		os << endl;
+
+		os << network.mBlocksLayers.size() << endl;//Get number of layers
 		for (unsigned int j = 0; j < network.mBlocksLayers.size(); j++){
+			os << network.mBlocksLayers[j].size() << endl;
 			for (unsigned int i = 0; i < network.mBlocksLayers[j].size(); i++){
 				os << network.mBlocksLayers[j][i] << endl;
 			}
-			os << "layer " << j << endl;
+			os << "layer_" << j << endl;
 		}
 		os << endl;
 		os << endl;
+		os << "GPUWeights" << endl;
 		os << network.GPUWeights.size() << endl;
 		for (unsigned int i = 0; i < network.GPUWeights.size(); i++){
-			os << (weight_type)network.GPUWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUWeights[i] << endl;
 		}
 		os << endl;
 		os << endl;
 
+		os << "deltas" << endl;
 		os << network.device_deltas.size() << endl;
 		for (unsigned int i = 0; i < network.device_deltas.size(); i++){
-			os << (weight_type)network.device_deltas[i] << ", " << endl;
+			os << (weight_type)network.device_deltas[i] << endl;
 		}
 
 		os << endl;
@@ -312,7 +328,7 @@ private:
 		os << network.GPUOutput_values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
-			os << (weight_type)network.GPUOutput_values[i]  << ", " << endl;
+			os << (weight_type)network.GPUOutput_values[i]  << endl;
 		}
 
 		os << endl;
@@ -322,7 +338,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
-			os <<  (weight_type)network.GPUPreviousOutput_Values[i] << ", " << endl;
+			os <<  (weight_type)network.GPUPreviousOutput_Values[i] << endl;
 		}
 
 		os << endl;
@@ -330,29 +346,32 @@ private:
 
 
 		os << "GPUPreviousWeights" << endl;
-		os << network.GPUPreviousOutput_Values.size() << endl;
+		os << network.GPUPreviousWeights.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousWeights.size(); i++){
-			os << (weight_type)network.GPUPreviousWeights[i] << ", " << endl;
+			os << (weight_type)network.GPUPreviousWeights[i] << endl;
 		}
 
 		os << endl;
 		os << endl;
 
-		os << "(to, from)" << endl;
+		os << "(from,to)" << endl;
 		os << network.GPUMapFrom.size() << endl;
 		for (unsigned int i = 0; i < network.GPUMapFrom.size(); i++){
-			os << i << ") " << "(" << network.GPUMapFrom[i] << ", " << network.GPUMapTo[i] << ")" << ", " << endl;
+			os << network.GPUMapFrom[i] << " " << network.GPUMapTo[i] << endl;
 		}
 		os << endl;
 		os << endl;
 
 		os << "SumOrder" << endl;
-		thrust::copy(network.positionToSum.begin(), network.positionToSum.end(), std::ostream_iterator<int>(os, ","));
+		os << network.positionToSum.size() << endl;
+		thrust::copy(network.positionToSum.begin(), network.positionToSum.end(), std::ostream_iterator<int>(os, " "));
 
 		os << endl;
 
-		thrust::copy(network.count.begin(), network.count.end(), std::ostream_iterator<int>(os, ","));
+		os << "count_orders" << endl;
+		os << network.count.size() << endl;
+		thrust::copy(network.count.begin(), network.count.end(), std::ostream_iterator<int>(os, " "));
 
 
 		os << endl;
@@ -360,8 +379,10 @@ private:
 
 
 		os << endl;
+		os << "GPU_BIAS" << endl;
+		os << network.GPUBias.size() << endl;
 		for (unsigned int i = 0; i < network.GPUBias.size(); i++){
-			os << (weight_type)network.GPUBias[i] << ",";
+			os << (weight_type)network.GPUBias[i] << " ";
 		}
 	
 
@@ -370,9 +391,10 @@ private:
 		os << endl;
 
 		os << endl;
-
+		os << "Prev_GPU_BIAS" << endl;
+		os << network.GPUPreviousBias.size() << endl;
 		for (unsigned int i = 0; i < network.GPUPreviousBias.size(); i++){
-			os << (weight_type)network.GPUPreviousBias[i] << ",";
+			os << (weight_type)network.GPUPreviousBias[i] << " ";
 		}
 
 

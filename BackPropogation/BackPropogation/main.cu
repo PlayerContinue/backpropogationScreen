@@ -898,14 +898,20 @@ void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 //
 
 void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
-	ReccurentLoops RLoops = ReccurentLoops(settings,ReccurentLoops::LongTermShortTerm);
-	
+	ReccurentLoops RLoops;
+	if (!settings.b_loadFromCheckpoint){
+		RLoops = ReccurentLoops(settings, ReccurentLoops::LongTermShortTerm);
+	}
+	else{
+		RLoops = ReccurentLoops(settings);
+	}
 	double* temp = new double[settings.i_input];
 
 	for (int i = 0; i < settings.i_input; i++){
 		temp[i] = i;
 	}
 	//RLoops.runNetwork(temp);
+	//RLoops.startTraining(ReccurentLoops::LongTermShortTerm);
 	RLoops.testTraining();
 
 

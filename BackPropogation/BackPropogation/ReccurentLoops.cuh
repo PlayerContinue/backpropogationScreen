@@ -59,7 +59,8 @@ private:
 	CRecurrentCheckpoint checkpoint;
 	weight_type** input;
 	weight_type** output;
-
+	std::fstream* inputfile;
+	std::fstream* outputfile;
 	//*********************
 	//Constructors
 	//*********************
@@ -86,7 +87,8 @@ private:
 	//Load Network From File
 	//*********************
 	bool loadNetworkFromFile();
-
+	//Load from a file, returns the length of the sequence and the length of the returned list
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length,int type);
 	//*********************
 	//Utilization
 	//*********************
@@ -115,7 +117,7 @@ private:
 
 	//Retrieve the training data from the file passed in by the settings
 	bool load_training_data_from_file();
-
+	
 
 	//*********************
 	//Testing Methods
@@ -123,13 +125,14 @@ private:
 	weight_type* createTestInputOutput(int numberOfInput, int input_output);
 	void createCheckpoint();
 	void createCheckpoint(string file_name);
-
+	void loadCheckpoint();
 	//*********************
 	//Override Operators
 	//*********************
 
 	friend ostream& operator<<(ostream &os, const ReccurentLoops &loop){
 		os.precision(30);
+		os << loop.checkpoint;//Output the checkpoint
 		loop.mainNetwork->OutputNetwork(os);
 		return os;
 	}

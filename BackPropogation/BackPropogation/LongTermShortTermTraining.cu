@@ -1,10 +1,11 @@
 #include "LongTermShortTermNetwork.cuh"
-#define TRAININGTEST
+//#define TRAININGTEST
 //#define TRAININGTEST2
 //#define DELTA_TEST
 //#define AVERAGE_TEST
 //#define APPLY_DELTA_BIAS
 //#define NVIDA_OUTPUT_TEST
+//#define NVIDA_OUTPUT_TEST2
 #define NUMBER_MEMORY_WEIGHTS 4
 //*********************
 //Training the Network
@@ -64,6 +65,7 @@ void LongTermShortTermNetwork::averageWeights(){
 		_1 / this->settings.i_backprop_unrolled
 
 		);*/
+	int i = 0;
 	thrust::copy(this->GPUOutput_values.end() - this->numberOfNodes, this->GPUOutput_values.end(), this->GPUOutput_values.begin() + this->numberNonWeights);//Replace the current input with the output from the last run
 #ifdef AVERAGE_TEST
 	testing::outputToFile<weight_type>(this->GPUOutput_values, "outputaftertransform", "tests/Testing6.txt");
@@ -83,11 +85,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 	//Get the number of weights in the output layer
 	//This is needed because the output layer needs to be used only once, so we need to inform the system which weights to skip
 
-#ifdef NVIDA_OUTPUT_TEST
 
-	cout << "1";
-	
-#endif
 	//Set the input values
 	this->setInput(in);
 	unsigned int number_nodes_to_beginning_of_layer = 0;
@@ -114,7 +112,8 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 			this->GPUPreviousOutput_Values.begin()
 			);
 
-#ifdef NVIDA_OUTPUT_TEST
+#ifdef NVIDA_OUTPUT_TEST2
+		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "PrevBias-3", "tests/prevbias3.txt");
 		testing::outputToFile<weight_type>(thrust::make_permutation_iterator(
 			this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,
 			this->GPUMapFrom.begin()
