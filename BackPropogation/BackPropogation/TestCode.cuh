@@ -99,6 +99,33 @@ namespace testing{
 		}
 	}
 
+
+	template <typename T>
+	void outputArrayToFile(T** out, int size2,int size, string file_name){
+		static bool opened_once = false;
+		std::ofstream outputfile;
+		outputfile.precision(30);
+		if (opened_once){
+			outputfile.open(file_name, std::ios::app | std::ios::ate);
+		}
+		else{
+			outputfile.open(file_name, ios::trunc);
+		}
+
+		if (outputfile.is_open()){
+			for (int j = 0; j < size2; j++){
+				for (int i = 0; i < size; i++){
+					outputfile << out[j][i] << ",";
+				}
+			}
+			outputfile << endl;
+
+			outputfile.close();
+			opened_once = true;
+		}
+	}
+
+
 	template<typename T>
 	void outputVectorToFile(std::vector<T> vec, string title, string file_name){
 		static bool opened_once = false;

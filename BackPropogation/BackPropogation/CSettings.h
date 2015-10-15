@@ -74,6 +74,7 @@ public:
 
 	//Number of allowed output matches to allow a layer in
 	int i_number_allowed_same;
+
 	//Load From File
 	bool b_loadNetworkFromFile = false;
 	string s_loadNetworkFile;
@@ -98,6 +99,8 @@ public:
 
 	//Number extra connections to add
 	int i_number_new_weights;
+	
+	
 	CSettings();
 
 

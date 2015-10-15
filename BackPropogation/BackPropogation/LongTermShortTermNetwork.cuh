@@ -152,7 +152,9 @@ public:
 	//*********************
 	//Run The Network
 	//*********************
-	device_vector<weight_type> runNetwork(weight_type* in);
+	virtual device_vector<weight_type> runNetwork(weight_type* in);
+	device_vector<weight_type> runNetwork(weight_type* in,int number_extra_weights);
+	virtual device_vector<weight_type> runNetwork(weight_type* in, run_type type);
 	void InitializeLongShortTermMemoryForRun();
 	void InitializeRun(){
 		this->InitializeLongShortTermMemoryForRun();

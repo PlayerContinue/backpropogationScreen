@@ -29,14 +29,32 @@ namespace functors{
 
 	};
 
+	//Used in cases where a multiplication may occur, but it is used in addition and we don't want the multiplication to occur
+	template <typename T, int value>
+	struct multiply_or_return_zero : public thrust::unary_function < T, T > {
+
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x) const{
+			if (thrust::get<0>(x) == (T)value){
+				return 0;
+			}
+			else{
+				return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
+			}
+		}
+
+	};
+
 	//Multiply two values
 	//0 <, 1 >, 2 <=, 3 >=, 4 ==
-	template <unsigned int pos_in_tuple,unsigned int return_on_fail_pos, typename T>
+	template <unsigned int pos_in_tuple, unsigned int return_on_fail_pos, typename T>
 	struct multiply_if : public thrust::unary_function < T, T > {
 		const int type_of_if;
 		const T compare_to;
-			multiply_if() :type_of_if(100),compare_to((T)0){};
-			multiply_if( int _type_of_if, T _compare_to) :type_of_if(_type_of_if),compare_to(_compare_to){};
+		multiply_if() :type_of_if(100), compare_to((T)0){};
+		multiply_if(int _type_of_if, T _compare_to) :type_of_if(_type_of_if), compare_to(_compare_to){};
 
 
 		//Overload the function operator
@@ -84,7 +102,7 @@ namespace functors{
 
 	};
 
-	template <unsigned int pos_in_tuple,  typename T>
+	template <unsigned int pos_in_tuple, typename T>
 	struct compare_two : public thrust::unary_function < bool, T > {
 		const int type_of_if;
 		const T compare_to;
@@ -135,7 +153,7 @@ namespace functors{
 
 		//Overload the function operator
 		__host__ __device__
-			T operator()(const T &y,const T &x) const{
+			T operator()(const T &y, const T &x) const{
 			bool perform_op = false;
 			switch (type_of_if){
 			case 0:
@@ -219,7 +237,7 @@ namespace functors{
 		}
 
 	};
-	
+
 
 	//Add Two Values if true
 	//0 <, 1 >, 2 <=, 3 >=, 4 ==
@@ -267,7 +285,7 @@ namespace functors{
 				break;
 			}
 			if (perform_op){
-				return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+				return ((T)thrust::get<0>(x) +(T)thrust::get<1>(x));
 			}
 			else{
 				return thrust::get<return_on_fail_pos>(x);
@@ -282,19 +300,19 @@ namespace functors{
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(Tuple x) const{
-			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+			return ((T)thrust::get<0>(x) +(T)thrust::get<1>(x));
 		}
 
 
 	};
 
 	template<typename T, typename M>
-	struct bin_add:public thrust::binary_function < T, M, T > {
+	struct bin_add :public thrust::binary_function < T, M, T > {
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const T &x,const M &y) const{
-			return ((T)x +(T)y);
+			T operator()(const T &x, const M &y) const{
+			return ((T)x + (T)y);
 		}
 
 
@@ -304,18 +322,18 @@ namespace functors{
 	template < typename T>
 	struct add_and_store : public thrust::unary_function < T, T > {
 		const T divide;
-		add_and_store(T _divide):divide(_divide){};
+		add_and_store(T _divide) :divide(_divide){};
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(Tuple x){
-			thrust::get<1>(x) = thrust::get<1>(x) /divide; 
-			return ((T)thrust::get<0>(x) + (T)thrust::get<1>(x));
+			thrust::get<1>(x) = thrust::get<1>(x) / divide;
+			return ((T)thrust::get<0>(x) +(T)thrust::get<1>(x));
 		}
 
 	};
 
-	
+
 
 	//Multiply the first two values in a tuple, then add the last one
 	template < typename T>
@@ -336,7 +354,7 @@ namespace functors{
 	struct multiply_by_constant : public thrust::unary_function < T, T > {
 		const T constant;
 		multiply_by_constant(T _constant) : constant(_constant){};
-		
+
 
 		//Overload the function operator
 		__host__ __device__
@@ -344,7 +362,7 @@ namespace functors{
 			return constant * x;
 		}
 
-		
+
 
 	};
 
@@ -391,7 +409,7 @@ namespace functors{
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(Tuple &x){
-			return ((T)thrust::get<0>(x) - (T)thrust::get<1>(x));
+			return ((T)thrust::get<0>(x) -(T)thrust::get<1>(x));
 		}
 	};
 
@@ -409,23 +427,23 @@ namespace functors{
 			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
 			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
 
-			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T memory_value_input = (T)thrust::get<6>(x) +(T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
 			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
-			
-			
-			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<5>(x),1,0) + thrust::get<1>(x), 1, 0);
-			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Sum the input value and the forget value
+
+
+			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<5>(x), 1, 0) + thrust::get<1>(x), 1, 0);
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate, 1, 0); //Sum the input value and the forget value
 		}
 
 		__host__ __device__
 			T sigmoid_function(T value){
-			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>)-1 * (thrust::complex<T>)value)));
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
 			return (T)1 / ((T)1 + (T)exped.real());
 		}
 
 		__host__ __device__
 			T  logistic_function(T value, T max_value, T midpoint){
-			return ((thrust::complex<T>)max_value / 
+			return ((thrust::complex<T>)max_value /
 				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
 
@@ -446,12 +464,12 @@ namespace functors{
 			//thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
 			//thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
 
-			T memory_value_input =(T)thrust::get<0>(x) + (T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
-			T forget_gate = (T)thrust::get<4>(x) + (T)thrust::get<2>(x);//Get the value of the forget gate
+			T memory_value_input = (T)thrust::get<0>(x) +(T)thrust::get<2>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<4>(x) +(T)thrust::get<2>(x);//Get the value of the forget gate
 
 
 			//thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<4>(x), 1, 0) * thrust::get<1>(x), 1, 0);
-			thrust::get<5>(x) = logistic_function(memory_value_input + forget_gate,0,1); //Sum the input value and the forget value
+			thrust::get<5>(x) = logistic_function(memory_value_input + forget_gate, 0, 1); //Sum the input value and the forget value
 		}
 
 		__host__ __device__
@@ -485,17 +503,17 @@ namespace functors{
 	};
 
 	template < typename T>
-	struct add_and_sigmoid : public thrust::binary_function < T, T,T > {
+	struct add_and_sigmoid : public thrust::binary_function < T, T, T > {
 		add_and_sigmoid(){
 
 		};
 
 		//Overload the function operator
 		__host__ __device__
-			T operator()(const T &y1,const T &y2) const{
-			T x = ((T)y1+(T)y2);
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
-			
+			T operator()(const T &y1, const T &y2) const{
+			T x = ((T)y1 + (T)y2);
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
+
 		}
 
 
@@ -509,7 +527,7 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(const T &x) const{
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
 		}
 
 	};
@@ -521,7 +539,7 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(T &x){
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) -1.0 * (thrust::complex<T>)x)).real()));
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
 		}
 
 	};
@@ -530,14 +548,14 @@ namespace functors{
 
 	//Increase amount when beyond the provided length
 	template <typename T>
-	struct extend_value:public thrust::unary_function<T,T>{
+	struct extend_value :public thrust::unary_function < T, T > {
 		const T length;
 		const T subtract;
 		const T add;
 		const bool keep;
-		extend_value(T _length) :length(_length),subtract((T)0),add(_length),keep(false){};
-		extend_value(T _length, T _subtract) :length(_length), subtract(_subtract),add(_length),keep(false){};
-		extend_value(T _length, T _subtract, T _add) :length(_length), subtract(_subtract),add(_add), keep(false){};
+		extend_value(T _length) :length(_length), subtract((T)0), add(_length), keep(false){};
+		extend_value(T _length, T _subtract) :length(_length), subtract(_subtract), add(_length), keep(false){};
+		extend_value(T _length, T _subtract, T _add) :length(_length), subtract(_subtract), add(_add), keep(false){};
 		extend_value(T _length, T _subtract, T _add, bool _include_less) :length(_length), subtract(_subtract), add(_add), keep(_include_less){};
 		template <typename Tuple>
 		__host__ __device__
@@ -669,7 +687,7 @@ namespace functors{
 		check_not_between(T _start, T _end) : start(_start), end(_end){};
 
 		__host__ __device__
-		bool operator()(T x){
+			bool operator()(T x){
 			if (start > x && x <= end){
 				return 0;
 			}
@@ -686,13 +704,13 @@ namespace functors{
 		const T divide;
 		const int start;
 		const int end;
-		apply_new_error(T _alpha, T _divide,int _start,int _end) :alpha(_alpha), divide(_divide),start(_start),end(_end){
+		apply_new_error(T _alpha, T _divide, int _start, int _end) :alpha(_alpha), divide(_divide), start(_start), end(_end){
 
 		}
 		template <typename Tuple>
 		__host__ __device__ //previousWeight, weight
 			T operator()(Tuple &x){
-			
+
 			//if (thrust::get<1>(x) != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
 			if (!(thrust::get<3>(x) > start && thrust::get<3>(x) < end)){
 				thrust::get<1>(x) *= alpha;//Multiply the previous weight by the alpha
@@ -703,7 +721,7 @@ namespace functors{
 			else{
 				return (T)1;
 			}
-			
+
 		}
 
 	};

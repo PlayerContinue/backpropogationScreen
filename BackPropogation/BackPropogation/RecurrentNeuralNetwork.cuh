@@ -99,6 +99,10 @@ public:
 	void InitializeRun(){
 		this->InitializeTraining();
 	}
+
+	virtual device_vector<weight_type> runNetwork(weight_type* in, run_type run){
+		return runNetwork(in);
+	}
 	//***************************
 	//Train the Network
 	//***************************

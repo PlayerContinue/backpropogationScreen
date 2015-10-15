@@ -712,110 +712,110 @@ istream& LongTermShortTermNetwork::LoadNetwork(istream& is){
 	string name;
 	int count;
 	int count2; 
-	is >> this->numberOfNodes;
-	is >> this->numberNonWeights;
-	is >> name;
-	is >> count;
+	is >>  this->numberOfNodes;
+	is >>  this->numberNonWeights;
+	is >>  name;
+	is >>  count;
 	this->numberOfWeightsInLayers = vector<unsigned int>();
 	for (int i = 0; i < count; i++){
-		is >> count2;
+		is >>  count2;
 		this->numberOfWeightsInLayers.push_back(count2);
 	}
 
-	is >> count;//Get the number of blocks
+	is >>  count;//Get the number of blocks
 	
 	this->mBlocksLayers = vector<vector<Memory_Block>>();
 	for (int i = 0; i < count; i++){
-		is >> count2;
+		is >>  count2;
 		this->mBlocksLayers.push_back(vector<Memory_Block>());
 		for (int j = 0; j < count2; j++){
 			this->mBlocksLayers[i].push_back(Memory_Block());
-			is >> std::skipws >> this->mBlocksLayers[i][j];
+			is >>  this->mBlocksLayers[i][j];
 		}
-		is >> std::skipws >> name;
+		is >>  name;
 	}
 
 	weight_type value;
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUWeights = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUWeights.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->device_deltas = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->device_deltas.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUOutput_values = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUOutput_values.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUPreviousOutput_Values = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUPreviousOutput_Values.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUPreviousWeights = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUPreviousWeights.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->mapTo = thrust::device_vector<int>();
 	this->mapFrom = thrust::device_vector<int>();
 	for (int i = 0; i < count; i++){
-		is >> count2;
-		this->mapFrom.push_back(count2);
-		is >> count2;
-		this->mapTo.push_back(count2);
+		is >>  count2;
+		this->GPUMapFrom.push_back(count2);
+		is >>  count2;
+		this->GPUMapTo.push_back(count2);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->positionToSum = thrust::device_vector<int>();
 	for (int i = 0; i < count; i++){
-		is >> count2;
+		is >>  count2;
 		this->positionToSum.push_back(count2);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->count = thrust::device_vector<int>();
 	for (int i = 0; i < count; i++){
-		is >> count2;
+		is >>  count2;
 		this->count.push_back(count2);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUBias = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUBias.push_back(value);
 	}
 
-	is >> name;
-	is >> count;
+	is >>  name;
+	is >>  count;
 	this->GPUPreviousBias = thrust::device_vector<weight_type>();
 	for (int i = 0; i < count; i++){
-		is >> value;
+		is >>  value;
 		this->GPUPreviousBias.push_back(value);
 	}
 
