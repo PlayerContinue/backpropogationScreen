@@ -102,6 +102,68 @@ namespace functors{
 
 	};
 
+	template <unsigned int pos_in_tuple,typename T>
+	struct compare_between :public thrust::unary_function < bool, bool >{
+		const int type_of_if_1;
+		const int type_of_if_2;
+		const T compare_to_1;
+		const T compare_to_2;
+		compare_between():type_of_if_1(0), type_of_if_2(0), compare_to_1(0), compare_to_2(0){};
+		compare_between(int _type_of_if_1, int _type_of_if_2, T _compare_to_1, T _compare_to_2):type_of_if_1(_type_of_if_1), type_of_if_2(_type_of_if_2), compare_to_1(_compare_to_1), compare_to_2(_compare_to_2){};
+
+		template <typename Tuple>
+		__host__ __device__
+			bool operator()(const Tuple &x)const{
+			return !(run_switch(thrust::get<pos_in_tuple>(x), type_of_if_1, compare_to_1) && run_switch(thrust::get<pos_in_tuple>(x), type_of_if_2, compare_to_2));
+			
+		}
+
+		__host__ __device__
+			bool run_switch(const T &x, const int &type_of_if,const T &compare_to)const{
+			bool perform_op = false;
+			switch (type_of_if){
+				case 0:
+					if (x < compare_to){
+						perform_op = true;
+					}
+					break;
+				case 1:
+					if (x > compare_to){
+						perform_op = true;
+					}
+					break;
+				case 2:
+					if (x <= compare_to){
+						perform_op = true;
+					}
+					break;
+				case 3:
+					if (x >= compare_to){
+						perform_op = true;
+					}
+					break;
+				case 4:
+					if (x == compare_to){
+						perform_op = true;
+					}
+					break;
+				case 5:
+					if (x != compare_to){
+						perform_op = true;
+					}
+					break;
+				default:
+					perform_op = true;
+					break;
+				}
+				return perform_op;
+			}
+
+
+
+
+	};
+
 	template <unsigned int pos_in_tuple, typename T>
 	struct compare_two : public thrust::unary_function < bool, T > {
 		const int type_of_if;
@@ -151,6 +213,7 @@ namespace functors{
 			return perform_op;
 		}
 
+
 		//Overload the function operator
 		__host__ __device__
 			T operator()(const T &y, const T &x) const{
@@ -196,7 +259,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			bool perform_op = false;
 			switch (type_of_if){
 			case 0:
@@ -494,7 +557,7 @@ namespace functors{
 		template <typename Tuple>
 
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			T z = (T)((T)thrust::get<0>(x)*(T)thrust::get<1>(x));
 			z = (T)thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)z)).real();
 			return (T)1 / ((T)1 + z);
@@ -538,7 +601,7 @@ namespace functors{
 		changed_sigmoid_functor(){};
 
 		__host__ __device__
-			T operator()(T &x){
+			T operator()(const T &x)const{
 			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)x)).real()));
 		}
 
@@ -559,7 +622,7 @@ namespace functors{
 		extend_value(T _length, T _subtract, T _add, bool _include_less) :length(_length), subtract(_subtract), add(_add), keep(_include_less){};
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 			if (!keep || thrust::get<1>(x) >= length * 2){
 				return (((T)thrust::get<1>(x) / (T)length)* (T)add) + (T)thrust::get<0>(x) -(T)subtract;
 			}

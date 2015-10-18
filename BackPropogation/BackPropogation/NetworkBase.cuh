@@ -31,6 +31,7 @@ class NetworkBase {
 	//*********************
 
 public:
+	CSettings settings;
 	enum run_type{ WITH_MEMORY_CELLS, WITHOUT_MEMORY_CELLS};
 	//*********************
 	//Run The Network

@@ -650,29 +650,14 @@ unsigned int LongTermShortTermNetwork::getNumberTypeWeightsInLayer(unsigned int 
 }
 void LongTermShortTermNetwork::getSumPermutation(){
 	//Create a permutation list containing a list of object
-	this->positionToSum = thrust::device_vector<int>();
-	this->count = thrust::device_vector<int>();
-	int* list_of_found_values = new int[this->numberOfNodes];
-#ifdef  _DEBUG
-	vector<int> temp = vector<int>();
-#endif
-	for (int i = this->numberNonWeights; i <= this->numberOfNodes; i++){
-		for (unsigned int j = 0; j < this->GPUMapTo.size(); j++){
-				if (i == this->GPUMapFrom[j]){
-					//This is a position of one of the matching nodes
-					this->positionToSum.push_back(j);
-					this->count.push_back(i);
-
-#ifdef  _DEBUG
-					temp.push_back(j);
-#endif
-
-				}
-		}
-
-	}
-		
-	
+	this->positionToSum = thrust::device_vector<int>(this->GPUMapFrom.size());
+	this->count = thrust::device_vector<int>(this->GPUMapFrom);
+	thrust::sequence(this->positionToSum.begin(), this->positionToSum.end(), (int)(0));
+	thrust::sort_by_key(this->count.begin(), this->count.end(), this->positionToSum.begin());
+	thrust::device_vector<int>::iterator positionToSumStartRemove = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 < this->numberNonWeights);
+	thrust::device_vector<int>::iterator countStartRemove = thrust::remove_if(this->count.begin(), this->count.end(), _1 < this->numberNonWeights);
+	this->count.erase(countStartRemove,this->count.end());
+	this->positionToSum.erase(positionToSumStartRemove,this->positionToSum.end());
 
 }
 
@@ -726,7 +711,7 @@ istream& LongTermShortTermNetwork::LoadNetwork(istream& is){
 	
 	this->mBlocksLayers = vector<vector<Memory_Block>>();
 	for (int i = 0; i < count; i++){
-		is >>  count2;
+		is >> count2;
 		this->mBlocksLayers.push_back(vector<Memory_Block>());
 		for (int j = 0; j < count2; j++){
 			this->mBlocksLayers[i].push_back(Memory_Block());
@@ -734,7 +719,7 @@ istream& LongTermShortTermNetwork::LoadNetwork(istream& is){
 		}
 		is >>  name;
 	}
-
+	
 	weight_type value;
 	is >>  name;
 	is >>  count;

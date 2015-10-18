@@ -195,6 +195,12 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 		//Get current location in file
 		int currentPosition = file.tellg();
 		if (file.eof()){
+			if (sequence_length[0] < this->settings.i_number_of_training){
+				storage[sequence_length[0]] = new weight_type[length_of_results];
+				for (int j = 0; j < length_of_results; j++){
+					storage[sequence_length[0]][j] = SEQUENCE_DELIMITER;
+				}
+			}
 			sequence_length[1] = -1;//File has ended
 		}
 		else if (current_char == sequence_delimiter){
@@ -279,7 +285,6 @@ void ReccurentLoops::testTraining(){
 	bool sequence_end = false;//Tell if the sequence ends
 	
 	try{
-		this->load_training_data_from_file();
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
 		}
@@ -291,14 +296,17 @@ void ReccurentLoops::testTraining(){
 			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT);
 			//testing::outputArrayToFile(this->input, length[0], this->settings.i_input, "tests/input_output.txt");
 			//testing::outputArrayToFile(this->output, length[0], this->settings.i_output, "tests/input_output.txt");
-			for (int i = 0; i < this->settings.i_number_of_training; i += this->settings.i_backprop_unrolled){
-
-				for (int j = i, k = 0; k < this->settings.i_backprop_unrolled; j++, k++){
-					if (!sequence_end && (this->input[j][0] != SEQUENCE_DELIMITER || this->output[j][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
-						trainingInput[k] = this->input[j];
-						trainingOutput[k] = this->output[j];
+			for (int i = 0; i < length[0];){
+				for (int k = 0; k < this->settings.i_backprop_unrolled; k++){
+					if (!sequence_end && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER) && i < length[0]){//If both are a sequence_delimiter, then the sequence has ended
+						trainingInput[k] = this->input[i];
+						trainingOutput[k] = this->output[i];
+						i++;//Increment i here because the next sequence follows
 					}
 					else{
+						if (!sequence_end){
+							i++;//Skip passed the end of the sequence
+						}
 						sequence_end = true;
 						if (k < this->settings.i_backprop_unrolled){
 							trainingInput[k] = this->input[0];
@@ -355,7 +363,7 @@ void ReccurentLoops::testTraining(){
 				if (this->training_input[i][0] != SEQUENCE_DELIMITER || this->training_output[i][0] != SEQUENCE_DELIMITER){
 					testing::outputArrayToFile<weight_type>(this->training_input[i], this->settings.i_input, "tests/results.txt");
 					testing::outputArrayToFile<weight_type>(this->training_output[i], this->settings.i_output, "tests/results.txt");
-					thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->training_input[i]);
+					thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->training_input[i],NetworkBase::run_type::WITH_MEMORY_CELLS);
 					testing::outputToFile<weight_type>(temp, "results", "tests/results.txt");
 				}
 				else{
@@ -387,6 +395,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->emptyGPUMemory();
 		}
 		catch (exception e){
+			cout << "error" << endl;
 			cout << e.what();
 			cin.sync();
 			cin.get();
@@ -397,6 +406,7 @@ void ReccurentLoops::testTraining(){
 	}
 
 	catch (exception e){//Edit to write the problems to file later
+		cout << "error" << endl;
 		cout << e.what();
 		cin.sync();
 		cin.get();

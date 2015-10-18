@@ -8,7 +8,7 @@
 #include <thrust/iterator/permutation_iterator.h>
 #include <thrust/copy.h>
 #include <thrust/complex.h>
-
+#include <thrust/sort.h>
 #ifndef __TESTCODE_CUH_INCLUDED___
 #include "testcode.cuh"
 #define __TESTCODE_CUH_INCLUDED___
@@ -122,7 +122,7 @@ private:
 	//Vector Containing Layer Info
 	vector<vector<Memory_Block>> mBlocksLayers;
 
-	CSettings settings;
+	
 public:
 	//*********************
 	//Constructors
