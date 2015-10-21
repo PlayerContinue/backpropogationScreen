@@ -100,7 +100,7 @@ public:
 	//Number extra connections to add
 	int i_number_new_weights;
 	
-	
+	int i_number_of_testing_items;
 	CSettings();
 
 
@@ -252,6 +252,9 @@ public:
 
 		is >> next;
 		is >> settings.i_number_new_weights;
+
+		is >> next;
+		is >> settings.i_number_of_testing_items;
 
 		return is;
 	}

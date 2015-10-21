@@ -35,7 +35,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings, int type){
 		break;
 	}
 
-	
+
 	this->InitializeNetwork();
 	this->checkpoint = CRecurrentCheckpoint(settings);
 }
@@ -43,7 +43,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings, int type){
 ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint){
 	this->settings = settings;
 	this->checkpoint = checkpoint;
-	this->mainNetwork = new LongTermShortTermNetwork(settings,true);
+	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
 	this->InitializeNetwork();
 }
 
@@ -54,6 +54,8 @@ ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoi
 void ReccurentLoops::InitializeNetwork(){
 	this->input = new weight_type*[this->settings.i_number_of_training];
 	this->output = new weight_type*[this->settings.i_number_of_training];
+	this->mean_square_error_results_new = host_vector<weight_type>(this->settings.i_output + 1);
+	this->mean_square_error_results_old = host_vector<weight_type>(this->settings.i_output + 1);
 	this->inputfile = new std::fstream();
 	this->outputfile = new std::fstream();
 	this->inputfile->open(this->settings.s_trainingSet);
@@ -67,7 +69,7 @@ void ReccurentLoops::InitializeNetwork(){
 //Reload a Network From a File
 //*****************************
 bool ReccurentLoops::loadNetworkFromFile(){
-	
+
 	return true;
 }
 
@@ -75,7 +77,7 @@ void ReccurentLoops::loadCheckpoint(){
 	std::ifstream is;
 	is.open(this->settings.s_checkpoint_file);
 	is >> this->checkpoint;
-	
+
 	this->mainNetwork->LoadNetwork(is);
 }
 
@@ -98,15 +100,10 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(int* in){
 }
 
 vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
-	device_vector<weight_type> temp_device;
-	if (this->checkpoint.b_still_running){
-		temp_device = this->mainNetwork->runNetwork(in, NetworkBase::run_type::WITH_MEMORY_CELLS);
-	}
-	else{
-		temp_device = this->mainNetwork->runNetwork(in,NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
-	}
-	
-	vector<RETURN_WEIGHT_TYPE> to_return = vector <RETURN_WEIGHT_TYPE>(temp_device.size());
+
+	device_vector<weight_type> temp_device = this->runTrainingNetwork(in);
+	vector<RETURN_WEIGHT_TYPE> to_return = vector<RETURN_WEIGHT_TYPE>(temp_device.size());
+
 
 	for (unsigned int i = 0; i < temp_device.size(); i++){
 		to_return[i] = temp_device[i];
@@ -114,6 +111,20 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 	clear_vector::free(temp_device);
 
 	return to_return;
+}
+
+//Run the network during training
+device_vector<weight_type> ReccurentLoops::runTrainingNetwork(weight_type* in){
+	device_vector<weight_type> temp_device;
+	if (this->checkpoint.b_still_running){
+		temp_device = this->mainNetwork->runNetwork(in, NetworkBase::run_type::WITH_MEMORY_CELLS);
+	}
+	else{
+		temp_device = this->mainNetwork->runNetwork(in, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
+	}
+
+	return temp_device;
+
 }
 //*****************************
 //Get Data From the users file
@@ -144,6 +155,10 @@ bool ReccurentLoops::load_training_data_from_file(){
 //sequence_length - [0] = length of the current sequence, [1] - if the sequence is longer than storage returns 0, else returns 1
 //type - the type of data which should be retrieved
 void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], data_type type){
+	this->loadFromFile(file, length_of_results, storage, sequence_length,this->settings.i_number_of_training, type);
+}
+
+void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type){
 
 	//reset sequence length
 	sequence_length[0] = 0;
@@ -156,7 +171,7 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 	int start = file.tellg();
 	if (file.is_open()){
 		int letterPosition = 0;
-		for (int i = 0; i < this->settings.i_number_of_training;i++){
+		for (int i = 0; i < length; i++){
 			//Reset Everything
 			storage[i] = new weight_type[length_of_results];
 			current_char = '1';
@@ -164,7 +179,7 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 			letterPosition = 0;
 
 			//While not at the end of a group, retrieve the current dataset
-			while (current_char != group_delimiter && !file.eof() && current_char!=sequence_delimiter){
+			while (current_char != group_delimiter && !file.eof() && current_char != sequence_delimiter){
 				//Get the current char
 				current_char = file.get();
 
@@ -172,8 +187,8 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 					if (type == OUTPUT){
 						storage[i][letterPosition] = stod(current_string);
 					}
-					else if(type==INPUT){
-						storage[i][letterPosition] = (weight_type)current_string.at(0);
+					else if (type == INPUT){
+						storage[i][letterPosition] = (weight_type)stod(current_string);
 					}
 					letterPosition++;
 					current_string = "";
@@ -195,7 +210,7 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 		//Get current location in file
 		int currentPosition = file.tellg();
 		if (file.eof()){
-			if (sequence_length[0] < this->settings.i_number_of_training){
+			if (sequence_length[0] < length){
 				storage[sequence_length[0]] = new weight_type[length_of_results];
 				for (int j = 0; j < length_of_results; j++){
 					storage[sequence_length[0]][j] = SEQUENCE_DELIMITER;
@@ -226,19 +241,19 @@ void ReccurentLoops::LoadTrainingSet(){
 	std::fstream stream;
 	if (this->settings.b_testingFromFile){//A training file has been included and should be read from for the training set
 		stream.open(this->settings.s_testSet);
-		this->loadFromFile(stream, this->settings.i_number_of_training, this->training_input, training_length,INPUT);
+		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length,this->settings.i_number_of_testing_items, INPUT);
 		stream.close();
 		stream.open(this->settings.s_outputTestSet);
-		this->loadFromFile(stream, this->settings.i_number_of_training, this->training_output, training_length, OUTPUT);
+		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
 	}
 	else{//A training file has not been included, get a random set from the input file
 		stream.open(this->settings.s_trainingSet);
-		this->loadFromFile(stream, this->settings.i_number_of_training, this->training_input, training_length, INPUT);
+		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT);
 		stream.close();
 		stream.open(this->settings.s_outputTrainingFile);
-		this->loadFromFile(stream, this->settings.i_number_of_training, this->training_output, training_length, OUTPUT);
+		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
 	}
@@ -250,7 +265,7 @@ void ReccurentLoops::LoadTrainingSet(){
 void ReccurentLoops::startTraining(int type){
 	//Load the data from a file
 	//if (!load_training_data_from_file()){
-		//throw exception("Unable to read from file.");
+	//throw exception("Unable to read from file.");
 	//}
 	this->inputfile->open(this->settings.s_outputTrainingFile);
 	this->outputfile->open(this->settings.s_outputTestSet);
@@ -283,7 +298,7 @@ void ReccurentLoops::testTraining(){
 	weight_type** trainingOutput = new weight_type*[this->settings.i_backprop_unrolled];
 	int length[2];
 	bool sequence_end = false;//Tell if the sequence ends
-	
+	int count_sequences = 0;
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
@@ -296,8 +311,9 @@ void ReccurentLoops::testTraining(){
 			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT);
 			//testing::outputArrayToFile(this->input, length[0], this->settings.i_input, "tests/input_output.txt");
 			//testing::outputArrayToFile(this->output, length[0], this->settings.i_output, "tests/input_output.txt");
+			int k;
 			for (int i = 0; i < length[0];){
-				for (int k = 0; k < this->settings.i_backprop_unrolled; k++){
+				for (k = 0; k < this->settings.i_backprop_unrolled; k++){
 					if (!sequence_end && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER) && i < length[0]){//If both are a sequence_delimiter, then the sequence has ended
 						trainingInput[k] = this->input[i];
 						trainingOutput[k] = this->output[i];
@@ -308,15 +324,23 @@ void ReccurentLoops::testTraining(){
 							i++;//Skip passed the end of the sequence
 						}
 						sequence_end = true;
-						if (k < this->settings.i_backprop_unrolled){
-							trainingInput[k] = this->input[0];
-							trainingOutput[k] = this->output[0];
-						}
+						
+						break;
+						//if (k < this->settings.i_backprop_unrolled){
+							//trainingInput[k] = this->input[0];
+							//trainingOutput[k] = this->output[0];
+						//}
+
 						//Reached the end of the sequence, load the next sequence
 						//Normally load more from the file
 						//break;
 					}
 				}
+				//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
+				//Allows for multilength sequences
+				this->mainNetwork->seti_backprop_unrolled(k);
+
+				//Run the sequence to find the results
 				this->mainNetwork->StartTraining(trainingInput, trainingOutput);
 
 				if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
@@ -331,31 +355,41 @@ void ReccurentLoops::testTraining(){
 
 
 
-				
+
 				this->checkpoint.i_number_of_loops_checkpoint += 1;
 
 
 				if (sequence_end){
 					//The sequence has ended, so we need to reset the sequence
 					this->mainNetwork->ResetSequence();
+					if (count_sequences >= this->settings.i_loops){
+						//Copy the previous set of error to the new set of errors
+						std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
+						//Get the mean Square error
+						this->getMeanSquareError();
+						testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+						this->mainNetwork->ResetSequence();
+						count_sequences = 0;
+					}
+					count_sequences++;
 					sequence_end = false;
 				}
 
 			}
 			if (length[1] == 0){//Reset the sequence once the sequence has finished
-
 				this->mainNetwork->ResetSequence();
+
 			}
 			//Load more data from the file
-			
-			
+
+
 		}
 		//No longer running loops
-		
+
 		try{
 			this->createCheckpoint();
 			this->mainNetwork->ResetSequence();
-			for (int i = 0; i < this->settings.i_number_of_training; i++){
+			for (int i = 0; i < this->number_in_training_sequence; i++){
 				if (i == 0){
 					testing::outputArrayToFile<weight_type>(this->training_input[i], this->settings.i_input, "tests/results.txt");
 					testing::outputArrayToFile<weight_type>(this->training_output[i], this->settings.i_output, "tests/results.txt");
@@ -363,7 +397,7 @@ void ReccurentLoops::testTraining(){
 				if (this->training_input[i][0] != SEQUENCE_DELIMITER || this->training_output[i][0] != SEQUENCE_DELIMITER){
 					testing::outputArrayToFile<weight_type>(this->training_input[i], this->settings.i_input, "tests/results.txt");
 					testing::outputArrayToFile<weight_type>(this->training_output[i], this->settings.i_output, "tests/results.txt");
-					thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->training_input[i],NetworkBase::run_type::WITH_MEMORY_CELLS);
+					thrust::device_vector<weight_type> temp = this->mainNetwork->runNetwork(this->training_input[i], NetworkBase::run_type::WITH_MEMORY_CELLS);
 					testing::outputToFile<weight_type>(temp, "results", "tests/results.txt");
 				}
 				else{
@@ -376,7 +410,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->InitializeRun();
 			this->mainNetwork->ResetSequence();
 			this->createCheckpoint("RunStart");
-			for (int i = 0; i < this->settings.i_number_of_training; i++){
+			for (int i = 0; i < this->number_in_training_sequence; i++){
 				if (i == 0){
 					testing::outputArrayToFile<weight_type>(this->training_input[i], this->settings.i_input, "tests/results2.txt");
 					testing::outputArrayToFile<weight_type>(this->training_output[i], this->settings.i_output, "tests/results2.txt");
@@ -402,7 +436,7 @@ void ReccurentLoops::testTraining(){
 			//this->mainNetwork->emptyGPUMemory();
 		}
 
-		
+
 	}
 
 	catch (exception e){//Edit to write the problems to file later
@@ -413,6 +447,34 @@ void ReccurentLoops::testTraining(){
 	}
 }
 
+void ReccurentLoops::getMeanSquareError(){
+	thrust::device_vector<weight_type> vec;
+	thrust::device_vector<weight_type> real_output = thrust::device_vector<weight_type>(this->settings.i_output);
+	for (int i = 0; i < this->number_in_training_sequence; i++){
+		if (this->training_input[i][0] == SEQUENCE_DELIMITER && this->training_output[i][0] == SEQUENCE_DELIMITER){
+			this->mainNetwork->ResetSequence();
+		}
+		else{
+			vec = this->runTrainingNetwork(this->training_input[i]);
+
+			for (int j = 0; j < this->settings.i_output; j++){
+				real_output[j] = this->training_output[i][j];
+			}
+
+			if (i != 0){
+				value_testing::getMeanSquareErrorSum(vec.begin(), vec.end(), real_output.begin(), real_output.end(), this->mean_square_error_results_new);
+			}
+			else{
+				value_testing::getMeanSquareError(vec.begin(), vec.end(), real_output.begin(), real_output.end(), this->mean_square_error_results_new);
+			}
+		}
+	}
+
+	//Divide the summed value
+	for (int i = 0; i < this->mean_square_error_results_new.size(); i++){
+		this->mean_square_error_results_new[i] /= this->number_in_training_sequence;
+	}
+}
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
 	this->mainNetwork->InitializeTraining();
@@ -469,7 +531,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 		count += .1;
 		position++;
 	}
-	
+
 	return  temp;
 }
 
@@ -494,23 +556,23 @@ void ReccurentLoops::createCheckpoint(){
 
 //Create a Checkpoint with any name
 void ReccurentLoops::createCheckpoint(string file_name){
-	static int count = 0 ;
+	static int count = 0;
 
-		std::ofstream outputfile;
-		outputfile.open("recurrent_networks/" + file_name + std::to_string(count) + ".txt", ios::trunc);
-		if (outputfile.is_open()){
-			outputfile << *this << flush;
-			outputfile << endl;
-			outputfile.close();
-		}
-		else{
-			std::cout << "Unable to write checkpoint to file." << endl;
-			std::cout << "continue?";
-		}
-		
-		count++;
-		
+	std::ofstream outputfile;
+	outputfile.open("recurrent_networks/" + file_name + std::to_string(count) + ".txt", ios::trunc);
+	if (outputfile.is_open()){
+		outputfile << *this << flush;
+		outputfile << endl;
+		outputfile.close();
+	}
+	else{
+		std::cout << "Unable to write checkpoint to file." << endl;
+		std::cout << "continue?";
+	}
 
-	
+	count++;
+
+
+
 
 }

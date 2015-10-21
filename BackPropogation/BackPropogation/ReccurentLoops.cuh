@@ -68,7 +68,8 @@ private:
 	//Files connected to the input/output files containing the data
 	std::fstream* inputfile;
 	std::fstream* outputfile;
-
+	host_vector<weight_type> mean_square_error_results_old;
+	host_vector<weight_type> mean_square_error_results_new;
 	enum data_type {OUTPUT,INPUT,TRAINING};
 	//*********************
 	//Constructors
@@ -99,6 +100,7 @@ private:
 	bool loadNetworkFromFile();
 	//Load from a file, returns the length of the sequence and the length of the returned list
 	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length,data_type type);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type);
 	//Loads the training set from a file
 	void LoadTrainingSet();
 	//*********************
@@ -109,6 +111,8 @@ public:
 	
 	vector<RETURN_WEIGHT_TYPE> runNetwork(weight_type* in);
 
+
+public:
 	template <typename T>
 	weight_type* convert_array(T* in);
 
@@ -125,7 +129,8 @@ private:
 	//Training data is passed in
 	bool train_network_RealTimeRecurrentTraining();
 	bool train_network_HessianFreeOptimizationTraining();
-
+	device_vector<weight_type> runTrainingNetwork(weight_type* in);
+	void getMeanSquareError();
 	//Retrieve the training data from the file passed in by the settings
 	bool load_training_data_from_file();
 	

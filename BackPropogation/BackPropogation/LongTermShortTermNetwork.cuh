@@ -16,7 +16,7 @@
 
 #ifndef __FUNCTORS__H__INCLUDED__
 #include "Recurrent_Functors.cuh"
-#define __FUNCTORS__H__INCLUDES__
+#define __FUNCTORS__H__INCLUDED__
 #endif
 #include <vector>
 #ifndef __TIME_H_INCLUDED__

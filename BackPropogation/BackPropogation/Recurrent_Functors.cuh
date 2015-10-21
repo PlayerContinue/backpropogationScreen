@@ -60,7 +60,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			bool perform_op = false;
 			switch (type_of_if){
 			case 0:
@@ -315,7 +315,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			bool perform_op = false;
 			switch (type_of_if){
 			case 0:
@@ -362,7 +362,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x) const{
+			T operator()(const Tuple &x) const{
 			return ((T)thrust::get<0>(x) +(T)thrust::get<1>(x));
 		}
 
@@ -389,7 +389,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x){
+			T operator()(const Tuple &x)const{
 			thrust::get<1>(x) = thrust::get<1>(x) / divide;
 			return ((T)thrust::get<0>(x) +(T)thrust::get<1>(x));
 		}
@@ -404,7 +404,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple x){
+			T operator()(const Tuple &x)const{
 			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x)) + (T)thrust::get<2>(x);
 		}
 
@@ -438,7 +438,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(T &bias, Tuple &x){
+			T operator()(const T &bias, const Tuple &x)const{
 			if (thrust::get<1>(x) != 0){
 				return (bias * (T)thrust::get<0>(x)) + (T)thrust::get<1>(x);
 			}
@@ -459,7 +459,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__ //Delta, Bias
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 			thrust::get<1>(x) += (T)(thrust::get<0>(x));
 			return (bias * (T)thrust::get<1>(x)) + (T)thrust::get<0>(x);
 		}
@@ -471,7 +471,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 			return ((T)thrust::get<0>(x) -(T)thrust::get<1>(x));
 		}
 	};
@@ -484,7 +484,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
+			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
 			//Compute Logistic value of input,output,forget,and potential
 			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
 			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
@@ -499,13 +499,13 @@ namespace functors{
 		}
 
 		__host__ __device__
-			T sigmoid_function(T value){
+			T sigmoid_function(const T &value)const{
 			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
 			return (T)1 / ((T)1 + (T)exped.real());
 		}
 
 		__host__ __device__
-			T  logistic_function(T value, T max_value, T midpoint){
+			T  logistic_function(const T &value,const T &max_value,const T &midpoint)const{
 			return ((thrust::complex<T>)max_value /
 				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
@@ -520,7 +520,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(Tuple x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
+			void operator()(Tuple &x){//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value
 			//Compute Logistic value of input,output,forget,and potential
 			//thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
 			//thrust::get<1>(x) = logistic_function(thrust::get<1>(x), 1, 0);
@@ -641,7 +641,7 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple &x) const{
+			T operator()(const Tuple &x) const{
 			return thrust::pow((thrust::complex<T>)((thrust::complex<T>)thrust::get<0>(x) -(thrust::complex<T>)thrust::get<1>(x)), (thrust::complex<T>)2).real();
 		}
 
@@ -681,7 +681,7 @@ namespace functors{
 
 
 		__host__ __device__
-			int operator()(int &x) const{
+			int operator()(const int &x) const{
 			if (x < this->input){//Returns this directly, as it is an input
 				return x;
 			}
@@ -697,7 +697,7 @@ namespace functors{
 		const T divide_by;
 		add_one_when_equal_to(T _divide_by, T _equal_to) :equal_to(_equal_to), divide_by(_divide_by){}
 		__host__ __device__
-			T operator()(const T &x){
+			T operator()(const T &x)const{
 			if (x >= equal_to){
 				return  (T)x;
 			}
@@ -713,7 +713,7 @@ namespace functors{
 		const T add_to;
 		add_when_greater_than(T _add_to, T _greater_than_this) :greater_than_this(_greater_than_this), add_to(_add_to){}
 		__host__ __device__
-			T operator()(const T &x){
+			T operator()(const T &x)const{
 			if (x >= _equal_to){
 				return (x + add_to);
 			}
@@ -734,7 +734,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__ //Delta,output
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 			//Multiply beta * output * delta
 			return (T)this->beta * (T)thrust::get<0>(x) * (T)thrust::get<1>(x);
 		}
@@ -750,7 +750,7 @@ namespace functors{
 		check_not_between(T _start, T _end) : start(_start), end(_end){};
 
 		__host__ __device__
-			bool operator()(T x){
+			bool operator()(const T &x)const{
 			if (start > x && x <= end){
 				return 0;
 			}
@@ -772,7 +772,7 @@ namespace functors{
 		}
 		template <typename Tuple>
 		__host__ __device__ //previousWeight, weight
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 
 			//if (thrust::get<1>(x) != (T)1){//Don't change any weights which are going to or from a memory node. These need to remain as 1
 			if (!(thrust::get<3>(x) > start && thrust::get<3>(x) < end)){
@@ -807,7 +807,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__ //Delta,Weight,PreviousWeight,output
-			T operator()(Tuple &x){
+			T operator()(const Tuple &x)const{
 			//Get the new weight (essentially apply the learning rate/momentum
 			thrust::get<1>(x) += (T)alpha * (T)thrust::get<2>(x);
 
@@ -831,7 +831,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(Tuple &t){
+			T operator()(const Tuple &t)const{
 			return (T)thrust::get<0>(t) * ((T)1 - (T)thrust::get<0>(t)) * (T)thrust::get<1>(t);
 
 		}
@@ -841,11 +841,41 @@ namespace functors{
 	};
 
 	template <typename T>
-	struct find_output_delta : public thrust::unary_function < T, T > {
+	struct find_output_delta : public thrust::binary_function < T,T, T > {
 		find_output_delta(){};
 		__host__ __device__
 			T operator()(const T &target, const T &output)const{
-			return (T)output*((T)1 - (T)output)*((T)target - (T)output);
+			return ((T)output)*((T)1 - (T)output)*((T)target - (T)output);
+		}
+	};
+
+
+	template <typename T>
+	struct mean_square_error : public thrust::unary_function < T, T > {
+		mean_square_error(){};
+
+		__host__ __device__
+			T operator()(const T &target,const T &pred)const{
+			return (pred - target)*(pred - target);
+		}
+
+		template <typename Tuple>
+		__host__ __device__
+		T operator()(const Tuple &x)const{
+			return (((T)thrust::get<1>(x) -(T)thrust::get<0>(x))*((T)thrust::get<1>(x) -(T)thrust::get<0>(x)));
+		}
+	};
+
+	template <typename T>
+	struct mean_square_error_special : public thrust::unary_function < T, T >{
+
+		mean_square_error_special(){};
+
+		template <typename Tuple>
+		__host__ __device__
+		T operator()(const Tuple &x)const{
+			T temp = (((T)thrust::get<1>(x) - (T)thrust::get<0>(x))*((T)thrust::get<1>(x) -(T)thrust::get<0>(x)));
+			return temp;
 		}
 	};
 }

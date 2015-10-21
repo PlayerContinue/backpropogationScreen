@@ -298,7 +298,7 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 }
 
 void LongTermShortTermNetwork::ResetSequence(){
-	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type)0);
+	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type).1);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), (weight_type)0);

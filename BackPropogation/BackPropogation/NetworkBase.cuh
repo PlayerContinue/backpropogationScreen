@@ -86,6 +86,13 @@ public:
 	//Empty all of the GPU memory currently used
 	//Primarily used when finished training or running the network
 	virtual void emptyGPUMemory() = 0;
+
+	//***************************
+	//Get And Set
+	//***************************
+	void seti_backprop_unrolled(int length){
+		this->settings.i_backprop_unrolled = length;
+	}
 };
 
 //*********************
