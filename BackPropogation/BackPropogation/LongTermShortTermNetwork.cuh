@@ -71,6 +71,7 @@ private:
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
 	
 	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
+	int training_previous_number_rows;
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;

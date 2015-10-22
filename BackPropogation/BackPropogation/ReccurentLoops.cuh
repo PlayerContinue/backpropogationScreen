@@ -99,8 +99,8 @@ private:
 	//*********************
 	bool loadNetworkFromFile();
 	//Load from a file, returns the length of the sequence and the length of the returned list
-	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length,data_type type);
-	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length, data_type type, bool first_run);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type, bool first_run);
 	//Loads the training set from a file
 	void LoadTrainingSet();
 	//*********************

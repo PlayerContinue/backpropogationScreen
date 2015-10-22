@@ -185,26 +185,6 @@ void LongTermShortTermNetwork::addNeuron(int numberNeuronsToAdd){
 //Perform Functionality
 //*********************
 
-//Add the input
-void LongTermShortTermNetwork::setInput(weight_type* in){
-	//Place the input into the GPU values matrix
-	for (int i = 0; i < this->settings.i_input; i++){
-		this->GPUOutput_values[i] = in[i];
-	}
-
-}
-
-//Add the input
-void LongTermShortTermNetwork::setInput(weight_type** in){
-	//Place the input into the GPU values matrix
-	
-	for (int j = 0; j < this->settings.i_backprop_unrolled; j++){
-		for (int i = 0; i < this->numberNonWeights; i++){
-			this->GPUOutput_values[i + (j*(this->numberNonWeights + this->numberOfNodes))] = in[j][i];
-		}
-	}
-
-}
 
 void LongTermShortTermNetwork::moveBiasToGPU(bool add_memory_cells){
 	this->GPUBias = thrust::device_vector<weight_type>();

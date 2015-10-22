@@ -154,11 +154,11 @@ bool ReccurentLoops::load_training_data_from_file(){
 //storage - array to contain the results
 //sequence_length - [0] = length of the current sequence, [1] - if the sequence is longer than storage returns 0, else returns 1
 //type - the type of data which should be retrieved
-void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], data_type type){
-	this->loadFromFile(file, length_of_results, storage, sequence_length,this->settings.i_number_of_training, type);
+void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], data_type type, bool first_run){
+	this->loadFromFile(file, length_of_results, storage, sequence_length,this->settings.i_number_of_training, type,first_run);
 }
 
-void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type){
+void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type,bool first_run){
 
 	//reset sequence length
 	sequence_length[0] = 0;
@@ -171,9 +171,11 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 	int start = file.tellg();
 	if (file.is_open()){
 		int letterPosition = 0;
-		for (int i = 0; i < length; i++){
+		for (int i = 0; i < length && !file.eof(); i++){
 			//Reset Everything
-			storage[i] = new weight_type[length_of_results];
+			if (first_run){
+				storage[i] = new weight_type[length_of_results];
+			}
 			current_char = '1';
 			current_string = "";
 			letterPosition = 0;
@@ -199,21 +201,23 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 			}
 			//Increment Length Of String
 			sequence_length[0]++;
-			if (current_char == sequence_delimiter){
-				i++;//Increment i and store a special sequence which is used to represent a new sequence
-				storage[i] = new weight_type[length_of_results];
+			if (current_char == sequence_delimiter || file.eof()){
 				for (int j = 0; j < length_of_results; j++){
 					storage[i][j] = SEQUENCE_DELIMITER;
 				}
 			}
+
+			
 		}
 		//Get current location in file
 		int currentPosition = file.tellg();
 		if (file.eof()){
 			if (sequence_length[0] < length){
-				storage[sequence_length[0]] = new weight_type[length_of_results];
+				if (first_run){
+					//storage[sequence_length[0]] = new weight_type[length_of_results];
+				}
 				for (int j = 0; j < length_of_results; j++){
-					storage[sequence_length[0]][j] = SEQUENCE_DELIMITER;
+					//storage[sequence_length[0]][j] = SEQUENCE_DELIMITER;
 				}
 			}
 			sequence_length[1] = -1;//File has ended
@@ -241,19 +245,19 @@ void ReccurentLoops::LoadTrainingSet(){
 	std::fstream stream;
 	if (this->settings.b_testingFromFile){//A training file has been included and should be read from for the training set
 		stream.open(this->settings.s_testSet);
-		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length,this->settings.i_number_of_testing_items, INPUT);
+		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length,this->settings.i_number_of_testing_items, INPUT,true);
 		stream.close();
 		stream.open(this->settings.s_outputTestSet);
-		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT);
+		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, true);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
 	}
 	else{//A training file has not been included, get a random set from the input file
 		stream.open(this->settings.s_trainingSet);
-		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT);
+		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, true);
 		stream.close();
 		stream.open(this->settings.s_outputTrainingFile);
-		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT);
+		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, true);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
 	}
@@ -295,69 +299,76 @@ void ReccurentLoops::startTraining(int type){
 
 void ReccurentLoops::testTraining(){
 	weight_type** trainingInput = new weight_type*[this->settings.i_backprop_unrolled];
-	weight_type** trainingOutput = new weight_type*[this->settings.i_backprop_unrolled];
+	weight_type** trainingOutput = new weight_type*[this->settings.i_backprop_unrolled+1];
 	int length[2];
 	bool sequence_end = false;//Tell if the sequence ends
 	int count_sequences = 0;
+	int k = 0;
+	bool first_run = true;
+	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
 		}
 		this->checkpoint.b_still_running = true;
 		this->createCheckpoint("Initial Checkpoint");
-		while (length[1] != -1){
+		//Get the mean Square error
+		this->getMeanSquareError();
+		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+		this->mainNetwork->ResetSequence();
+		while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
 
-			this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT);
-			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT);
-			//testing::outputArrayToFile(this->input, length[0], this->settings.i_input, "tests/input_output.txt");
-			//testing::outputArrayToFile(this->output, length[0], this->settings.i_output, "tests/input_output.txt");
-			int k;
+			this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, first_run);
+			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, first_run);
+			first_run = false;
+			
 			for (int i = 0; i < length[0];){
-				for (k = 0; k < this->settings.i_backprop_unrolled; k++){
-					if (!sequence_end && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER) && i < length[0]){//If both are a sequence_delimiter, then the sequence has ended
+				for (; k < this->settings.i_backprop_unrolled; k++){
+					if (!sequence_end && i < length[0] && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
 						trainingInput[k] = this->input[i];
-						trainingOutput[k] = this->output[i];
+						if (k == 0){
+							trainingOutput[k] = this->output[i];
+						}
+						trainingOutput[k+1] = this->output[i];
 						i++;//Increment i here because the next sequence follows
 					}
 					else{
+						//Since the sequence ended, but we have not reached the end of the backdrop, we need to add an extra layer
+						trainingInput[k] = this->input[i - 1];
+						trainingOutput[k+1] = this->output[i-1];
+						k++;
 						if (!sequence_end){
 							i++;//Skip passed the end of the sequence
 						}
+						
 						sequence_end = true;
 						
 						break;
-						//if (k < this->settings.i_backprop_unrolled){
-							//trainingInput[k] = this->input[0];
-							//trainingOutput[k] = this->output[0];
-						//}
-
-						//Reached the end of the sequence, load the next sequence
-						//Normally load more from the file
-						//break;
 					}
 				}
+				
 				//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
 				//Allows for multilength sequences
 				this->mainNetwork->seti_backprop_unrolled(k);
+				if (k > 0){
+					//Run the sequence to find the results
+					this->mainNetwork->StartTraining(trainingInput, trainingOutput);
 
-				//Run the sequence to find the results
-				this->mainNetwork->StartTraining(trainingInput, trainingOutput);
+					if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
+						this->createCheckpoint();
+					}
+					//Apply the error
+					this->mainNetwork->ApplyError();
+					if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
+						this->createCheckpoint();
+					}
 
-				if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
-					this->createCheckpoint();
+
+
+
+
+					this->checkpoint.i_number_of_loops_checkpoint += 1;
 				}
-				//Apply the error
-				this->mainNetwork->ApplyError();
-				if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
-					this->createCheckpoint();
-				}
-
-
-
-
-
-				this->checkpoint.i_number_of_loops_checkpoint += 1;
-
 
 				if (sequence_end){
 					//The sequence has ended, so we need to reset the sequence
@@ -373,6 +384,15 @@ void ReccurentLoops::testTraining(){
 					}
 					count_sequences++;
 					sequence_end = false;
+					//A new sequence, start from the beginning
+					k = 0;
+				}
+				else{
+					//The input of the initial is the beginning of it.
+					trainingInput[0] = trainingInput[k-1];
+					trainingOutput[0] = trainingOutput[k];
+					//Continue the sequence, we need to keep the previous input
+					k = 1;
 				}
 
 			}
