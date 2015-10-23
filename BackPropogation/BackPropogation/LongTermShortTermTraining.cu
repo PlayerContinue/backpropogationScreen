@@ -1,7 +1,7 @@
 #include "LongTermShortTermNetwork.cuh"
 //#define TRAININGTEST
 //#define TRAININGTEST2
-#define DELTA_TEST
+//#define DELTA_TEST
 //#define AVERAGE_TEST
 //#define APPLY_DELTA_BIAS
 //#define NVIDA_OUTPUT_TEST
@@ -254,35 +254,95 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 
 	}
 
+	this->FindPreviousBias();
+	this->FindPreviousWeights();
 
+	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
 }
 
-
-
-//Apply the error
-void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
-#ifdef NVIDA_OUTPUT_TEST
-
-	cout << "5";
-#endif
+void LongTermShortTermNetwork::FindPreviousBias(){
+	int start_mem_cells = this->GPUBias.size() - this->settings.i_output - this->mBlocksLayers[0].size();
+	int end_mem_cells = this->GPUBias.size() - this->settings.i_output;
 #ifdef APPLY_DELTA_BIAS
-	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias-1", "tests/prevbias2.txt");
-	testing::outputToFile<weight_type>(this->GPUBias, "Bias-1", "tests/prevbias2.txt");
+
+	testing::outputToFile<weight_type>(this->GPUBias, "Bias1", "tests/prevbias2.txt");
+	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias1", "tests/prevbias2.txt");
+#endif
+	//Apply momentum to the bias
+
+	if (this->settings.d_alpha != 0){
+		//Apply the alpha to bias
+		thrust::transform_if(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousBias.begin(),
+			thrust::make_constant_iterator(this->settings.d_alpha),
+			this->GPUBias.begin(),
+			thrust::make_counting_iterator(int(0))
+			)
+			)
+			,
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousBias.begin(),
+			thrust::make_constant_iterator(this->settings.d_alpha) + this->GPUPreviousBias.size(),
+			this->GPUBias.begin(),
+			thrust::make_counting_iterator(int(0))
+			)
+			) + this->GPUBias.size(),
+			this->GPUBias.begin(),
+			functors::multiply_add<weight_type>(),
+			functors::compare_between<(unsigned int)3, int>(3, 0, start_mem_cells, end_mem_cells)// #bias-#output-#memory_cells < count < #bias - #output
+			);
+	}
 
 
+
+#ifdef APPLY_DELTA_BIAS
+	testing::outputToFile<weight_type>(this->GPUBias, "Bias2", "tests/prevbias2.txt");
+	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias2", "tests/prevbias2.txt");
 #endif
 
-#ifdef DELTA_MAP_TEST 
-	testing::outputToFile<int>(this->GPUMapFrom, "From", "tests/prevbias3.txt");
-	testing::outputToFile<int>(this->GPUMapTo, "To", "tests/prevbias3.txt");
-#endif
-	//thrust::device_vector<int> tempMapFrom = thrust::device_vector<int>(this->GPUMapFrom);
-	this->ApplyErrorToBias();
+	//Retrieve the new previous Bias
+	//If I remove memory cells, remove permutation around device_delta so it doesn't skip
+	thrust::reduce_by_key(
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		(_1 / (this->settings.i_backprop_unrolled - 1))
+		),
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		(_1 / (this->settings.i_backprop_unrolled - 1))
+		) + ((this->settings.i_backprop_unrolled - 1) * this->GPUBias.size()),
 
+		thrust::make_permutation_iterator(
+		thrust::make_transform_iterator(
+		this->device_deltas.begin() + this->numberOfNodes,
+		functors::multiply_by_constant<weight_type>((weight_type)this->settings.d_beta)
+		),
+
+		thrust::make_transform_iterator(
+		thrust::make_counting_iterator((int)0),
+		(this->numberOfNodes*(_1 % (this->settings.i_backprop_unrolled - 1))) + (_1 / (this->settings.i_backprop_unrolled - 1))
+		)
+		),
+		thrust::make_discard_iterator(),
+		this->GPUPreviousTemp.begin()
+		);
+
+	thrust::transform(this->GPUPreviousBias.begin(),this->GPUPreviousBias.end(),this->GPUPreviousTemp.begin(),this->GPUPreviousBias.begin(), _1 + _2);
+
+#ifdef APPLY_DELTA_BIAS
+	testing::outputToFile<weight_type>(this->GPUBias, "Bias3", "tests/prevbias2.txt");
+	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias3", "tests/prevbias2.txt");
+#endif
+}
+
+void LongTermShortTermNetwork::FindPreviousWeights(){
 
 	//thrust::device_vector<weight_type> tempPrevBias = thrust::device_vector<weight_type>(this->GPUPreviousBias);
 	//thrust::device_vector<weight_type> tempBias = thrust::device_vector<weight_type>(this->GPUBias);
-	
+
 #ifdef TRAININGTEST2
 	//testing::outputToFile<weight_type>(this->device_deltas, "Delta");
 	//testing::outputToFile<weight_type>(this->GPUOutput_values, "Output");
@@ -454,7 +514,6 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 		this->GPUWeights.begin(),
 		functors::multiply_add<weight_type>(),
 		functors::compare_two<(unsigned int)1, weight_type>(5, 1)
-
 		);
 
 #ifdef APPLY_DELTA_BIAS
@@ -539,8 +598,10 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 
 		),//End Permutation Iterator
 		thrust::make_discard_iterator(),
-		this->GPUPreviousWeights.begin()
+		this->GPUPreviousTemp.begin()
 		);
+
+	thrust::transform(this->GPUPreviousWeights.begin(),this->GPUPreviousWeights.end(),this->GPUPreviousTemp.begin(),this->GPUPreviousWeights.begin(), _1 + _2);
 #ifdef DELTA_MAP_TEST 
 	testing::outputToFile<int>(this->GPUMapFrom, "From", "tests/prevbias3.txt");
 	testing::outputToFile<int>(this->GPUMapTo, "To", "tests/prevbias3.txt");
@@ -555,6 +616,29 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 	testing::outputToFile<weight_type>(this->device_deltas, "Delta", "tests/test5.txt");
 	testing::outputToFile<weight_type>(this->GPUPreviousWeights, "PrevGPUVal", "tests/test5.txt");
 #endif
+
+}
+
+//Apply the error
+void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
+#ifdef NVIDA_OUTPUT_TEST
+
+	cout << "5";
+#endif
+#ifdef APPLY_DELTA_BIAS
+	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias-1", "tests/prevbias2.txt");
+	testing::outputToFile<weight_type>(this->GPUBias, "Bias-1", "tests/prevbias2.txt");
+
+
+#endif
+
+#ifdef DELTA_MAP_TEST 
+	testing::outputToFile<int>(this->GPUMapFrom, "From", "tests/prevbias3.txt");
+	testing::outputToFile<int>(this->GPUMapTo, "To", "tests/prevbias3.txt");
+#endif
+	//thrust::device_vector<int> tempMapFrom = thrust::device_vector<int>(this->GPUMapFrom);
+	this->ApplyErrorToBias();
+
 
 	thrust::transform_if(
 		thrust::make_zip_iterator(
@@ -584,7 +668,6 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias-5", "tests/prevbias2.txt");
 #endif
 
-	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
 
 
 }
@@ -593,78 +676,7 @@ void LongTermShortTermNetwork::ApplyErrorToBias(){
 	int start_mem_cells = this->GPUBias.size() - this->settings.i_output - this->mBlocksLayers[0].size();
 	int end_mem_cells = this->GPUBias.size() - this->settings.i_output;
 	//Apply the delta to the bias
-#ifdef APPLY_DELTA_BIAS
 
-	testing::outputToFile<weight_type>(this->GPUBias, "Bias1", "tests/prevbias2.txt");
-	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias1", "tests/prevbias2.txt");
-#endif
-	//Apply momentum to the bias
-
-	if (this->settings.d_alpha != 0){
-		//Apply the alpha to bias
-		thrust::transform_if(
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			this->GPUPreviousBias.begin(),
-			thrust::make_constant_iterator(this->settings.d_alpha),
-			this->GPUBias.begin(),
-			thrust::make_counting_iterator(int(0))
-			)
-			)
-			,
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			this->GPUPreviousBias.begin(),
-			thrust::make_constant_iterator(this->settings.d_alpha) + this->GPUPreviousBias.size(),
-			this->GPUBias.begin(),
-			thrust::make_counting_iterator(int(0))
-			)
-			) + this->GPUBias.size(),
-			this->GPUBias.begin(),
-			functors::multiply_add<weight_type>(),
-			//functors::compare_two<(unsigned int)2, weight_type>(5, (weight_type)0)
-			functors::compare_between<(unsigned int)3, int>(3, 0, start_mem_cells,end_mem_cells)// #bias-#output-#memory_cells < count < #bias - #output
-			);
-	}
-
-	
-
-#ifdef APPLY_DELTA_BIAS
-	testing::outputToFile<weight_type>(this->GPUBias, "Bias2", "tests/prevbias2.txt");
-	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias2", "tests/prevbias2.txt");
-#endif
-
-	//Retrieve the new previous Bias
-	//If I remove memory cells, remove permutation around device_delta so it doesn't skip
-	thrust::reduce_by_key(
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0),
-		(_1 / (this->settings.i_backprop_unrolled - 1))
-		),
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0),
-		(_1 / (this->settings.i_backprop_unrolled - 1))
-		) + ((this->settings.i_backprop_unrolled - 1) * this->GPUBias.size()),
-
-		thrust::make_permutation_iterator(
-		thrust::make_transform_iterator(
-		this->device_deltas.begin() + this->numberOfNodes,
-		functors::multiply_by_constant<weight_type>((weight_type)this->settings.d_beta)
-		),
-
-		thrust::make_transform_iterator(
-		thrust::make_counting_iterator((int)0),
-		(this->numberOfNodes*(_1 % (this->settings.i_backprop_unrolled - 1))) + (_1 / (this->settings.i_backprop_unrolled - 1))
-		)
-		),
-		thrust::make_discard_iterator(),
-		this->GPUPreviousBias.begin()
-		);
-
-#ifdef APPLY_DELTA_BIAS
-	testing::outputToFile<weight_type>(this->GPUBias, "Bias3", "tests/prevbias2.txt");
-	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias3", "tests/prevbias2.txt");
-#endif
 
 	//Apply the error
 	thrust::transform_if(
@@ -684,7 +696,6 @@ void LongTermShortTermNetwork::ApplyErrorToBias(){
 		) + this->GPUBias.size(),
 		this->GPUBias.begin(),
 		functors::add_and_store<weight_type>(this->settings.i_backprop_unrolled - 1),
-		//functors::compare_two<(unsigned int)0, weight_type>(5, (weight_type)0)
 		functors::compare_between<(unsigned int)2, int>(3, 0, start_mem_cells, end_mem_cells)
 		);
 

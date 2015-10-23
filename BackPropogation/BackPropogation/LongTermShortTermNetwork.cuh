@@ -94,10 +94,12 @@ private:
 	//Stores the bias in the GPU
 	thrust::device_vector<weight_type> GPUBias;
 	thrust::device_vector<weight_type> GPUPreviousBias;
+
 	//Stores the values of the neuron in GPU Memory
 	thrust::device_vector<weight_type> GPUOutput_values;
 	thrust::device_vector<weight_type> GPUPreviousOutput_Values;
 
+	thrust::device_vector<weight_type> GPUPreviousTemp;
 	//Stores the delta in GPU Memory
 	host_vector<weight_type> host_deltas;
 	thrust::device_vector<weight_type> device_deltas;
@@ -202,6 +204,10 @@ private:
 	void LongShortTermMemoryTraining(weight_type** in, weight_type** out);
 	//Find the delta values of the current output from the expected gradiant
 	void FindBackPropDelta(weight_type** out, int current_layer);
+
+	void FindPreviousBias();
+
+	void FindPreviousWeights();
 
 	//Apply the error
 	void ApplyLongTermShortTermMemoryError();

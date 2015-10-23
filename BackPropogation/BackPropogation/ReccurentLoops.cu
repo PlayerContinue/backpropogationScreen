@@ -305,6 +305,7 @@ void ReccurentLoops::testTraining(){
 	int count_sequences = 0;
 	int k = 0;
 	bool first_run = true;
+	int length_of_sequence = 0;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
@@ -350,26 +351,29 @@ void ReccurentLoops::testTraining(){
 				//Allows for multilength sequences
 				this->mainNetwork->seti_backprop_unrolled(k);
 				if (k > 0){
+					length_of_sequence += k;
 					//Run the sequence to find the results
 					this->mainNetwork->StartTraining(trainingInput, trainingOutput);
 
-					if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
+					if (this->checkpoint.i_number_of_loops_checkpoint>this->settings.i_number_allowed_same){
 						this->createCheckpoint();
 					}
-					//Apply the error
-					this->mainNetwork->ApplyError();
-					if (this->checkpoint.i_number_of_loops_checkpoint%this->settings.i_number_allowed_same == 0){
-						this->createCheckpoint();
-					}
-
-
-
-
 
 					this->checkpoint.i_number_of_loops_checkpoint += 1;
 				}
 
+
 				if (sequence_end){
+					if (length_of_sequence > 0){
+						this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
+						//Apply the error at the end of the sequence
+						this->mainNetwork->ApplyError();
+						if (this->checkpoint.i_number_of_loops_checkpoint>this->settings.i_number_allowed_same){
+							this->createCheckpoint();
+							this->checkpoint.i_number_of_loops_checkpoint = 0;
+						}
+						length_of_sequence = 0;
+					}
 					//The sequence has ended, so we need to reset the sequence
 					this->mainNetwork->ResetSequence();
 					if (count_sequences >= this->settings.i_loops){

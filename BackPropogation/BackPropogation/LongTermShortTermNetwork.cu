@@ -273,6 +273,8 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	this->moveBiasToGPU();
 
 
+	this->GPUPreviousTemp = thrust::device_vector<weight_type>(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
+
 	//Create an empty array for the current values in the network
 	this->ResetSequence();
 }
@@ -659,6 +661,7 @@ void LongTermShortTermNetwork::emptyGPUMemory(){
 	clear_vector::free(this->GPUPreviousWeights);
 	clear_vector::free(this->GPUBias);
 	clear_vector::free(this->GPUPreviousBias);
+	clear_vector::free(this->GPUPreviousTemp);
 }
 //*********************
 //Misc
