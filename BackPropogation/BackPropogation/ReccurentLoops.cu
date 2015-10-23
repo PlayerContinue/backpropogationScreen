@@ -346,7 +346,6 @@ void ReccurentLoops::testTraining(){
 						break;
 					}
 				}
-				
 				//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
 				//Allows for multilength sequences
 				this->mainNetwork->seti_backprop_unrolled(k);
@@ -407,6 +406,12 @@ void ReccurentLoops::testTraining(){
 		//No longer running loops
 
 		try{
+			//Copy the previous set of error to the new set of errors
+			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
+			//Get the mean Square error
+			this->getMeanSquareError();
+			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			this->mainNetwork->ResetSequence();
 			this->createCheckpoint();
 			this->mainNetwork->ResetSequence();
 			for (int i = 0; i < this->number_in_training_sequence; i++){
@@ -476,7 +481,6 @@ void ReccurentLoops::getMeanSquareError(){
 		}
 		else{
 			vec = this->runTrainingNetwork(this->training_input[i]);
-
 			for (int j = 0; j < this->settings.i_output; j++){
 				real_output[j] = this->training_output[i][j];
 			}

@@ -172,7 +172,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 #ifdef DELTA_TEST
 		testing::outputToFile<weight_type>(this->RealOutput, "output", "tests/testing.txt");
 		testing::outputToFile<weight_type>(this->RealOutput, "output", "tests/testing.txt");
-		testing::outputToFile<weight_type>(this->GPUOutput_values.end() - number_to_output_of_layer, this->settings.i_output, "pred_out", "tests/testing.txt");
+		testing::outputToFile<weight_type>(this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output, this->settings.i_output, "pred_out", "tests/testing.txt");
 		testing::outputToFile<weight_type>(this->device_deltas.begin() + delta_next_end - this->settings.i_output,this->settings.i_output, "delta_output", "tests/testing.txt");
 		testing::outputToFile<weight_type>(this->device_deltas, "PostOutput", "tests/testing.txt");
 		
@@ -233,7 +233,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 				thrust::make_transform_iterator(
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
-				this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights + this->settings.i_output) * (i)) - this->numberOfNodes,
+				this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * (i)) - this->numberOfNodes,
 				this->GPUPreviousOutput_Values.begin()
 				)), functors::find_non_output_delta<weight_type>()),
 				this->device_deltas.begin() + delta_next_start,
@@ -572,7 +572,7 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 		)
 		),
 		this->GPUWeights.begin(),
-		functors::add_and_store<weight_type>(this->settings.i_backprop_unrolled),
+		functors::add_and_store<weight_type>(this->settings.i_backprop_unrolled-1),
 		functors::compare_two<(unsigned int)0, weight_type>(5, 1));
 
 	//thrust::copy(tempPrevBias.begin(), tempPrevBias.end(), this->GPUPreviousBias.begin());
