@@ -76,49 +76,118 @@ private:
 	//Override
 	//**************************
 	friend ostream& operator<<(ostream& os, const Memory_Block& block){
-		for (unsigned int i = 0; i < block.input_weights.size(); i++){
-			os << block.input_weights[i] << ",";
-		}
-		os << endl;
-		for (unsigned int i = 0; i < block.output_weights.size(); i++){
-			os << block.output_weights[i] << ",";
-		}
-		os << endl;
+		os << block.type << endl;
+		os << block.potential_memory_cell_value.size() << endl;
+		if (block.type == Memory_Block::LAYER){
+			for (unsigned int i = 0; i < block.input_weights.size(); i++){
+				os << block.input_weights[i] << " ";
+			}
+			os << endl;
+			for (unsigned int i = 0; i < block.output_weights.size(); i++){
+				os << block.output_weights[i] << " ";
+			}
+			os << endl;
 
-		for (unsigned int i = 0; i < block.forget_weights.size(); i++){
-			os << block.forget_weights[i] << ",";
-		}
-		os << endl;
-
+			for (unsigned int i = 0; i < block.forget_weights.size(); i++){
+				os << block.forget_weights[i] << " ";
+			}
+			os << endl;
+		} 
+		
 		for (unsigned int i = 0; i < block.potential_memory_cell_value.size(); i++){
-			os << block.potential_memory_cell_value[i] << ", ";
+			os << block.potential_memory_cell_value[i] << " ";
 		}
-		os << endl;
-
-		os << "Memory_Cell_Values";
-
-		for (unsigned int i = 0; i < block.memory_cell_weights.size();i++){
-			os << block.memory_cell_weights[i] << ", ";
-
+		
+		
+		if (block.type == Memory_Block::LAYER){
+			os << endl;
+			os << block.memory_cell_weights.size() << endl;
+			for (unsigned int i = 0; i < block.memory_cell_weights.size(); i++){
+				os << block.memory_cell_weights[i] << " ";
+			}
 		}
 
 
 		os << endl;
-
+		os << block.mapFrom.size() << endl;
 		for (unsigned int i = 0; i < block.mapFrom.size(); i++){
-			os << block.mapFrom[i] << ",";
+			os << block.mapFrom[i] << " ";
 		}
 
 		os << endl;
 
-		std::copy(block.bias.begin(), block.bias.end(), std::ostream_iterator<weight_type>(os, ", "));
+		os << block.bias.size()<<endl;
+		std::copy(block.bias.begin(), block.bias.end(), std::ostream_iterator<weight_type>(os, " "));
 
 		os << endl;
 
 		return os;
 	}
-	friend istream& operator>>(istream& is, Memory_Block& network){
+	friend istream& operator>>(istream& is, Memory_Block& block){
+		int count;
+		double value;
+		
+		block.input_weights = host_vector<weight_type>();
+		block.output_weights = host_vector<weight_type>();
+		block.forget_weights = host_vector<weight_type>();
+		block.potential_memory_cell_value = host_vector<weight_type>();
+		block.memory_cell_weights = host_vector<weight_type>();
+		block.bias = host_vector<weight_type>();
+		block.number_weights = 0;
+		is >> std::skipws >> count;
+		block.type = (Memory_Block::memory_block_type) count;
+		is >> std::skipws >> count;
+		block.number_inputs = count;
+		//input weights
+		if (block.type == Memory_Block::LAYER){
+			for (unsigned int i = 0; i < count; i++){
+				is >> std::skipws >> value;
+				block.input_weights.push_back(value);
+				block.number_weights++;
+			}
 
+			for (unsigned int i = 0; i < count; i++){
+				is >> std::skipws >> value;
+				block.output_weights.push_back(value);
+				block.number_weights++;
+			}
+
+
+			for (unsigned int i = 0; i < count; i++){
+				is >> std::skipws >> value;
+				block.forget_weights.push_back(value);
+				block.number_weights++;
+			}
+		}
+
+		for (unsigned int i = 0; i < count; i++){
+			is >> std::skipws >> value;
+			block.potential_memory_cell_value.push_back(value);
+			block.number_weights++;
+		}
+		if (block.type == Memory_Block::LAYER){
+			is >> count;
+			for (unsigned int i = 0; i < count; i++){
+				is >> std::skipws >> value;
+				block.memory_cell_weights.push_back(value);
+
+
+			}
+		}
+
+		int map;
+		is >> count;
+		for (unsigned int i = 0; i < count; i++){
+			is >> std::skipws >> map;
+			block.mapFrom.push_back(map);
+		}
+
+		
+		is >> count;
+		for (unsigned int i = 0; i < count; i++){
+			is >> std::skipws >> value;
+			block.bias.push_back(value);
+		}
 		return is;
 	}
 

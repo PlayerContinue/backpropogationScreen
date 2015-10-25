@@ -59,7 +59,18 @@ private:
 	CRecurrentCheckpoint checkpoint;
 	weight_type** input;
 	weight_type** output;
-
+	//Set of input/output for testing to train
+	//If no training set is given, the training set will be taken from a randomly selected 
+	//set of the input/output
+	weight_type** training_input;
+	weight_type** training_output;
+	int number_in_training_sequence;
+	//Files connected to the input/output files containing the data
+	std::fstream* inputfile;
+	std::fstream* outputfile;
+	host_vector<weight_type> mean_square_error_results_old;
+	host_vector<weight_type> mean_square_error_results_new;
+	enum data_type {OUTPUT,INPUT,TRAINING};
 	//*********************
 	//Constructors
 	//*********************
@@ -82,11 +93,16 @@ private:
 	//*********************
 
 	void InitializeNetwork();
+	
 	//*********************
 	//Load Network From File
 	//*********************
 	bool loadNetworkFromFile();
-
+	//Load from a file, returns the length of the sequence and the length of the returned list
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length, data_type type, bool first_run);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type, bool first_run);
+	//Loads the training set from a file
+	void LoadTrainingSet();
 	//*********************
 	//Utilization
 	//*********************
@@ -95,6 +111,8 @@ public:
 	
 	vector<RETURN_WEIGHT_TYPE> runNetwork(weight_type* in);
 
+
+public:
 	template <typename T>
 	weight_type* convert_array(T* in);
 
@@ -104,32 +122,36 @@ public:
 public:
 	void startTraining(int type);
 
-#ifdef _DEBUG 
 	void testTraining();
-#endif
+
 
 private:
 	//Training data is passed in
 	bool train_network_RealTimeRecurrentTraining();
 	bool train_network_HessianFreeOptimizationTraining();
-
+	device_vector<weight_type> runTrainingNetwork(weight_type* in);
+	void getMeanSquareError();
 	//Retrieve the training data from the file passed in by the settings
 	bool load_training_data_from_file();
-
-
+	
+	//*********************
+	//Clean the Network
+	//*********************
+	void cleanLoops();
 	//*********************
 	//Testing Methods
 	//*********************
 	weight_type* createTestInputOutput(int numberOfInput, int input_output);
 	void createCheckpoint();
 	void createCheckpoint(string file_name);
-
+	void loadCheckpoint();
 	//*********************
 	//Override Operators
 	//*********************
 
 	friend ostream& operator<<(ostream &os, const ReccurentLoops &loop){
 		os.precision(30);
+		os << loop.checkpoint;//Output the checkpoint
 		loop.mainNetwork->OutputNetwork(os);
 		return os;
 	}

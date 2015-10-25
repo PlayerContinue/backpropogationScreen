@@ -16,6 +16,9 @@ public:
 	CRecurrentCheckpoint();
 	CRecurrentCheckpoint(CSettings settings);
 
+		//Check if System still running
+	bool b_still_running = false;
+
 		//Count the total number of loops which have occured
 		int i_number_of_loops_checkpoint = 0;
 
@@ -54,6 +57,7 @@ public:
 
 		//Output file current pos
 		int i_current_position_in_output_file;
+		
 
 		
 

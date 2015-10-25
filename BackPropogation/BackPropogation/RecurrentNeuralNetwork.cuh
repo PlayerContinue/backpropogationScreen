@@ -99,6 +99,10 @@ public:
 	void InitializeRun(){
 		this->InitializeTraining();
 	}
+
+	virtual device_vector<weight_type> runNetwork(weight_type* in, run_type run){
+		return runNetwork(in);
+	}
 	//***************************
 	//Train the Network
 	//***************************
@@ -152,6 +156,9 @@ public:
 	//Only used for dubug. Outputs a simple example of what the network looks like
 	void VisualizeNetwork();
 	ostream& OutputNetwork(ostream &os);
+	virtual istream& LoadNetwork(istream& is){
+		return is;
+	};
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************

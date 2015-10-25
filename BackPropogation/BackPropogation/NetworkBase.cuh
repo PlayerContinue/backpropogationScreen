@@ -31,10 +31,13 @@ class NetworkBase {
 	//*********************
 
 public:
+	CSettings settings;
+	enum run_type{ WITH_MEMORY_CELLS, WITHOUT_MEMORY_CELLS};
 	//*********************
 	//Run The Network
 	//*********************
 	virtual device_vector<weight_type> runNetwork(weight_type* in) = 0;
+	virtual device_vector<weight_type> runNetwork(weight_type* in,run_type) = 0;
 	virtual void InitializeRun() = 0;
 	//***************************
 	//Train the Network
@@ -58,7 +61,7 @@ public:
 	virtual void VisualizeNetwork() = 0;
 
 	virtual ostream& OutputNetwork(ostream &os) = 0;
-
+	virtual istream& LoadNetwork(istream& is) = 0;
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************
@@ -83,6 +86,13 @@ public:
 	//Empty all of the GPU memory currently used
 	//Primarily used when finished training or running the network
 	virtual void emptyGPUMemory() = 0;
+
+	//***************************
+	//Get And Set
+	//***************************
+	void seti_backprop_unrolled(int length){
+		this->settings.i_backprop_unrolled = length;
+	}
 };
 
 //*********************

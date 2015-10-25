@@ -12,6 +12,11 @@ LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings){
 	this->initialize_network();
 }
 
+LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings, bool checkpoint){
+	this->settings = settings;
+	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
+}
+
 LongTermShortTermNetwork::~LongTermShortTermNetwork(){
 	this->emptyGPUMemory();//Empty the GPU Memory
 }
@@ -180,26 +185,6 @@ void LongTermShortTermNetwork::addNeuron(int numberNeuronsToAdd){
 //Perform Functionality
 //*********************
 
-//Add the input
-void LongTermShortTermNetwork::setInput(weight_type* in){
-	//Place the input into the GPU values matrix
-	for (int i = 0; i < this->settings.i_input; i++){
-		this->GPUOutput_values[i] = in[i];
-	}
-
-}
-
-//Add the input
-void LongTermShortTermNetwork::setInput(weight_type** in){
-	//Place the input into the GPU values matrix
-	
-	for (int j = 0; j < this->settings.i_backprop_unrolled; j++){
-		for (int i = 0; i < this->numberNonWeights; i++){
-			this->GPUOutput_values[i + (j*(this->numberNonWeights + this->numberOfNodes))] = in[j][i];
-		}
-	}
-
-}
 
 void LongTermShortTermNetwork::moveBiasToGPU(bool add_memory_cells){
 	this->GPUBias = thrust::device_vector<weight_type>();
@@ -288,12 +273,14 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	this->moveBiasToGPU();
 
 
+	this->GPUPreviousTemp = thrust::device_vector<weight_type>(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
+
 	//Create an empty array for the current values in the network
 	this->ResetSequence();
 }
 
 void LongTermShortTermNetwork::ResetSequence(){
-	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type)0);
+	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type).1);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), (weight_type)0);
@@ -645,29 +632,14 @@ unsigned int LongTermShortTermNetwork::getNumberTypeWeightsInLayer(unsigned int 
 }
 void LongTermShortTermNetwork::getSumPermutation(){
 	//Create a permutation list containing a list of object
-	this->positionToSum = thrust::device_vector<int>();
-	this->count = thrust::device_vector<int>();
-	int* list_of_found_values = new int[this->numberOfNodes];
-#ifdef  _DEBUG
-	vector<int> temp = vector<int>();
-#endif
-	for (int i = this->numberNonWeights; i <= this->numberOfNodes; i++){
-		for (unsigned int j = 0; j < this->GPUMapTo.size(); j++){
-				if (i == this->GPUMapFrom[j]){
-					//This is a position of one of the matching nodes
-					this->positionToSum.push_back(j);
-					this->count.push_back(i);
-
-#ifdef  _DEBUG
-					temp.push_back(j);
-#endif
-
-				}
-		}
-
-	}
-		
-	
+	this->positionToSum = thrust::device_vector<int>(this->GPUMapFrom.size());
+	this->count = thrust::device_vector<int>(this->GPUMapFrom);
+	thrust::sequence(this->positionToSum.begin(), this->positionToSum.end(), (int)(0));
+	thrust::sort_by_key(this->count.begin(), this->count.end(), this->positionToSum.begin());
+	thrust::device_vector<int>::iterator positionToSumStartRemove = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 < this->numberNonWeights);
+	thrust::device_vector<int>::iterator countStartRemove = thrust::remove_if(this->count.begin(), this->count.end(), _1 < this->numberNonWeights);
+	this->count.erase(countStartRemove,this->count.end());
+	this->positionToSum.erase(positionToSumStartRemove,this->positionToSum.end());
 
 }
 
@@ -689,6 +661,7 @@ void LongTermShortTermNetwork::emptyGPUMemory(){
 	clear_vector::free(this->GPUPreviousWeights);
 	clear_vector::free(this->GPUBias);
 	clear_vector::free(this->GPUPreviousBias);
+	clear_vector::free(this->GPUPreviousTemp);
 }
 //*********************
 //Misc
@@ -700,4 +673,123 @@ void LongTermShortTermNetwork::VisualizeNetwork(){
 ostream& LongTermShortTermNetwork::OutputNetwork(ostream& os){
 	os << *this;
 	return os;
+}
+
+istream& LongTermShortTermNetwork::LoadNetwork(istream& is){
+	this->emptyGPUMemory();//Empty the memory
+	string name;
+	int count;
+	int count2; 
+	is >>  this->numberOfNodes;
+	is >>  this->numberNonWeights;
+	is >>  name;
+	is >>  count;
+	this->numberOfWeightsInLayers = vector<unsigned int>();
+	for (int i = 0; i < count; i++){
+		is >>  count2;
+		this->numberOfWeightsInLayers.push_back(count2);
+	}
+
+	is >>  count;//Get the number of blocks
+	
+	this->mBlocksLayers = vector<vector<Memory_Block>>();
+	for (int i = 0; i < count; i++){
+		is >> count2;
+		this->mBlocksLayers.push_back(vector<Memory_Block>());
+		for (int j = 0; j < count2; j++){
+			this->mBlocksLayers[i].push_back(Memory_Block());
+			is >>  this->mBlocksLayers[i][j];
+		}
+		is >>  name;
+	}
+	
+	weight_type value;
+	is >>  name;
+	is >>  count;
+	this->GPUWeights = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUWeights.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->device_deltas = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->device_deltas.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->GPUOutput_values = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUOutput_values.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->GPUPreviousOutput_Values = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUPreviousOutput_Values.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->GPUPreviousWeights = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUPreviousWeights.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->mapTo = thrust::device_vector<int>();
+	this->mapFrom = thrust::device_vector<int>();
+	for (int i = 0; i < count; i++){
+		is >>  count2;
+		this->GPUMapFrom.push_back(count2);
+		is >>  count2;
+		this->GPUMapTo.push_back(count2);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->positionToSum = thrust::device_vector<int>();
+	for (int i = 0; i < count; i++){
+		is >>  count2;
+		this->positionToSum.push_back(count2);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->count = thrust::device_vector<int>();
+	for (int i = 0; i < count; i++){
+		is >>  count2;
+		this->count.push_back(count2);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->GPUBias = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUBias.push_back(value);
+	}
+
+	is >>  name;
+	is >>  count;
+	this->GPUPreviousBias = thrust::device_vector<weight_type>();
+	for (int i = 0; i < count; i++){
+		is >>  value;
+		this->GPUPreviousBias.push_back(value);
+	}
+
+
+
+	
+	return is;
+
 }

@@ -898,18 +898,43 @@ void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 //
 
 void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
-	ReccurentLoops RLoops = ReccurentLoops(settings,ReccurentLoops::LongTermShortTerm);
-	
-	double* temp = new double[settings.i_input];
+	ReccurentLoops RLoops;
 
-	for (int i = 0; i < settings.i_input; i++){
-		temp[i] = i;
+
+
+	if (!settings.b_loadFromCheckpoint){
+		RLoops = ReccurentLoops(settings, ReccurentLoops::LongTermShortTerm);
 	}
-	//RLoops.runNetwork(temp);
-	RLoops.testTraining();
+	else{
+		RLoops = ReccurentLoops(settings);
+	}
+	double* temp = new double[settings.i_input];
+	std::cout << "1) Training " << endl << "2) Run" << endl;
+	cin.sync();
+	switch (cin.get()){
+	case '1':
+		//RLoops.runNetwork(temp);
+		//RLoops.startTraining(ReccurentLoops::LongTermShortTerm);
+		RLoops.testTraining();
+		break;
+	case '2':
+		weight_type* input = new weight_type[settings.i_input];
+		vector<weight_type> results;
+		for (int j = 0; j < settings.i_number_in_sequence; j++){
+			for (int i = 0; i < settings.i_input; i++){
+				input[i] = 111 + j;
+			}
+			results = RLoops.runNetwork(input);
+			testing::outputVectorToFile(results, "test1", "tests/outtest1.txt");
+		}
 
 
-	
+		break;
+	}
+
+
+
+
 }
 
 void initialize_loops(int argc, char** argv){
