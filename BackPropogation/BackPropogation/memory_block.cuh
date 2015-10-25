@@ -59,7 +59,7 @@ public:
 	//numberInput - the number of inputs
 	Memory_Block(unsigned int start, unsigned int numberInput);
 	Memory_Block(unsigned int start, unsigned int numberInput, memory_block_type type);
-
+	Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigned int extra_at_start, memory_block_type type);
 	//**************************
 	//Add a New Input Connection
 	//**************************
@@ -71,7 +71,7 @@ public:
 
 private:
 	weight_type getNewWeight();
-
+	void setInitialWeights(int start, int end, memory_block_type type);
 	//**************************
 	//Override
 	//**************************

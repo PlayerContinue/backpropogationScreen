@@ -323,7 +323,7 @@ void ReccurentLoops::testTraining(){
 			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, first_run);
 			first_run = false;
 			
-			for (int i = 0; i < length[0];){
+			for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
 				for (; k < this->settings.i_backprop_unrolled; k++){
 					if (!sequence_end && i < length[0] && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
 						trainingInput[k] = this->input[i];
@@ -353,13 +353,16 @@ void ReccurentLoops::testTraining(){
 				if (k > 0){
 					length_of_sequence += k;
 					//Run the sequence to find the results
+					
 					this->mainNetwork->StartTraining(trainingInput, trainingOutput);
-
-					if (this->checkpoint.i_number_of_loops_checkpoint>this->settings.i_number_allowed_same){
+					
+					this->checkpoint.i_number_of_loops_checkpoint += 1;
+					
+					if (this->checkpoint.i_number_of_loops_checkpoint>=this->settings.i_number_allowed_same){
 						this->createCheckpoint();
 					}
 
-					this->checkpoint.i_number_of_loops_checkpoint += 1;
+					
 				}
 
 
@@ -368,8 +371,8 @@ void ReccurentLoops::testTraining(){
 						this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
 						//Apply the error at the end of the sequence
 						this->mainNetwork->ApplyError();
-						if (this->checkpoint.i_number_of_loops_checkpoint>this->settings.i_number_allowed_same){
-							this->createCheckpoint();
+						if (this->checkpoint.i_number_of_loops_checkpoint>=this->settings.i_number_allowed_same){
+							this->createCheckpoint("AfterError");
 							this->checkpoint.i_number_of_loops_checkpoint = 0;
 						}
 						length_of_sequence = 0;
@@ -379,8 +382,11 @@ void ReccurentLoops::testTraining(){
 					if (count_sequences >= this->settings.i_loops){
 						//Copy the previous set of error to the new set of errors
 						std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
+						
 						//Get the mean Square error
 						this->getMeanSquareError();
+						weight_type old = this->mean_square_error_results_old[0];
+						weight_type new_val = this->mean_square_error_results_new[0];
 						testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
 						this->mainNetwork->ResetSequence();
 						count_sequences = 0;
@@ -481,7 +487,9 @@ void ReccurentLoops::getMeanSquareError(){
 	thrust::device_vector<weight_type> real_output = thrust::device_vector<weight_type>(this->settings.i_output);
 	for (int i = 0; i < this->number_in_training_sequence; i++){
 		if (this->training_input[i][0] == SEQUENCE_DELIMITER && this->training_output[i][0] == SEQUENCE_DELIMITER){
+			
 			this->mainNetwork->ResetSequence();
+			
 		}
 		else{
 			vec = this->runTrainingNetwork(this->training_input[i]);
