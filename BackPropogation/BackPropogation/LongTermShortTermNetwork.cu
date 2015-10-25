@@ -40,13 +40,21 @@ void LongTermShortTermNetwork::initialize_network(){
 }
 
 void LongTermShortTermNetwork::count_weights_in_layers(){
-	this->numberOfWeightsInLayers = vector<unsigned int>();
+	this->count_weights_in_layers(false);
+}
+
+void LongTermShortTermNetwork::count_weights_in_layers(bool running){
+	this->numberOfWeightsInLayers.clear();
 
 	//Count number of weights found in each layer
 	for (int i = 0; i < this->mBlocksLayers.size(); i++){
 		this->numberOfWeightsInLayers.push_back(0);
-		for (int j = 0; j < this->mBlocksLayers[i].size();j++){
+		for (int j = 0; j < this->mBlocksLayers[i].size(); j++){
 			this->numberOfWeightsInLayers[i] += this->mBlocksLayers[i][j].number_weights;
+			if (running && this->mBlocksLayers[i][j].getTypeOfMemoryBlock() == Memory_Block::memory_block_type::LAYER)
+			{
+				this->numberOfWeightsInLayers[i] += this->mBlocksLayers[i][j].number_memory_cells * NUMBER_MEM_CELL_WEIGHTS;
+			}
 		}
 	}
 
@@ -66,7 +74,7 @@ void LongTermShortTermNetwork::InitialcreateMemoryBlock(int numberMemoryCells){
 	this->numberOfWeightsInLayers[0] = 0;//Set the number weights to zero
 	this->numberOfWeightsInLayers[1] = 0;
 	for (int i = 0; i < this->settings.i_output; i++){//Create the output layer
-		this->mBlocksLayers[1].push_back(Memory_Block(numberMemoryCells + this->numberNonWeights, numberMemoryCells, Memory_Block::OUTPUT));
+		this->mBlocksLayers[1].push_back(Memory_Block(numberMemoryCells + this->numberNonWeights, numberMemoryCells, this->settings.i_input, Memory_Block::OUTPUT));
 		this->numberOfWeightsInLayers[1] += this->mBlocksLayers[1][i].number_weights;
 	}
 
@@ -280,7 +288,7 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 }
 
 void LongTermShortTermNetwork::ResetSequence(){
-	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type).1);
+	thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), (weight_type)0);
@@ -303,8 +311,13 @@ void LongTermShortTermNetwork::CopyToHost(){
 	//Copy the secondary output
 	thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->bias.begin());
 	int start = 0;//Number counting position
+	int start_of_layer = this->numberOfWeightsInLayers[0];
 	int biasCount = 0;//Keeps track of the position in the bias list
 	for (unsigned int j = 0; j < this->mBlocksLayers.size(); j++){
+		if (j != 0){
+			start = start_of_layer;
+			start_of_layer += this->numberOfWeightsInLayers[j];
+		}
 		//Copy back the input
 		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
@@ -354,7 +367,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 					biasCount++;
 					this->mBlocksLayers[j][i].memory_cell_weights[0] = (weight_type)0;
-					start += 4;
+					start += 3;
 			}
 		}
 	}
@@ -399,12 +412,12 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 	unsigned int start_output_position = 0;
 	unsigned int number_output_to_add = 0;
 	unsigned int* input_nodes = new unsigned int[this->mBlocksLayers[j].size() * 3];
-	host_vector<int> memory_cell_from = host_vector<int>(4);
-	host_vector<weight_type> memory_cell_weights = host_vector<weight_type>(4);
+	host_vector<int> memory_cell_from = host_vector<int>(3);
+	host_vector<weight_type> memory_cell_weights = host_vector<weight_type>(3);
 	memory_cell_weights[0] = 1;//From the input
 	memory_cell_weights[1] = 1;//From the potential
 	memory_cell_weights[2] = 1;//From the forget
-	memory_cell_weights[3] = 1;//From itself
+	//memory_cell_weights[3] = 1;//From itself
 
 	if (type_of_row == 0){//Is not an output row
 		number_output_to_add = this->mBlocksLayers[j].size();
@@ -484,7 +497,7 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 			memory_cell_from[0] = input_nodes[i];//Get input in
 			memory_cell_from[1] = input_nodes[i + this->mBlocksLayers[j].size()];//The potential input
 			memory_cell_from[2] = input_nodes[i + (this->mBlocksLayers[j].size() * 2)];
-			memory_cell_from[3] = this->GPUOutput_values.size();//itself
+			//memory_cell_from[3] = this->GPUOutput_values.size();//itself
 			
 			if (type_of_row == 2){
 				this->numberOfNodes++;

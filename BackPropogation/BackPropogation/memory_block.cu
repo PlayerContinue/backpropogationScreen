@@ -28,15 +28,44 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	}
 	this->number_memory_cells = 1;
 	this->mapFrom = host_vector<int>();
+	
+	setInitialWeights(start, numberInput, type);
+
+
+}
+
+Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigned int extra_at_start, memory_block_type type){
+
+	//Initialize the values
+	this->input_weights = host_vector<weight_type>();
+	this->output_weights = host_vector<weight_type>();
+	this->forget_weights = host_vector<weight_type>();
+	this->potential_memory_cell_value = host_vector<weight_type>();
+	this->memory_cell_weights = host_vector<weight_type>();
+	this->bias = host_vector<weight_type>();
+	this->number_weights = 0;
+	this->number_inputs = numberInput;
+	this->type = type;//Set the type of memory block this is
+	if (type == LAYER){//Output layer does not require this, as it is only a set of input	
+		this->memory_cell_weights.push_back(this->getNewWeight());
+	}
+	this->number_memory_cells = 1;
+	this->mapFrom = host_vector<int>();
+	setInitialWeights(0, extra_at_start,type);
+	setInitialWeights(start, numberInput, type);
+
+}
+
+void Memory_Block::setInitialWeights(int start, int numberInput, memory_block_type type){
 	//Add weights which connect from the input nodes to the output nodes
 	for (int i = 0; i < numberInput; i++){
 
-		
-		if (type==LAYER){//Only add these if the current node is in a layer which is not an output
+
+		if (type == LAYER){//Only add these if the current node is in a layer which is not an output
 			this->input_weights.push_back(this->getNewWeight());
 			this->output_weights.push_back(this->getNewWeight());
 			this->forget_weights.push_back(this->getNewWeight());
-			
+
 		}
 		//If the layer is an output, it needs both a map from where the ouput is
 		//and a cell for containing the output
@@ -61,10 +90,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	else if (type == OUTPUT){
 		this->bias.push_back(this->getNewWeight());
 	}
-
 }
-
-
 
 void Memory_Block::addNewConnection(int min, int max){
 	bool mappedFrom = false;

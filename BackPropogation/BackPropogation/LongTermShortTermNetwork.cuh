@@ -54,6 +54,10 @@ using namespace thrust::placeholders;
 #define weight_type double
 #endif
 
+#ifndef NUMBER_MEM_CELL_WEIGHTS
+#define NUMBER_MEM_CELL_WEIGHTS 5
+#endif
+
 //****************************************************************************************************
 //
 //Programmer: David Greenberg
@@ -151,6 +155,8 @@ private:
 	//Initialize the network from the settings object if possible
 	void initialize_network();
 	void count_weights_in_layers();
+	void count_weights_in_layers(bool running);
+	
 public:
 	//*********************
 	//Run The Network
