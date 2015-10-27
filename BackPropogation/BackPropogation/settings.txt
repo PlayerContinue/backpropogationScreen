@@ -32,6 +32,6 @@ s_loadNetworkFile networks/word_network_44.txt
 Type:LongTermShortTerm_items
 i_backprop_unrolled 7
 i_number_in_sequence 5
-i_number_start_nodes 40
-i_number_new_weights 50
+i_number_start_nodes 300
+i_number_new_weights 0
 i_number_of_testing_items 100

@@ -1,6 +1,6 @@
 #include "LongTermShortTermNetwork.cuh"
 #define TEST_DEBUG
-
+#define NUMBER_OUTPUT_WEIGHTS
 //#define _DEBUG_WEIGHTS
 LongTermShortTermNetwork::LongTermShortTermNetwork(){
 	this->settings = CSettings();
@@ -486,11 +486,13 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 		if (type_of_row == 2){
 			this->numberOfNodes++;
 		}
-
 		specialCopyToNodes<weight_type>(start_output_position, number_output_to_add, this->GPUWeights, this->GPUMapTo, this->GPUMapFrom, this->mBlocksLayers[j][i].potential_memory_cell_value, this->mBlocksLayers[j][i].mapFrom);
+
+	
 		
 		this->GPUOutput_values.push_back(0);
 	}
+
 	//Set the values of the Memory Cells
 	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){

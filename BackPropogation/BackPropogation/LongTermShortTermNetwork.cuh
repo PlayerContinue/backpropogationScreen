@@ -187,7 +187,21 @@ public:
 	}
 
 	virtual void StartTraining(weight_type** in, weight_type** out){
+		//Reset the weights to the end of the weights
+		this->averageWeights();
+		//Set the input values
+		this->setInput(in);
+		this->training_previous_number_rows = this->settings.i_backprop_unrolled;
 		this->LongShortTermMemoryTraining(in, out);
+		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+		//Find the delta 
+		this->FindBackPropDelta(out, 0);
+		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+		this->FindPreviousBias();
+		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+		this->FindPreviousWeights();
+		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+		thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
 	}
 	//Apply the error to the network
 	virtual void ApplyError(){
