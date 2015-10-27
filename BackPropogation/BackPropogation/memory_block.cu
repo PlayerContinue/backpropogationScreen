@@ -51,7 +51,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigne
 	}
 	this->number_memory_cells = 1;
 	this->mapFrom = host_vector<int>();
-	setInitialWeights(0, extra_at_start,type);
+	//setInitialWeights(0, extra_at_start,type);
 	setInitialWeights(start, numberInput, type);
 
 }

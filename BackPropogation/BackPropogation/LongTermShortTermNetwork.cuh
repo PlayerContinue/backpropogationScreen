@@ -128,7 +128,7 @@ private:
 
 	//Vector Containing Layer Info
 	vector<vector<Memory_Block>> mBlocksLayers;
-
+	bool newSequence;
 	
 public:
 	//*********************
@@ -161,9 +161,10 @@ public:
 	//*********************
 	//Run The Network
 	//*********************
-	virtual device_vector<weight_type> runNetwork(weight_type* in);
+	device_vector<weight_type> runNetwork(weight_type* in);
 	device_vector<weight_type> runNetwork(weight_type* in,int number_extra_weights);
-	virtual device_vector<weight_type> runNetwork(weight_type* in, run_type type);
+	device_vector<weight_type> runNetwork(weight_type* in, run_type type);
+	device_vector<weight_type> runNetwork(weight_type* in, int number_of_extra_weights, bool &newSequence);
 	void InitializeLongShortTermMemoryForRun();
 	void InitializeRun(){
 		this->InitializeLongShortTermMemoryForRun();
@@ -186,23 +187,7 @@ public:
 		//this->LongShortTermMemoryTraining(in, out);
 	}
 
-	virtual void StartTraining(weight_type** in, weight_type** out){
-		//Reset the weights to the end of the weights
-		this->averageWeights();
-		//Set the input values
-		this->setInput(in);
-		this->training_previous_number_rows = this->settings.i_backprop_unrolled;
-		this->LongShortTermMemoryTraining(in, out);
-		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-		//Find the delta 
-		this->FindBackPropDelta(out, 0);
-		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-		this->FindPreviousBias();
-		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-		this->FindPreviousWeights();
-		thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-		thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
-	}
+	void StartTraining(weight_type** in, weight_type** out);
 	//Apply the error to the network
 	virtual void ApplyError(){
 		this->ApplyLongTermShortTermMemoryError();

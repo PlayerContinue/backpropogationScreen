@@ -317,6 +317,7 @@ void ReccurentLoops::testTraining(){
 		this->getMeanSquareError();
 		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
 		this->mainNetwork->ResetSequence();
+		cout << "Trainig Start" << endl;
 		while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
 
 			this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, first_run);
@@ -416,6 +417,13 @@ void ReccurentLoops::testTraining(){
 		//No longer running loops
 
 		try{
+			this->mainNetwork->seti_backprop_unrolled(k);
+			this->mainNetwork->StartTraining(trainingInput, trainingOutput);
+
+			this->checkpoint.i_number_of_loops_checkpoint += 1;
+			this->createCheckpoint();
+			
+			
 			//Copy the previous set of error to the new set of errors
 			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
 			//Get the mean Square error

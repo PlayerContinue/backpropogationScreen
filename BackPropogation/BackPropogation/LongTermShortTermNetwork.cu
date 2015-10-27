@@ -292,6 +292,7 @@ void LongTermShortTermNetwork::ResetSequence(){
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), (weight_type)0);
 	thrust::fill(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), (weight_type)0);
+	this->newSequence = true;//Tell the network a new sequence is too be read. Only needed during training
 }
 
 template <typename T>
