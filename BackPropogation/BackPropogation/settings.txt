@@ -14,7 +14,7 @@ d_fluctuate_square_mean 0
 b_allow_node_locking 1
 d_lock_node_level .3e-70
 d_alpha 0
-d_beta .1
+d_beta .2
 b_trainingFromFile 0
 s_inputTrainingSet datasets/input4.txt
 s_outputTrainingFile datasets/binout4.txt
@@ -32,6 +32,6 @@ s_loadNetworkFile networks/word_network_44.txt
 Type:LongTermShortTerm_items
 i_backprop_unrolled 7
 i_number_in_sequence 5
-i_number_start_nodes 500
+i_number_start_nodes 200
 i_number_new_weights 0
 i_number_of_testing_items 100
