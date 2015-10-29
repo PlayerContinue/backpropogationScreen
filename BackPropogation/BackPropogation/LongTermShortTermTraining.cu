@@ -7,7 +7,6 @@
 //#define NVIDA_OUTPUT_TEST
 //#define NVIDA_OUTPUT_TEST2
 //#define DELTA_MAP_TEST
-#define NUMBER_MEMORY_WEIGHTS 3
 //*********************
 //Training the Network
 //*********************
@@ -83,64 +82,114 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 	//Get the number of weights in the output layer
 	//This is needed because the output layer needs to be used only once, so we need to inform the system which weights to skip
 
-
-	if (this->newSequence){
-		//New sequence, so find the initial first layer
-		start = 0;
-		
-	}
-	
+	unsigned int number_nodes_to_next_layer = 0;
+	unsigned int number_output_weights = this->number_weights_by_type[this->number_weights_by_type.size() - 1][POTENTIAL_MEMORY_CELL];
+	unsigned int number_nodes_to_start_of_storage_layer = this->numberNonWeights + this->numberOfNodes + this->numberNonWeights;//Two number of non weights to get to the start of the next set of non input values
 	unsigned int number_nodes_to_beginning_of_layer = 0;
 	unsigned int number_weights_in_layer = this->GPUWeights.size();
 	for (int i = start; i < this->settings.i_backprop_unrolled; i++){
-	
+		number_nodes_to_next_layer = 0;
+		for (int j = 0; j < this->mBlocksLayers.size() - 1; j++){
+			thrust::reduce_by_key(
+				this->GPUMapTo.begin(),
+				this->GPUMapTo.end() - number_output_weights,
+
+				//Multiply the weights x output
+				thrust::make_transform_iterator(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUWeights.begin(),
+				thrust::make_permutation_iterator(
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,
+				this->GPUMapFrom.begin()
+				)
+				)
+				),
+				functors::multiply<weight_type>()
+				),
+				thrust::make_discard_iterator(),
+				this->GPUPreviousOutput_Values.begin()
+				);
+
+				//Add the bias to the current value
+				thrust::transform(this->GPUBias.begin(),
+				this->GPUBias.end() - number_output_weights,
+				this->GPUPreviousOutput_Values.begin(),
+				this->GPUOutput_values.begin() + number_nodes_to_start_of_storage_layer + number_nodes_to_next_layer,
+				functors::sum_and_sigmoid<weight_type>()
+				);
+
+				number_nodes_to_next_layer += this->number_nodes_by_type[j][POTENTIAL_MEMORY_CELL] +
+					this->number_nodes_by_type[j][MEMORY_CELL] +
+					this->number_nodes_by_type[j][INPUT_CELL] +
+					this->number_nodes_by_type[j][OUTPUT_CELL] +
+					this->number_nodes_by_type[j][FORGET_CELL];
+
+		}
+
+
+#ifdef NVIDA_OUTPUT_TEST2
+		testing::outputToFile<weight_type>(this->GPUWeights, "weights1", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUBias, "bias1", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,8, "GPU", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout", "tests/prevbias3.txt");
+#endif
+		
+		
+		//Find the output
 		thrust::reduce_by_key(
-			this->GPUMapTo.begin(),
+			this->GPUMapTo.end() - number_output_weights,
 			this->GPUMapTo.end(),
 
 			//Multiply the weights x output
 			thrust::make_transform_iterator(
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
-			this->GPUWeights.begin(),
+			this->GPUWeights.end() - number_output_weights,
 			thrust::make_permutation_iterator(
 			this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,
-			this->GPUMapFrom.begin()
+			this->GPUMapFrom.end() - number_output_weights
 			)
 			)
 			),
 			functors::multiply<weight_type>()
 			),
 			thrust::make_discard_iterator(),
-			this->GPUPreviousOutput_Values.begin()
+			this->GPUPreviousOutput_Values.end() - this->settings.i_output
+			);
+
+		//Add the bias to the current value
+		thrust::transform(this->GPUBias.end() - this->settings.i_output,
+			this->GPUBias.end(),
+			this->GPUPreviousOutput_Values.end() - this->settings.i_output,
+			this->GPUOutput_values.begin() + number_nodes_to_start_of_storage_layer + number_nodes_to_next_layer,
+			functors::sum_and_sigmoid<weight_type>()
 			);
 
 #ifdef NVIDA_OUTPUT_TEST2
-		testing::outputToFile<weight_type>(this->GPUWeights, "weights", "tests/prevbias3.txt");
-		testing::outputToFile<weight_type>(this->GPUBias, "weights", "tests/prevbias3.txt");
-		testing::outputToFile<weight_type>(this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,8, "GPU", "tests/prevbias3.txt");
-		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "PrevBias-3", "tests/prevbias3.txt");
-		
+		testing::outputToFile<weight_type>(this->GPUOutput_values, "fullout1", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1", "tests/prevbias3.txt");
 #endif
 
-		if (i > 0){//Only increment it by the number of nodes when working from any layer which is not the initial layer
+		//Only increment it by the number of nodes when working from any layer which is not the initial layer
 			//This lets the nodes use the previous layer as their input
 			number_nodes_to_beginning_of_layer += this->numberOfNodes + this->numberNonWeights;
-		}
+			number_nodes_to_start_of_storage_layer += this->numberNonWeights + this->numberOfNodes;
 
-		//Add the bias to the current value
-		thrust::transform(this->GPUBias.begin(),
-			this->GPUBias.end(),
-			this->GPUPreviousOutput_Values.begin(),
-			this->GPUPreviousOutput_Values.begin(),
-			_1 + _2
-			);
+		
 
+		
+#ifdef NVIDA_OUTPUT_TEST2
+		testing::outputToFile<weight_type>(this->GPUOutput_values, "fullout2", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout2", "tests/prevbias3.txt");
 
-		//Transfer all values from the current to the next row
-		thrust::transform(this->GPUPreviousOutput_Values.begin(),
-			this->GPUPreviousOutput_Values.end(),
-			this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->numberNonWeights, functors::sigmoid_functor<weight_type>());
+#endif
+
+#ifdef NVIDA_OUTPUT_TEST2
+		testing::outputToFile<weight_type>(this->GPUOutput_values, "fullout3", "tests/prevbias3.txt");
+		testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout3", "tests/prevbias3.txt");
+
+#endif
 
 	}
 
@@ -155,15 +204,9 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 //Find the delta gradiant for each of the "layers" of the network
 void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_layer){
 
-	unsigned int number_weights_in_layer = this->GPUWeights.size();
-
-	unsigned int number_nodes_to_end_of_layer = this->GPUOutput_values.size();
-
-	
-
-
 	unsigned int delta_next_start = this->numberOfNodes * this->settings.i_backprop_unrolled - this->numberOfNodes;//this->device_deltas.size() - this->numberOfNodes;
 	unsigned int delta_next_end = this->numberOfNodes * this->settings.i_backprop_unrolled; //this->device_deltas.size();
+	unsigned int internal_delta_next_end = this->number_nodes_in_layer[this->number_nodes_in_layer.size()-1];
 	
 	//Find the deltas of the output
 	for (int i = this->settings.i_backprop_unrolled; i > 0; i--){
@@ -182,17 +225,15 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 			this->device_deltas.begin() + delta_next_end - this->settings.i_output,
 			functors::find_output_delta<weight_type>());
 
-		number_nodes_to_end_of_layer -= this->settings.i_output;
+		
 #ifdef DELTA_TEST
 		testing::outputToFile<weight_type>(this->RealOutput, "output", "tests/testing.txt");
-		testing::outputToFile<weight_type>(this->RealOutput, "output", "tests/testing.txt");
+
 		testing::outputToFile<weight_type>(this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output, this->settings.i_output, "pred_out", "tests/testing.txt");
 		testing::outputToFile<weight_type>(this->device_deltas.begin() + delta_next_end - this->settings.i_output,this->settings.i_output, "delta_output", "tests/testing.txt");
 		testing::outputToFile<weight_type>(this->device_deltas, "PostOutput", "tests/testing.txt");
 		
 #endif
-		if (i != this->settings.i_backprop_unrolled){//Only perform this action when we've gone past the output layer
-
 			thrust::reduce_by_key(
 				this->count.begin(),
 				this->count.end(),
@@ -203,66 +244,62 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 				this->GPUWeights.begin(),
 
 				thrust::make_permutation_iterator(
-				this->device_deltas.begin() + delta_next_end,
+				this->device_deltas.begin() + delta_next_start,
+				thrust::make_transform_iterator(
+				
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
 				thrust::make_transform_iterator(
 				this->GPUMapTo.begin(),
 				_1 - this->numberNonWeights
+				),
+				this->GPUMapFrom.begin()
+				)
+				),
+				functors::add_when_less_than<int>(this->numberOfNodes, this->numberOfNodes + this->numberNonWeights)
 				)
 				)
 				)
 				),
 				functors::multiply<weight_type>()
 				),
+
 				this->positionToSum.begin()
 
 				),//Transform End
 				thrust::make_discard_iterator(),
 				this->GPUPreviousOutput_Values.begin()
 				);
+		
+
 
 #ifdef DELTA_TEST
-			testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "PreTransform", "tests/testing.txt");
+			testing::outputToFile<weight_type>(this->device_deltas, "DeviceMid", "tests/testing.txt");
 #endif
-			//Add the bias
-			/*thrust::transform(
-				this->GPUBias.begin(),
-				this->GPUBias.end(),
-				thrust::make_zip_iterator(
-				thrust::make_tuple(
-				this->device_deltas.begin() + end_of_succeeding_layer - this->numberNonWeights - this->numberOfNodes,
-				this->GPUPreviousOutput_Values.begin()
 
-				)
-				),
-				this->GPUPreviousOutput_Values.begin(),
-				functors::add_bias<weight_type>(this->settings.i_backprop_unrolled == i)
-				);*/
-#ifdef DELTA_TEST
-			testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "PostBias", "tests/testing.txt");
-#endif
-			//Find the new deltas
-			thrust::transform(
-				this->device_deltas.begin() + delta_next_start,
-				this->device_deltas.begin() + delta_next_start + this->numberOfNodes,
-				thrust::make_transform_iterator(
-				thrust::make_zip_iterator(
-				thrust::make_tuple(
-				this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * (i)) - this->numberOfNodes,
-				this->GPUPreviousOutput_Values.begin()
-				)), functors::find_non_output_delta<weight_type>()),
-				this->device_deltas.begin() + delta_next_start,
-				_1 + _2
-				);
+				//Find the new deltas
+				thrust::transform(
+					this->device_deltas.begin() + delta_next_start,
+					this->device_deltas.begin() + delta_next_start + this->numberOfNodes,
+					thrust::make_transform_iterator(
+					thrust::make_zip_iterator(
+					thrust::make_tuple(
+					this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * (i)) - this->numberOfNodes,
+					this->GPUPreviousOutput_Values.begin()
+					)), functors::find_non_output_delta<weight_type>()),
+					this->device_deltas.begin() + delta_next_start,
+					_1 + _2
+					);
 #ifdef DELTA_TEST
 			testing::outputToFile<weight_type>(this->device_deltas, "Device","tests/testing.txt");
+			testing::outputToFile<weight_type>(this->GPUOutput_values,"test","tests/testing.txt");
+			testing::outputToFile<weight_type>(this->GPUWeights, "test", "tests/testing.txt");
 #endif
-		}
 		delta_next_end -= this->numberOfNodes;
 
 		
 		delta_next_start -= this->numberOfNodes;
 
-		number_nodes_to_end_of_layer = (number_nodes_to_end_of_layer + this->settings.i_output) - this->numberOfNodes - this->numberNonWeights;
 		
 
 
@@ -494,25 +531,27 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 #endif
 
 	//Apply the alpha
-	thrust::transform_if(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		thrust::make_constant_iterator(this->settings.d_alpha),
-		this->GPUPreviousWeights.begin(),
-		this->GPUWeights.begin()
-		)
-		),
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		thrust::make_constant_iterator(this->settings.d_alpha),
-		this->GPUPreviousWeights.end(),
-		this->GPUWeights.end()
-		)
-		),
-		this->GPUWeights.begin(),
-		functors::multiply_add<weight_type>(),
-		functors::compare_two<(unsigned int)1, weight_type>(5, 1)
-		);
+	if (this->settings.d_alpha != 0){
+		thrust::transform_if(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			thrust::make_constant_iterator(this->settings.d_alpha),
+			this->GPUPreviousWeights.begin(),
+			this->GPUWeights.begin()
+			)
+			),
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			thrust::make_constant_iterator(this->settings.d_alpha),
+			this->GPUPreviousWeights.end(),
+			this->GPUWeights.end()
+			)
+			),
+			this->GPUWeights.begin(),
+			functors::multiply_add<weight_type>(),
+			functors::compare_two<(unsigned int)1, weight_type>(5, 1)
+			);
+	}
 
 	//Find the previous weights
 	thrust::reduce_by_key(
@@ -559,7 +598,6 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		thrust::make_permutation_iterator(
 		this->GPUOutput_values.begin(),
 		thrust::make_transform_iterator(//Add the number of nodes when the end of the mapto is reached
-
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
 		thrust::make_permutation_iterator(
@@ -714,8 +752,8 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 
 thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in, int number_of_extra_weights, bool &newSequence){
 	if (newSequence){
-		this->runNetwork(in, number_of_extra_weights);
-		newSequence = false;
+		//this->runNetwork(in, number_of_extra_weights);
+		//newSequence = false;
 	}
 
 	return this->runNetwork(in, number_of_extra_weights);
@@ -808,28 +846,28 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
 			this->GPUPreviousOutput_Values.begin(), //input values
-			this->GPUPreviousOutput_Values.begin() + numberMBlocks,//output values
-			this->GPUPreviousOutput_Values.begin() + (2 * numberMBlocks),//forget values
-			this->GPUPreviousOutput_Values.begin() + (3 * numberMBlocks),//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + (4 * numberMBlocks),
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 4),//Old Memory Cell Values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL],//output values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL],//forget values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//Old Memory Cell Values
 			this->GPUOutput_values.begin() + numberBlocksToLayer, //Old Input
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 2), //Old Forget
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 3), //Old Potential
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 1)
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL], //Old Forget
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] , //Old Potential
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] 
 			)),
 			thrust::make_zip_iterator(
 			thrust::make_tuple(
-			this->GPUPreviousOutput_Values.begin() + numberMBlocks, //input values
-			this->GPUPreviousOutput_Values.begin() + (2 * numberMBlocks),//output values
-			this->GPUPreviousOutput_Values.begin() + (3 * numberMBlocks),//forget values
-			this->GPUPreviousOutput_Values.begin() + (4 * numberMBlocks),//potential_memory_cell_value
-			this->GPUPreviousOutput_Values.begin() + (5 * numberMBlocks),
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 5),//Memory Cell Values
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 1), //Old Input
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 3), //Old Forget
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 4), //Old Potential
-			this->GPUOutput_values.begin() + numberBlocksToLayer + (numberMBlocks * 2)
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL], //input values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL],//output values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//forget values
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//potential_memory_cell_value
+			this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + +this->number_nodes_by_type[0][MEMORY_CELL],
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL],//Old Memory Cell Values
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL], //Old Input
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + +this->number_nodes_by_type[0][FORGET_CELL], //Old Forget
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL], //Old Potential
+			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + +this->number_nodes_by_type[0][OUTPUT_CELL]
 			)),
 			functors::run_memory_block_functon<weight_type>());
 		
@@ -841,6 +879,10 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 		}
 		
 #endif
+
+
+		//Find the output value
+		if (number_of_extra_weights == 0){
 			thrust::reduce_by_key(
 				this->GPUMapTo.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
 				this->GPUMapTo.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i] + this->numberOfWeightsInLayers[i + 1],
@@ -849,7 +891,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 				thrust::make_tuple(
 				this->GPUWeights.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
 				thrust::make_permutation_iterator(
-				this->GPUOutput_values.begin(),
+				this->GPUPreviousOutput_Values.begin(),
 				thrust::make_transform_iterator(
 				this->GPUMapFrom.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
 				_1
@@ -862,7 +904,30 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 				thrust::make_discard_iterator(),
 				this->GPUPreviousOutput_Values.begin() + numberBlocksToLayer + (numberMBlocks * 5)
 				);
-		
+		}
+		else{
+			thrust::reduce_by_key(
+				this->GPUMapTo.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
+				this->GPUMapTo.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i] + this->numberOfWeightsInLayers[i + 1],
+				thrust::make_transform_iterator(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUWeights.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
+				thrust::make_permutation_iterator(
+				this->GPUPreviousOutput_Values.begin(),
+				thrust::make_transform_iterator(
+				this->GPUMapFrom.begin() + previousnumberMBlocks + this->numberOfWeightsInLayers[i],
+				_1 - this->numberOfNodes - this->numberNonWeights
+				)
+				)
+				)
+				),
+				functors::multiply<weight_type>()
+				),
+				thrust::make_discard_iterator(),
+				this->GPUPreviousOutput_Values.begin() + numberBlocksToLayer + (numberMBlocks * 5)
+				);
+		}
 
 #ifdef TRAININGTEST
 		

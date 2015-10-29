@@ -486,9 +486,9 @@ namespace functors{
 		__host__ __device__
 			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
 			//Compute Logistic value of input,output,forget,and potential
-			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
-			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x)+logistic_function(thrust::get<5>(x), 1, 0), 1, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x)+logistic_function(thrust::get<5>(x), 1, 0), 1, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) +logistic_function(thrust::get<5>(x), 1, 0), 1, 0);
 
 			T memory_value_input = (T)thrust::get<6>(x) +(T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
 			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
@@ -607,6 +607,18 @@ namespace functors{
 
 	};
 
+	//Perform a sigmoid function
+	template <typename T>
+	struct sum_and_sigmoid : public thrust::binary_function < T, T, T > {
+		sum_and_sigmoid(){};
+
+		__host__ __device__
+			T operator()(const T &x, const T&y)const{
+			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)(x + y))).real()));
+		}
+
+	};
+
 
 
 	//Increase amount when beyond the provided length
@@ -714,8 +726,58 @@ namespace functors{
 		add_when_greater_than(T _add_to, T _greater_than_this) :greater_than_this(_greater_than_this), add_to(_add_to){}
 		__host__ __device__
 			T operator()(const T &x)const{
-			if (x >= _equal_to){
+			if (x >greater_than_this){
 				return (x + add_to);
+			}
+			else{
+				return x;
+			}
+		}
+
+	};
+
+	//Function is _add_to, _greater_than_this
+	template <typename T>
+	struct add_when_less_than : public thrust::unary_function < T, T > {
+		const T less_than_this;
+		const T add_to;
+		add_when_less_than(T _add_to, T _less_than_this) :less_than_this(_less_than_this), add_to(_add_to){};
+		__host__ __device__
+			T operator()(const T &x)const{
+			if (x <less_than_this){
+				return (x + add_to);
+			}
+			else{
+				return x;
+			}
+		}
+		template <typename Tuple>
+		__host__ __device__
+			
+			T operator()(const Tuple &x)const{
+			if (thrust::get<1>(x) <less_than_this){
+				return (thrust::get<0>(x) +add_to);
+			}
+			else{
+				return thrust::get<0>(x);
+			}
+		}
+
+	};
+
+	//Function is _add_to, _greater_than_this
+	template <typename T>
+	struct add_or_subtract_when_less_than : public thrust::unary_function < T, T > {
+		const T less_than_this;
+		const T add_to;
+		add_or_subtract_when_less_than(T _add_to, T _less_than_this) :less_than_this(_less_than_this), add_to(_add_to){}
+		__host__ __device__
+			T operator()(const T &x)const{
+			if (x <less_than_this){
+				return (x + add_to);
+			}
+			else if (x >= less_than_this){
+				return(x - add_to);
 			}
 			else{
 				return x;
@@ -831,7 +893,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &t)const{
+			T operator()(const Tuple &t)const{//sum of the output*(1-output)*(sum(delta*output))
 			return (T)thrust::get<0>(t) * ((T)1 - (T)thrust::get<0>(t)) * (T)thrust::get<1>(t);
 
 		}
@@ -848,6 +910,8 @@ namespace functors{
 			return ((T)output)*((T)1 - (T)output)*((T)target - (T)output);
 		}
 	};
+
+
 
 
 	template <typename T>

@@ -54,8 +54,12 @@ using namespace thrust::placeholders;
 #define weight_type double
 #endif
 
+#ifndef NUMBER_WEIGHTS_TO_MEM
+#define NUMBER_WEIGHTS_TO_MEM 3
+#endif
+
 #ifndef NUMBER_MEM_CELL_WEIGHTS
-#define NUMBER_MEM_CELL_WEIGHTS 5
+#define NUMBER_MEM_CELL_WEIGHTS 7
 #endif
 
 //****************************************************************************************************
@@ -80,13 +84,20 @@ private:
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
 	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL,NONE_CELL};
+	//Contains the number of weights of each type
+	std::vector<std::vector<int>> number_weights_by_type;
+	//Number Nodes in Each Layer by type
+	std::vector<std::vector<int>> number_nodes_by_type;
+
+	//Number Nodes in each layer 
+	std::vector<int> number_nodes_in_layer;
+
 	//Stores the weights between neurons
 	host_vector<weight_type> weights;
 	vector<unsigned int> numberOfWeightsInLayers;
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 	thrust::device_vector<weight_type> GPUPreviousWeights;
-
 
 
 	//Vectors for the inputs

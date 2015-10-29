@@ -1,6 +1,6 @@
 #include "LongTermShortTermNetwork.cuh"
 #define TEST_DEBUG
-#define NUMBER_OUTPUT_WEIGHTS
+
 //#define _DEBUG_WEIGHTS
 LongTermShortTermNetwork::LongTermShortTermNetwork(){
 	this->settings = CSettings();
@@ -35,8 +35,13 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->mapTo = host_vector<int>();
 	this->mapFrom = host_vector<int>();
 	this->bias = host_vector<weight_type>();
-
 	this->addWeight(this->settings.i_number_new_weights);
+	//Initialize the weight of cell type count
+	this->number_weights_by_type = std::vector<std::vector<int>>();
+	this->number_nodes_by_type = std::vector<std::vector<int>>();
+	this->number_nodes_in_layer = std::vector<int>();
+	//Count the number of weights
+	this->count_weights_in_layers();
 }
 
 void LongTermShortTermNetwork::count_weights_in_layers(){
@@ -45,18 +50,77 @@ void LongTermShortTermNetwork::count_weights_in_layers(){
 
 void LongTermShortTermNetwork::count_weights_in_layers(bool running){
 	this->numberOfWeightsInLayers.clear();
+	if (this->number_weights_by_type.size() < this->mBlocksLayers.size()){
+		int length = this->number_weights_by_type.size();
+		this->number_weights_by_type.resize(this->mBlocksLayers.size());
+		this->number_nodes_by_type.resize(this->mBlocksLayers.size());
+		this->number_nodes_in_layer.resize(this->mBlocksLayers.size()+1);
+	
+		for (; length < this->number_weights_by_type.size(); length++){
+			this->number_weights_by_type[length] = vector<int>(5);
+			this->number_nodes_by_type[length] = vector<int>(5);
+		}
+	}
+	else if (this->number_weights_by_type.size() > this->mBlocksLayers.size()){
+		this->number_weights_by_type.resize(this->mBlocksLayers.size());
+		this->number_nodes_by_type.resize(this->mBlocksLayers.size());
+		this->number_nodes_in_layer.resize(this->mBlocksLayers.size() + 1);
+	}
 
+	std::fill(this->number_nodes_in_layer.begin(), this->number_nodes_in_layer.end(), (int)0);
 	//Count number of weights found in each layer
 	for (int i = 0; i < this->mBlocksLayers.size(); i++){
 		this->numberOfWeightsInLayers.push_back(0);
+		//Number Weights
+		this->number_weights_by_type[i][MEMORY_CELL] = 0;
+		this->number_weights_by_type[i][INPUT_CELL] = 0;
+		this->number_weights_by_type[i][POTENTIAL_MEMORY_CELL] = 0;
+		this->number_weights_by_type[i][OUTPUT_CELL] = 0;
+		this->number_weights_by_type[i][FORGET_CELL] = 0;
+		//Number Nodes
+		this->number_nodes_by_type[i][MEMORY_CELL] = 0;
+		this->number_nodes_by_type[i][INPUT_CELL] = 0;
+		this->number_nodes_by_type[i][POTENTIAL_MEMORY_CELL] = 0;
+		this->number_nodes_by_type[i][OUTPUT_CELL] = 0;
+		this->number_nodes_by_type[i][FORGET_CELL] = 0;
+		
+		if (i != 0){
+			this->number_nodes_in_layer[this->mBlocksLayers.size()] += this->number_nodes_in_layer[i - 1];
+		}
+		
 		for (int j = 0; j < this->mBlocksLayers[i].size(); j++){
 			this->numberOfWeightsInLayers[i] += this->mBlocksLayers[i][j].number_weights;
-			if (running && this->mBlocksLayers[i][j].getTypeOfMemoryBlock() == Memory_Block::memory_block_type::LAYER)
-			{
-				this->numberOfWeightsInLayers[i] += this->mBlocksLayers[i][j].number_memory_cells * NUMBER_MEM_CELL_WEIGHTS;
+			
+			//Add the different memory cell types
+			
+			this->number_weights_by_type[i][POTENTIAL_MEMORY_CELL] += this->mBlocksLayers[i][j].potential_memory_cell_value.size();
+			this->number_nodes_in_layer[i] += 1;
+			this->number_nodes_by_type[i][POTENTIAL_MEMORY_CELL] += 1;
+			if (this->mBlocksLayers[i][j].getTypeOfMemoryBlock() == Memory_Block::memory_block_type::LAYER){
+				this->number_weights_by_type[i][OUTPUT_CELL] += this->mBlocksLayers[i][j].output_weights.size();
+				this->number_weights_by_type[i][FORGET_CELL] += this->mBlocksLayers[i][j].forget_weights.size();
+				this->number_weights_by_type[i][INPUT_CELL] += this->mBlocksLayers[i][j].input_weights.size();
+
+				this->number_nodes_by_type[i][OUTPUT_CELL] += 1;
+				this->number_nodes_by_type[i][FORGET_CELL] += 1;
+				this->number_nodes_by_type[i][MEMORY_CELL] += 1;
+				this->number_nodes_by_type[i][INPUT_CELL] += 1;
+				this->number_nodes_in_layer[i] += 4;
+				if (running)
+				{
+					this->numberOfWeightsInLayers[i] += this->mBlocksLayers[i][j].number_memory_cells * NUMBER_MEM_CELL_WEIGHTS;
+					this->number_weights_by_type[i][MEMORY_CELL] += NUMBER_WEIGHTS_TO_MEM;
+					this->number_weights_by_type[i][OUTPUT_CELL] += 1;
+					this->number_weights_by_type[i][FORGET_CELL] += 1;
+					this->number_weights_by_type[i][INPUT_CELL] += 1;
+					this->number_weights_by_type[i][POTENTIAL_MEMORY_CELL] += 1;
+				}
 			}
 		}
 	}
+
+	
+	
 
 }
 
@@ -263,6 +327,14 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	//The output layer will contain only n node (n is the number of output) and will merely sum all input passed into it
 	//This makes performing analysis far easier than using a extra layer of memory cells
 	this->loadUnrolledToDevice(2, this->mBlocksLayers.size()-1);
+	
+	//Transform the output pointers to get results from the next layer
+	thrust::transform(
+		this->GPUMapFrom.end() - this->number_weights_by_type[this->number_weights_by_type.size() - 1][POTENTIAL_MEMORY_CELL], 
+		this->GPUMapFrom.end(),
+		this->GPUMapFrom.end() - this->number_weights_by_type[this->number_weights_by_type.size() - 1][POTENTIAL_MEMORY_CELL],
+		_1 + this->numberOfNodes + this->numberNonWeights);
+
 	//Expand the output container
 	
 	this->GPUPreviousOutput_Values.resize(this->GPUOutput_values.size() - this->numberNonWeights);
@@ -325,7 +397,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].input_weights);
 				this->mBlocksLayers[j][i].bias[0] = this->GPUBias[biasCount];
 				biasCount++;
-				start += this->mBlocksLayers[j][i].input_weights.size();
+				start += this->mBlocksLayers[j][i].input_weights.size() + this->mBlocksLayers[j][i].number_memory_cells;
 			}
 		}
 
@@ -335,7 +407,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].output_weights);
 				this->mBlocksLayers[j][i].bias[1] = this->GPUBias[biasCount];
 				biasCount++;
-				start += this->mBlocksLayers[j][i].output_weights.size() + 1;//+1 is for extra weight going to the memory node
+				start += this->mBlocksLayers[j][i].output_weights.size() + this->mBlocksLayers[j][i].number_memory_cells;//+1 is for extra weight going to the memory node
 			}
 		}
 
@@ -345,7 +417,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].forget_weights);
 				this->mBlocksLayers[j][i].bias[2] = this->GPUBias[biasCount];
 				biasCount++;
-				start += this->mBlocksLayers[j][i].forget_weights.size() + 1;
+				start += this->mBlocksLayers[j][i].forget_weights.size() + this->mBlocksLayers[j][i].number_memory_cells;
 			}
 		}
 
@@ -354,6 +426,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 			copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].potential_memory_cell_value);
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				this->mBlocksLayers[j][i].bias[3] = this->GPUBias[biasCount];
+				start += this->mBlocksLayers[j][i].number_memory_cells;
 			}
 			else if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::OUTPUT){
 				this->mBlocksLayers[j][i].bias[0] = this->GPUBias[biasCount];
@@ -368,7 +441,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 					biasCount++;
 					this->mBlocksLayers[j][i].memory_cell_weights[0] = (weight_type)0;
-					start += 3;
+					start += NUMBER_WEIGHTS_TO_MEM;
 			}
 		}
 	}
@@ -437,6 +510,9 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 			specialCopyToNodes<weight_type>(start_output_position, number_output_to_add, this->GPUWeights, this->GPUMapTo, this->GPUMapFrom, this->mBlocksLayers[j][i].input_weights, this->mBlocksLayers[j][i].mapFrom);
 			input_nodes[i] = this->GPUOutput_values.size();//Get the position of an input node
+			this->GPUMapFrom.push_back(this->number_nodes_in_layer[j] - this->number_nodes_by_type[j][MEMORY_CELL] + this->numberNonWeights);//Push back connection to the memory cell
+			this->GPUMapTo.push_back(this->GPUOutput_values.size());
+			this->GPUWeights.push_back((weight_type)1);
 			if (type_of_row == 2){
 				this->numberOfNodes++;
 			}
@@ -482,13 +558,18 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 	//Set all the potential_output nodes
 	for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 		
-		input_nodes[i + (this->mBlocksLayers[j].size() * 2)] = this->GPUOutput_values.size();//Store the position of the 
+		input_nodes[i + (this->mBlocksLayers[j].size() * 2)] = this->GPUOutput_values.size();//Store the position of the potential output node for the memory cell
 		
 		if (type_of_row == 2){
 			this->numberOfNodes++;
 		}
 		specialCopyToNodes<weight_type>(start_output_position, number_output_to_add, this->GPUWeights, this->GPUMapTo, this->GPUMapFrom, this->mBlocksLayers[j][i].potential_memory_cell_value, this->mBlocksLayers[j][i].mapFrom);
-
+		
+		if (this->mBlocksLayers[j][i].getTypeOfMemoryBlock() == Memory_Block::LAYER){//Push back a memory cell
+			this->GPUMapFrom.push_back(this->number_nodes_in_layer[j] - this->number_nodes_by_type[j][MEMORY_CELL] + this->numberNonWeights);//Push back connection to the memory cell
+			this->GPUMapTo.push_back(this->GPUOutput_values.size());
+			this->GPUWeights.push_back((weight_type)1);
+		}
 	
 		
 		this->GPUOutput_values.push_back(0);
@@ -649,7 +730,16 @@ unsigned int LongTermShortTermNetwork::getNumberTypeWeightsInLayer(unsigned int 
 void LongTermShortTermNetwork::getSumPermutation(){
 	//Create a permutation list containing a list of object
 	this->positionToSum = thrust::device_vector<int>(this->GPUMapFrom.size());
-	this->count = thrust::device_vector<int>(this->GPUMapFrom);
+	this->count = thrust::device_vector<int>(
+		
+		thrust::make_transform_iterator(this->GPUMapFrom.begin(),
+		functors::add_when_greater_than<int>(-(this->numberOfNodes + this->numberNonWeights), this->numberOfNodes + this->numberNonWeights)
+		),
+		thrust::make_transform_iterator(this->GPUMapFrom.end(),
+		functors::add_when_greater_than<int>(-(this->numberOfNodes + this->numberNonWeights), this->numberOfNodes + this->numberNonWeights)
+		)
+		
+		);
 	thrust::sequence(this->positionToSum.begin(), this->positionToSum.end(), (int)(0));
 	thrust::sort_by_key(this->count.begin(), this->count.end(), this->positionToSum.begin());
 	thrust::device_vector<int>::iterator positionToSumStartRemove = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 < this->numberNonWeights);
