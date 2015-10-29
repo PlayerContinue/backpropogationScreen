@@ -68,8 +68,9 @@ void LongTermShortTermNetwork::count_weights_in_layers(bool running){
 	}
 
 	std::fill(this->number_nodes_in_layer.begin(), this->number_nodes_in_layer.end(), (int)0);
+	int i;
 	//Count number of weights found in each layer
-	for (int i = 0; i < this->mBlocksLayers.size(); i++){
+	for (i = 0; i < this->mBlocksLayers.size(); i++){
 		this->numberOfWeightsInLayers.push_back(0);
 		//Number Weights
 		this->number_weights_by_type[i][MEMORY_CELL] = 0;
@@ -118,8 +119,9 @@ void LongTermShortTermNetwork::count_weights_in_layers(bool running){
 			}
 		}
 	}
-
-	
+	if (i > 0){
+		this->number_nodes_in_layer[this->mBlocksLayers.size()] += this->number_nodes_in_layer[i - 1];
+	}
 	
 
 }

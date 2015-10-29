@@ -415,13 +415,12 @@ void ReccurentLoops::testTraining(){
 
 		}
 		//No longer running loops
-
+		this->mainNetwork->ResetSequence();
+		this->mainNetwork->seti_backprop_unrolled(this->settings.i_backprop_unrolled - 2);
+		this->mainNetwork->StartTraining(this->input, this->output);
+		this->createCheckpoint("Last_Train_Check");
 		try{
-			this->mainNetwork->seti_backprop_unrolled(k);
-			this->mainNetwork->StartTraining(trainingInput, trainingOutput);
-
-			this->checkpoint.i_number_of_loops_checkpoint += 1;
-			this->createCheckpoint();
+			
 			
 			
 			//Copy the previous set of error to the new set of errors
@@ -449,9 +448,9 @@ void ReccurentLoops::testTraining(){
 			}
 			this->checkpoint.b_still_running = false;
 			this->createCheckpoint("RunResultsInMemory");
+			this->mainNetwork->ResetSequence();
 			this->mainNetwork->cleanNetwork();
 			this->mainNetwork->InitializeRun();
-			this->mainNetwork->ResetSequence();
 			this->createCheckpoint("RunStart");
 			for (int i = 0; i < this->number_in_training_sequence; i++){
 				if (i == 0){
