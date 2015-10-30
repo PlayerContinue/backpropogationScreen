@@ -615,8 +615,9 @@ namespace functors{
 
 		__host__ __device__
 			T operator()(const T &x, const T&y)const{
-			T temp = x + y;
-			return ((T)1 / ((T)1 + thrust::exp((thrust::complex<T>)((thrust::complex<T>) - 1.0 * (thrust::complex<T>)temp)).real()));
+			T temp = -1*(x + y);
+			temp = thrust::exp((thrust::complex<T>)temp).real();
+			return ((T)1 / ((T)1 + temp));
 		}
 
 	};

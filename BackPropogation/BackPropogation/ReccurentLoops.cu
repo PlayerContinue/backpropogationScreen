@@ -428,6 +428,7 @@ void ReccurentLoops::testTraining(){
 			//Get the mean Square error
 			this->getMeanSquareError();
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			this->mainNetwork->seti_backprop_unrolled(0);
 			this->mainNetwork->ResetSequence();
 			this->createCheckpoint();
 			this->mainNetwork->ResetSequence();
