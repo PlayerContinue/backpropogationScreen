@@ -233,6 +233,7 @@
   <ItemGroup>
     <CudaCompile Include="CGraphicNetwork.cu" />
     <CudaCompile Include="LongTermShortTermNetwork.cu" />
+    <CudaCompile Include="LongTermShortTermNetworkGrowth.cu" />
     <CudaCompile Include="main.cu" />
     <CudaCompile Include="main2.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>

@@ -101,6 +101,9 @@ public:
 	int i_number_new_weights;
 	
 	int i_number_of_testing_items;
+
+	bool b_allow_growth = false;
+
 	CSettings();
 
 
@@ -255,6 +258,10 @@ public:
 
 		is >> next;
 		is >> settings.i_number_of_testing_items;
+
+
+		is >> next;
+		is >> settings.b_allow_growth;
 
 		return is;
 	}

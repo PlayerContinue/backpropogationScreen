@@ -80,6 +80,7 @@ private:
 	
 	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	int training_previous_number_rows;
+	unsigned int total_number_of_unrolled;
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
@@ -256,7 +257,7 @@ public:
 	void createMemoryBlock(int numberMemoryCells,int layer_num);
 
 	void addNeuron(int numberNeuronsToAdd);
-
+	void addCellToGPU(unsigned int start_new, unsigned int layer);
 	//Add a new weight between neurons
 	void addWeight(int numberWeightsToAdd);
 private:

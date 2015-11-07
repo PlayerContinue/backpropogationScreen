@@ -316,6 +316,10 @@ void ReccurentLoops::testTraining(){
 		//Get the mean Square error
 		this->getMeanSquareError();
 		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+		this->mainNetwork->addNeuron(1);
+		this->createCheckpoint("Add Checkpoint");
+		this->mainNetwork->emptyGPUMemory();
+		exit(0);
 		this->mainNetwork->ResetSequence();
 		cout << "Training Start" << endl;
 		while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
