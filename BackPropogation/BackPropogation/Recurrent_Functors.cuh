@@ -484,18 +484,19 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value, old memory cell, old input,old forget, old potential
+			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value,  old input, old Output, old forget, old potential, old memory cell
 			//Compute Logistic value of input,output,forget,and potential
-			thrust::get<0>(x) = logistic_function(thrust::get<0>(x), 1, 0);
-			thrust::get<2>(x) = logistic_function(thrust::get<2>(x), 1, 0);
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x), 1, 0);
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x) + thrust::get<9>(x), 1, 0);
+			thrust::get<1>(x) = logistic_function(thrust::get<1>(x) + thrust::get<9>(x), 1, 0);
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) + thrust::get<9>(x), 1, 0);
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) + thrust::get<9>(x), 1, 0);
 
-			T memory_value_input = (T)thrust::get<6>(x) +(T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
 			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
 
 
-			thrust::get<1>(x) = logistic_function(logistic_function(thrust::get<5>(x), 1, 0) + thrust::get<1>(x), 1, 0);
-			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate, 1, 0); //Sum the input value and the forget value
+			
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Sum the input value and the forget value
 		}
 
 		__host__ __device__
@@ -607,6 +608,20 @@ namespace functors{
 
 	};
 
+	//Perform a sigmoid function
+	template <typename T>
+	struct sum_and_sigmoid : public thrust::binary_function < T, T, T > {
+		sum_and_sigmoid(){};
+
+		__host__ __device__
+			T operator()(const T &x, const T&y)const{
+			T temp = -1*(x + y);
+			temp = thrust::exp((thrust::complex<T>)temp).real();
+			return ((T)1 / ((T)1 + temp));
+		}
+
+	};
+
 
 
 	//Increase amount when beyond the provided length
@@ -714,8 +729,58 @@ namespace functors{
 		add_when_greater_than(T _add_to, T _greater_than_this) :greater_than_this(_greater_than_this), add_to(_add_to){}
 		__host__ __device__
 			T operator()(const T &x)const{
-			if (x >= _equal_to){
+			if (x >greater_than_this){
 				return (x + add_to);
+			}
+			else{
+				return x;
+			}
+		}
+
+	};
+
+	//Function is _add_to, _greater_than_this
+	template <typename T>
+	struct add_when_less_than : public thrust::unary_function < T, T > {
+		const T less_than_this;
+		const T add_to;
+		add_when_less_than(T _add_to, T _less_than_this) :less_than_this(_less_than_this), add_to(_add_to){};
+		__host__ __device__
+			T operator()(const T &x)const{
+			if (x <less_than_this){
+				return (x + add_to);
+			}
+			else{
+				return x;
+			}
+		}
+		template <typename Tuple>
+		__host__ __device__
+			
+			T operator()(const Tuple &x)const{
+			if (thrust::get<1>(x) <less_than_this){
+				return (thrust::get<0>(x) +add_to);
+			}
+			else{
+				return thrust::get<0>(x);
+			}
+		}
+
+	};
+
+	//Function is _add_to, _greater_than_this
+	template <typename T>
+	struct add_or_subtract_when_less_than : public thrust::unary_function < T, T > {
+		const T less_than_this;
+		const T add_to;
+		add_or_subtract_when_less_than(T _add_to, T _less_than_this) :less_than_this(_less_than_this), add_to(_add_to){}
+		__host__ __device__
+			T operator()(const T &x)const{
+			if (x <less_than_this){
+				return (x + add_to);
+			}
+			else if (x >= less_than_this){
+				return(x - add_to);
 			}
 			else{
 				return x;
@@ -831,7 +896,7 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &t)const{
+			T operator()(const Tuple &t)const{//sum of the output*(1-output)*(sum(delta*output))
 			return (T)thrust::get<0>(t) * ((T)1 - (T)thrust::get<0>(t)) * (T)thrust::get<1>(t);
 
 		}
@@ -848,6 +913,8 @@ namespace functors{
 			return ((T)output)*((T)1 - (T)output)*((T)target - (T)output);
 		}
 	};
+
+
 
 
 	template <typename T>

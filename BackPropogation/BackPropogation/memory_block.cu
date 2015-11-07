@@ -25,8 +25,11 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	this->type = type;//Set the type of memory block this is
 	if (type == LAYER){//Output layer does not require this, as it is only a set of input	
 		this->memory_cell_weights.push_back(this->getNewWeight());
+		this->number_memory_cells = 1;
 	}
-	this->number_memory_cells = 1;
+	else{
+		this->number_memory_cells = 0;
+	}
 	this->mapFrom = host_vector<int>();
 	
 	setInitialWeights(start, numberInput, type);
@@ -46,12 +49,17 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigne
 	this->number_weights = 0;
 	this->number_inputs = numberInput;
 	this->type = type;//Set the type of memory block this is
+	
 	if (type == LAYER){//Output layer does not require this, as it is only a set of input	
 		this->memory_cell_weights.push_back(this->getNewWeight());
+		this->number_memory_cells = 1;
 	}
-	this->number_memory_cells = 1;
+	else{
+		this->number_memory_cells = 0;
+	}
+
 	this->mapFrom = host_vector<int>();
-	setInitialWeights(0, extra_at_start,type);
+	//setInitialWeights(0, extra_at_start,type);
 	setInitialWeights(start, numberInput, type);
 
 }
