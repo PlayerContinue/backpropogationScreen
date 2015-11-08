@@ -77,14 +77,15 @@ private:
 
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
-	
+
 	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	int training_previous_number_rows;
 	unsigned int total_number_of_unrolled;
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
 	long last_input_cell_pos;
-	enum cell_type{MEMORY_CELL, POTENTIAL_MEMORY_CELL,INPUT_CELL,OUTPUT_CELL,FORGET_CELL,NONE_CELL};
+
+	enum cell_type{ INPUT_CELL, OUTPUT_CELL, FORGET_CELL, POTENTIAL_MEMORY_CELL, MEMORY_CELL, NONE_CELL };
 	//Contains the number of weights of each type
 	std::vector<std::vector<int>> number_weights_by_type;
 	//Number Nodes in Each Layer by type
@@ -141,7 +142,7 @@ private:
 	//Vector Containing Layer Info
 	vector<vector<Memory_Block>> mBlocksLayers;
 	bool newSequence;
-	
+
 public:
 	//*********************
 	//Constructors
@@ -155,7 +156,7 @@ public:
 	LongTermShortTermNetwork(CSettings& settings);
 
 	//Create a LongTermShortTermNetwork from a checkpoint
-	LongTermShortTermNetwork(CSettings& settings,bool checkpoint);
+	LongTermShortTermNetwork(CSettings& settings, bool checkpoint);
 	//*********************
 	//Destructor
 	//*********************
@@ -168,13 +169,13 @@ private:
 	void initialize_network();
 	void count_weights_in_layers();
 	void count_weights_in_layers(bool running);
-	
+
 public:
 	//*********************
 	//Run The Network
 	//*********************
 	device_vector<weight_type> runNetwork(weight_type* in);
-	device_vector<weight_type> runNetwork(weight_type* in,int number_extra_weights);
+	device_vector<weight_type> runNetwork(weight_type* in, int number_extra_weights);
 	device_vector<weight_type> runNetwork(weight_type* in, run_type type);
 	device_vector<weight_type> runNetwork(weight_type* in, int number_of_extra_weights, bool &newSequence);
 	void InitializeLongShortTermMemoryForRun();
@@ -215,7 +216,7 @@ private:
 	void InitializeLongShortTermMemory();
 	//Unroll the network into a multilayer representation
 	void UnrollNetwork(int numLayers);
-	
+
 
 	//Train the network using Backpropogation through time
 	void LongShortTermMemoryTraining(weight_type** in, weight_type** out);
@@ -235,7 +236,7 @@ private:
 	//Combine these two function, they do the same thing
 	template <typename T>
 	void specialCopyToNodes(int start_output, int number_output, device_vector<T> &GPUWeightVector, device_vector<int> &toPosition, device_vector<int> &fromPosition, host_vector<T> &weights, host_vector<int> map);
-	
+
 	template <typename T>
 	void copyNodesToDevice(device_vector<T> &GPU_Vector, device_vector<int> &fromPosition, host_vector<T> &local_host_Vector, host_vector<int> host_from_vector);
 public:
@@ -254,10 +255,18 @@ public:
 
 	//Creates a new memory block with connections to all inputs
 	void InitialcreateMemoryBlock(int numberMemoryCells);
-	void createMemoryBlock(int numberMemoryCells,int layer_num);
+	void createMemoryBlock(int numberMemoryCells, int layer_num);
 
 	void addNeuron(int numberNeuronsToAdd);
 	void addCellToGPU(unsigned int start_new, unsigned int layer);
+	void transferCellToGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
+		unsigned int &number_new_added,
+		unsigned int &number_new_added_total,
+		unsigned int layer,
+		thrust::device_vector<weight_type>::iterator &weight_iterator,
+		thrust::device_vector<int>::iterator &int_iterator,
+		cell_type type,
+		Memory_Block::cell_type memory_type);
 	//Add a new weight between neurons
 	void addWeight(int numberWeightsToAdd);
 private:
@@ -267,7 +276,7 @@ private:
 	//Requires knowing which node it will be attaching to in order to avoid double connections
 	int decideNodeToAttachFrom(int attachTo);
 
-	
+
 
 	//Get a new weight
 	weight_type getNewWeight();
@@ -354,7 +363,7 @@ private:
 		os << network.GPUOutput_values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUOutput_values.size(); i++){
-			os << (weight_type)network.GPUOutput_values[i]  << endl;
+			os << (weight_type)network.GPUOutput_values[i] << endl;
 		}
 
 		os << endl;
@@ -364,7 +373,7 @@ private:
 		os << network.GPUPreviousOutput_Values.size() << endl;
 		//Output the current output values
 		for (unsigned int i = 0; i < network.GPUPreviousOutput_Values.size(); i++){
-			os <<  (weight_type)network.GPUPreviousOutput_Values[i] << endl;
+			os << (weight_type)network.GPUPreviousOutput_Values[i] << endl;
 		}
 
 		os << endl;
@@ -410,7 +419,7 @@ private:
 		for (unsigned int i = 0; i < network.GPUBias.size(); i++){
 			os << (weight_type)network.GPUBias[i] << " ";
 		}
-	
+
 
 
 		os << endl;

@@ -33,8 +33,12 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	this->mapFrom = host_vector<int>();
 	
 	setInitialWeights(start, numberInput, type);
-
-
+	this->weight_lists = vector<thrust::host_vector<weight_type>>(5);
+	this->weight_lists[cell_type::INPUT_CELL] = this->input_weights;
+	this->weight_lists[cell_type::OUTPUT_CELL] = this->output_weights;
+	this->weight_lists[cell_type::MEMORY_CELL] = this->memory_cell_weights;
+	this->weight_lists[cell_type::FORGET_CELL] = this->forget_weights;
+	this->weight_lists[cell_type::POTENTIAL_MEMORY_CELL] = this->potential_memory_cell_value;
 }
 
 Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigned int extra_at_start, memory_block_type type){
@@ -97,6 +101,21 @@ void Memory_Block::setInitialWeights(int start, int numberInput, memory_block_ty
 	}
 	else if (type == OUTPUT){
 		this->bias.push_back(this->getNewWeight());
+	}
+}
+
+weight_type Memory_Block::getBias(cell_type type){
+	switch (type){
+	case INPUT_CELL:
+		return this->bias[0];
+	case OUTPUT_CELL:
+		return this->bias[1];
+	case FORGET_CELL:
+		return this->bias[2];
+	case POTENTIAL_MEMORY_CELL:
+		return this->bias[3];
+	default:
+		return -1;
 	}
 }
 

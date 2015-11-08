@@ -38,6 +38,9 @@ public:
 	//Contains Bias Information For Each Node
 	host_vector<weight_type> bias;
 
+	//Contains pointers to the host_vectors
+	vector<host_vector<weight_type>> weight_lists;
+
 	//Number of cells in the memory_block
 	unsigned int number_memory_cells;
 
@@ -49,7 +52,8 @@ public:
 
 	enum memory_block_type { OUTPUT, LAYER };
 
-private:
+	enum cell_type{ INPUT_CELL, OUTPUT_CELL, FORGET_CELL, POTENTIAL_MEMORY_CELL, MEMORY_CELL, NONE_CELL };
+
 	memory_block_type type;
 
 public:
@@ -66,7 +70,7 @@ public:
 
 public:
 	void addNewConnection(int min, int max);
-
+	weight_type getBias(cell_type type);
 	memory_block_type getTypeOfMemoryBlock();
 
 private:
@@ -92,13 +96,13 @@ private:
 				os << block.forget_weights[i] << " ";
 			}
 			os << endl;
-		} 
-		
+		}
+
 		for (unsigned int i = 0; i < block.potential_memory_cell_value.size(); i++){
 			os << block.potential_memory_cell_value[i] << " ";
 		}
-		
-		
+
+
 		if (block.type == Memory_Block::LAYER){
 			os << endl;
 			os << block.memory_cell_weights.size() << endl;
@@ -116,7 +120,7 @@ private:
 
 		os << endl;
 
-		os << block.bias.size()<<endl;
+		os << block.bias.size() << endl;
 		std::copy(block.bias.begin(), block.bias.end(), std::ostream_iterator<weight_type>(os, " "));
 
 		os << endl;
@@ -126,7 +130,7 @@ private:
 	friend istream& operator>>(istream& is, Memory_Block& block){
 		int count;
 		double value;
-		
+
 		block.input_weights = host_vector<weight_type>();
 		block.output_weights = host_vector<weight_type>();
 		block.forget_weights = host_vector<weight_type>();
@@ -182,7 +186,7 @@ private:
 			block.mapFrom.push_back(map);
 		}
 
-		
+
 		is >> count;
 		for (unsigned int i = 0; i < count; i++){
 			is >> std::skipws >> value;
