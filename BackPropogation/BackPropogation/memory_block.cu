@@ -114,6 +114,8 @@ weight_type Memory_Block::getBias(cell_type type){
 		return this->bias[2];
 	case POTENTIAL_MEMORY_CELL:
 		return this->bias[3];
+	case MEMORY_CELL:
+		return 0;
 	default:
 		return -1;
 	}

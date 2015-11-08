@@ -259,7 +259,16 @@ public:
 
 	void addNeuron(int numberNeuronsToAdd);
 	void addCellToGPU(unsigned int start_new, unsigned int layer);
-	void transferCellToGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
+	void addNonMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
+		unsigned int &number_new_added,
+		unsigned int &number_new_added_total,
+		unsigned int layer,
+		thrust::device_vector<weight_type>::iterator &weight_iterator,
+		thrust::device_vector<int>::iterator &int_iterator,
+		cell_type type,
+		Memory_Block::cell_type memory_type);
+
+	void addMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
 		unsigned int &number_new_added,
 		unsigned int &number_new_added_total,
 		unsigned int layer,

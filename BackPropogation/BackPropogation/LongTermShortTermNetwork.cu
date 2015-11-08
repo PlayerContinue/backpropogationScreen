@@ -393,6 +393,7 @@ void LongTermShortTermNetwork::loadUnrolledToDevice(int type_of_row, unsigned in
 }
 
 
+
 void LongTermShortTermNetwork::loadLayerToDevice(unsigned int j){
 
 	
