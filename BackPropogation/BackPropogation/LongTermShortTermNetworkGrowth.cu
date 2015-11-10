@@ -158,7 +158,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 			this->mBlocksLayers[layer][j].mapFrom.begin(),
 			this->mBlocksLayers[layer][j].mapFrom.end());
 
-		int_iterator = this->GPUMapFrom.begin() + start_of_weights_to_insert_on + this->mBlocksLayers[layer][j].number_memory_cells;
+		int_iterator = this->GPUMapFrom.begin() + start_of_weights_to_insert_on + this->mBlocksLayers[layer][j].weight_lists[memory_type].size();
 
 
 		//Temporary measure, will be altered to actual value later
@@ -184,7 +184,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].number_memory_cells;
 		this->number_weights_by_type[layer][type] += size_to_add;
 
-		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start,start_of_nodes_to_insert_on-number_new_added, number_new_added, size_to_add);
+		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start,start_of_nodes_to_insert_on, number_new_added, size_to_add);
 
 		this->number_nodes_by_type[layer][type] += 1;
 		this->number_nodes_in_layer[layer] += 1;
@@ -246,7 +246,7 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 	this->numberOfNodes += 1;
 
 	//Increment From to include the new values
-this->addPositionOfWeightChange(start_of_weights_to_insert_on, start_weights,start_of_nodes_to_insert_on-number_new_added, number_new_added, size_to_add);
+this->addPositionOfWeightChange(start_of_weights_to_insert_on, start_weights,start_of_nodes_to_insert_on, number_new_added, size_to_add);
 	number_new_added_total += number_new_added;//Note n new nodes have been added
 	number_new_added = 0;
 
@@ -303,16 +303,16 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		start_of_nodes_to_insert_on += this->number_nodes_by_type[layer][MEMORY_CELL];
 
 
-		
+		testing::outputToFile<int>(this->GPUMapFrom, "tests", "tests/test3.txt");
 
 		//Add the memory cell
 		addMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
 			number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, MEMORY_CELL, Memory_Block::cell_type::MEMORY_CELL);
 		
-
+		testing::outputToFile<int>(this->GPUMapFrom, "tests", "tests/test3.txt");
 		//Replace the information pointing to the Memory Cell values
 		//Works due to the start_of_nodes_to_insert_on-add_length being the last original memory_cell value. Thus the new memory cell is just x more than that one
-		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), (_1 * -1) + (start_of_nodes_to_insert_on - add_length), _1 < 0);
+		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), (_1 * -1) + (start_of_nodes_to_insert_on), _1 < 0);
 
 		//Add a new weight to the connect the output of the new nodes to the input of the next layer
 		//Get the start of the next layer

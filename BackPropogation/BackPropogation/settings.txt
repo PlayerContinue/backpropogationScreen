@@ -16,8 +16,8 @@ d_lock_node_level .3e-70
 d_alpha 0
 d_beta .2
 b_trainingFromFile 0
-s_inputTrainingSet datasets/input5.txt
-s_outputTrainingFile datasets/binout5.txt
+s_inputTrainingSet datasets/input6.txt
+s_outputTrainingFile datasets/binout6.txt
 b_testingFromFile 0
 s_inputTestSet datasets/input3.txt
 s_outputTestSet datasets/binout3.txt
