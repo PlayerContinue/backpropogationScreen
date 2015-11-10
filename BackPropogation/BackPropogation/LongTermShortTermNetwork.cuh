@@ -278,6 +278,7 @@ public:
 		Memory_Block::cell_type memory_type);
 	//Add a new weight between neurons
 	void addWeight(int numberWeightsToAdd);
+	void addPositionOfWeightChange(int start,int start_weights, int extension, int number_new_weights);
 private:
 	//Decide which node the new weight should be attached to 
 	int decideNodeToAttachTo();

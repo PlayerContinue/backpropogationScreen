@@ -69,12 +69,14 @@ public:
 	//**************************
 
 public:
+	void addNewConnection(int);
 	void addNewConnection(int min, int max);
 	weight_type getBias(cell_type type);
 	memory_block_type getTypeOfMemoryBlock();
 
 private:
 	weight_type getNewWeight();
+	void createStorage();
 	void setInitialWeights(int start, int end, memory_block_type type);
 	//**************************
 	//Override
@@ -178,6 +180,8 @@ private:
 
 			}
 		}
+
+		block.createStorage();
 
 		int map;
 		is >> count;

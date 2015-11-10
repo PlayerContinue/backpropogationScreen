@@ -33,12 +33,7 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, memory_
 	this->mapFrom = host_vector<int>();
 	
 	setInitialWeights(start, numberInput, type);
-	this->weight_lists = vector<thrust::host_vector<weight_type>>(5);
-	this->weight_lists[cell_type::INPUT_CELL] = this->input_weights;
-	this->weight_lists[cell_type::OUTPUT_CELL] = this->output_weights;
-	this->weight_lists[cell_type::MEMORY_CELL] = this->memory_cell_weights;
-	this->weight_lists[cell_type::FORGET_CELL] = this->forget_weights;
-	this->weight_lists[cell_type::POTENTIAL_MEMORY_CELL] = this->potential_memory_cell_value;
+	createStorage();
 }
 
 Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigned int extra_at_start, memory_block_type type){
@@ -65,14 +60,22 @@ Memory_Block::Memory_Block(unsigned int start, unsigned int numberInput, unsigne
 	this->mapFrom = host_vector<int>();
 	//setInitialWeights(0, extra_at_start,type);
 	setInitialWeights(start, numberInput, type);
+	
+	createStorage();
+}
 
+void Memory_Block::createStorage(){
+	this->weight_lists = vector<thrust::host_vector<weight_type>>(5);
+	this->weight_lists[cell_type::INPUT_CELL] = this->input_weights;
+	this->weight_lists[cell_type::OUTPUT_CELL] = this->output_weights;
+	this->weight_lists[cell_type::MEMORY_CELL] = this->memory_cell_weights;
+	this->weight_lists[cell_type::FORGET_CELL] = this->forget_weights;
+	this->weight_lists[cell_type::POTENTIAL_MEMORY_CELL] = this->potential_memory_cell_value;
 }
 
 void Memory_Block::setInitialWeights(int start, int numberInput, memory_block_type type){
 	//Add weights which connect from the input nodes to the output nodes
 	for (int i = 0; i < numberInput; i++){
-
-
 		if (type == LAYER){//Only add these if the current node is in a layer which is not an output
 			this->input_weights.push_back(this->getNewWeight());
 			this->output_weights.push_back(this->getNewWeight());
@@ -121,6 +124,28 @@ weight_type Memory_Block::getBias(cell_type type){
 	}
 }
 
+
+
+void Memory_Block::addNewConnection(int pos){
+	
+	this->mapFrom.push_back(pos);
+	
+	this->potential_memory_cell_value.push_back(this->getNewWeight());
+	this->weight_lists[POTENTIAL_MEMORY_CELL].push_back(this->potential_memory_cell_value[this->potential_memory_cell_value.size() - 1]);
+	if (this->type != OUTPUT){
+		this->input_weights.push_back(this->getNewWeight());
+		this->output_weights.push_back(this->getNewWeight());
+		this->forget_weights.push_back(this->getNewWeight());
+		this->weight_lists[INPUT_CELL].push_back(this->input_weights[this->input_weights.size() - 1]);
+		this->weight_lists[OUTPUT_CELL].push_back(this->output_weights[this->output_weights.size() - 1]);
+		this->weight_lists[FORGET_CELL].push_back(this->forget_weights[this->forget_weights.size() - 1]);
+		this->number_weights += 4;
+	}
+	else{
+		this->number_weights += 1;
+	}
+	
+}
 void Memory_Block::addNewConnection(int min, int max){
 	bool mappedFrom = false;
 	for (int i = min; i < max; i++){
@@ -132,12 +157,7 @@ void Memory_Block::addNewConnection(int min, int max){
 		}
 
 		if (!mappedFrom){
-			this->mapFrom.push_back(i);
-			this->input_weights.push_back(this->getNewWeight());
-			this->output_weights.push_back(this->getNewWeight());
-			this->potential_memory_cell_value.push_back(this->getNewWeight());
-			this->forget_weights.push_back(this->getNewWeight());
-			this->number_weights+=4;
+			addNewConnection(i);
 			break;
 		}
 	}
