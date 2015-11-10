@@ -163,8 +163,8 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 
 		//Temporary measure, will be altered to actual value later
 		this->GPUMapFrom.insert(int_iterator,
-			thrust::make_constant_iterator((int)-j),
-			thrust::make_constant_iterator((int)-j) + this->mBlocksLayers[layer][j].number_memory_cells);
+			thrust::make_constant_iterator((int)-(j-start_new)-1),
+			thrust::make_constant_iterator((int)-(j-start_new)-1) + this->mBlocksLayers[layer][j].number_memory_cells);
 
 		//Insert where the values should go to
 		int_iterator = this->GPUMapTo.begin() + start_of_weights_to_insert_on;
@@ -340,7 +340,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 				
 				this->GPUMapFrom.insert(int_iterator, 
 					thrust::make_transform_iterator((*cell_block)[i].mapFrom.end() - (add_length),
-					_1 + this->numberOfNodes + this->numberNonWeights), 
+					_1 + this->numberOfNodes + this->numberNonWeights),
 					thrust::make_transform_iterator((*cell_block)[i].mapFrom.end(),
 					_1 + this->numberOfNodes + this->numberNonWeights));
 				
