@@ -258,6 +258,7 @@ public:
 	void createMemoryBlock(int numberMemoryCells, int layer_num);
 
 	void addNeuron(int numberNeuronsToAdd);
+private:
 	void addCellToGPU(unsigned int start_new, unsigned int layer);
 	void addNonMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
 		unsigned int &number_new_added,
@@ -265,6 +266,8 @@ public:
 		unsigned int layer,
 		thrust::device_vector<weight_type>::iterator &weight_iterator,
 		thrust::device_vector<int>::iterator &int_iterator,
+		thrust::device_vector<int> &key,
+		thrust::device_vector<int> &value,
 		cell_type type,
 		Memory_Block::cell_type memory_type);
 
@@ -274,11 +277,22 @@ public:
 		unsigned int layer,
 		thrust::device_vector<weight_type>::iterator &weight_iterator,
 		thrust::device_vector<int>::iterator &int_iterator,
+		thrust::device_vector<int> &key,
+		thrust::device_vector<int> &value,
 		cell_type type,
 		Memory_Block::cell_type memory_type);
+	template <typename T>
+	void addNewSumCount(int start, int end, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert);
+	template <typename T>
+	void addNewSumCount(int start, int end,int ,int, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert);
+	void addConnectionToNewCells(int layer, int start_of_output_layer_weights, int add_length, int start_new, thrust::device_vector<weight_type>::iterator &weight_iterator,
+		thrust::device_vector<int>::iterator &int_iterator, thrust::device_vector<int>::iterator &to_iterator,
+		thrust::device_vector<int> &key,
+		thrust::device_vector<int> &value,
+		vector<Memory_Block>* cell_block);
 	//Add a new weight between neurons
 	void addWeight(int numberWeightsToAdd);
-	void addPositionOfWeightChange(int start,int start_weights,int start_nodes, int extension, int number_new_weights);
+	void addPositionOfWeightChange(int start, int start_weights, int start_nodes, int extension, int number_new_weights);
 private:
 	//Decide which node the new weight should be attached to 
 	int decideNodeToAttachTo();

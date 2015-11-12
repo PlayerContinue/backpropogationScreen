@@ -163,6 +163,13 @@ void Memory_Block::addNewConnection(int min, int max){
 	}
 }
 
+void Memory_Block::incrementFromPosition(int add){
+	this->incrementFromPosition(add, 0);
+}
+void Memory_Block::incrementFromPosition(int add, int add_from){
+	thrust::transform(this->mapFrom.begin() + add_from, this->mapFrom.end(), this->mapFrom.begin() + add_from, _1 + add);
+}
+
 weight_type Memory_Block::getNewWeight(){
 	return RandomClamped();
 }

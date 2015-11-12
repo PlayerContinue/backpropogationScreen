@@ -18,6 +18,7 @@
 #define weight_type double
 #endif
 using namespace thrust;
+using namespace thrust::placeholders;
 class Memory_Block{
 public:
 	//Contains the weights and input output of the input weights
@@ -71,6 +72,8 @@ public:
 public:
 	void addNewConnection(int);
 	void addNewConnection(int min, int max);
+	void incrementFromPosition(int add);
+	void incrementFromPosition(int add, int add_from);
 	weight_type getBias(cell_type type);
 	memory_block_type getTypeOfMemoryBlock();
 
