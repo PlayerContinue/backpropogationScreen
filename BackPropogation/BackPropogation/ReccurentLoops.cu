@@ -383,6 +383,9 @@ void ReccurentLoops::testTraining(){
 
 				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, first_run);
 				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, first_run);
+				if (length[1] == -1){//Sequence may break early
+					break;
+				}
 				first_run = false;
 
 				for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
