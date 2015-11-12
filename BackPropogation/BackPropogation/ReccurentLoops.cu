@@ -327,14 +327,17 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence,int &count_sequences,in
 		//Check to see if the change is great enough
 		growth_check = 0;
 		for (int mean_pos = 0; mean_pos < this->mean_square_error_results_new.size(); mean_pos++){
-			if (std::abs(this->mean_square_error_results_old[mean_pos] - this->mean_square_error_results_new[mean_pos]) < this->settings.d_fluctuate_square_mean){
+			if (this->mean_square_error_results_old[mean_pos] < this->mean_square_error_results_new[mean_pos] - this->settings.d_fluctuate_square_mean){
 				growth_check++;
 			}
 		}
 
-		if (this->settings.b_allow_growth && std::abs(this->mean_square_error_results_old[0] - this->mean_square_error_results_new[0]) < this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
+		if (this->settings.b_allow_growth && this->mean_square_error_results_old[0] < this->mean_square_error_results_new[0] - this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
 
 			this->mainNetwork->addNeuron(3);
+			//Set a new old mean square error so it will attempt to learn before gaining a new node
+			this->getMeanSquareError();
+			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
 		}
 		int temp[1];
 		this->mainNetwork->getInfoAboutNetwork(temp);
