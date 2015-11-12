@@ -62,6 +62,10 @@ using namespace thrust::placeholders;
 #define NUMBER_MEM_CELL_WEIGHTS 7
 #endif
 
+#ifndef INFO_LENGTH
+#define INFO_LENGTH 1
+#endif
+
 //****************************************************************************************************
 //
 //Programmer: David Greenberg
@@ -171,6 +175,11 @@ private:
 	void count_weights_in_layers(bool running);
 
 public:
+	//**************************
+	//Information About Network
+	//**************************
+
+	virtual void getInfoAboutNetwork(int* info);
 	//*********************
 	//Run The Network
 	//*********************
@@ -358,7 +367,7 @@ private:
 
 		os << network.mBlocksLayers.size() << endl;//Get number of layers
 		for (unsigned int j = 0; j < network.mBlocksLayers.size(); j++){
-			os << network.mBlocksLayers[j].size() << endl;
+			os << network.mBlocksLayers[j].size() << endl << endl;
 			for (unsigned int i = 0; i < network.mBlocksLayers[j].size(); i++){
 				os << network.mBlocksLayers[j][i] << endl;
 			}

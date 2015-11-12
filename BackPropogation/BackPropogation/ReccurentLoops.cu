@@ -334,12 +334,12 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence,int &count_sequences,in
 
 		if (this->settings.b_allow_growth && std::abs(this->mean_square_error_results_old[0] - this->mean_square_error_results_new[0]) < this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
 
-			this->mainNetwork->addNeuron(1);
-			this->mainNetwork->addNeuron(1);
-			this->mainNetwork->addNeuron(1);
+			this->mainNetwork->addNeuron(3);
 		}
-
+		int temp[1];
+		this->mainNetwork->getInfoAboutNetwork(temp);
 		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+		testing::outputArrayToFile<int>(temp,1, "tests/meansquare.txt");
 		this->mainNetwork->ResetSequence();
 		count_sequences = 0;
 	}
@@ -364,12 +364,12 @@ void ReccurentLoops::testTraining(){
 		this->checkpoint.b_still_running = true;
 		this->createCheckpoint("Initial Checkpoint");
 		//Get the mean Square error
-		this->mainNetwork->addNeuron(1);
-		this->createCheckpoint("Add Checkpoint");
-		this->mainNetwork->cleanNetwork();
-		exit(0);
+		//this->mainNetwork->addNeuron(1);
+		//this->createCheckpoint("Add Checkpoint");
+		//this->mainNetwork->cleanNetwork();
+		//exit(0);
 		
-		this->mainNetwork->ResetSequence();
+		
 
 		cout << "Training Start" << endl;
 		
@@ -377,6 +377,7 @@ void ReccurentLoops::testTraining(){
 			reset_file_for_loop();
 			this->getMeanSquareError();
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			this->mainNetwork->ResetSequence();
 			length[1] = 0;
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
 
@@ -385,6 +386,7 @@ void ReccurentLoops::testTraining(){
 				first_run = false;
 
 				for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
+					
 					for (; k < this->settings.i_backprop_unrolled; k++){
 						if (!sequence_end && i < length[0] && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
 							trainingInput[k] = this->input[i];
@@ -408,9 +410,11 @@ void ReccurentLoops::testTraining(){
 							break;
 						}
 					}
+					
 					//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
 					//Allows for multilength sequences
 					this->mainNetwork->seti_backprop_unrolled(k);
+					
 					if (k > 0){
 						length_of_sequence += k;
 						//Run the sequence to find the results

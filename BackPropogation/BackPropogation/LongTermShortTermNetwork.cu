@@ -45,8 +45,12 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->total_number_of_unrolled = this->settings.i_backprop_unrolled;
 }
 
-
-
+//*********************
+//Info About Network
+//*********************
+void LongTermShortTermNetwork::getInfoAboutNetwork(int* info){
+	info[NetworkBase::info_pos::NUMBER_NETWORK_CELLS] = this->mBlocksLayers[0].size();
+}
 
 
 //*********************

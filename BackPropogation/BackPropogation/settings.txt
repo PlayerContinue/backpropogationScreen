@@ -16,11 +16,11 @@ d_lock_node_level .3e-70
 d_alpha 0
 d_beta .2
 b_trainingFromFile 1
-s_inputTrainingSet datasets/input5.txt
-s_outputTrainingFile datasets/binout5.txt
+s_inputTrainingSet datasets/oneinput100000.txt
+s_outputTrainingFile datasets/twooutput100000.txt
 b_testingFromFile 0
-s_inputTestSet datasets/input4.txt
-s_outputTestSet datasets/binout4.txt
+s_inputTestSet datasets/oneinput100000.txt
+s_outputTestSet datasets/twooutput100000.txt
 i_number_of_training  10000
 i_trainingSetType char
 i_outputTrainingSetType double
@@ -29,7 +29,7 @@ b_loadFromCheckpoint 0
 s_checkpoint_file recurrent_networks/recurrentNetwork2216.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
-i_numberTimesThroughFile 2
+i_numberTimesThroughFile 1
 Type:LongTermShortTerm_items
 i_backprop_unrolled 7
 i_number_in_sequence 5

@@ -131,7 +131,7 @@ public:
 
 private:
 	void LongShortTermMemoryTraining(device_vector<weight_type> in, weight_type* out);
-
+	
 	//Set up for HessianFreeoptimization
 	void InitializeHessianFreeOptimizationTraining();
 	void HessianFreeOptimizationTraining(weight_type* in, weight_type* out);
@@ -148,7 +148,9 @@ private:
 		thrust::device_vector<int> &GPUMapFrom, thrust::device_vector<weight_type> &GPUWeights, thrust::device_vector<weight_type> &GPUOutput_values, thrust::device_vector<weight_type> &GPUPreviousOutput_Values,
 		thrust::device_vector<weight_type> &deltas);
 public:
-	
+	void getInfoAboutNetwork(int* info){
+
+	}
 	//*********************
 	//Visualization
 	//*********************

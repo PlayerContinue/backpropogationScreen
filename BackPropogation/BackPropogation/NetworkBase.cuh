@@ -15,6 +15,11 @@ using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
 #ifndef weight_type
 #define weight_type double
+
+#endif
+
+#ifndef INFO_LENGTH
+#define INFO_LENGTH 1
 #endif
 //****************************************************************************************************
 //
@@ -33,6 +38,9 @@ class NetworkBase {
 public:
 	CSettings settings;
 	enum run_type{ WITH_MEMORY_CELLS, WITHOUT_MEMORY_CELLS};
+	enum info_pos {NUMBER_NETWORK_CELLS = 0, 
+	NUMBER_NODES = 0
+	};
 	//*********************
 	//Run The Network
 	//*********************
@@ -87,6 +95,8 @@ public:
 	//Primarily used when finished training or running the network
 	virtual void emptyGPUMemory() = 0;
 
+	//Retrieve Information about the network
+	virtual void getInfoAboutNetwork(int* info) = 0;
 	//***************************
 	//Get And Set
 	//***************************
