@@ -179,7 +179,20 @@ void LongTermShortTermNetwork::CopyToHost(){
 	thrust::copy(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), this->output_bias.begin());
 	//Copy the secondary output
 	thrust::copy(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), this->bias.begin());
-	int start = 0;//Number counting position
+	int start = 0;
+	int end = this->numberOfWeightsInLayers[0];
+	//Change mapFrom to all be normalized
+	for (int i = 1; i < this->mBlocksLayers.size(); i++){
+		start += this->numberOfWeightsInLayers[i - 1];
+		end += this->numberOfWeightsInLayers[i];
+		thrust::transform_if(this->GPUMapFrom.begin() + start, 
+			this->GPUMapFrom.begin() + end, this->GPUMapFrom.begin() + start, 
+			_1 - (i * (this->numberNonWeights + this->numberOfNodes)), _1 > this->numberNonWeights + this->numberOfNodes);
+	}
+
+	//this->GPUMapFrom.erase(thrust::remove_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(),))
+
+	start = 0;//Number counting position
 	int start_of_layer = this->numberOfWeightsInLayers[0];
 	int biasCount = 0;//Keeps track of the position in the bias list
 	for (unsigned int j = 0; j < this->mBlocksLayers.size(); j++){
@@ -191,6 +204,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].input_weights);
+				
 				this->mBlocksLayers[j][i].bias[0] = this->GPUBias[biasCount];
 				biasCount++;
 				start += this->mBlocksLayers[j][i].input_weights.size() + this->mBlocksLayers[j][i].number_memory_cells;
@@ -220,6 +234,7 @@ void LongTermShortTermNetwork::CopyToHost(){
 		//Copy back to potential memory cell
 		for (unsigned int i = 0; i < this->mBlocksLayers[j].size(); i++){
 			copyValuesToHost<weight_type>(start, this->GPUWeights, this->mBlocksLayers[j][i].potential_memory_cell_value);
+			copyValuesToHost<int>(start, this->GPUMapFrom, this->mBlocksLayers[j][i].mapFrom);
 			if (this->mBlocksLayers[j][0].getTypeOfMemoryBlock() == Memory_Block::LAYER){
 				this->mBlocksLayers[j][i].bias[3] = this->GPUBias[biasCount];
 				start += this->mBlocksLayers[j][i].number_memory_cells;

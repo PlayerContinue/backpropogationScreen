@@ -134,6 +134,10 @@ private:
 	//Retrieve the training data from the file passed in by the settings
 	bool load_training_data_from_file();
 	
+	//function to run at the end of sequence, seperated for cleaner looking code
+	void sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check);
+	//Resets the file and other information for a new loop
+	void reset_file_for_loop();
 	//*********************
 	//Clean the Network
 	//*********************

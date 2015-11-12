@@ -104,6 +104,9 @@ public:
 
 	bool b_allow_growth = false;
 
+	//Number of times to go through the training file before ending
+	int i_numberTimesThroughFile;
+
 	CSettings();
 
 
@@ -241,6 +244,10 @@ public:
 
 		is >> next;
 		is >> settings.s_loadNetworkFile;
+
+		//Number of times to go through training file
+		is >> next;
+		is >> settings.i_numberTimesThroughFile;
 
 		//LongTermShortTerm_items
 		is >> next; //States data is for special kind of network

@@ -452,8 +452,6 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 	
 		int_iterator = thrust::remove_if(CountOrder_Inserts.begin(), CountOrder_Inserts.end(), _1 < this->numberNonWeights);
 		CountOrder_Inserts.erase(int_iterator, CountOrder_Inserts.end());
-		testing::outputToFile(CountOrder_Inserts, "Count", "tests/test3.txt");
-		testing::outputToFile(SumOrder_Inserts, "Count", "tests/test3.txt");
 		
 		//Sort the keys
 		thrust::sort_by_key(CountOrder_Inserts.begin(), CountOrder_Inserts.end(), SumOrder_Inserts.begin());
