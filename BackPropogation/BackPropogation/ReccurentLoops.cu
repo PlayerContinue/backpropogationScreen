@@ -366,6 +366,9 @@ void ReccurentLoops::testTraining(){
 		//Get the mean Square error
 		this->mainNetwork->addNeuron(1);
 		this->createCheckpoint("Add Checkpoint");
+		this->mainNetwork->cleanNetwork();
+		exit(0);
+		
 		this->mainNetwork->ResetSequence();
 
 		cout << "Training Start" << endl;
