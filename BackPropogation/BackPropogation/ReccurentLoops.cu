@@ -366,11 +366,15 @@ void ReccurentLoops::testTraining(){
 		}
 		this->checkpoint.b_still_running = true;
 		this->createCheckpoint("Initial Checkpoint");
-		//Get the mean Square error
-		//this->mainNetwork->addNeuron(1);
-		//this->createCheckpoint("Add Checkpoint");
-		//this->mainNetwork->cleanNetwork();
-		//exit(0);
+		if (this->settings.b_allow_growth){
+			//Get the mean Square error
+			this->mainNetwork->addNeuron(3);
+			this->createCheckpoint("Add Checkpoint_1");
+			this->mainNetwork->addNeuron(3);
+			this->createCheckpoint("Add Checkpoint_2");
+			this->mainNetwork->cleanNetwork();
+			exit(0);
+		}
 		
 		
 

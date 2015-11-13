@@ -228,7 +228,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 
 		this->number_nodes_by_type[layer][type] += 1;
 		this->number_nodes_in_layer[layer] += 1;
-		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
+		//this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 		this->numberOfNodes += 1;
 	}
 
@@ -288,7 +288,7 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 		this->number_weights_by_type[layer][type] += size_to_add;
 		this->number_nodes_by_type[layer][type] += 1;
 		this->number_nodes_in_layer[layer] += 1;
-		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
+		//this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 		this->numberOfNodes += 1;
 
 		//Increment From to include the new values
@@ -349,7 +349,7 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 			to_iterator += this->mBlocksLayers[layer].size() - start_new;
 
 			this->numberOfWeightsInLayers[layer + 1]+= add_length;
-			this->number_weights_by_type[layer][block_type]+=add_length;
+			this->number_weights_by_type[layer+1][block_type]+=add_length;
 		}
 	}
 }

@@ -29,7 +29,7 @@ b_loadFromCheckpoint 0
 s_checkpoint_file recurrent_networks/recurrentNetwork2216.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/word_network_44.txt
-i_numberTimesThroughFile 20
+i_numberTimesThroughFile 1
 Type:LongTermShortTerm_items
 i_backprop_unrolled 7
 i_number_in_sequence 5
