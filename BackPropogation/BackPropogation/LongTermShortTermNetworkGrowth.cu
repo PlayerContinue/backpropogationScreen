@@ -222,7 +222,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		start_of_nodes_to_insert_on += 1;
 		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].number_memory_cells;
 		this->number_weights_by_type[layer][type] += size_to_add;
-
+		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start,start_of_nodes_to_insert_on, 1, size_to_add);
 		
 
@@ -288,9 +288,8 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 		this->number_weights_by_type[layer][type] += size_to_add;
 		this->number_nodes_by_type[layer][type] += 1;
 		this->number_nodes_in_layer[layer] += 1;
-		//this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
+		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 		this->numberOfNodes += 1;
-
 		//Increment From to include the new values
 		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start_weights, start_of_nodes_to_insert_on, 1, size_to_add);
 		number_new_added_total += number_new_added;//Note n new nodes have been added
@@ -347,7 +346,6 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 			weight_iterator += this->mBlocksLayers[layer].size() - start_new;
 			int_iterator += this->mBlocksLayers[layer].size() - start_new;
 			to_iterator += this->mBlocksLayers[layer].size() - start_new;
-
 			this->numberOfWeightsInLayers[layer + 1]+= add_length;
 			this->number_weights_by_type[layer+1][block_type]+=add_length;
 		}

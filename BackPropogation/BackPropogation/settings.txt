@@ -33,7 +33,7 @@ i_numberTimesThroughFile 20
 Type:LongTermShortTerm_items
 i_backprop_unrolled 7
 i_number_in_sequence 5
-i_number_start_nodes 12
+i_number_start_nodes 3
 i_number_new_weights 0
 i_number_of_testing_items 100
-b_allow_growth 0
+b_allow_growth 1
