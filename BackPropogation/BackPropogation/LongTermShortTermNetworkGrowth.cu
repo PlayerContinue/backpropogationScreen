@@ -363,6 +363,7 @@ T findTotalNumberWeights(thrust::device_vector<T> device){
 
 void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int layer){
 	if (layer < this->mBlocksLayers.size()){
+		srand(time(NULL));
 		thrust::device_vector<weight_type>::iterator weight_iterator;
 		thrust::device_vector<int>::iterator int_iterator;
 		thrust::device_vector<int>::iterator to_iterator;
@@ -480,14 +481,15 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 
 
 		this->GPUPreviousBias.resize(this->GPUBias.size());
-		this->GPUPreviousTemp.resize(this->GPUPreviousTemp.size() + number_new_added_total);
+		
 		this->GPUPreviousOutput_Values.resize(this->GPUPreviousOutput_Values.size() + number_new_added_total);
+		
 		this->GPUPreviousWeights.resize(this->GPUWeights.size());
 		this->device_deltas.resize(this->device_deltas.size() + (number_new_added_total*this->total_number_of_unrolled));
 		//Add the new outputs to each row
 		this->GPUOutput_values.resize(this->GPUOutput_values.size() + (number_new_added_total*this->total_number_of_unrolled));
 
-		
+		this->GPUPreviousTemp.resize(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
 
 		//Clean the extra vectors
 		clear_vector::free(CountOrder_Inserts);

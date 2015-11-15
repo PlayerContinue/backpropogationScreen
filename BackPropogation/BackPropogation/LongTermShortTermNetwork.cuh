@@ -293,7 +293,7 @@ private:
 	template <typename T>
 	void addNewSumCount(int start, int end, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert);
 	template <typename T>
-	void addNewSumCount(int start, int end,int ,int, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert);
+	void addNewSumCount(int start, int end, int, int, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert);
 	void addConnectionToNewCells(int layer, int start_of_output_layer_weights, int add_length, int start_new, thrust::device_vector<weight_type>::iterator &weight_iterator,
 		thrust::device_vector<int>::iterator &int_iterator, thrust::device_vector<int>::iterator &to_iterator,
 		thrust::device_vector<int> &key,
@@ -352,19 +352,52 @@ private:
 	//***************************
 	//Overload Functions
 	//***************************
+private:
+
+	//Output multilayer vectors
+	template <typename T>
+	static ostream& outputstream(ostream &os, vector<vector<T>> list, int size){
+		os << list.size() << endl;
+		for (int i = 0; i < size; i++){
+			os << list[i].size() << endl;
+			std::copy(list[i].begin(), list[i].end(), std::ostream_iterator<T>(os, " "));
+			os << endl;
+		}
+		os << endl;
+		return os;
+	}
+
+	template <typename T>
+	static ostream& outputstream(ostream &os, vector<T> list, int size){
+		os << list.size() << endl;
+		std::copy(list.begin(), list.end(), std::ostream_iterator<T>(os, " "));
+		
+		os << endl;
+		return os;
+	}
+
+public:
 
 	friend ostream& operator<<(ostream &os, const LongTermShortTermNetwork &network){
 		cout.precision(20);
 		os << network.numberOfNodes << endl;
 		os << network.numberNonWeights << endl;
-
-		os << "number_weights_in_layers" << endl;
-		os << network.numberOfWeightsInLayers.size() << endl;
-		for (int i = 0; i < network.numberOfWeightsInLayers.size(); i++){
-			os << network.numberOfWeightsInLayers[i] << endl;
-		}
 		os << endl;
 
+		os << "number_weights_in_layers" << endl;
+		network.outputstream(os, network.numberOfWeightsInLayers, network.mBlocksLayers.size());
+
+		os << "number_weights_by_type" << endl;
+		network.outputstream(os, network.number_weights_by_type, network.mBlocksLayers.size());
+
+		//Output the number of nodes in layer
+		os << "number_nodes_in_layers" << endl;
+		network.outputstream(os, network.number_nodes_in_layer, network.mBlocksLayers.size() + 1);
+
+		os << "number_nodes_by_type" << endl;
+		network.outputstream(os, network.number_nodes_by_type, network.mBlocksLayers.size());
+
+		//Output the blocks
 		os << network.mBlocksLayers.size() << endl;//Get number of layers
 		for (unsigned int j = 0; j < network.mBlocksLayers.size(); j++){
 			os << network.mBlocksLayers[j].size() << endl << endl;
@@ -472,6 +505,146 @@ private:
 
 
 		return os;
+	}
+
+	//Output multilayer vectors
+	template <typename T>
+	static istream& loadstream(istream &is, vector<vector<T>> &list){
+		int current_length;
+		is >> current_length;
+		T value;
+		list.resize(current_length);
+		for (int i = 0; i < list.size(); i++){
+			is >> current_length ;
+			list[i].resize(current_length);
+			for (int j = 0; j < current_length; j++){
+				is >> value;
+				list[i][j]=value;
+			}
+		}
+		return is;
+	}
+
+	template <typename T>
+	static istream& loadstream(istream &is, vector<T> &list){
+		int current_length;
+		T value;
+		is >> current_length;
+		list.resize(current_length);
+		for (int i = 0; i < list.size(); i++){
+			is >> value;
+			list[i] = value;
+		}
+		return is;
+	}
+
+	template <typename T>
+	static istream& loadstream(istream &is, thrust::device_vector<T> &list){
+		int current_length;
+		T value;
+		is >> current_length;
+		list.resize(current_length);
+		for (int i = 0; i < list.size(); i++){
+			is >> value;
+			list[i] = value;
+		}
+		return is;
+	}
+
+	//Test at some point
+	friend istream& operator>>(istream &is, LongTermShortTermNetwork &network){
+		
+		string name;
+		int count;
+		int count2;
+		is >> network.numberOfNodes;
+		is >> network.numberNonWeights;
+		
+		//Load number of nodes by type
+		is >> name;
+		network.numberOfWeightsInLayers = vector<unsigned int>();
+		network.loadstream(is, network.numberOfWeightsInLayers);
+
+		is >> name;
+		network.number_weights_by_type = vector<vector<int>>();
+		network.loadstream(is, network.number_weights_by_type);
+
+		//Load Number of nodes in layers and by type
+		is >> name;
+		network.number_nodes_in_layer = vector<int>();
+		network.loadstream(is, network.number_nodes_in_layer);
+
+		is >> name;
+		network.number_nodes_by_type = vector<vector<int>>();
+		network.loadstream(is, network.number_nodes_by_type);
+
+		is >> count;//Get the number of blocks
+
+		network.mBlocksLayers = vector<vector<Memory_Block>>();
+		for (int i = 0; i < count; i++){
+			is >> count2;
+			network.mBlocksLayers.push_back(vector<Memory_Block>());
+			for (int j = 0; j < count2; j++){
+				network.mBlocksLayers[i].push_back(Memory_Block());
+				is >> network.mBlocksLayers[i][j];
+			}
+			is >> name;
+		}
+
+		weight_type value;
+		is >> name;
+		network.GPUWeights = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUWeights);
+
+		is >> name;
+		network.device_deltas = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.device_deltas);
+
+		is >> name;
+		network.GPUOutput_values = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUOutput_values);
+
+		is >> name;
+		network.GPUPreviousOutput_Values = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUPreviousOutput_Values);
+
+		is >> name;
+		network.GPUPreviousWeights = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUPreviousWeights);
+
+		is >> name;
+		is >> count;
+		network.GPUMapTo = thrust::device_vector<int>(count);
+		network.GPUMapFrom = thrust::device_vector<int>(count);
+		for (int i = 0; i < count; i++){
+			is >> value;
+			network.GPUMapFrom[i] = value;
+			is >> value;
+			network.GPUMapTo[i] = value;
+		}
+
+		is >> name;
+		network.positionToSum = thrust::device_vector<int>();
+		network.loadstream(is, network.positionToSum);
+
+		is >> name;
+		network.count = thrust::device_vector<int>();
+		
+		network.loadstream(is, network.count);
+
+		is >> name;
+		network.GPUBias = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUBias);
+		
+		is >> name;
+		network.GPUPreviousBias = thrust::device_vector<weight_type>();
+		network.loadstream(is, network.GPUPreviousBias);
+
+
+		network.GPUPreviousTemp = thrust::device_vector<weight_type>((network.GPUPreviousBias.size() > network.GPUPreviousWeights.size()) ? network.GPUPreviousBias.size() : network.GPUPreviousWeights.size());
+		network.training_previous_number_rows = network.settings.i_backprop_unrolled;
+
+		return is;
 	}
 
 };

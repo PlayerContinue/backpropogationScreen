@@ -127,7 +127,6 @@ weight_type Memory_Block::getBias(cell_type type){
 
 
 void Memory_Block::addNewConnection(int pos){
-	
 	this->mapFrom.push_back(pos);
 	
 	this->potential_memory_cell_value.push_back(this->getNewWeight());

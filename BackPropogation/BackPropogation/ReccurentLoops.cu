@@ -375,8 +375,6 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
-		
-		
 
 		cout << "Training Start" << endl;
 		
