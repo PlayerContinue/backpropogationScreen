@@ -38,17 +38,23 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 	//Store the location of the weights/nodes/bias to be removed and store them in a vector
 	for (int i = MEMORY_CELL, mem_type = Memory_Block::MEMORY_CELL; i >= INPUT_CELL; i--, mem_type--){
 		length_of_weight_to_remove = (mem_type == MEMORY_CELL ? NUMBER_WEIGHTS_TO_MEM : mem->weight_lists[mem_type].size() + 1);
-		for (int k = 0; k < length_of_weight_to_remove; k++){
-			this->GPUWeights.erase(this->GPUWeights.begin() + start_of_weights);
-			this->GPUMapTo.erase(this->GPUMapTo.begin() + start_of_weights);
-			this->GPUMapFrom.erase(this->GPUMapFrom.begin() + start_of_weights);
-		}
-
+		this->GPUWeights.erase(this->GPUWeights.begin() + start_of_weights, this->GPUWeights.begin() + start_of_weights + length_of_weight_to_remove);
+		this->GPUMapTo.erase(this->GPUMapTo.begin() + start_of_weights, this->GPUMapTo.begin() + start_of_weights + length_of_weight_to_remove);
+		this->GPUMapFrom.erase(this->GPUMapFrom.begin() + start_of_weights, this->GPUMapFrom.begin() + start_of_weights + length_of_weight_to_remove);
+		
+		//Remove the bias
 		this->GPUBias.erase(this->GPUBias.begin() + start_of_nodes);
-
 
 		this->number_weights_by_type[layer][i] -= length_of_weight_to_remove;
 		this->number_nodes_by_type[layer][i] -= 1;
+
+		thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 == start_of_weights);
+
+		thrust::transform_if(this->GPUMapTo.begin() + start_of_weights, this->GPUMapTo.end(), this->GPUMapTo.begin() + start_of_weights, _1 - 1, _1 >= this->numberNonWeights);
+		thrust::transform_if(this->GPUMapFrom.begin() + start_of_weights, this->GPUMapFrom.end(), this->GPUMapFrom.begin() + start_of_weights, _1 - 1, _1 >= this->numberNonWeights);
+		thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 - 1, _1 > start_of_weights);
+		thrust::transform_if(this->count.begin(), this->count.end(),this->count.begin(), _1 - 1, _1 > start_of_nodes);
+
 		if (i > INPUT_CELL){
 			//Increment by the number of nodes/weights of the current type
 			start_of_weights -= (this->number_weights_by_type[layer][i - 1] - length_of_weights_to_skip);
@@ -56,7 +62,7 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 		}
 	}
 
-
+	
 
 	
 
