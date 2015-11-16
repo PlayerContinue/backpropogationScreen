@@ -62,6 +62,10 @@ using namespace thrust::placeholders;
 #define NUMBER_MEM_CELL_WEIGHTS 7
 #endif
 
+#ifndef NUMBER_NODES_IN_CELL
+#define NUMBER_NODES_IN_CELL 5
+#endif
+
 #ifndef INFO_LENGTH
 #define INFO_LENGTH 1
 #endif
@@ -267,6 +271,7 @@ public:
 	void createMemoryBlock(int numberMemoryCells, int layer_num);
 
 	void addNeuron(int numberNeuronsToAdd);
+	void removeNeuron(int position, int layer);
 private:
 	void addCellToGPU(unsigned int start_new, unsigned int layer);
 	void addNonMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,

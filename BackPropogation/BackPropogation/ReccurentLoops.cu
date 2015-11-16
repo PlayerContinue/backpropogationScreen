@@ -368,10 +368,13 @@ void ReccurentLoops::testTraining(){
 		this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
 			//Get the mean Square error
-			this->mainNetwork->addNeuron(3);
-			this->createCheckpoint("Add Checkpoint_1");
-			this->mainNetwork->addNeuron(3);
-			this->createCheckpoint("Add Checkpoint_2");
+
+			this->mainNetwork->removeNeuron(0, 0);
+			this->createCheckpoint("Remove_Checkpoint_1");
+			//this->mainNetwork->addNeuron(3);
+		//	this->createCheckpoint("Add Checkpoint_1");
+	//		this->mainNetwork->addNeuron(3);
+//			this->createCheckpoint("Add Checkpoint_2");
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}

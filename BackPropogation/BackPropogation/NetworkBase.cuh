@@ -74,7 +74,7 @@ public:
 	//Modify Structure Of Neuron
 	//***************************
 	virtual void addNeuron(int numberNeuronsToAdd) = 0;
-
+	virtual void removeNeuron(int position, int layer) = 0;
 	//Add a new weight between neurons
 	virtual void addWeight(int numberWeightsToAdd) = 0;
 

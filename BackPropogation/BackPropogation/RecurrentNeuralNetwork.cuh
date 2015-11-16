@@ -103,6 +103,9 @@ public:
 	virtual device_vector<weight_type> runNetwork(weight_type* in, run_type run){
 		return runNetwork(in);
 	}
+	virtual void removeNeuron(int position, int layer){
+
+	}
 	//***************************
 	//Train the Network
 	//***************************
