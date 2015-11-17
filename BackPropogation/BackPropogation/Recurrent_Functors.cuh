@@ -917,7 +917,6 @@ namespace functors{
 
 
 
-
 	template <typename T>
 	struct mean_square_error : public thrust::unary_function < T, T > {
 		mean_square_error(){};

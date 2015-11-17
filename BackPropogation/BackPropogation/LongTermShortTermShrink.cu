@@ -74,21 +74,25 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 		this->number_weights_by_type[layer][i] -= length_of_weight_to_remove;
 		this->number_nodes_by_type[layer][i] -= 1;
 
-		thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 == start_of_nodes + this->numberNonWeights);
-		remove_iterator = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), _1 == start_of_weights);
-		
-		if (i == INPUT_CELL){//Only perform at the end to save time
-			this->positionToSum.erase(remove_iterator, this->positionToSum.end());
-		}
-		remove_iterator = thrust::remove_if(this->count.begin(), this->count.end(), _1 == start_of_nodes + this->numberNonWeights);
-		if (i == INPUT_CELL){
-			this->count.erase(remove_iterator, this->count.end());
-		}
+		//Remove weights going from the deleted nodes
+		remove_iterator = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 == start_of_nodes + this->numberNonWeights);
+		this->positionToSum.erase(remove_iterator, this->positionToSum.end());
 
+		remove_iterator = thrust::remove_if(this->count.begin(), this->count.end(), _1 == start_of_nodes + this->numberNonWeights);
+		this->count.erase(remove_iterator, this->count.end());
+
+		//Remove weights going to the deleted node
+		remove_iterator = thrust::remove_if(this->count.begin(), this->count.end(), this->positionToSum.begin(), _1 == start_of_weights);
+		this->count.erase(remove_iterator, this->count.end());
+
+		remove_iterator = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), _1 == start_of_weights);
+		this->positionToSum.erase(remove_iterator, this->positionToSum.end());
+		
+		//Transform the values
 		thrust::transform_if(this->GPUMapTo.begin() + start_of_weights, this->GPUMapTo.end(), this->GPUMapTo.begin() + start_of_weights, _1 - 1, _1 >= this->numberNonWeights);
 		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), _1 - 1, _1 > start_of_nodes + this->numberNonWeights);
-		thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 - 1, _1 > start_of_weights);
-		thrust::transform_if(this->count.begin(), this->count.end(),this->count.begin(), _1 - 1, _1 > start_of_nodes);
+		thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 - length_of_weight_to_remove, _1 >= start_of_weights);
+		thrust::transform_if(this->count.begin(), this->count.end(), this->count.begin(), _1 - 1, _1 > start_of_nodes + this->numberNonWeights);
 
 
 
@@ -99,7 +103,7 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 		}
 	}
 
-
+	
 
 	
 	
@@ -123,7 +127,12 @@ void LongTermShortTermNetwork::removeOutputConnection(int position, int previous
 		_1 - number_nodes_to_remove,
 		_1 > start_of_nodes);
 
-	testing::outputToFile(this->GPUMapFrom, "test", "tests/test1.txt");
+	thrust::transform_if(this->positionToSum.begin(), 
+		this->positionToSum.end(), 
+		this->positionToSum.begin(),
+		_1 - this->numberOfNodes - this->numberNonWeights,
+		_1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
+
 
 	//Remove the Weights 
 	remove_weight_iterator = thrust::remove_if(this->GPUWeights.begin() + start_of_nodes_in_layer, this->GPUWeights.end(),
