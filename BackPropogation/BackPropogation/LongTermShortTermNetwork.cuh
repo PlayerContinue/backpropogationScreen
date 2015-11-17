@@ -266,12 +266,14 @@ public:
 	//Modify Structure Of Neuron
 	//***************************
 
+
+	//-------------Add Nodes---------------------//
 	//Creates a new memory block with connections to all inputs
 	void InitialcreateMemoryBlock(int numberMemoryCells);
 	void createMemoryBlock(int numberMemoryCells, int layer_num);
 
 	void addNeuron(int numberNeuronsToAdd);
-	void removeNeuron(int position, int layer);
+
 private:
 	void addCellToGPU(unsigned int start_new, unsigned int layer);
 	void addNonMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
@@ -307,6 +309,21 @@ private:
 	//Add a new weight between neurons
 	void addWeight(int numberWeightsToAdd);
 	void addPositionOfWeightChange(int start, int start_weights, int start_nodes, int extension, int number_new_weights);
+
+	//-------------Remove Nodes---------------------//
+public:
+	void removeNeuron(int position, int layer);
+
+private:
+	//start of weights - should be the start of the previous layer
+	//start_of_nodes - the start of the nodes of the previous layer
+	//They will both be increased in here by the length of that layer
+	//For removing a single node
+	void removeOutputConnection(int position, int previous_layer, int start_of_nodes_in_layer, int start_of_weights_in_layer, int start_of_nodes, int start_of_weights);
+	//Perhaps for deleting multiple nodes
+	void removeOutputConnection(int position, int previous_layer, int start_of_nodes_in_layer, int start_of_weights_in_layer, int start_of_nodes, int start_of_weights, int number_nodes_to_remove);
+
+//-------------Add Weights---------------------//
 private:
 	//Decide which node the new weight should be attached to 
 	int decideNodeToAttachTo();
@@ -376,7 +393,7 @@ private:
 	static ostream& outputstream(ostream &os, vector<T> list, int size){
 		os << list.size() << endl;
 		std::copy(list.begin(), list.end(), std::ostream_iterator<T>(os, " "));
-		
+
 		os << endl;
 		return os;
 	}
@@ -520,11 +537,11 @@ public:
 		T value;
 		list.resize(current_length);
 		for (int i = 0; i < list.size(); i++){
-			is >> current_length ;
+			is >> current_length;
 			list[i].resize(current_length);
 			for (int j = 0; j < current_length; j++){
 				is >> value;
-				list[i][j]=value;
+				list[i][j] = value;
 			}
 		}
 		return is;
@@ -558,13 +575,13 @@ public:
 
 	//Test at some point
 	friend istream& operator>>(istream &is, LongTermShortTermNetwork &network){
-		
+
 		string name;
 		int count;
 		int count2;
 		is >> network.numberOfNodes;
 		is >> network.numberNonWeights;
-		
+
 		//Load number of nodes by type
 		is >> name;
 		network.numberOfWeightsInLayers = vector<unsigned int>();
@@ -634,13 +651,13 @@ public:
 
 		is >> name;
 		network.count = thrust::device_vector<int>();
-		
+
 		network.loadstream(is, network.count);
 
 		is >> name;
 		network.GPUBias = thrust::device_vector<weight_type>();
 		network.loadstream(is, network.GPUBias);
-		
+
 		is >> name;
 		network.GPUPreviousBias = thrust::device_vector<weight_type>();
 		network.loadstream(is, network.GPUPreviousBias);
