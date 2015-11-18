@@ -32,27 +32,30 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 
 	//Find the start of the input nodes
 	for (int i = 0; i < position; i++){
-		start_of_weights += this->mBlocksLayers[layer][i].input_weights.size();
-		length_of_nodes_to_skip += this->mBlocksLayers[layer][i].input_weights.size();
-		start_of_nodes += 1;//Increment by the input nodes
-		length_of_weights_to_skip += 1;
+		length_of_weights_to_skip += this->mBlocksLayers[layer][i].input_weights.size() + 1;
+		length_of_nodes_to_skip += 1;
 	}
 
+	//Adding nodes to start of memory cells
 	for (int i = INPUT_CELL; i < MEMORY_CELL; i++){
 		if (i == OUTPUT_CELL){
 			//Remove the connections to the next layer
-			this->removeOutputConnection(position, layer, start_of_nodes_in_next_layer, start_of_weights_in_next_layer, start_of_nodes + length_of_nodes_to_skip, start_of_weights + length_of_weights_to_skip);
+			this->removeOutputConnection(position, layer, 
+				start_of_nodes_in_next_layer,
+				start_of_weights_in_next_layer, 
+				start_of_nodes,
+				start_of_weights,
+				this->mBlocksLayers[layer][position].input_weights.size() * 2);//Number of weights to delete is 2 times the number of weights
 		}
 		start_of_weights += this->number_weights_by_type[layer][i];
-		start_of_nodes += this->number_nodes_by_type[layer][i];
-		
+		start_of_nodes += this->number_nodes_by_type[layer][i];	
 	}
 
 	
 
 
-
-	start_of_weights += length_of_weights_to_skip;
+	//Move to the start of the memory cell weights and nodes
+	start_of_weights += NUMBER_WEIGHTS_TO_MEM * length_of_nodes_to_skip;
 	start_of_nodes += length_of_nodes_to_skip;
 
 	
@@ -75,6 +78,7 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 		this->number_nodes_by_type[layer][i] -= 1;
 		this->numberOfNodes--;
 		this->number_nodes_in_layer[layer]--;
+		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1]--;
 		this->numberOfWeightsInLayers[layer] -= length_of_weight_to_remove;
 
 		//Remove weights going from the deleted nodes
@@ -101,13 +105,15 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 
 		if (i > INPUT_CELL){
 			//Increment by the number of nodes/weights of the current type
-			start_of_weights -= (this->number_weights_by_type[layer][i - 1] - length_of_weights_to_skip);
-			start_of_nodes -= (this->number_nodes_by_type[layer][i - 1] - length_of_nodes_to_skip);
+			start_of_weights -= (this->number_weights_by_type[layer][i - 1] + length_of_weight_to_remove - length_of_weights_to_skip);
+			start_of_nodes -= (this->number_nodes_by_type[layer][i - 1]);
 		}
 	}
 
-	
+	//Remove the Cell
+	this->mBlocksLayers[layer].erase(this->mBlocksLayers[layer].begin() + position);
 
+	//Resize the output
 	this->device_deltas.resize(this->device_deltas.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
 	this->GPUOutput_values.resize(this->GPUOutput_values.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
 	this->GPUPreviousBias.resize(this->GPUBias.size());
@@ -120,27 +126,54 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 
 void LongTermShortTermNetwork::removeOutputConnection(int position, int previous_layer,
 	int start_of_nodes_in_layer, int start_of_weights_in_layer, int start_of_nodes, int start_of_weights){
-	this->removeOutputConnection(position, previous_layer, start_of_nodes_in_layer, start_of_weights_in_layer, start_of_nodes, start_of_weights,2);
+	this->removeOutputConnection(position, previous_layer, start_of_nodes_in_layer, start_of_weights_in_layer, start_of_nodes, start_of_weights,this->settings.i_output);
 }
 
 void LongTermShortTermNetwork::removeOutputConnection(int position, int previous_layer, 
-	int start_of_nodes_in_layer, int start_of_weights_in_layer, int start_of_nodes, int start_of_weights, int number_nodes_to_remove){
+	int start_of_nodes_in_layer, int start_of_weights_in_layer, int start_of_nodes,int number_of_weights,  int number_nodes_to_remove){
 	thrust::device_vector<weight_type>::iterator remove_weight_iterator;
 	thrust::device_vector<int>::iterator remove_int_iterator;
-	
+	thrust::device_vector<int>::reverse_iterator reverse_int_iterator;
 	//+1 is to skip over the node which will be deleted
 	thrust::transform_if(this->GPUMapFrom.begin() + start_of_weights_in_layer,
 		this->GPUMapFrom.begin() + start_of_weights_in_layer + this->numberOfWeightsInLayers[previous_layer + 1],
 		this->GPUMapFrom.begin() + start_of_weights_in_layer,
 		_1 - number_nodes_to_remove,
-		_1 > start_of_nodes);
+		_1 > start_of_nodes && _1 < this->numberOfNodes + this->numberNonWeights 
+		|| _1 >= start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights);
 
-	thrust::transform_if(this->positionToSum.begin(), 
-		this->positionToSum.end(), 
-		this->positionToSum.begin(),
-		_1 - this->numberOfNodes - this->numberNonWeights,
-		_1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
+	reverse_int_iterator = thrust::find_if(
+		this->GPUMapFrom.rbegin(),
+		this->GPUMapFrom.rend(),
+		_1 == start_of_nodes + this->numberNonWeights 
+		|| _1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
+	
 
+
+	//Lower the position of the weights
+	do{
+		
+		
+		int temp = (this->GPUMapFrom.size() - (reverse_int_iterator - this->GPUMapFrom.rbegin())) - 1;
+		if (reverse_int_iterator != this->GPUMapFrom.rend()){
+			//Only perform the operation if the end has not been reached
+			thrust::transform_if(this->positionToSum.begin(), 
+				this->positionToSum.end(), 
+				this->positionToSum.begin(), 
+				_1 - 1,
+				_1 > (this->GPUMapFrom.size() - (reverse_int_iterator - this->GPUMapFrom.rbegin())) - 1);
+		}
+
+		reverse_int_iterator = thrust::find_if(
+			reverse_int_iterator+1,
+			this->GPUMapFrom.rend(),
+			_1 == start_of_nodes + this->numberNonWeights
+			|| _1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
+
+	} while (reverse_int_iterator != this->GPUMapFrom.rend());
+
+	
+	//testing::outputToFile(this->positionToSum, "GPUFROM1", "tests/testing1.txt");
 
 	//Remove the Weights 
 	remove_weight_iterator = thrust::remove_if(this->GPUWeights.begin() + start_of_nodes_in_layer, this->GPUWeights.end(),
@@ -157,16 +190,20 @@ void LongTermShortTermNetwork::removeOutputConnection(int position, int previous
 		_1 == start_of_nodes + this->numberNonWeights || _1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
 
 	//Subtract the number of weights removed
-	this->numberOfWeightsInLayers[previous_layer + 1] -= (remove_int_iterator - this->GPUMapFrom.begin());
+	this->numberOfWeightsInLayers[previous_layer + 1] -= (this->GPUMapTo.end() - remove_int_iterator);
+
 	for (int i = INPUT_CELL; i < MEMORY_CELL; i++){
 		if (this->number_weights_by_type[previous_layer + 1][i] > 0){
-			this->number_weights_by_type[previous_layer + 1][i] -= 1;
+			if (this->mBlocksLayers[previous_layer + 1][0].type == Memory_Block::LAYER){
+				this->number_weights_by_type[previous_layer + 1][i] -= (this->GPUMapTo.end() - remove_int_iterator) / 4;
+			}
+			else{
+				this->number_weights_by_type[previous_layer + 1][i] -= this->settings.i_output;
+			}
 		}
 	}
 
 	this->GPUMapTo.erase(remove_int_iterator, this->GPUMapTo.end());
-
-	
 
 	//Remove the pointer to From
 	remove_int_iterator = thrust::remove_if(
@@ -175,4 +212,19 @@ void LongTermShortTermNetwork::removeOutputConnection(int position, int previous
 		_1 == start_of_nodes + this->numberNonWeights || _1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
 
 	this->GPUMapFrom.erase(remove_int_iterator, this->GPUMapFrom.end());
+
+	//Remove the connection in the node
+	for (unsigned int i = 0; i < this->mBlocksLayers[previous_layer + 1].size(); i++){
+		
+			//Remove the connection
+			this->mBlocksLayers[previous_layer + 1][i].removeConnection(
+				thrust::find_if(host,this->mBlocksLayers[previous_layer + 1][i].mapFrom.begin(),
+				this->mBlocksLayers[previous_layer + 1][i].mapFrom.end(),
+				_1 == start_of_nodes + this->numberNonWeights + position
+				) 
+				- this->mBlocksLayers[previous_layer + 1][i].mapFrom.begin());
+
+		
+	}
+
 }

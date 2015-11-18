@@ -1,6 +1,7 @@
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <thrust/complex.h>
+#include <thrust/execution_policy.h>
 #ifndef __TIME_H_INCLUDED__
 #include <time.h>
 #define __TIME_H_INCLUDED__
@@ -76,7 +77,7 @@ public:
 	void incrementFromPosition(int add, int add_from);
 	weight_type getBias(cell_type type);
 	memory_block_type getTypeOfMemoryBlock();
-
+	bool Memory_Block::removeConnection(int toRemove);
 private:
 	weight_type getNewWeight();
 	void createStorage();

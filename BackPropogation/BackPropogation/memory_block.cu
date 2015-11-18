@@ -162,6 +162,33 @@ void Memory_Block::addNewConnection(int min, int max){
 	}
 }
 
+bool Memory_Block::removeConnection(int toRemove){
+	
+
+	if (toRemove < this->potential_memory_cell_value.size()){
+		if (this->type == LAYER){
+			for (unsigned int start = INPUT_CELL; start <= MEMORY_CELL; start++){
+				if (start != POTENTIAL_MEMORY_CELL){
+					this->weight_lists[start].erase(this->weight_lists[start].begin() + toRemove);
+				}
+			}
+			this->input_weights.erase(this->input_weights.begin() + toRemove);
+			this->output_weights.erase(this->output_weights.begin() + toRemove);
+			this->forget_weights.erase(this->forget_weights.begin() + toRemove);
+		}
+		this->weight_lists[POTENTIAL_MEMORY_CELL].erase(this->weight_lists[POTENTIAL_MEMORY_CELL].begin() + toRemove);
+		this->mapFrom.erase(this->mapFrom.begin() + toRemove);
+		this->number_weights--;
+		for (; toRemove < this->mapFrom.size(); toRemove++){
+			this->mapFrom[toRemove]--;
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
 void Memory_Block::incrementFromPosition(int add){
 	this->incrementFromPosition(add, 0);
 }
