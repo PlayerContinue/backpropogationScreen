@@ -73,6 +73,9 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 
 		this->number_weights_by_type[layer][i] -= length_of_weight_to_remove;
 		this->number_nodes_by_type[layer][i] -= 1;
+		this->numberOfNodes--;
+		this->number_nodes_in_layer[layer]--;
+		this->numberOfWeightsInLayers[layer] -= length_of_weight_to_remove;
 
 		//Remove weights going from the deleted nodes
 		remove_iterator = thrust::remove_if(this->positionToSum.begin(), this->positionToSum.end(), this->count.begin(), _1 == start_of_nodes + this->numberNonWeights);
@@ -105,7 +108,12 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 
 	
 
-	
+	this->device_deltas.resize(this->device_deltas.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
+	this->GPUOutput_values.resize(this->GPUOutput_values.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
+	this->GPUPreviousBias.resize(this->GPUBias.size());
+	this->GPUPreviousOutput_Values.resize(this->GPUPreviousOutput_Values.size() - (MEMORY_CELL - INPUT_CELL));
+	this->GPUPreviousWeights.resize(this->GPUWeights.size());
+	this->GPUPreviousTemp.resize(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
 	
 
 }
@@ -148,7 +156,17 @@ void LongTermShortTermNetwork::removeOutputConnection(int position, int previous
 		this->GPUMapFrom.begin() + start_of_nodes_in_layer,
 		_1 == start_of_nodes + this->numberNonWeights || _1 == start_of_nodes + this->numberNonWeights + this->numberOfNodes + this->numberNonWeights - number_nodes_to_remove);
 
+	//Subtract the number of weights removed
+	this->numberOfWeightsInLayers[previous_layer + 1] -= (remove_int_iterator - this->GPUMapFrom.begin());
+	for (int i = INPUT_CELL; i < MEMORY_CELL; i++){
+		if (this->number_weights_by_type[previous_layer + 1][i] > 0){
+			this->number_weights_by_type[previous_layer + 1][i] -= 1;
+		}
+	}
+
 	this->GPUMapTo.erase(remove_int_iterator, this->GPUMapTo.end());
+
+	
 
 	//Remove the pointer to From
 	remove_int_iterator = thrust::remove_if(
