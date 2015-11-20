@@ -176,12 +176,10 @@ bool Memory_Block::removeConnection(int toRemove){
 			this->output_weights.erase(this->output_weights.begin() + toRemove);
 			this->forget_weights.erase(this->forget_weights.begin() + toRemove);
 		}
+		this->potential_memory_cell_value.erase(this->potential_memory_cell_value.begin() + toRemove);
 		this->weight_lists[POTENTIAL_MEMORY_CELL].erase(this->weight_lists[POTENTIAL_MEMORY_CELL].begin() + toRemove);
 		this->mapFrom.erase(this->mapFrom.begin() + toRemove);
 		this->number_weights--;
-		for (; toRemove < this->mapFrom.size(); toRemove++){
-			this->mapFrom[toRemove]--;
-		}
 		return true;
 	}
 	else{

@@ -377,7 +377,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
-
+		this->mainNetwork->removeNeuron(1, 0);
 		cout << "Training Start" << endl;
 		
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){

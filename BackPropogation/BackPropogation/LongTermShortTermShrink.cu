@@ -113,11 +113,13 @@ void LongTermShortTermNetwork::removeNeuron(int position, int layer){
 	//Remove the Cell
 	this->mBlocksLayers[layer].erase(this->mBlocksLayers[layer].begin() + position);
 
+	int growth_size = (MEMORY_CELL - INPUT_CELL) + 1;
+
 	//Resize the output
-	this->device_deltas.resize(this->device_deltas.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
-	this->GPUOutput_values.resize(this->GPUOutput_values.size() - ((MEMORY_CELL - INPUT_CELL)*this->total_number_of_unrolled));
+	this->device_deltas.resize(this->device_deltas.size() - (growth_size*this->total_number_of_unrolled));
+	this->GPUOutput_values.resize(this->GPUOutput_values.size() - (growth_size*this->total_number_of_unrolled));
 	this->GPUPreviousBias.resize(this->GPUBias.size());
-	this->GPUPreviousOutput_Values.resize(this->GPUPreviousOutput_Values.size() - (MEMORY_CELL - INPUT_CELL));
+	this->GPUPreviousOutput_Values.resize(this->GPUPreviousOutput_Values.size() - growth_size);
 	this->GPUPreviousWeights.resize(this->GPUWeights.size());
 	this->GPUPreviousTemp.resize(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
 	

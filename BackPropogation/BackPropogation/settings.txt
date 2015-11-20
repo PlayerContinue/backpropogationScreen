@@ -36,4 +36,4 @@ i_number_in_sequence 5
 i_number_start_nodes 9
 i_number_new_weights 0
 i_number_of_testing_items 100
-b_allow_growth 1
+b_allow_growth 0
