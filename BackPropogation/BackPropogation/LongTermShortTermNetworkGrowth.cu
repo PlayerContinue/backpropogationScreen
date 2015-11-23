@@ -581,6 +581,7 @@ void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	for (int i = 0; i < numberWeightsToAdd; i++){
 		if (decideTo != -1){
 			this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
+		
 		}
 		else{
 			break;
