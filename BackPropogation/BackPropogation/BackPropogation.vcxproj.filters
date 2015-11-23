@@ -84,6 +84,9 @@
     <ClInclude Include="Recurrent_Functors.cuh">
       <Filter>Header Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="Unique_Iterators.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">

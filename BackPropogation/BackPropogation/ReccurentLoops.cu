@@ -368,7 +368,8 @@ void ReccurentLoops::testTraining(){
 		this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
 			//Get the mean Square error
-			this->mainNetwork->removeNeuron(1, 0);
+			//this->mainNetwork->removeNeuron(1, 0);
+			this->mainNetwork->addWeight(1);
 			this->createCheckpoint("Remove_Checkpoint_1");
 			//this->mainNetwork->addNeuron(3);
 		//	this->createCheckpoint("Add Checkpoint_1");
@@ -377,7 +378,8 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
-		this->mainNetwork->removeNeuron(1, 0);
+		//this->mainNetwork->removeNeuron(1, 0);
+		this->mainNetwork->addWeight(1);
 		cout << "Training Start" << endl;
 		
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){

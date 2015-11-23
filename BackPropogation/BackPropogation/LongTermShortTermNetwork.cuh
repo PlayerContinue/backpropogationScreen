@@ -47,6 +47,10 @@
 #include "TestCode.cuh"
 #endif
 
+#ifndef UNIQUE_ITERATOR_CLASS
+#include "Unique_Iterators.cuh"
+#endif
+
 using namespace thrust;
 using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
@@ -307,7 +311,7 @@ private:
 		thrust::device_vector<int> &value,
 		vector<Memory_Block>* cell_block);
 	//Add a new weight between neurons
-	void addWeight(int numberWeightsToAdd);
+	
 	void addPositionOfWeightChange(int start, int start_weights, int start_nodes, int extension, int number_new_weights);
 
 	//-------------Remove Nodes---------------------//
@@ -330,9 +334,13 @@ private:
 	//Decide which node the new weight should be attached from
 	//Requires knowing which node it will be attaching to in order to avoid double connections
 	int decideNodeToAttachFrom(int attachTo);
-
-
-
+	void addWeight(int numberWeightsToAdd);
+	//Add a weight into the GPU position from Host Memory
+	//Return the end position of the weight of the node
+	int addWeightToGPU(int nodePosition, int layer);
+	//Add a weight into the GPU position
+	//Start is the position of the first insertion
+	void addWeightToGPU(int nodePosition, int layer, int start);
 	//Get a new weight
 	weight_type getNewWeight();
 

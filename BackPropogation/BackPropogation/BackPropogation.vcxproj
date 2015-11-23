@@ -225,6 +225,7 @@
     </ClInclude>
     <ClInclude Include="structures_cuda.cuh" />
     <ClInclude Include="TestCode.cuh" />
+    <ClInclude Include="Unique_Iterators.cuh" />
     <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>

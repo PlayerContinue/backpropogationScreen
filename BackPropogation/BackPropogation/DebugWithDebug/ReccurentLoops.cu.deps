@@ -1364,4 +1364,5 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Unique_Iterators.cuh
 e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h

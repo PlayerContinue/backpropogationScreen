@@ -578,10 +578,13 @@ weight_type LongTermShortTermNetwork::getNewWeight(){
 
 void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	int decideTo = this->decideNodeToAttachTo();
+	decideTo = 2;
 	for (int i = 0; i < numberWeightsToAdd; i++){
 		if (decideTo != -1){
 			this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
-		
+			if (this->GPUMapTo.size() > 0){
+				this->addWeightToGPU(decideTo, 0);
+			}
 		}
 		else{
 			break;
@@ -591,6 +594,62 @@ void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 
 }
 
+int LongTermShortTermNetwork::addWeightToGPU(int nodePosition, int layer){
+	int start = 0;
+	//Sum the number of inputs until the input desired
+	for (int i = 0; i <= nodePosition; i++){
+		start += this->mBlocksLayers[layer][i].input_weights.size();
+	}
+
+	//Add the weights until the last weight has been reached
+	for (int i = INPUT_CELL; i < MEMORY_CELL - 1; i++){
+		start += this->number_weights_by_type[layer][i];
+	}
+	addWeightToGPU(nodePosition, layer, start);
+	return start;
+}
+
+void LongTermShortTermNetwork::addWeightToGPU(int nodePosition, int layer, int start){
+	thrust::device_vector<int>::iterator int_iterator;
+	for (int i = MEMORY_CELL - 1; i >= INPUT_CELL; i--){
+		this->GPUWeights.insert(this->GPUWeights.begin() + start - 1,
+			*(this->mBlocksLayers[layer][nodePosition].weight_lists[i].rbegin())
+			);
+
+		this->GPUMapFrom.insert(this->GPUMapFrom.begin() + start - 1,
+			*(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin())
+			);
+
+		this->GPUMapTo.insert(this->GPUMapTo.begin() + start -1,
+			*(this->GPUMapTo.begin() + start - 1)
+			);
+
+		
+
+		//Transform the positionToSum
+		thrust::transform_if(
+			this->positionToSum.begin(),
+			this->positionToSum.end(),
+			this->positionToSum.begin(),
+			_1 + 1,
+			_1 > start
+			);
+
+		int_iterator = thrust::find(this->count.begin(), this->count.end(), *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));
+		this->count.insert(int_iterator, *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));
+		this->positionToSum.insert(this->positionToSum.begin() + (int_iterator - this->count.begin()),
+			start - 1);
+		//Increment to next set
+		start -= this->number_weights_by_type[layer][i];
+		this->number_weights_by_type[layer][i] += 1;
+		this->numberOfWeightsInLayers[layer] += 1;
+		
+	}
+
+	this->GPUPreviousWeights.resize(this->GPUWeights.size());
+	
+
+}
 
 
 
