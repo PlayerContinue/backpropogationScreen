@@ -101,6 +101,12 @@ public:
 	int i_number_new_weights;
 	
 	int i_number_of_testing_items;
+
+	bool b_allow_growth = false;
+
+	//Number of times to go through the training file before ending
+	int i_numberTimesThroughFile;
+
 	CSettings();
 
 
@@ -239,6 +245,10 @@ public:
 		is >> next;
 		is >> settings.s_loadNetworkFile;
 
+		//Number of times to go through training file
+		is >> next;
+		is >> settings.i_numberTimesThroughFile;
+
 		//LongTermShortTerm_items
 		is >> next; //States data is for special kind of network
 		is >> next;
@@ -255,6 +265,10 @@ public:
 
 		is >> next;
 		is >> settings.i_number_of_testing_items;
+
+
+		is >> next;
+		is >> settings.b_allow_growth;
 
 		return is;
 	}

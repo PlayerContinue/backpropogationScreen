@@ -102,6 +102,7 @@ namespace functors{
 
 	};
 
+
 	template <unsigned int pos_in_tuple,typename T>
 	struct compare_between :public thrust::unary_function < bool, bool >{
 		const int type_of_if_1;
@@ -916,7 +917,6 @@ namespace functors{
 
 
 
-
 	template <typename T>
 	struct mean_square_error : public thrust::unary_function < T, T > {
 		mean_square_error(){};
@@ -945,4 +945,6 @@ namespace functors{
 			return temp;
 		}
 	};
+
+	
 }

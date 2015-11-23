@@ -121,6 +121,12 @@
     <CudaCompile Include="LongTermShortTermTraining.cu">
       <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </CudaCompile>
+    <CudaCompile Include="LongTermShortTermNetworkGrowth.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="LongTermShortTermShrink.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">

@@ -296,6 +296,58 @@ void ReccurentLoops::startTraining(int type){
 	}
 }
 
+void ReccurentLoops::reset_file_for_loop(){
+	this->inputfile->clear();
+	this->inputfile->seekg(0, ios::beg);
+	this->outputfile->clear();
+	this->outputfile->seekg(0, ios::beg);
+	this->mainNetwork->ResetSequence();
+}
+
+void ReccurentLoops::sequenceEnd(int &length_of_sequence,int &count_sequences,int &growth_check){
+	if (length_of_sequence > 0){
+		this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
+		//Apply the error at the end of the sequence
+		this->mainNetwork->ApplyError();
+		if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
+			this->createCheckpoint("AfterError");
+			this->checkpoint.i_number_of_loops_checkpoint = 0;
+		}
+		length_of_sequence = 0;
+	}
+	//The sequence has ended, so we need to reset the sequence
+	this->mainNetwork->ResetSequence();
+	if (count_sequences >= this->settings.i_loops){
+		//Copy the previous set of error to the new set of errors
+		std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
+
+		//Get the mean Square error
+		this->getMeanSquareError();
+
+		//Check to see if the change is great enough
+		growth_check = 0;
+		for (int mean_pos = 0; mean_pos < this->mean_square_error_results_new.size(); mean_pos++){
+			if (this->mean_square_error_results_old[mean_pos] < this->mean_square_error_results_new[mean_pos] - this->settings.d_fluctuate_square_mean){
+				growth_check++;
+			}
+		}
+
+		if (this->settings.b_allow_growth && this->mean_square_error_results_old[0] < this->mean_square_error_results_new[0] - this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
+
+			this->mainNetwork->addNeuron(3);
+			//Set a new old mean square error so it will attempt to learn before gaining a new node
+			this->getMeanSquareError();
+			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
+		}
+		int temp[1];
+		this->mainNetwork->getInfoAboutNetwork(temp);
+		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+		testing::outputArrayToFile<int>(temp,1, "tests/meansquare.txt");
+		this->mainNetwork->ResetSequence();
+		count_sequences = 0;
+	}
+	count_sequences++;
+}
 
 void ReccurentLoops::testTraining(){
 	weight_type** trainingInput = new weight_type*[this->settings.i_backprop_unrolled];
@@ -306,6 +358,7 @@ void ReccurentLoops::testTraining(){
 	int k = 0;
 	bool first_run = true;
 	int length_of_sequence = 0;
+	int growth_check = 0;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
@@ -313,106 +366,106 @@ void ReccurentLoops::testTraining(){
 		}
 		this->checkpoint.b_still_running = true;
 		this->createCheckpoint("Initial Checkpoint");
-		//Get the mean Square error
-		this->getMeanSquareError();
-		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
-		this->mainNetwork->ResetSequence();
+		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
+			//Get the mean Square error
+			this->mainNetwork->removeNeuron(1, 0);
+			this->createCheckpoint("Remove_Checkpoint_1");
+			//this->mainNetwork->addNeuron(3);
+		//	this->createCheckpoint("Add Checkpoint_1");
+	//		this->mainNetwork->addNeuron(3);
+//			this->createCheckpoint("Add Checkpoint_2");
+			this->mainNetwork->cleanNetwork();
+			exit(0);
+		}
+		this->mainNetwork->removeNeuron(1, 0);
 		cout << "Training Start" << endl;
-		while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
+		
+		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
+			reset_file_for_loop();
+			this->getMeanSquareError();
+			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			this->mainNetwork->ResetSequence();
+			length[1] = 0;
+			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
 
-			this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, first_run);
-			this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, first_run);
-			first_run = false;
-			
-			for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
-				for (; k < this->settings.i_backprop_unrolled; k++){
-					if (!sequence_end && i < length[0] && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
-						trainingInput[k] = this->input[i];
-						if (k == 0){
-							trainingOutput[k] = this->output[i];
+				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, first_run);
+				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, first_run);
+				if (length[1] == -1){//Sequence may break early
+					break;
+				}
+				first_run = false;
+
+				for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
+					
+					for (; k < this->settings.i_backprop_unrolled; k++){
+						if (!sequence_end && i < length[0] && (this->input[i][0] != SEQUENCE_DELIMITER || this->output[i][0] != SEQUENCE_DELIMITER)){//If both are a sequence_delimiter, then the sequence has ended
+							trainingInput[k] = this->input[i];
+							if (k == 0){
+								trainingOutput[k] = this->output[i];
+							}
+							trainingOutput[k + 1] = this->output[i];
+							i++;//Increment i here because the next sequence follows
 						}
-						trainingOutput[k+1] = this->output[i];
-						i++;//Increment i here because the next sequence follows
+						else{
+							//Since the sequence ended, but we have not reached the end of the backdrop, we need to add an extra layer
+							trainingInput[k] = this->input[i - 1];
+							trainingOutput[k + 1] = this->output[i - 1];
+							k++;
+							if (!sequence_end){
+								i++;//Skip passed the end of the sequence
+							}
+
+							sequence_end = true;
+
+							break;
+						}
+					}
+					
+					//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
+					//Allows for multilength sequences
+					this->mainNetwork->seti_backprop_unrolled(k);
+					
+					if (k > 0){
+						length_of_sequence += k;
+						//Run the sequence to find the results
+
+						this->mainNetwork->StartTraining(trainingInput, trainingOutput);
+
+						this->checkpoint.i_number_of_loops_checkpoint += 1;
+
+						if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
+							this->createCheckpoint();
+						}
+
+
+					}
+
+
+					if (sequence_end){
+						//Perform the sequence end functions
+						sequenceEnd(length_of_sequence, count_sequences, growth_check);
+						
+						sequence_end = false;
+						//A new sequence, start from the beginning
+						k = 0;
 					}
 					else{
-						//Since the sequence ended, but we have not reached the end of the backdrop, we need to add an extra layer
-						trainingInput[k] = this->input[i - 1];
-						trainingOutput[k+1] = this->output[i-1];
-						k++;
-						if (!sequence_end){
-							i++;//Skip passed the end of the sequence
-						}
-						
-						sequence_end = true;
-						
-						break;
+						//The input of the initial is the beginning of it.
+						trainingInput[0] = trainingInput[k - 1];
+						trainingOutput[0] = trainingOutput[k];
+						//Continue the sequence, we need to keep the previous input
+						k = 1;
 					}
+
 				}
-				//Set the i_backpropunrolled of the mainNetworks settings so it only applys the information on the current sequence length
-				//Allows for multilength sequences
-				this->mainNetwork->seti_backprop_unrolled(k);
-				if (k > 0){
-					length_of_sequence += k;
-					//Run the sequence to find the results
-					
-					this->mainNetwork->StartTraining(trainingInput, trainingOutput);
-					
-					this->checkpoint.i_number_of_loops_checkpoint += 1;
-					
-					if (this->checkpoint.i_number_of_loops_checkpoint>=this->settings.i_number_allowed_same){
-						this->createCheckpoint();
-					}
-
-					
-				}
-
-
-				if (sequence_end){
-					if (length_of_sequence > 0){
-						this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
-						//Apply the error at the end of the sequence
-						this->mainNetwork->ApplyError();
-						if (this->checkpoint.i_number_of_loops_checkpoint>=this->settings.i_number_allowed_same){
-							this->createCheckpoint("AfterError");
-							this->checkpoint.i_number_of_loops_checkpoint = 0;
-						}
-						length_of_sequence = 0;
-					}
-					//The sequence has ended, so we need to reset the sequence
+				if (length[1] == 0){//Reset the sequence once the sequence has finished
 					this->mainNetwork->ResetSequence();
-					if (count_sequences >= this->settings.i_loops){
-						//Copy the previous set of error to the new set of errors
-						std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
-						
-						//Get the mean Square error
-						this->getMeanSquareError();
-						weight_type old = this->mean_square_error_results_old[0];
-						weight_type new_val = this->mean_square_error_results_new[0];
-						testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
-						this->mainNetwork->ResetSequence();
-						count_sequences = 0;
-					}
-					count_sequences++;
-					sequence_end = false;
-					//A new sequence, start from the beginning
-					k = 0;
+
 				}
-				else{
-					//The input of the initial is the beginning of it.
-					trainingInput[0] = trainingInput[k-1];
-					trainingOutput[0] = trainingOutput[k];
-					//Continue the sequence, we need to keep the previous input
-					k = 1;
-				}
+				//Load more data from the file
+
 
 			}
-			if (length[1] == 0){//Reset the sequence once the sequence has finished
-				this->mainNetwork->ResetSequence();
-
-			}
-			//Load more data from the file
-
-
 		}
 		//No longer running loops
 		this->mainNetwork->ResetSequence();
