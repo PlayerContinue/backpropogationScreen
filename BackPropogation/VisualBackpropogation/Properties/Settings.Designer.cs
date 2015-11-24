@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace VisualBackpropogation.Properties
+namespace VisualBackPropogation.Properties
 {
 
 

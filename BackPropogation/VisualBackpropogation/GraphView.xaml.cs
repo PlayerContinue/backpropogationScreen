@@ -16,24 +16,32 @@ using System.Windows.Shapes;
 namespace VisualBackPropogation
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for GraphView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class GraphView : Page
     {
-        public MainWindow()
+        public GraphView()
         {
             try
             {
                 InitializeComponent();
-                GraphView temp = new GraphView();
-                _mainFrame.Navigate(temp);
+                
             }
             catch (Exception ex)
             {
                 ConsoleManager.Show();
-               Console.Write(ex.Message);
-             
+                Console.Write(ex.Message);
             }
+
+            List<int[]> temp = new List<int[]>();
+            Random rand = new Random();
+            for (int i = 0; i < 20; i++)
+            {
+                temp.Add(new int[2] { rand.Next(10), rand.Next(10) });
+            }
+                _MainGraphView.DrawGraph(temp,10);
         }
+
+        
     }
 }

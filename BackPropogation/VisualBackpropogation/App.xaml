@@ -1,8 +1,9 @@
-﻿<Application x:Class="VisualBackpropogation.App"
+﻿<Application x:Class="VisualBackPropogation.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:VisualBackPropogation"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-       
+        <local:ConverterClass x:Key="ConverterClass"/>
     </Application.Resources>
 </Application>
