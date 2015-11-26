@@ -495,6 +495,7 @@ void ReccurentLoops::testTraining(){
 
 					if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
 						this->createCheckpoint();
+						this->checkpoint.i_number_of_loops_checkpoint = 0;
 					}
 
 
