@@ -11,14 +11,14 @@ ReccurentLoops::ReccurentLoops()
 
 }
 
-ReccurentLoops::~ReccurentLoops(){
+/*ReccurentLoops::~ReccurentLoops(){
 	this->cleanLoops();
 	delete this->input;
 	delete this->output;
 	delete this->training_input;
 	delete this->training_output;
 	delete this->mainNetwork;
-}
+}*/
 
 ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->settings = settings;
