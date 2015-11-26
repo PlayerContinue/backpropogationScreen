@@ -11,6 +11,15 @@ ReccurentLoops::ReccurentLoops()
 
 }
 
+ReccurentLoops::~ReccurentLoops(){
+	this->cleanLoops();
+	delete this->input;
+	delete this->output;
+	delete this->training_input;
+	delete this->training_output;
+	delete this->mainNetwork;
+}
+
 ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->settings = settings;
 	this->InitializeNetwork();
@@ -53,7 +62,9 @@ ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoi
 
 void ReccurentLoops::InitializeNetwork(){
 	this->input = new weight_type*[this->settings.i_number_of_training];
+	this->length_of_arrays[OUTPUT] = 0;
 	this->output = new weight_type*[this->settings.i_number_of_training];
+	this->length_of_arrays[INPUT] = 0;
 	this->mean_square_error_results_new = host_vector<weight_type>(this->settings.i_output + 1);
 	this->mean_square_error_results_old = host_vector<weight_type>(this->settings.i_output + 1);
 	this->inputfile = new std::fstream();
@@ -258,19 +269,23 @@ void ReccurentLoops::LoadTrainingSet(){
 		stream.open(this->settings.s_testSet);
 		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
 		stream.close();
+		this->length_of_arrays[TRAINING_1] = training_length[0];
 		stream.open(this->settings.s_outputTestSet);
 		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, this->settings.i_output, true);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
+		this->length_of_arrays[TRAINING_2] = training_length[0];
 	}
 	else{//A training file has not been included, get a random set from the input file
 		stream.open(this->settings.s_trainingSet);
 		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
 		stream.close();
+		this->length_of_arrays[TRAINING_1] = training_length[0];
 		stream.open(this->settings.s_outputTrainingFile);
 		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, this->settings.i_output, true);
 		stream.close();
 		this->number_in_training_sequence = training_length[0];
+		this->length_of_arrays[TRAINING_2] = training_length[0];
 	}
 }
 
@@ -373,6 +388,7 @@ void ReccurentLoops::testTraining(){
 	int length_of_sequence = 0;
 	int growth_check = 0;
 	int output_length;
+	int output_stop;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
@@ -407,16 +423,20 @@ void ReccurentLoops::testTraining(){
 				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_input, first_run);
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
 				output_length = length[0];
-				if (length[1] == -1){//Sequence may break early
-					break;
+				output_stop = length[1];
+				if (this->length_of_arrays[OUTPUT] < length[0]){
+					this->length_of_arrays[OUTPUT] = length[0];
 				}
 				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_output, first_run);
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();
 				if (length[0] > output_length){//The length should be the value of the shortest one
 					length[0] = output_length;
 				}
+				if (length[0] > this->length_of_arrays[INPUT]){
+					this->length_of_arrays[INPUT] = length[0];
+				}
 
-				if (length[1] == -1){//Sequence may break early
+				if (length[1] == -1 || output_stop == -1){//Sequence may break early
 					break;
 				}
 				first_run = false;
@@ -424,7 +444,7 @@ void ReccurentLoops::testTraining(){
 				for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
 
 					for (; k < this->settings.i_backprop_unrolled; k++){
-						if (i < length[0] && this->input[i][0] != SEQUENCE_DELIMITER && this->output[i][0] != this->input[i][0]){//Checks for sequence input and output mistmatch
+						if (i < length[0] && (this->input[i][0] == SEQUENCE_DELIMITER || this->output[i][0]==SEQUENCE_DELIMITER) && this->output[i][0] != this->input[i][0]){//Checks for sequence input and output mistmatch
 							cout << "Sequence End Mismatch. The input or output do not both have the same end sequence" << endl;
 							cout << "Countinue? ";
 							cin.sync();
@@ -509,8 +529,8 @@ void ReccurentLoops::testTraining(){
 	}
 	//No longer running loops
 	this->mainNetwork->ResetSequence();
-	this->mainNetwork->seti_backprop_unrolled(this->settings.i_backprop_unrolled - 2);
-	this->mainNetwork->StartTraining(this->input, this->output);
+	//this->mainNetwork->seti_backprop_unrolled(this->settings.i_backprop_unrolled - 2);
+	//this->mainNetwork->StartTraining(this->input, this->output);
 	this->createCheckpoint("Last_Train_Check");
 	try{
 
@@ -680,16 +700,26 @@ void ReccurentLoops::cleanLoops(){
 	this->checkpoint.b_still_running = false;
 	this->inputfile->close();
 	this->outputfile->close();
-	for (int i = 0; i < this->settings.i_number_of_training; i++){
-		std::free(this->input[i]);
-		std::free(this->output[i]);
-		std::free(this->training_input[i]);
-		std::free(this->training_output[i]);
+	for (int i = 0; i < this->length_of_arrays[INPUT]; i++){
+		delete[] this->input[i];
 	}
-	std::free(this->input);
-	std::free(this->output);
-	std::free(this->training_input);
-	std::free(this->training_output);
+	for (int i = 0; i < this->length_of_arrays[OUTPUT]; i++){
+		delete[] this->output[i];
+	}
+
+	for (int i = 0; i < this->length_of_arrays[TRAINING_1]; i++){
+		delete[] this->training_input[i];
+	}
+
+	for (int i = 0; i < this->length_of_arrays[TRAINING_2]; i++){
+		delete[] this->training_output[i];
+	}
+
+	this->length_of_arrays[INPUT] = 0;
+	this->length_of_arrays[OUTPUT] = 0;
+	this->length_of_arrays[TRAINING_1] = 0;
+	this->length_of_arrays[TRAINING_2] = 0;
+	
 }
 
 //Create a checkpoint with the network name

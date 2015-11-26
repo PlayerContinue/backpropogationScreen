@@ -70,7 +70,8 @@ private:
 	std::fstream* outputfile;
 	host_vector<weight_type> mean_square_error_results_old;
 	host_vector<weight_type> mean_square_error_results_new;
-	enum data_type {OUTPUT,INPUT,TRAINING};
+	enum data_type {OUTPUT,INPUT,TRAINING=2,TRAINING_1 = 2, TRAINING_2 = 3};
+	int length_of_arrays[4];
 	//*********************
 	//Constructors
 	//*********************
