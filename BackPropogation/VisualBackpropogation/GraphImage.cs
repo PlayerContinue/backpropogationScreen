@@ -49,6 +49,7 @@ namespace VisualBackPropogation
         //List Containing the Ellipses Which will be drawn as the images
         private List<Ellipse> Nodes = new List<Ellipse>();
         private List<System.Windows.Shapes.Line> Edges = new List<Line>();
+        private List<PolyBezierSegment> RecursiveEdges = new List<PolyBezierSegment>();
         static GraphImage()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphImage), new FrameworkPropertyMetadata(typeof(GraphImage)));
@@ -81,16 +82,32 @@ namespace VisualBackPropogation
             start = this.Edges.Count - 1;
             for (int i = 0; i < MapToFrom.Count; i++)
             {
-                
-                if (i > start)
+                if (MapToFrom[i][0] != MapToFrom[i][1])
                 {
-                    this.Edges.Add(AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line()));
+                    if (i > start)
+                    {
+                        this.Edges.Add(AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line()));
+                        this.Children.Add(this.Edges.Last<Line>());
+                    }
+                    else
+                    {
+                        this.Edges[i] = AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line());
+                    }
+                   
                 }
                 else
                 {
-                    this.Edges[i] = AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line());
+                    if (i > start)
+                    {
+                        this.RecursiveEdges.Add(AddRecursiveEdge(MapToFrom[i][0], new PolyBezierSegment()));
+                        
+                    }
+                    else
+                    {
+                        this.RecursiveEdges[i] = AddRecursiveEdge(MapToFrom[i][0], new PolyBezierSegment());
+                    }
+                    
                 }
-                this.Children.Add(this.Edges[i]);
             }
 
 
@@ -113,6 +130,17 @@ namespace VisualBackPropogation
             Shape.Stroke = new SolidColorBrush(Colors.Green);
             Shape.Fill = Brushes.Aqua;
             return Shape;
+        }
+
+        private PolyBezierSegment AddRecursiveEdge(int node, PolyBezierSegment TempLine)
+        {
+            TempLine.Points = new PointCollection() { new Point(Canvas.GetLeft(this.Nodes[node]), Canvas.GetTop(this.Nodes[node])),
+                new Point(Canvas.GetLeft(this.Nodes[node])+ (this.Nodes[node].Width/2), Canvas.GetTop(this.Nodes[node]) + (this.Nodes[node].Height)+5),
+                new Point(Canvas.GetLeft(this.Nodes[node]) + (this.Nodes[node].Width), Canvas.GetTop(this.Nodes[node]) + (this.Nodes[node].Height/2))
+            };
+
+            return TempLine;
+
         }
 
         private Line AddEdge(int node1, int node2, Line TempLine)

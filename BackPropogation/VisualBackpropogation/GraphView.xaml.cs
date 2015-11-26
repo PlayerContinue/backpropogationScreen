@@ -35,9 +35,9 @@ namespace VisualBackPropogation
 
             List<int[]> temp = new List<int[]>();
             Random rand = new Random();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 1; i++)
             {
-                temp.Add(new int[2] { rand.Next(10), rand.Next(10) });
+                temp.Add(new int[2] { 0, 0 });//rand.Next(10), rand.Next(10) });
             }
                 _MainGraphView.DrawGraph(temp,10);
         }
