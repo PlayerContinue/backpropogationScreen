@@ -25,6 +25,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->InitializeNetwork();
 	this->checkpoint = CRecurrentCheckpoint();
 	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
+	this->timer = NetworkTimer();
 	this->loadCheckpoint();
 }
 
@@ -408,6 +409,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
+		
 		//this->mainNetwork->removeNeuron(1, 0);
 		//this->mainNetwork->addWeight(1);
 		cout << "Training Start" << endl;
@@ -419,15 +421,17 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->ResetSequence();
 			length[1] = 0;
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
+				cout << this->timer.clear_timer() << endl;
+				this->timer.start();
 
-				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_input, first_run);
+				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_output, first_run);
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
 				output_length = length[0];
 				output_stop = length[1];
 				if (this->length_of_arrays[OUTPUT] < length[0]){
 					this->length_of_arrays[OUTPUT] = length[0];
 				}
-				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_output, first_run);
+				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_input, first_run);
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();
 				if (length[0] > output_length){//The length should be the value of the shortest one
 					length[0] = output_length;
@@ -449,6 +453,7 @@ void ReccurentLoops::testTraining(){
 							cout << "Countinue? ";
 							cin.sync();
 							if (cin.get() == 'n'){
+								this->cleanLoops();
 								exit(0);
 							}
 							else{
@@ -524,7 +529,7 @@ void ReccurentLoops::testTraining(){
 
 			}
 			//Load more data from the file
-
+			this->timer.restart_timer();
 
 		}
 	}

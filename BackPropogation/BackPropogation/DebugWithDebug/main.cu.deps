@@ -463,9 +463,11 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\csignal
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\signal.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkTimer.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ctime
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/config.h
@@ -932,10 +934,10 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/co
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrig.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrigf.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/stream.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.h
@@ -1315,7 +1317,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/partition.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/partition.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/trivial_sequence.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/par.h
@@ -1367,13 +1369,13 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/uninitialized_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Unique_Iterators.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CGraphicNetwork.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\Unique_Iterators.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CGraphicNetwork.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CudaCalculations.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
+c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
