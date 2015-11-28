@@ -420,9 +420,10 @@ void ReccurentLoops::testTraining(){
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
 			this->mainNetwork->ResetSequence();
 			length[1] = 0;
+			cout << this->timer.clear_timer() << endl;
+			this->timer.start();
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
-				cout << this->timer.clear_timer() << endl;
-				this->timer.start();
+				
 
 				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_output, first_run);
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();

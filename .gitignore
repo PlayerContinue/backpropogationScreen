@@ -201,3 +201,4 @@ FakesAssemblies/
 *.txt
 *.txt
 BackPropogation/BackPropogation/settings.txt
+BackPropogation/BackPropogation/tests/meansquare_3
