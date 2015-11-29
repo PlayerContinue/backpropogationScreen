@@ -8,11 +8,12 @@
 #include <iostream>
 #endif
 
+#ifndef __NETWORKTIMER_H_INCLUDED__
+#define __NETWORKTIMER_H_INCLUDED__
+#include "NetworkTimer.h"
+#endif
 
-
-#ifdef __X_H_INCLUDED__
-
-#else
+#ifndef __X_H_INCLUDED__
 #define __X_H_INCLUDED__
 #include "CSettings.h"
 #include "NetworkBase.cuh"
@@ -72,6 +73,9 @@ private:
 	host_vector<weight_type> mean_square_error_results_new;
 	enum data_type {OUTPUT,INPUT,TRAINING=2,TRAINING_1 = 2, TRAINING_2 = 3};
 	int length_of_arrays[4];
+	//Timer to keep track of length
+	NetworkTimer timer;
+
 	//*********************
 	//Constructors
 	//*********************

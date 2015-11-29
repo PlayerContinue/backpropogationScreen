@@ -25,6 +25,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->InitializeNetwork();
 	this->checkpoint = CRecurrentCheckpoint();
 	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
+	this->timer = NetworkTimer(this->settings.i_number_minutes_to_checkpoint);
 	this->loadCheckpoint();
 }
 
@@ -324,9 +325,16 @@ void ReccurentLoops::startTraining(int type){
 
 void ReccurentLoops::reset_file_for_loop(){
 	this->inputfile->clear();
+	this->inputfile->seekg(0,this->inputfile->end);
+	//Set the timer information about the file size
+	this->timer.set_file_size(this->inputfile->tellg() * (std::istream::streampos) this->settings.i_numberTimesThroughFile);
+	this->timer.clear_timer();
+
+	this->inputfile->clear();
 	this->inputfile->seekg(0, ios::beg);
 	this->outputfile->clear();
 	this->outputfile->seekg(0, ios::beg);
+	
 	this->mainNetwork->ResetSequence();
 }
 
@@ -389,6 +397,7 @@ void ReccurentLoops::testTraining(){
 	int growth_check = 0;
 	int output_length;
 	int output_stop;
+	std::istream::streampos length_of_previous_files = 0;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
@@ -408,26 +417,36 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
+		
 		//this->mainNetwork->removeNeuron(1, 0);
 		//this->mainNetwork->addWeight(1);
 		cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
+			length_of_previous_files += this->inputfile->tellg();
 			reset_file_for_loop();
 			this->getMeanSquareError();
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			
 			this->mainNetwork->ResetSequence();
 			length[1] = 0;
+			this->timer.start();
+			
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
+				if (length[1] != 0){
+					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + length_of_previous_files) << endl;
+				}
+				this->timer.clear_timer();
+				
 
-				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_input, first_run);
+				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_output, first_run);
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
 				output_length = length[0];
 				output_stop = length[1];
 				if (this->length_of_arrays[OUTPUT] < length[0]){
 					this->length_of_arrays[OUTPUT] = length[0];
 				}
-				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_output, first_run);
+				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_input, first_run);
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();
 				if (length[0] > output_length){//The length should be the value of the shortest one
 					length[0] = output_length;
@@ -436,6 +455,10 @@ void ReccurentLoops::testTraining(){
 					this->length_of_arrays[INPUT] = length[0];
 				}
 
+				if (first_run){
+					this->timer.set_size_of_round(this->inputfile->tellg());//Set it to the position in the file after a single round
+				}
+				
 				if (length[1] == -1 || output_stop == -1){//Sequence may break early
 					break;
 				}
@@ -449,6 +472,7 @@ void ReccurentLoops::testTraining(){
 							cout << "Countinue? ";
 							cin.sync();
 							if (cin.get() == 'n'){
+								this->cleanLoops();
 								exit(0);
 							}
 							else{
@@ -491,11 +515,10 @@ void ReccurentLoops::testTraining(){
 
 					this->mainNetwork->StartTraining(trainingInput, trainingOutput);
 
-					this->checkpoint.i_number_of_loops_checkpoint += 1;
+					//this->checkpoint.i_number_of_loops_checkpoint += 1;
 
-					if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
+					if (this->timer.passed_checkpoint()){//Create a checkpoint if the set checkpoint values has been passed
 						this->createCheckpoint();
-						this->checkpoint.i_number_of_loops_checkpoint = 0;
 					}
 
 
@@ -517,14 +540,15 @@ void ReccurentLoops::testTraining(){
 					//Continue the sequence, we need to keep the previous input
 					k = 1;
 				}
-
+				//Load the timer
+				this->timer.restart_timer();
 			}
 			if (length[1] == 0){//Reset the sequence once the sequence has finished
 				this->mainNetwork->ResetSequence();
 
 			}
-			//Load more data from the file
 
+		
 
 		}
 	}

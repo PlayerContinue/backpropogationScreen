@@ -211,6 +211,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="NetworkBase.cuh" />
+    <ClInclude Include="NetworkTimer.h" />
     <ClInclude Include="ReccurentLoops.cuh" />
     <ClInclude Include="CRecurrentCheckpoint.h" />
     <ClInclude Include="RecurrentNeuralNetwork.cuh" />
@@ -244,6 +245,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="NetworkTimer.cpp" />
     <CudaCompile Include="LongTermShortTermTraining.cu" />
     <ClCompile Include="Network.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
