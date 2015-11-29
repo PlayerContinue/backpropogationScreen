@@ -419,7 +419,7 @@ void ReccurentLoops::testTraining(){
 		}
 		
 		//this->mainNetwork->removeNeuron(1, 0);
-		//this->mainNetwork->addWeight(1);
+		this->mainNetwork->addWeight(1);
 		cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
