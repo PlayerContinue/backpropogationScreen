@@ -75,6 +75,7 @@ private:
 	int length_of_arrays[4];
 	//Timer to keep track of length
 	NetworkTimer timer;
+	std::istream::streampos length_of_file = (std::istream::streampos)0;
 
 	//*********************
 	//Constructors

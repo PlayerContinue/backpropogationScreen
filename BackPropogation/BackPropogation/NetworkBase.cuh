@@ -77,7 +77,7 @@ public:
 	virtual void removeNeuron(int position, int layer) = 0;
 	//Add a new weight between neurons
 	virtual void addWeight(int numberWeightsToAdd) = 0;
-
+	virtual void removeWeight() = 0;
 public:
 	virtual void ResetSequence() = 0;
 

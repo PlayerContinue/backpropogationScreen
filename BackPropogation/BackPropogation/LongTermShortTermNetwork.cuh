@@ -345,6 +345,12 @@ private:
 	void addWeightToGPU(int nodePosition, int layer, int start);
 	//Get a new weight
 	weight_type getNewWeight();
+	void removeWeight();
+	//-------------Remove Weights---------------------//
+	//Remove weight from the GPU
+	void removeWeight(int layer_pos, int node_pos, int weight_pos);
+
+	
 
 	//***************************
 	//Perform Functionality

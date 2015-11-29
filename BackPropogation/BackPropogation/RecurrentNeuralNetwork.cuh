@@ -180,7 +180,9 @@ private:
 
 	//Get a new weight
 	weight_type getNewWeight();
+	void removeWeight(){
 
+	}
 	//***************************
 	//Perform Functionality
 	//***************************

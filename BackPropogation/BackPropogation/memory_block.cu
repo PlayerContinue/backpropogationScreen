@@ -168,7 +168,7 @@ bool Memory_Block::removeConnection(int toRemove){
 	if (toRemove < this->potential_memory_cell_value.size()){
 		if (this->type == LAYER){
 			for (unsigned int start = INPUT_CELL; start <= MEMORY_CELL; start++){
-				if (start != POTENTIAL_MEMORY_CELL){
+				if (start != POTENTIAL_MEMORY_CELL && toRemove < this->weight_lists[start].size()){
 					this->weight_lists[start].erase(this->weight_lists[start].begin() + toRemove);
 				}
 			}

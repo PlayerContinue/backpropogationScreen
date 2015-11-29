@@ -324,11 +324,13 @@ void ReccurentLoops::startTraining(int type){
 }
 
 void ReccurentLoops::reset_file_for_loop(){
-	this->inputfile->clear();
-	this->inputfile->seekg(0,this->inputfile->end);
-	//Set the timer information about the file size
-	this->timer.set_file_size(this->inputfile->tellg() * (std::istream::streampos) this->settings.i_numberTimesThroughFile);
-	this->timer.clear_timer();
+	if ((int)this->inputfile->tellg() == 0){
+		this->inputfile->clear();
+		this->inputfile->seekg(0, this->inputfile->end);
+		this->length_of_file = this->inputfile->tellg();
+		//Set the timer information about the file size
+		this->timer.set_file_size(this->length_of_file * (std::istream::streampos) this->settings.i_numberTimesThroughFile);
+	}
 
 	this->inputfile->clear();
 	this->inputfile->seekg(0, ios::beg);
@@ -344,7 +346,7 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 		//Apply the error at the end of the sequence
 		this->mainNetwork->ApplyError();
 		if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
-			this->createCheckpoint("AfterError");
+			//this->createCheckpoint("AfterError");
 			this->checkpoint.i_number_of_loops_checkpoint = 0;
 		}
 		length_of_sequence = 0;
@@ -397,7 +399,6 @@ void ReccurentLoops::testTraining(){
 	int growth_check = 0;
 	int output_length;
 	int output_stop;
-	std::istream::streampos length_of_previous_files = 0;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	try{
 		if (!this->checkpoint.b_still_running){
@@ -406,24 +407,16 @@ void ReccurentLoops::testTraining(){
 		this->checkpoint.b_still_running = true;
 		this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
-			//Get the mean Square error
-			//this->mainNetwork->removeNeuron(1, 0);
-			this->mainNetwork->addWeight(1);
+			//this->mainNetwork->addWeight(1);
+			this->mainNetwork->removeWeight();
 			this->createCheckpoint("Remove_Checkpoint_1");
-			//this->mainNetwork->addNeuron(3);
-			//	this->createCheckpoint("Add Checkpoint_1");
-			//		this->mainNetwork->addNeuron(3);
-			//			this->createCheckpoint("Add Checkpoint_2");
 			this->mainNetwork->cleanNetwork();
 			exit(0);
 		}
 		
-		//this->mainNetwork->removeNeuron(1, 0);
-		this->mainNetwork->addWeight(1);
 		cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
-			length_of_previous_files += this->inputfile->tellg();
 			reset_file_for_loop();
 			this->getMeanSquareError();
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
@@ -434,7 +427,9 @@ void ReccurentLoops::testTraining(){
 			
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
 				if (length[1] != 0){
-					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + length_of_previous_files) << endl;
+					//Find the estimated time remaining from the length 
+					//The length of file * loops is number of previously found values
+					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + (this->length_of_file*loops)) << endl;
 				}
 				this->timer.clear_timer();
 				

@@ -1,10 +1,10 @@
-s_network_name LetterNetwork_1
-i_loops 5000
+s_network_name LetterNetwork_2
+i_loops 10000
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
 i_number_allowed_same 5000
-i_input 32
-i_output 32
+i_input 8
+i_output 8
 d_threshold .0003
 d_distance_threshold .7
 d_neuron_distance_threshold .2
@@ -16,11 +16,11 @@ d_lock_node_level .3e-70
 d_alpha 0
 d_beta .2
 b_trainingFromFile 1
-s_inputTrainingSet datasets/countin10000.txt
-s_outputTrainingFile datasets/countout10000.txt
+s_inputTrainingSet datasets/letterinput1.txt
+s_outputTrainingFile datasets/letterbinout1.txt
 b_testingFromFile 0
-s_inputTestSet datasets/countin10000.txt
-s_outputTestSet datasets/countout10000.txt
+s_inputTestSet datasets/letterinput1.txt
+s_outputTestSet datasets/letterbinout1.txt
 i_number_of_training 30000
 i_trainingSetType char
 i_outputTrainingSetType double
@@ -33,8 +33,8 @@ i_numberTimesThroughFile 2
 Type:LongTermShortTerm_items
 i_backprop_unrolled 15
 i_number_in_sequence 5
-i_number_start_nodes 100
+i_number_start_nodes 10000
 i_number_new_weights 0
 i_number_of_testing_items 100
 b_allow_growth 0
-i_number_minutes_to_checkpoint 2
+i_number_minutes_to_checkpoint 30

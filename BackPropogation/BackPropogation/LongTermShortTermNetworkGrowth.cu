@@ -578,7 +578,6 @@ weight_type LongTermShortTermNetwork::getNewWeight(){
 
 void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	int decideTo = this->decideNodeToAttachTo();
-	decideTo = 2;
 	for (int i = 0; i < numberWeightsToAdd; i++){
 		if (decideTo != -1){
 			this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
@@ -627,13 +626,11 @@ void LongTermShortTermNetwork::addWeightToGPU(int nodePosition, int layer, int s
 		
 
 		//Transform the positionToSum
-		thrust::transform_if(
+		thrust::transform(
 			this->positionToSum.begin(),
 			this->positionToSum.end(),
 			this->positionToSum.begin(),
-			_1 + 1,
-			_1 > start
-			);
+		functors::add_different_by_value<int,0,1,1>(start-1));
 
 		int_iterator = thrust::find(this->count.begin(), this->count.end(), *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));
 		this->count.insert(int_iterator, *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));

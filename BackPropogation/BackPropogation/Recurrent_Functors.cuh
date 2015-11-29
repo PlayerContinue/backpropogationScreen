@@ -47,6 +47,30 @@ namespace functors{
 
 	};
 
+
+	template<typename T, T add_less_than, T add_more_than, T add_equal_to>
+	struct add_different_by_value : public thrust::unary_function < T, T > {
+		const T compare_to;
+
+		add_different_by_value(T _compare_to):compare_to(_compare_to){
+
+		}
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &x) const{
+			if (x > compare_to){
+				return x + add_more_than;
+			}
+			else if(x==compare_to){
+				return x + add_equal_to;
+			}else{
+				return x + add_less_than;
+			}
+		}
+
+	};
+
 	//Multiply two values
 	//0 <, 1 >, 2 <=, 3 >=, 4 ==
 	template <unsigned int pos_in_tuple, unsigned int return_on_fail_pos, typename T>

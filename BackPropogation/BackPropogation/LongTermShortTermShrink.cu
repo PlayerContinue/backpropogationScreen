@@ -229,4 +229,75 @@ void LongTermShortTermNetwork::removeOutputConnection(int position, int previous
 		
 	}
 
+	
+
+}
+
+
+//************************
+//Remove Weight From Network
+//************************
+
+void LongTermShortTermNetwork::removeWeight(){
+	int decideTo = 0;
+	this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), 
+		this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
+	this->addWeightToGPU(decideTo,0);
+	testing::outputToFile(this->GPUMapFrom, "from", "tests/testing1.txt");
+	testing::outputToFile(this->GPUMapFrom, "from", "tests/testing1.txt");
+	testing::outputToFile(this->GPUMapTo, "to", "tests/testing1.txt");
+	testing::outputToFile(this->positionToSum, "sum", "tests/testing1.txt");
+	testing::outputToFile(this->count, "count", "tests/testing1.txt");
+	this->removeWeight(0, decideTo, this->mBlocksLayers[0][decideTo].mapFrom.size()-1);
+}
+
+//Remove a weight while the system is running
+void LongTermShortTermNetwork::removeWeight(int layer_pos, int node_pos, int weight_pos){
+		thrust::device_vector<int>::iterator int_iterator;
+		//Find the position of the weight to remove in the Input Node
+		int start_pos_weights = 0;
+		//Reach start of layer
+		for (int i = 0; i < layer_pos; i++){
+			start_pos_weights += this->numberOfWeightsInLayers[layer_pos];
+		}
+		
+		//Reach start of node
+		for (int i = 0; i < node_pos; i++){
+			start_pos_weights += this->mBlocksLayers[layer_pos][node_pos].mapFrom.size();
+		}
+
+		start_pos_weights += weight_pos;
+
+		//Reach value for last type
+		for (int i = INPUT_CELL; i < POTENTIAL_MEMORY_CELL; i++){
+			start_pos_weights += this->number_weights_by_type[layer_pos][i];
+		}
+
+		//Remove the weight one by one
+		for (int i = POTENTIAL_MEMORY_CELL; i >= INPUT_CELL; i--){
+
+			this->GPUWeights.erase(this->GPUWeights.begin() + start_pos_weights);
+			this->GPUMapFrom.erase(this->GPUMapFrom.begin() + start_pos_weights);
+			this->GPUMapTo.erase(this->GPUMapTo.begin() + start_pos_weights);
+			
+
+			this->number_weights_by_type[layer_pos][i]--;
+			this->numberOfWeightsInLayers[layer_pos]--;
+			
+			//Remove the weight from the sumTo List
+			int_iterator = thrust::find(this->positionToSum.begin(), this->positionToSum.end(), start_pos_weights);
+			int temp = int_iterator - this->positionToSum.begin();
+
+			//Remove from the count
+			this->count.erase(this->count.begin() + (int_iterator - this->positionToSum.begin()));
+			//Remove from the sum
+			this->positionToSum.erase(int_iterator);
+			thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 - 1, _1 > start_pos_weights);
+			if (i > 0){
+				start_pos_weights -= this->number_weights_by_type[layer_pos][i-1];
+			}
+
+		}
+		//Remove from the node
+		this->mBlocksLayers[layer_pos][node_pos].removeConnection(weight_pos);
 }
