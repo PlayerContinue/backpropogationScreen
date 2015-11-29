@@ -324,9 +324,10 @@ void ReccurentLoops::startTraining(int type){
 }
 
 void ReccurentLoops::reset_file_for_loop(){
+	this->inputfile->clear();
 	this->inputfile->seekg(0,this->inputfile->end);
 	//Set the timer information about the file size
-	this->timer.set_file_size(this->inputfile->tellg() * (std::istream::streampos) this->settings.i_numberTimesThroughFile, this->settings.i_number_of_training);
+	this->timer.set_file_size(this->inputfile->tellg() * (std::istream::streampos) this->settings.i_numberTimesThroughFile);
 	this->timer.clear_timer();
 
 	this->inputfile->clear();
@@ -432,8 +433,9 @@ void ReccurentLoops::testTraining(){
 			this->timer.start();
 			
 			while (length[1] != -1 && this->mean_square_error_results_new[0] > this->settings.d_threshold){
-				
-				cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + length_of_previous_files) << endl;
+				if (length[1] != 0){
+					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + length_of_previous_files) << endl;
+				}
 				this->timer.clear_timer();
 				
 

@@ -21,9 +21,8 @@ void NetworkTimer::start(){
 	this->timer_start = std::clock();
 }
 
-void NetworkTimer::set_file_size(std::istream::streampos file_size, int size_of_round){
+void NetworkTimer::set_file_size(std::istream::streampos file_size){
 	this->file_size = file_size;
-	this->size_of_round = size_of_round;
 }
 
 std::string NetworkTimer::estimated_time_remaining(std::istream::streampos file_pos){

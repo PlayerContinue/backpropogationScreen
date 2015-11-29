@@ -43,7 +43,7 @@ public:
 	void set_size_of_round(std::istream::streampos size){
 		this->size_of_round = size;
 	}
-	void set_file_size(std::istream::streampos file_size, int size_of_round);
+	void set_file_size(std::istream::streampos file_size);
 
 	//Get the estimated time remaining to run from the current most recent value
 	std::string estimated_time_remaining(std::istream::streampos file_pos);
