@@ -183,8 +183,36 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 			this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output,
 			this->device_deltas.begin() + delta_next_end - this->settings.i_output,
 			functors::find_output_delta<weight_type>());
-
+		
+		
+		
+		
 #ifdef DELTA_TEST
+		this->device_deltas[0] = -1;
+		testing::outputToFile<weight_type>(
+			make_permutation_iterator(
+			thrust::make_permutation_iterator(
+			Unique_Iterator::make_return_zero_iterator(
+			this->device_deltas.begin() + delta_next_start,
+			this->device_deltas.end(),
+			this->device_deltas.begin()
+			),
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			thrust::make_transform_iterator(
+			this->GPUMapTo.begin(),
+			_1 - this->numberNonWeights
+			),
+			this->GPUMapFrom.begin()
+			)
+			),
+			functors::add_when_less_than<long>(this->numberOfNodes, this->numberOfNodes + this->numberNonWeights)
+			)
+			),
+			this->positionToSum.begin()
+			),this->positionToSum.size() + 5, "delta_test","tests/delta_test.txt");
+
 		testing::outputToFile<weight_type>(
 			thrust::make_permutation_iterator(
 			thrust::make_permutation_iterator(
@@ -265,7 +293,6 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 		testing::outputToFile<weight_type>(this->device_deltas, "PostOutput", "tests/testing.txt");
 
 #endif
-		
 		thrust::reduce_by_key(
 			this->count.begin(),
 			this->count.end(),
@@ -276,8 +303,10 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 			this->GPUWeights.begin(),
 			thrust::make_permutation_iterator(
 			Unique_Iterator::make_return_zero_iterator(
-			this->device_deltas.begin() + delta_next_start - 1, 
-			this->device_deltas.size() - delta_next_start),
+			this->device_deltas.begin() + delta_next_start,
+			this->device_deltas.end(),
+			this->device_deltas.begin()
+			),
 			thrust::make_transform_iterator(
 			thrust::make_zip_iterator(
 			thrust::make_tuple(

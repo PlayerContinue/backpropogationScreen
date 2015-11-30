@@ -25,7 +25,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->InitializeNetwork();
 	this->checkpoint = CRecurrentCheckpoint();
 	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
-	this->timer = NetworkTimer(this->settings.i_number_minutes_to_checkpoint);
+
 	this->loadCheckpoint();
 }
 
@@ -47,7 +47,10 @@ ReccurentLoops::ReccurentLoops(CSettings settings, int type){
 
 
 	this->InitializeNetwork();
-	this->checkpoint = CRecurrentCheckpoint(settings);
+	
+		this->checkpoint = CRecurrentCheckpoint(settings);
+	
+	
 }
 
 ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint){
@@ -62,6 +65,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoi
 //*****************************
 
 void ReccurentLoops::InitializeNetwork(){
+	this->timer = NetworkTimer(this->settings.i_number_minutes_to_checkpoint);
 	this->input = new weight_type*[this->settings.i_number_of_training];
 	this->length_of_arrays[OUTPUT] = 0;
 	this->output = new weight_type*[this->settings.i_number_of_training];
@@ -754,7 +758,9 @@ void ReccurentLoops::createCheckpoint(){
 //Create a Checkpoint with any name
 void ReccurentLoops::createCheckpoint(string file_name){
 	static int count = 0;
-
+	if (count > 20){
+		count = 0;
+	}
 	std::ofstream outputfile;
 	outputfile.open("recurrent_networks/" + file_name + std::to_string(count) + ".txt", ios::trunc);
 	if (outputfile.is_open()){

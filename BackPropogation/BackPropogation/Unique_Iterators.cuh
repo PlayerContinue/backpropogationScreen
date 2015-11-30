@@ -1,5 +1,18 @@
-#include <thrust/iterator/iterator_adaptor.h>
+#pragma once
 
+/*
+Author: David Greenberg
+
+Contain several Iterators which are not contained in the main system
+
+*/
+
+#include <thrust/iterator/iterator_adaptor.h>
+#include <thrust/iterator/iterator_facade.h>
+#include <thrust/detail/type_traits.h>
+#include <thrust/detail/function.h>
+#include <thrust/functional.h>
+#include <thrust/detail/raw_reference_cast.h>
 namespace Unique_Iterator{
 	// derive repeat_iterator from iterator_adaptor
 	template<typename Iterator>
@@ -36,110 +49,93 @@ namespace Unique_Iterator{
 
 
 	//Special Iterator for skipping a set number of places on each iteration
-	template<typename Iterator>
-	class skip_iterator : public thrust::iterator_adaptor < skip_iterator<Iterator>, Iterator >
+	/*template<typename Iterator>
+	class skip_iterator : public thrust::iterator_adaptor < skip_iterator<Iterator>, Iterator>
 	{
 	public:
-		// shorthand for the name of the iterator_adaptor we're deriving from
-		typedef thrust::iterator_adaptor <
-			skip_iterator<Iterator>,
-			Iterator
-		> super_t;
-		__host__ __device__
-			skip_iterator(const Iterator &x, int n) : super_t(x), begin(x), n(n) {}
-		// befriend thrust::iterator_core_access to allow it access to the private interface below
-		friend class thrust::iterator_core_access;
+	// shorthand for the name of the iterator_adaptor we're deriving from
+	typedef thrust::iterator_adaptor <
+	skip_iterator<Iterator>,
+	Iterator,
+	> super_t;
+	__host__ __device__
+	skip_iterator(const Iterator &x, int n) : super_t(x), begin(x), n(n) {}
+	// befriend thrust::iterator_core_access to allow it access to the private interface below
+	friend class thrust::iterator_core_access;
 	private:
-		// skip n elements
-		unsigned int n;
-		// used to keep track of where we began
-		const Iterator begin;
-		// it is private because only thrust::iterator_core_access needs access to it
-		__host__ __device__
-			typename super_t::reference dereference() const
-		{
-			
-			return *(begin + ((this->base() - begin)*n));
-		}
+	// skip n elements
+	unsigned int n;
+	// used to keep track of where we began
+	const Iterator begin;
+	// it is private because only thrust::iterator_core_access needs access to it
+	__host__ __device__
+	typename super_t::reference dereference() const
+	{
+
+	return *(begin + ((this->base() - begin)*n));
+	}
 	};
 
 	template<typename Iterator>
 	Unique_Iterator::skip_iterator<Iterator> make_skip_iterator(Iterator it, int n){
-		return Unique_Iterator::skip_iterator<Iterator>(it, n);
-	};
+	return Unique_Iterator::skip_iterator<Iterator>(it, n);
+	};*/
 
+	//*************************************
+	//return_zero_iterator
+	//Special form iterator for dealing with iterators beyond the size of the array
+	//n - the length of the array
+	//x - the iterator
+	//*************************************
 
 	//Special Iterator for skipping a set number of places on each iteration
-	template<typename Iterator>
-	class return_zero_iterator : public thrust::iterator_adaptor < return_zero_iterator<Iterator>, Iterator >
+	template<typename Iterator, typename Iterator2>
+	class return_zero_iterator : public thrust::iterator_adaptor < return_zero_iterator<Iterator, Iterator2>, Iterator >
 	{
 	public:
 		// shorthand for the name of the iterator_adaptor we're deriving from
+
 		typedef thrust::iterator_adaptor <
-			return_zero_iterator<Iterator>,
+			return_zero_iterator<Iterator, Iterator2>,
 			Iterator
 		> super_t;
+
 		__host__ __device__
-			return_zero_iterator(const Iterator &x, const unsigned int n) : super_t(x), begin(x), n(n) {}
+			return_zero_iterator(const Iterator &begin, const Iterator &end, const Iterator2 &_return_type) : super_t(begin), begin(begin), end(end), return_value(_return_type) {}
 		// befriend thrust::iterator_core_access to allow it access to the private interface below
 		friend class thrust::iterator_core_access;
 	private:
-		//n is the length, return zero if greater than
-		const unsigned int n;
+	
+
+		
+
 		// used to keep track of where we began
 		const Iterator begin;
+		// used to keep track of where the value ends
+		const Iterator end;
+		//Value to return when beyond the scope
+		const Iterator2 return_value;
+
+
+
 		// it is private because only thrust::iterator_core_access needs access to it
 		__host__ __device__
 			typename super_t::reference dereference() const
 		{
-			if (((int)(this->base()-begin)) > n){
-				return *(begin);
+			if (end - this->base() < 0){
+				return *(return_value);
 			}
 			else{
-				return *(begin + (this->base()-begin) + 1);
+				return *(this->base_reference());
 			}
 		}
 	};
 
-	template<typename Iterator>
-	Unique_Iterator::return_zero_iterator<Iterator> make_return_zero_iterator(Iterator it, int n){
-		return Unique_Iterator::return_zero_iterator<Iterator>(it, n);
+	template<typename Iterator, typename Iterator2>
+	inline __host__ __device__
+		Unique_Iterator::return_zero_iterator<Iterator, Iterator2> make_return_zero_iterator(Iterator it, Iterator end, Iterator2 return_value){
+		return Unique_Iterator::return_zero_iterator<Iterator, Iterator2>(it, end, return_value);
 	};
 
 
-	//Special Iterator for skipping a set number of places on each iteration and then counting and skipping again
-	/*template<typename Iterator>
-	class skip_and_count_iterator : public thrust::iterator_adaptor < skip_iterator<Iterator>, Iterator >
-	{
-	public:
-		// shorthand for the name of the iterator_adaptor we're deriving from
-		typedef thrust::iterator_adaptor <
-			skip_iterator<Iterator>,
-			Iterator
-		> super_t;
-		__host__ __device__
-			skip_and_count_iterator(const Iterator &x, int n, int count) : super_t(x), begin(x), n(n), count(count) {}
-		// befriend thrust::iterator_core_access to allow it access to the private interface below
-		friend class thrust::iterator_core_access;
-	private:
-		// skip n elements
-		unsigned int n;
-
-		//count the number before next skip
-		unsigned int count;
-
-		// used to keep track of where we began
-		const Iterator begin;
-		// it is private because only thrust::iterator_core_access needs access to it
-		__host__ __device__
-			typename super_t::reference dereference() const
-		{
-			return *(begin + ((this->base() - begin)*n));
-		}
-	};
-
-	template<typename Iterator>
-	Unique_Iterator::skip_and_count_iterator skip_and_count_iterator(Iterator it, int n, int count){
-		return Unique_Iterator::skip_and_count_iterator<Iterator>(it, n,count);
-	}*/
 }
