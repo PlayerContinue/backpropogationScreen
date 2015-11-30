@@ -68,6 +68,45 @@ namespace Unique_Iterator{
 		return Unique_Iterator::skip_iterator<Iterator>(it, n);
 	};
 
+
+	//Special Iterator for skipping a set number of places on each iteration
+	template<typename Iterator>
+	class return_zero_iterator : public thrust::iterator_adaptor < return_zero_iterator<Iterator>, Iterator >
+	{
+	public:
+		// shorthand for the name of the iterator_adaptor we're deriving from
+		typedef thrust::iterator_adaptor <
+			return_zero_iterator<Iterator>,
+			Iterator
+		> super_t;
+		__host__ __device__
+			return_zero_iterator(const Iterator &x, const unsigned int n) : super_t(x), begin(x), n(n) {}
+		// befriend thrust::iterator_core_access to allow it access to the private interface below
+		friend class thrust::iterator_core_access;
+	private:
+		//n is the length, return zero if greater than
+		const unsigned int n;
+		// used to keep track of where we began
+		const Iterator begin;
+		// it is private because only thrust::iterator_core_access needs access to it
+		__host__ __device__
+			typename super_t::reference dereference() const
+		{
+			if (((int)(this->base()-begin)) > n){
+				return *(begin);
+			}
+			else{
+				return *(begin + (this->base()-begin) + 1);
+			}
+		}
+	};
+
+	template<typename Iterator>
+	Unique_Iterator::return_zero_iterator<Iterator> make_return_zero_iterator(Iterator it, int n){
+		return Unique_Iterator::return_zero_iterator<Iterator>(it, n);
+	};
+
+
 	//Special Iterator for skipping a set number of places on each iteration and then counting and skipping again
 	/*template<typename Iterator>
 	class skip_and_count_iterator : public thrust::iterator_adaptor < skip_iterator<Iterator>, Iterator >

@@ -5,7 +5,7 @@ i_number_before_growth_potential 5000
 i_number_allowed_same 5000
 i_input 8
 i_output 8
-d_threshold .0003
+d_threshold .003
 d_distance_threshold .7
 d_neuron_distance_threshold .2
 d_row_success_threshold .3

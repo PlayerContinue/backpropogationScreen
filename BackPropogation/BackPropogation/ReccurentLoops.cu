@@ -337,6 +337,9 @@ void ReccurentLoops::reset_file_for_loop(){
 	this->outputfile->clear();
 	this->outputfile->seekg(0, ios::beg);
 	
+	int temp1 = this->outputfile->tellg();
+	int temp2 = this->inputfile->tellg();
+
 	this->mainNetwork->ResetSequence();
 }
 
@@ -405,7 +408,7 @@ void ReccurentLoops::testTraining(){
 			this->mainNetwork->InitializeTraining();
 		}
 		this->checkpoint.b_still_running = true;
-		this->createCheckpoint("Initial Checkpoint");
+		//this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
 			//this->mainNetwork->addWeight(1);
 			this->mainNetwork->removeWeight();
