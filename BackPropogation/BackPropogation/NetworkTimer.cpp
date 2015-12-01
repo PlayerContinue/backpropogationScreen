@@ -28,6 +28,9 @@ void NetworkTimer::set_file_size(std::istream::streampos file_size){
 std::string NetworkTimer::estimated_time_remaining(std::istream::streampos file_pos){
 	std::istream::streamoff file_diff =(long double) ((this->file_size - file_pos) / this->size_of_round);//Amount of file remaining
 	long double estimated_milliseconds = (this->current_time/CLOCKS_PER_SEC);//Time passed in one round
+	if (estimated_milliseconds == 0){
+		estimated_milliseconds = 1;
+	}
 	estimated_milliseconds *= file_diff; //Multiply amount of file remaining by the time remaining
 	long estimated_days = estimated_milliseconds / 3600 / 24;
 	estimated_milliseconds -= estimated_days * 3600 * 24;

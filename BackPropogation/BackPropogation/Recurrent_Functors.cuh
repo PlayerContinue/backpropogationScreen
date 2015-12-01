@@ -8,6 +8,9 @@
 #include <thrust/copy.h>
 #include <thrust/complex.h>
 #include <vector>
+
+
+
 #ifndef weight_type
 #define weight_type double
 #endif

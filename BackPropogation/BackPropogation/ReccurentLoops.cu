@@ -270,28 +270,43 @@ void ReccurentLoops::LoadTrainingSet(){
 	this->training_output = new weight_type*[this->settings.i_number_of_training];
 	int training_length[2];
 	std::fstream stream;
+	
 	if (this->settings.b_testingFromFile){//A training file has been included and should be read from for the training set
 		stream.open(this->settings.s_testSet);
-		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
-		stream.close();
-		this->length_of_arrays[TRAINING_1] = training_length[0];
-		stream.open(this->settings.s_outputTestSet);
-		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, this->settings.i_output, true);
-		stream.close();
-		this->number_in_training_sequence = training_length[0];
-		this->length_of_arrays[TRAINING_2] = training_length[0];
 	}
 	else{//A training file has not been included, get a random set from the input file
 		stream.open(this->settings.s_trainingSet);
-		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
-		stream.close();
-		this->length_of_arrays[TRAINING_1] = training_length[0];
-		stream.open(this->settings.s_outputTrainingFile);
-		this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, this->settings.i_output, true);
-		stream.close();
-		this->number_in_training_sequence = training_length[0];
-		this->length_of_arrays[TRAINING_2] = training_length[0];
 	}
+
+		if (stream.is_open()){
+			this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
+			stream.close();
+			this->length_of_arrays[TRAINING_1] = training_length[0];
+			
+			if (this->settings.b_testingFromFile){//A training file has been included and should be read from for the training set
+				stream.open(this->settings.s_outputTestSet);
+			}
+			else{//A training file has not been included, get a random set from the input file
+				stream.open(this->settings.s_outputTrainingFile);
+			}
+
+			if (stream.is_open()){
+				this->loadFromFile(stream, this->settings.i_output, this->training_output, training_length, this->settings.i_number_of_testing_items, OUTPUT, this->settings.i_output, true);
+				stream.close();
+				this->number_in_training_sequence = training_length[0];
+				this->length_of_arrays[TRAINING_2] = training_length[0];
+			}
+			else{
+				throw new exception("Output File Not Found");
+			}
+		}
+		else{
+			throw new exception("Input File Not Found");
+		}
+	
+	
+		
+	
 }
 
 //**********************
@@ -411,6 +426,7 @@ void ReccurentLoops::testTraining(){
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
 		}
+		
 		this->checkpoint.b_still_running = true;
 		//this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){

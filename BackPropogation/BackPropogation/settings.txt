@@ -1,10 +1,10 @@
 s_network_name LetterNetwork_2
-i_loops 10000
+i_loops 100
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
 i_number_allowed_same 5000
-i_input 8
-i_output 8
+i_input 32
+i_output 32
 d_threshold .03
 d_distance_threshold .7
 d_neuron_distance_threshold .2
@@ -16,11 +16,11 @@ d_lock_node_level .3e-70
 d_alpha 0
 d_beta .5
 b_trainingFromFile 1
-s_inputTrainingSet datasets/letterinput1.txt
-s_outputTrainingFile datasets/letterbinout1.txt
+s_inputTrainingSet datasets/countin10000.txt
+s_outputTrainingFile datasets/countout10000.txt
 b_testingFromFile 0
-s_inputTestSet datasets/letterinput1.txt
-s_outputTestSet datasets/letterbinout1.txt
+s_inputTestSet datasets/countin10000.txt
+s_outputTestSet datasets/countout10000.txt
 i_number_of_training 100000
 i_trainingSetType char
 i_outputTrainingSetType double
@@ -29,11 +29,11 @@ b_loadFromCheckpoint 0
 s_checkpoint_file recurrent_networks/LetterNetwork_214.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile networks/LetterNetwork_214.txt
-i_numberTimesThroughFile 2
+i_numberTimesThroughFile 5
 Type:LongTermShortTerm_items
 i_backprop_unrolled 30
 i_number_in_sequence 5
-i_number_start_nodes 1500
+i_number_start_nodes 5
 i_number_new_weights 0
 i_number_of_testing_items 100
 b_allow_growth 0

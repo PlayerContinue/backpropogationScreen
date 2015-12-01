@@ -35,5 +35,11 @@ namespace VisualBackPropogation
              
             }
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            Launch_Learning_Algorithm temp = new Launch_Learning_Algorithm();
+            temp.Launch();
+        }
     }
 }

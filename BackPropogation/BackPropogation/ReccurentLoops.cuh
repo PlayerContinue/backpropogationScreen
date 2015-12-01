@@ -21,6 +21,9 @@
 #include "RecurrentNeuralNetwork.cuh"
 #include "LongTermShortTermNetwork.cuh"
 
+
+
+
 #ifndef __TESTCODE_CUH_INCLUDED___
 #include "testcode.cuh"
 #define __TESTCODE_CUH_INCLUDED___
@@ -92,6 +95,7 @@ public:
 
 	//Constructor for an object with settings and a checkpoint
 	ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint);
+
 
 private:
 	//*********************

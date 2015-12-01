@@ -8,6 +8,7 @@
             <Menu IsMainMenu="True" Name="MainMenu"  DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Open"/>
+                    <MenuItem Click="MenuItem_Click" Header="_Start"/>
                 </MenuItem>
                 <MenuItem Header="_Display">
                     <MenuItem Header="_GraphView"/>
