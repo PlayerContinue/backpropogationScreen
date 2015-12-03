@@ -472,7 +472,7 @@ void ReccurentLoops::testTraining(){
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
 			reset_file_for_loop();
-			if (this->checkpoint.i_current_position_in_input_file > 0 && length[1] != -1){
+			if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0 && length[1] != -1){
 				this->inputfile->seekg(this->checkpoint.i_current_position_in_input_file);
 				this->outputfile->seekg(this->checkpoint.i_current_position_in_output_file);
 			}
@@ -493,14 +493,14 @@ void ReccurentLoops::testTraining(){
 
 
 				this->loadFromFile(*(this->outputfile), this->settings.i_output, this->output, length, OUTPUT, this->settings.i_output, first_run);
-				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
+				
 				output_length = length[0];
 				output_stop = length[1];
 				if (this->length_of_arrays[OUTPUT] < length[0]){
 					this->length_of_arrays[OUTPUT] = length[0];
 				}
 				this->loadFromFile(*(this->inputfile), this->settings.i_input, this->input, length, INPUT, this->settings.i_input, first_run);
-				
+
 				if (length[0] > output_length){//The length should be the value of the shortest one
 					length[0] = output_length;
 				}
@@ -509,10 +509,8 @@ void ReccurentLoops::testTraining(){
 				}
 
 				if (first_run){
-					if (this->checkpoint.i_current_position_in_input_file > 0){
-						std::ios_base::streampos temp = (std::ios_base::streampos)this->checkpoint.i_current_position_in_input_file;
-						std::ios_base::streampos gfj = this->inputfile->tellg();
-						this->timer.set_size_of_round(this->inputfile->tellg() - temp);//Set it to the position in the file after a single round
+					if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0){
+						this->timer.set_size_of_round(this->inputfile->tellg() - (std::ios_base::streampos)this->checkpoint.i_current_position_in_input_file);//Set it to the position in the file after a single round
 					}
 					else{
 						this->timer.set_size_of_round(this->inputfile->tellg());//Set it to the position in the file after a single round
@@ -520,7 +518,7 @@ void ReccurentLoops::testTraining(){
 					}
 				}
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();//Done afterwards for the purpose of setting the difference
-
+				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
 				if (length[1] == -1 || output_stop == -1){//Sequence may break early
 					break;
 				}

@@ -202,3 +202,6 @@ FakesAssemblies/
 *.txt
 BackPropogation/BackPropogation/settings.txt
 BackPropogation/BackPropogation/tests/meansquare_3
+BackPropogation/BackPropogation/DebugWithDebug/structures_cuda.cu.deps
+BackPropogation/BackPropogation/DebugWithDebug/RecurrentNeuralNetwork.cu.deps
+*.deps
