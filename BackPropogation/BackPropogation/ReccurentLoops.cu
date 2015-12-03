@@ -472,6 +472,10 @@ void ReccurentLoops::testTraining(){
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
 			reset_file_for_loop();
+			if (this->checkpoint.i_current_position_in_input_file > 0 && length[1]!=-1){
+				this->inputfile->seekg(this->checkpoint.i_current_position_in_input_file);
+				this->outputfile->seekg(this->checkpoint.i_current_position_in_output_file);
+			}
 			this->getMeanSquareError();
 			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
 			
