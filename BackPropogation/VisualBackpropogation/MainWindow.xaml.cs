@@ -23,6 +23,7 @@ namespace VisualBackPropogation
     {
         String Loaded_Settings;
         VisualBackPropogation.Pages.Settings_Form Settings_Page;
+        VisualBackPropogation.GraphView Graph;
         ICommand onMenuChangeScreensCommand;
         public ICommand OnMenuChangeScreensCommand
         {
@@ -37,8 +38,8 @@ namespace VisualBackPropogation
             try
             {
                 InitializeComponent();
-                GraphView temp = new GraphView();
-                _mainFrame.Navigate(temp);
+                Settings_Page = new VisualBackPropogation.Pages.Settings_Form();
+                _mainFrame.Navigate(Settings_Page);
             }
             catch (Exception ex)
             {
@@ -56,7 +57,11 @@ namespace VisualBackPropogation
                 Settings_Page = new VisualBackPropogation.Pages.Settings_Form();
             }
 
-            Loaded_Settings= Settings_Page.LoadFile();
+            Loaded_Settings = Settings_Page.LoadFile();
+            if (_mainFrame.Content is VisualBackPropogation.Pages.Settings_Form)
+            {
+                Settings_Page.Load_File_Info(Loaded_Settings);
+            }
         }
       
 
@@ -82,7 +87,11 @@ namespace VisualBackPropogation
 
                     break;
                 case "Graph_View":
-                    _mainFrame.Navigate(new GraphView());
+                    if (Graph == null)
+                    {
+                        this.Graph = new VisualBackPropogation.GraphView();
+                    }
+                    _mainFrame.Navigate(this.Graph);
                     break;
             }
         }

@@ -70,11 +70,11 @@ namespace VisualBackPropogation.Custom_Controls
                  if (value == "1")
                  {
                      TrueButton.IsChecked = true;
-                     FalseButton.IsChecked = false;
+                    
                  }
                  else
                  {
-                     FalseButton.IsChecked = true;
+                    
                      TrueButton.IsChecked = false;
                  }
              }

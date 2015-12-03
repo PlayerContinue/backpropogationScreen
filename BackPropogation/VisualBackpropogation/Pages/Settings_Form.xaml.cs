@@ -50,7 +50,7 @@ namespace VisualBackPropogation.Pages
                 for (int k = 0, i = 0; k < lines.Length; k++)
                 {
                     line = lines[k].Split();
-                    if (!line[0].Contains("Type"))
+                    if (!line[0].StartsWith("Type"))
                     {
                         if (Elements[i] is File_Select_Button)
                         {
@@ -73,10 +73,6 @@ namespace VisualBackPropogation.Pages
                     }
 
                 }
-            }
-            else
-            {
-                throw new Exception("File Issues");
             }
         }
 
@@ -156,7 +152,7 @@ namespace VisualBackPropogation.Pages
                                  "b_loadNetworkFromFile",
                                  "s_loadNetworkFile",
                                  "i_numberTimesThroughFile",
-                                 "Type:LongTermShortTerm_items",
+                                 "NetworkType:LongTermShortTerm_items",
                                  "i_backprop_unrolled",
                                  "i_number_in_sequence",
                                  "i_number_start_nodes",
@@ -169,30 +165,31 @@ namespace VisualBackPropogation.Pages
                 {
                     createElementList();
                 }
-                for (int i = 0, k = 0; i < lines.Length; i++)
+                string value;
+                for (int i = 0, k = 0; k < lines.Length; k++)
                 {
-                    if (!((string)lines[i]).Contains("Type"))
+                    if (!((string)lines[k]).StartsWith("Type"))
                     {
 
                         if (Elements[i] is File_Select_Button)
                         {
-                            lines[i]+=((File_Select_Button)Elements[i]).Text;
+                            lines[k]+=" " + ((File_Select_Button)Elements[i]).Text;
                         }
                         else if (Elements[i] is Number_Picker)
                         {
-                            lines[i] += ((Number_Picker)Elements[i]).Text;
+                            lines[k] += " " + ((Number_Picker)Elements[i]).Text;
                         }
                         else if (Elements[i] is True_False_Button)
                         {
-                            lines[i] += ((True_False_Button)Elements[i]).Text;
+                            lines[k] += " " + ((True_False_Button)Elements[i]).Text;
                         }
                         else if (Elements[i] is TextBox)
                         {
-                            lines[i] += ((TextBox)Elements[i]).Text;
+                            lines[k] += " "+((TextBox)Elements[i]).Text;
 
                         }
 
-                        k++;
+                        i++;
                     }
                 }
 

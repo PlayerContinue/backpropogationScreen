@@ -10,10 +10,11 @@
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="50"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <RadioButton GroupName="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=GroupName}" Grid.Column="0"
+        <CheckBox Name="TrueButton" Grid.Column="0" Height="Auto" Width="Auto"/>
+        <!--<RadioButton GroupName="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=GroupName}" Grid.Column="0"
              IsChecked="{Binding PropertyValue}" Content="True" Name="TrueButton"/>
         <RadioButton Name="FalseButton" GroupName="{Binding RelativeSource={RelativeSource AncestorType={x:Type UserControl}}, Path=GroupName}"  Content="False" Grid.Column="1"
              IsChecked="{Binding PropertyValue, 
-                         Converter={StaticResource BoolInverterConverter}}" />
+                         Converter={StaticResource BoolInverterConverter}}" />-->
     </Grid>
 </UserControl>

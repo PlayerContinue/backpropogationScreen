@@ -778,7 +778,7 @@ void ReccurentLoops::createCheckpoint(string file_name){
 		count = 0;
 	}
 	std::ofstream outputfile;
-	outputfile.open("recurrent_networks/" + file_name + std::to_string(count) + ".txt", ios::trunc);
+	outputfile.open(file_name + std::to_string(count) + ".txt", ios::trunc);
 	if (outputfile.is_open()){
 		outputfile << *this << flush;
 		outputfile << endl;

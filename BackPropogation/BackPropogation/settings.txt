@@ -1,4 +1,4 @@
-s_network_name LetterNetwork_2
+s_network_name recurrent_networks/LetterNetwork_2
 i_loops 100
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000

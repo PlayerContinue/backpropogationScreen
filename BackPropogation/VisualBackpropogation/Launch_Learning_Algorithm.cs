@@ -18,7 +18,6 @@ namespace VisualBackPropogation
         public void Launch(){
 
             this.Learning_Algorithm = startProcessWithOutput("../../../DebugWithDebug/BackPropogation.exe","\"C:\\Users\\dgree\\Documents\\GitHub\\backpropogationScreen\\BackPropogation\\BackPropogation\\settings.txt\" 1 1");
-        
         }
 
         private Process startProcessWithOutput(string command, string args="", bool showWindow=true)

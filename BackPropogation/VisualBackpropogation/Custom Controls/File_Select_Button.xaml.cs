@@ -21,6 +21,7 @@ namespace VisualBackPropogation.Custom_Controls
     /// </summary>
     public partial class File_Select_Button : UserControl
     {
+        private string save_open="Open";
         [Description("File Information"), Category("Data"), Browsable(false)]
         public String Text
         {
@@ -33,15 +34,24 @@ namespace VisualBackPropogation.Custom_Controls
                 File_Name.Text = value;
             }
         }
+
+        [Description("File Information"), Category("Data"), Browsable(false)]
+        public String Save_Open{
+            get{
+                return save_open;
+            }
+
+            set{
+                save_open = value;
+            }
+        }
+
         public File_Select_Button()
         {
             InitializeComponent();
         }
 
-      
-
-
-        private void Open_File_Selector(object sender, RoutedEventArgs e)
+        private void Open_Selector()
         {
             // Create OpenFileDialog 
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -62,6 +72,42 @@ namespace VisualBackPropogation.Custom_Controls
                 // Open document 
                 string filename = dlg.FileName;
                 this.Text = filename;
+            }
+        }
+
+        private void Open_Save_Selector()
+        {
+            // Create OpenFileDialog 
+            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+
+
+
+            // Set filter for file extension and default file extension 
+            dlg.DefaultExt = ".txt";
+            dlg.Filter = "TXT Files (*.txt)|*.txt";
+
+
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Get the selected file name and display in a TextBox 
+            if (result == true)
+            {
+                // Open document 
+                string filename = dlg.FileName;
+                this.Text = filename;
+            }
+        }
+
+        private void Open_File_Selector(object sender, RoutedEventArgs e)
+        {
+            if (save_open.CompareTo("Save") == 0)
+            {
+                Open_Selector();
+            }
+            else
+            {
+                Open_Save_Selector();
             }
         }
     }
