@@ -138,6 +138,56 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 	return to_return;
 }
 
+void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value){
+	this->runContinousNetwork(in, save_location, end_value, 1000);
+}
+void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value, int max_sequence_length){
+	//Open a File for writing the output
+	ofstream results;
+	results.open(save_location,ios::trunc);//Open the location
+	if (!results.is_open()){
+		//The file could not be opened. Throw an exception for usage
+		throw new exception("Save Location Could Not Be Opened");
+	}
+
+	//Run with initially given input	
+	device_vector<weight_type> input;
+	device_vector<weight_type> output;
+
+	if (this->checkpoint.b_still_running){
+		input = this->mainNetwork->runNetwork(in, NetworkBase::run_type::WITH_MEMORY_CELLS);
+	}
+	else{
+		input = this->mainNetwork->runNetwork(in, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
+	}
+
+	
+	max_sequence_length -= 1;//Remove one from the sequence
+	if (this->settings.i_input == this->settings.i_output){//Only allow recurrence runs with equal length input/output
+		//Transfer the end_value to the gpu
+		output = thrust::device_vector<weight_type>();
+		for (int i = 0; i < this->settings.i_output; i++){
+			output.push_back(end_value[i]);
+		}
+		//Run with gathered output
+		for (int i = 0; i < max_sequence_length 
+			/*&& thrust::mismatch(output.begin(), output.end(), input.begin()) != thrust::pair<device_vector<weight_type>::iterator, device_vector<weight_type>::iterator>(output.end(), input.end())*/; i++){
+			if (this->checkpoint.b_still_running){
+				input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITH_MEMORY_CELLS);
+			}
+			else{
+				input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
+			}
+			thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
+			results << endl;
+		}
+
+	}
+	
+
+
+}
+
 //Run the network during training
 device_vector<weight_type> ReccurentLoops::runTrainingNetwork(weight_type* in){
 	device_vector<weight_type> temp_device;
@@ -154,25 +204,6 @@ device_vector<weight_type> ReccurentLoops::runTrainingNetwork(weight_type* in){
 //*****************************
 //Get Data From the users file
 //*****************************
-bool ReccurentLoops::load_training_data_from_file(){
-#ifdef TESTING 
-	for (int i = 0; i < this->settings.i_number_of_training; i++){
-		this->input[i] = this->createTestInputOutput(this->settings.i_input,0);
-
-		testing::outputArrayToFile(this->input[i], this->settings.i_input, "tests/inout.txt");
-
-	}
-#endif
-#ifdef TESTING 
-	for (int i = 0; i < this->settings.i_number_of_training; i++){
-		this->output[i] = this->createTestInputOutput(this->settings.i_output, 1);
-
-		testing::outputArrayToFile(this->output[i], this->settings.i_output, "tests/inout.txt");
-
-	}
-#endif
-	return true;
-}
 
 //file - the file to read from
 //length_of_results - maximum length of the array

@@ -46,6 +46,7 @@ public:
 	//*********************
 	virtual device_vector<weight_type> runNetwork(weight_type* in) = 0;
 	virtual device_vector<weight_type> runNetwork(weight_type* in,run_type) = 0;
+	virtual device_vector<weight_type> runNetwork(device_vector<weight_type> in, run_type) = 0;
 	virtual void InitializeRun() = 0;
 	//***************************
 	//Train the Network

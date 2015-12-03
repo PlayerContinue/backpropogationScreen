@@ -2,6 +2,8 @@
 #include <string.h>
 #include <vector>
 #include <fstream>
+#include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
 #ifdef __IOSTREAM_H_INCLUDED__
 
 #else
@@ -120,7 +122,14 @@ public:
 	vector<RETURN_WEIGHT_TYPE> runNetwork(int* in);
 	
 	vector<RETURN_WEIGHT_TYPE> runNetwork(weight_type* in);
-
+	
+	//Run the network until either the end_value is reached or the max_sequence_length is reached
+	//end_value The value of the end
+	//in the input
+	//save_location where to place the output
+	//max_sequence_length the max length of the sequence
+	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value);
+	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value,int max_sequence_length);
 
 public:
 	template <typename T>
@@ -141,8 +150,6 @@ private:
 	bool train_network_HessianFreeOptimizationTraining();
 	device_vector<weight_type> runTrainingNetwork(weight_type* in);
 	void getMeanSquareError();
-	//Retrieve the training data from the file passed in by the settings
-	bool load_training_data_from_file();
 	
 	//function to run at the end of sequence, seperated for cleaner looking code
 	void sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check);

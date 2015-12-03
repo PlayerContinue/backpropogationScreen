@@ -152,7 +152,7 @@ namespace VisualBackPropogation.Pages
                                  "b_loadNetworkFromFile",
                                  "s_loadNetworkFile",
                                  "i_numberTimesThroughFile",
-                                 "NetworkType:LongTermShortTerm_items",
+                                 "Type:LongTermShortTerm_items",
                                  "i_backprop_unrolled",
                                  "i_number_in_sequence",
                                  "i_number_start_nodes",
@@ -166,9 +166,11 @@ namespace VisualBackPropogation.Pages
                     createElementList();
                 }
                 string value;
+              
+                bool save_problem = false;
                 for (int i = 0, k = 0; k < lines.Length; k++)
                 {
-                    if (!((string)lines[k]).StartsWith("Type"))
+                    if (!((string)lines[k]).StartsWith("Type") && i < Elements.Length)
                     {
 
                         if (Elements[i] is File_Select_Button)
@@ -191,9 +193,26 @@ namespace VisualBackPropogation.Pages
 
                         i++;
                     }
+                    else if(Elements.Length <=i)
+                    {
+                        
+                        save_problem = true;
+                        break;
+                    }
                 }
 
-                System.IO.File.WriteAllLines(filename, lines);
+                
+                if (save_problem)
+                {
+                    if (MessageBox.Show("Issue In Code. Please Contact Developer. There might be some issues in the file. Would you like to save the file anyway?", "test", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        System.IO.File.WriteAllLines(filename, lines);
+                    }
+                }
+                else
+                {
+                    System.IO.File.WriteAllLines(filename, lines);
+                }
             }
         }
 

@@ -55,6 +55,15 @@ void LongTermShortTermNetwork::setInput(weight_type** in){
 
 }
 
+void LongTermShortTermNetwork::setInput(thrust::device_vector<weight_type> in){
+	if (in.size() <= this->settings.i_input){
+		thrust::copy(in.begin(), in.end(), this->GPUOutput_values.begin());
+	}
+	else{
+		throw new exception("Input is too short");
+	}
+}
+
 void LongTermShortTermNetwork::StartTraining(weight_type** in, weight_type** out){
 
 	//Reset the weights to the end of the weights
@@ -796,6 +805,7 @@ void LongTermShortTermNetwork::InitializeLongShortTermMemoryForRun(){
 }
 
 device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in, run_type type){
+	this->setInput(in);
 	switch (type){
 	case run_type::WITHOUT_MEMORY_CELLS:
 		return this->runNetwork(in, 0, this->newSequence);
@@ -807,6 +817,21 @@ device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in,
 	}
 }
 
+device_vector<weight_type> LongTermShortTermNetwork::runNetwork(device_vector<weight_type> in, run_type type){
+	this->setInput(in);//Set the input
+
+	switch (type){
+	case run_type::WITHOUT_MEMORY_CELLS:
+		return this->runNetwork(0);
+	case run_type::WITH_MEMORY_CELLS:
+		//Pass the number of memory cells into the function so they can be skipped when finding the output
+		return this->runNetwork(1);
+	default:
+		return this->runNetwork(0);
+	}
+
+}
+
 thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in){
 	return this->runNetwork(in, 0, this->newSequence);
 }
@@ -816,13 +841,15 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 		//this->runNetwork(in, number_of_extra_weights);
 		//newSequence = false;
 	}
-
-	return this->runNetwork(in, number_of_extra_weights);
+	
+	return this->runNetwork(number_of_extra_weights);
 }
 
-thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_type* in, int number_of_extra_weights){
 
-	this->setInput(in);
+
+thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int number_of_extra_weights){
+
+	
 	//Stores the numberofmblocks in a layer
 	unsigned int numberMBlocks;
 	//Number mBlocks in previous layer

@@ -106,13 +106,7 @@
     <CudaCompile Include="CGraphicNetwork.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main2.cpp">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
     <CudaCompile Include="main.cu">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
-    <CudaCompile Include="structures_cuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="RecurrentNeuralNetwork.cu">
@@ -138,6 +132,9 @@
     </CudaCompile>
     <CudaCompile Include="LongTermShortTermShrink.cu">
       <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="structures_cuda.cu">
+      <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>

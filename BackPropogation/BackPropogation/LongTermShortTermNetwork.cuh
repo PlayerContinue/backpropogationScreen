@@ -194,8 +194,11 @@ public:
 	//Run The Network
 	//*********************
 	device_vector<weight_type> runNetwork(weight_type* in);
-	device_vector<weight_type> runNetwork(weight_type* in, int number_extra_weights);
 	device_vector<weight_type> runNetwork(weight_type* in, run_type type);
+	device_vector<weight_type> runNetwork(device_vector<weight_type> in, run_type type);
+
+private:
+	device_vector<weight_type> runNetwork(int number_extra_weights);
 	device_vector<weight_type> runNetwork(weight_type* in, int number_of_extra_weights, bool &newSequence);
 	void InitializeLongShortTermMemoryForRun();
 	void InitializeRun(){
@@ -229,6 +232,7 @@ private:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
 	void setInput(weight_type** in);
+	void setInput(thrust::device_vector<weight_type> in);
 	//Set the training network such that the input is the sum of the results
 	void averageWeights();
 	//Inititalize the Network For training

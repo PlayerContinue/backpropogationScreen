@@ -103,11 +103,11 @@ namespace VisualBackPropogation.Custom_Controls
         {
             if (save_open.CompareTo("Save") == 0)
             {
-                Open_Selector();
+                Open_Save_Selector(); 
             }
             else
             {
-                Open_Save_Selector();
+                Open_Selector();
             }
         }
     }

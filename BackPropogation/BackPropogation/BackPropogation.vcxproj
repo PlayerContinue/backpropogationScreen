@@ -134,6 +134,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies />
+      <AdditionalLibraryDirectories>%CUDA_PATH_V7_5%\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugBasedOnCuda|Win32'">
@@ -239,11 +240,7 @@
     <CudaCompile Include="LongTermShortTermNetworkGrowth.cu" />
     <CudaCompile Include="LongTermShortTermShrink.cu" />
     <CudaCompile Include="main.cu" />
-    <CudaCompile Include="main2.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugWithDebugAndTest|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseWithCude2|Win32'">true</ExcludedFromBuild>
-    </CudaCompile>
+    <CudaCompile Include="structures_cuda.cu" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetworkTimer.cpp" />
@@ -261,9 +258,6 @@
       <FileType>CppCode</FileType>
     </CudaCompile>
     <CudaCompile Include="RecurrentNeuralNetwork.cu" />
-    <CudaCompile Include="structures_cuda.cu">
-      <FileType>CppCode</FileType>
-    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="settings.txt" />
