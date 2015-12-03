@@ -12,6 +12,11 @@
                 </MenuItem>
                 <MenuItem Header="_Display">
                     <MenuItem Header="_GraphView"/>
+                    <MenuItem Header="_CreateSettings" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                        Path=OnMenuChangeScreensCommand}" CommandParameter="Settings_Page"/>
+                </MenuItem>
+                <MenuItem Header="_Load Files">
+                    <MenuItem Click="load_file" Header="Load"></MenuItem>
                 </MenuItem>
             </Menu>
         </DockPanel>

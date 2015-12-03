@@ -2,8 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:VisualBackPropogation"
+              xmlns:local_converter="clr-namespace:VisualBackPropogation.Convertor"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <local:ConverterClass x:Key="ConverterClass"/>
+        <local_converter:BoolInverterConverter x:Key="BoolInverterConverter"/>
     </Application.Resources>
 </Application>

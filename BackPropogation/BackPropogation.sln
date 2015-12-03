@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BackPropogation", "BackPropogation\BackPropogation.vcxproj", "{7B01A621-BBA9-4B2D-BB67-6A72438301B9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualBackPropogation", "VisualBackPropogation\VisualBackPropogation.csproj", "{FFC9D069-065D-4CFB-B798-CF4512119F2D}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7B01A621-BBA9-4B2D-BB67-6A72438301B9} = {7B01A621-BBA9-4B2D-BB67-6A72438301B9}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
