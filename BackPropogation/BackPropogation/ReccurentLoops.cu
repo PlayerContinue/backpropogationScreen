@@ -591,9 +591,9 @@ void ReccurentLoops::testTraining(){
 
 						sequence_end = false;
 						
-						if (static_cast<bool>(this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).first)){//Create a checkpoint if the set checkpoint values has been passed
+						if (static_cast<bool>(this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).first)){//Create a checkpoint if the set checkpoint values has been passed
 							this->createCheckpoint();
-							std::memset(this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).first, false, this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).second);
+							std::memset(this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).first, false, this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).second);
 						}
 
 						//A new sequence, start from the beginning

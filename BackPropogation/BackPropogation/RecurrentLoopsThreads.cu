@@ -58,13 +58,13 @@ void ReccurentLoops::initialize_threads(){
 
 	}
 	try{
-		this->timer_shared_memory = new managed_shared_memory(create_only, shared_name.c_str(), sizeof(std::istream::streampos) + (sizeof(bool) * 3));
+		this->timer_shared_memory = managed_shared_memory{create_only, shared_name.c_str(), 1024};
 	}
 	catch (exception e){
 	}
-	timer_shared_memory->construct<bool>("TIMER_NEEDED")(true);
-	timer_shared_memory->construct<bool>("PRINT_TIMER")(false);
-	timer_shared_memory->construct<bool>(CHECKPOINT_TIMER)(false);
+	timer_shared_memory.construct<bool>("TIMER_NEEDED")(true);
+	timer_shared_memory.construct<bool>("PRINT_TIMER")(false);
+	timer_shared_memory.construct<bool>(CHECKPOINT_TIMER)(false);
 	this->thread_list[TIMER_THREAD] = new thread(timer_thread,this->timer,shared_name);
 	
 }

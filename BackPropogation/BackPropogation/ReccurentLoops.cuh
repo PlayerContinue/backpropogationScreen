@@ -87,7 +87,7 @@ private:
 	int length_of_arrays[4];
 	//Timer to keep track of length
 	NetworkTimer timer;
-	boost::interprocess::managed_shared_memory* timer_shared_memory;//Keeps track of which, if any, stops need to be made in the running
+	boost::interprocess::managed_shared_memory timer_shared_memory;//Keeps track of which, if any, stops need to be made in the running
 	vector<std::thread*> thread_list;
 	enum thread_types {TIMER_THREAD,PIPE_THREAD,FINAL_THREAD_POS};
 	std::istream::streampos length_of_file = (std::istream::streampos)0;
