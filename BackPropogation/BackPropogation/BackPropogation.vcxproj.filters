@@ -145,6 +145,9 @@
     <CudaCompile Include="structures_cuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="RecurrentLoopsThreads.cu">
+      <Filter>Source Files\RecurrentNetwork</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">

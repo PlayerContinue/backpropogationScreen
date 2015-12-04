@@ -4,6 +4,10 @@
 #include <fstream>
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
+#include <thread>
+#include <boost/interprocess/managed_shared_memory.hpp>
+
+
 #ifdef __IOSTREAM_H_INCLUDED__
 
 #else
@@ -38,6 +42,9 @@
 #define weight_type double
 #endif
 #define RETURN_WEIGHT_TYPE  double
+
+#define CHECKPOINT_TIMER "CHECKPOINT_TIMER"
+
 //****************************************************************************************************
 //
 //Programmer: David Greenberg
@@ -80,6 +87,9 @@ private:
 	int length_of_arrays[4];
 	//Timer to keep track of length
 	NetworkTimer timer;
+	boost::interprocess::managed_shared_memory* timer_shared_memory;//Keeps track of which, if any, stops need to be made in the running
+	vector<std::thread*> thread_list;
+	enum thread_types {TIMER_THREAD,PIPE_THREAD,FINAL_THREAD_POS};
 	std::istream::streampos length_of_file = (std::istream::streampos)0;
 
 	//*********************
@@ -166,6 +176,25 @@ private:
 	void createCheckpoint();
 	void createCheckpoint(string file_name);
 	void loadCheckpoint();
+
+
+	//*********************
+	//Threaded Functions
+	//*********************
+	//Starts any threads required for training the network
+	//Returns true when all threads created, false otherwise
+	bool start_training_threads();
+
+	//Stop any threads required for training the network
+	//Returns true when sucessful, false otherwise
+	bool stop_training_thread();
+
+	//Initialize all objects required for use in threads
+	void initialize_threads();
+
+	//Clean Up All Threads
+	void clean_threads();
+
 	//*********************
 	//Override Operators
 	//*********************

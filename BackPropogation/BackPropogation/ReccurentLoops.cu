@@ -398,10 +398,7 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 		this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
 		//Apply the error at the end of the sequence
 		this->mainNetwork->ApplyError();
-		if (this->checkpoint.i_number_of_loops_checkpoint >= this->settings.i_number_allowed_same){
-			//this->createCheckpoint("AfterError");
-			this->checkpoint.i_number_of_loops_checkpoint = 0;
-		}
+	
 		length_of_sequence = 0;
 	}
 	//The sequence has ended, so we need to reset the sequence
@@ -509,13 +506,18 @@ void ReccurentLoops::testTraining(){
 				}
 
 				if (first_run){
+					
 					if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0){
 						this->timer.set_size_of_round(this->inputfile->tellg() - (std::ios_base::streampos)this->checkpoint.i_current_position_in_input_file);//Set it to the position in the file after a single round
 					}
 					else{
 						this->timer.set_size_of_round(this->inputfile->tellg());//Set it to the position in the file after a single round
+						initialize_threads();
 
 					}
+
+
+
 				}
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();//Done afterwards for the purpose of setting the difference
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
@@ -577,9 +579,7 @@ void ReccurentLoops::testTraining(){
 
 						//this->checkpoint.i_number_of_loops_checkpoint += 1;
 
-						if (this->timer.passed_checkpoint()){//Create a checkpoint if the set checkpoint values has been passed
-							this->createCheckpoint();
-						}
+						
 
 
 					}
@@ -590,6 +590,12 @@ void ReccurentLoops::testTraining(){
 						sequenceEnd(length_of_sequence, count_sequences, growth_check);
 
 						sequence_end = false;
+						
+						if (static_cast<bool>(this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).first)){//Create a checkpoint if the set checkpoint values has been passed
+							this->createCheckpoint();
+							std::memset(this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).first, false, this->timer_shared_memory->find<bool>(CHECKPOINT_TIMER).second);
+						}
+
 						//A new sequence, start from the beginning
 						k = 0;
 					}
@@ -600,8 +606,6 @@ void ReccurentLoops::testTraining(){
 						//Continue the sequence, we need to keep the previous input
 						k = 1;
 					}
-					//Load the timer
-					this->timer.restart_timer();
 				}
 				if (length[1] == 0){//Reset the sequence once the sequence has finished
 					this->mainNetwork->ResetSequence();

@@ -26,7 +26,8 @@ void Connection_Pipe::Close(){
 }
 
 bool Connection_Pipe::add_to_write_queue(string insert){
-	this->SendQueue.push(this->convert_to_wstring(insert).c_str);
+	this->SendQueue.push(this->convert_to_wstring(insert).c_str());
+	return true;
 }
 
 string Connection_Pipe::read_from_queue(){
@@ -63,5 +64,5 @@ wstring Connection_Pipe::convert_to_wstring(string convert){
 }
 
 string Connection_Pipe::read(){
-
+	return "";
 }
