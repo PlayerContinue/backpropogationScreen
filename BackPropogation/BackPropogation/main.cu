@@ -909,17 +909,26 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 		RLoops = ReccurentLoops(settings);
 	}
 	double* temp = new double[settings.i_input];
-	std::cout << "1) Training " << endl << "2) Run" << endl;
-	cin.sync();
-	switch (cin.get()){
+	char start;
+	if (argc > 3){
+		start = argv[3][0];
+	}
+	else{
+		std::cout << "1) Training " << endl << "2) Run" << "3) Run Continous" << endl;
+		cin.sync();
+		start = cin.get();
+	}
+	weight_type* input = new weight_type[settings.i_input];
+	vector<weight_type> results;
+
+	switch (start){
 	case '1':
 		//RLoops.runNetwork(temp);
 		//RLoops.startTraining(ReccurentLoops::LongTermShortTerm);
 		RLoops.testTraining();
 		break;
 	case '2':
-		weight_type* input = new weight_type[settings.i_input];
-		vector<weight_type> results;
+
 		for (int j = 0; j < settings.i_number_in_sequence; j++){
 			for (int i = 0; i < settings.i_input; i++){
 				input[i] = 111 + j;
@@ -927,9 +936,16 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 			results = RLoops.runNetwork(input);
 			testing::outputVectorToFile(results, "test1", "tests/outtest1.txt");
 		}
-
-
 		break;
+	case '3':
+		//Run the network Recurrsively
+		weight_type* input = new weight_type[settings.i_input];
+		for (int j = 0; j < settings.i_input; j++){
+			input[j] = 0;
+		}
+		RLoops.runContinousNetwork(input, settings.s_network_name + "_Contious_Output", input);
+		break;
+
 	}
 
 
@@ -950,9 +966,17 @@ void initialize_loops(int argc, char** argv){
 		std::getline(std::cin, settingsLocation);
 		settings = loadSettings(settingsLocation);
 	}
-	std::cout << "1) Recurrent Neural Network" << endl;
-	std::cout << "2) Feedforward Neural Network" << endl;
-	switch (cin.get()){
+	char start;
+	if (argc > 2){
+		start = argv[2][0];
+	}
+	else{
+		std::cout << "1) Recurrent Neural Network" << endl;
+		std::cout << "2) Feedforward Neural Network" << endl;
+		start = cin.get();
+	}
+
+	switch (start){
 	case '1':
 		initializeRecurrentNetwork(argc, argv, settings);
 		exit(0);

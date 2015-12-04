@@ -15,6 +15,11 @@ using namespace thrust::placeholders;
 //Define a type so it can use either double or float, depending on what turns out to be better
 #ifndef weight_type
 #define weight_type double
+
+#endif
+
+#ifndef INFO_LENGTH
+#define INFO_LENGTH 1
 #endif
 //****************************************************************************************************
 //
@@ -33,11 +38,15 @@ class NetworkBase {
 public:
 	CSettings settings;
 	enum run_type{ WITH_MEMORY_CELLS, WITHOUT_MEMORY_CELLS};
+	enum info_pos {NUMBER_NETWORK_CELLS = 0, 
+	NUMBER_NODES = 0
+	};
 	//*********************
 	//Run The Network
 	//*********************
 	virtual device_vector<weight_type> runNetwork(weight_type* in) = 0;
 	virtual device_vector<weight_type> runNetwork(weight_type* in,run_type) = 0;
+	virtual device_vector<weight_type> runNetwork(device_vector<weight_type> in, run_type) = 0;
 	virtual void InitializeRun() = 0;
 	//***************************
 	//Train the Network
@@ -66,10 +75,10 @@ public:
 	//Modify Structure Of Neuron
 	//***************************
 	virtual void addNeuron(int numberNeuronsToAdd) = 0;
-
+	virtual void removeNeuron(int position, int layer) = 0;
 	//Add a new weight between neurons
 	virtual void addWeight(int numberWeightsToAdd) = 0;
-
+	virtual void removeWeight() = 0;
 public:
 	virtual void ResetSequence() = 0;
 
@@ -87,6 +96,8 @@ public:
 	//Primarily used when finished training or running the network
 	virtual void emptyGPUMemory() = 0;
 
+	//Retrieve Information about the network
+	virtual void getInfoAboutNetwork(int* info) = 0;
 	//***************************
 	//Get And Set
 	//***************************

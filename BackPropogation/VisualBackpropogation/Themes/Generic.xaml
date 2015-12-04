@@ -1,0 +1,12 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:VisualBackPropogation"
+     xmlns:local_control="clr-namespace:VisualBackPropogation.Custom_Controls">
+
+    <!-- Extension of Textbox to keep look and feel consistant-->
+    <Style TargetType="{x:Type local_control:Settings_TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+        <Setter Property="IsEnabled" Value="false"/>
+        <Setter Property="Background" Value="AliceBlue"></Setter>
+    </Style>
+</ResourceDictionary>

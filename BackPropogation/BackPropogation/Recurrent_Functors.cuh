@@ -8,6 +8,9 @@
 #include <thrust/copy.h>
 #include <thrust/complex.h>
 #include <vector>
+
+
+
 #ifndef weight_type
 #define weight_type double
 #endif
@@ -42,6 +45,30 @@ namespace functors{
 			}
 			else{
 				return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
+			}
+		}
+
+	};
+
+
+	template<typename T, T add_less_than, T add_more_than, T add_equal_to>
+	struct add_different_by_value : public thrust::unary_function < T, T > {
+		const T compare_to;
+
+		add_different_by_value(T _compare_to):compare_to(_compare_to){
+
+		}
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &x) const{
+			if (x > compare_to){
+				return x + add_more_than;
+			}
+			else if(x==compare_to){
+				return x + add_equal_to;
+			}else{
+				return x + add_less_than;
 			}
 		}
 
@@ -101,6 +128,7 @@ namespace functors{
 		}
 
 	};
+
 
 	template <unsigned int pos_in_tuple,typename T>
 	struct compare_between :public thrust::unary_function < bool, bool >{
@@ -916,7 +944,6 @@ namespace functors{
 
 
 
-
 	template <typename T>
 	struct mean_square_error : public thrust::unary_function < T, T > {
 		mean_square_error(){};
@@ -945,4 +972,6 @@ namespace functors{
 			return temp;
 		}
 	};
+
+	
 }

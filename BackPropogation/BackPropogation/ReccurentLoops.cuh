@@ -2,23 +2,29 @@
 #include <string.h>
 #include <vector>
 #include <fstream>
+#include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
 #ifdef __IOSTREAM_H_INCLUDED__
 
 #else
 #include <iostream>
 #endif
 
+#ifndef __NETWORKTIMER_H_INCLUDED__
+#define __NETWORKTIMER_H_INCLUDED__
+#include "NetworkTimer.h"
+#endif
 
-
-#ifdef __X_H_INCLUDED__
-
-#else
+#ifndef __X_H_INCLUDED__
 #define __X_H_INCLUDED__
 #include "CSettings.h"
 #include "NetworkBase.cuh"
 #endif
 #include "RecurrentNeuralNetwork.cuh"
 #include "LongTermShortTermNetwork.cuh"
+
+
+
 
 #ifndef __TESTCODE_CUH_INCLUDED___
 #include "testcode.cuh"
@@ -70,7 +76,12 @@ private:
 	std::fstream* outputfile;
 	host_vector<weight_type> mean_square_error_results_old;
 	host_vector<weight_type> mean_square_error_results_new;
-	enum data_type {OUTPUT,INPUT,TRAINING};
+	enum data_type {OUTPUT,INPUT,TRAINING=2,TRAINING_1 = 2, TRAINING_2 = 3};
+	int length_of_arrays[4];
+	//Timer to keep track of length
+	NetworkTimer timer;
+	std::istream::streampos length_of_file = (std::istream::streampos)0;
+
 	//*********************
 	//Constructors
 	//*********************
@@ -87,6 +98,7 @@ public:
 	//Constructor for an object with settings and a checkpoint
 	ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint);
 
+
 private:
 	//*********************
 	//Initialize Internal Structure
@@ -99,8 +111,8 @@ private:
 	//*********************
 	bool loadNetworkFromFile();
 	//Load from a file, returns the length of the sequence and the length of the returned list
-	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length, data_type type, bool first_run);
-	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type, bool first_run);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length, data_type type, int max_allowed, bool first_run);
+	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int sequence_length[2], int length, data_type type, int max_allowed, bool first_run);
 	//Loads the training set from a file
 	void LoadTrainingSet();
 	//*********************
@@ -110,7 +122,14 @@ public:
 	vector<RETURN_WEIGHT_TYPE> runNetwork(int* in);
 	
 	vector<RETURN_WEIGHT_TYPE> runNetwork(weight_type* in);
-
+	
+	//Run the network until either the end_value is reached or the max_sequence_length is reached
+	//end_value The value of the end
+	//in the input
+	//save_location where to place the output
+	//max_sequence_length the max length of the sequence
+	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value);
+	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value,int max_sequence_length);
 
 public:
 	template <typename T>
@@ -131,9 +150,11 @@ private:
 	bool train_network_HessianFreeOptimizationTraining();
 	device_vector<weight_type> runTrainingNetwork(weight_type* in);
 	void getMeanSquareError();
-	//Retrieve the training data from the file passed in by the settings
-	bool load_training_data_from_file();
 	
+	//function to run at the end of sequence, seperated for cleaner looking code
+	void sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check);
+	//Resets the file and other information for a new loop
+	void reset_file_for_loop();
 	//*********************
 	//Clean the Network
 	//*********************

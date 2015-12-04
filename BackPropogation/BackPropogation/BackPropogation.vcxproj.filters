@@ -31,6 +31,12 @@
     <Filter Include="Source Files\RecurrentNetwork\LongTermShortTermNetwork">
       <UniqueIdentifier>{67bf8fe1-eafd-4f8e-9180-d8bd410633a1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Timer">
+      <UniqueIdentifier>{755f5315-9133-4548-9c78-517c663bc58e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Timer">
+      <UniqueIdentifier>{5991efbd-dbb0-46f4-b4f2-06f8ff5f0b5e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -84,6 +90,12 @@
     <ClInclude Include="Recurrent_Functors.cuh">
       <Filter>Header Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </ClInclude>
+    <ClInclude Include="Unique_Iterators.cuh">
+      <Filter>Header Files\RecurrentNetwork</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkTimer.h">
+      <Filter>Header Files\Timer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -94,13 +106,7 @@
     <CudaCompile Include="CGraphicNetwork.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="main2.cpp">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
     <CudaCompile Include="main.cu">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
-    <CudaCompile Include="structures_cuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="RecurrentNeuralNetwork.cu">
@@ -121,6 +127,15 @@
     <CudaCompile Include="LongTermShortTermTraining.cu">
       <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
     </CudaCompile>
+    <CudaCompile Include="LongTermShortTermNetworkGrowth.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="LongTermShortTermShrink.cu">
+      <Filter>Source Files\RecurrentNetwork\LongTermShortTermNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="structures_cuda.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Network.cpp">
@@ -131,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="CRecurrentCheckpoint.cpp">
       <Filter>Source Files\RecurrentNetwork</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkTimer.cpp">
+      <Filter>Source Files\Timer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

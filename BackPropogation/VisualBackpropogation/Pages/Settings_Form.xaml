@@ -1,0 +1,108 @@
+﻿<Page x:Class="VisualBackPropogation.Pages.Settings_Form"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:VisualBackPropogation"
+      xmlns:local_control="clr-namespace:VisualBackPropogation.Custom_Controls"
+      xmlns:local_pages="clr-namespace:VisualBackPropogation.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="300"
+	Title="Settings_Form">
+
+    <ScrollViewer>
+        <StackPanel Height="2040">
+            <Button Content="Accept" Click="CreateSettingsFile"></Button>
+            <UniformGrid Name="_Grid_View" Rows="40" Columns="2">
+
+                <UniformGrid.Height>
+                    <Binding RelativeSource="{RelativeSource AncestorType={x:Type StackPanel}}" Path="Height" Converter="{StaticResource ConverterClass}"  ConverterParameter="-;40"/>
+
+                </UniformGrid.Height>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="_network_name " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button Save_Open="Save"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_loops " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_allowed_failures " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_before_growth_potential " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_allowed_same " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_input " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_output " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_threshold " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_distance_threshold " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_neuron_distance_threshold " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_row_success_threshold " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_neuron_success_threshold " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_fluctuate_square_mean " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_allow_node_locking " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_lock_node_level " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_alpha " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_beta " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Decimal"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_trainingFromFile " Grid.RowSpan="1"/>
+                <local_control:True_False_Button></local_control:True_False_Button>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_inputTrainingSet " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_outputTrainingFile " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_testingFromFile " Grid.RowSpan="1"/>
+                <local_control:True_False_Button></local_control:True_False_Button>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_inputTestSet " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_outputTestSet " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_of_training " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Integer"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_trainingSetType " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Integer"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_outputTrainingSetType " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Integer"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_recurrent_flip_flop " Grid.RowSpan="1"/>
+                <local_control:Number_Picker IncrementType="Integer"/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_loadFromCheckpoint " Grid.RowSpan="1"/>
+                <local_control:True_False_Button></local_control:True_False_Button>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_checkpoint_file " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_loadNetworkFromFile " Grid.RowSpan="1"/>
+                <local_control:True_False_Button></local_control:True_False_Button>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="s_loadNetworkFile " Grid.RowSpan="1"/>
+                <local_control:File_Select_Button/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_numberTimesThroughFile " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="Type:LongTermShortTerm_items " Grid.RowSpan="1"/>
+                <TextBox IsEnabled="False"></TextBox>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_backprop_unrolled " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_in_sequence " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_start_nodes " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_new_weights " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_of_testing_items " Grid.RowSpan="1"/>
+                <local_control:Number_Picker/>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_allow_growth " Grid.RowSpan="1"/>
+                <local_control:True_False_Button></local_control:True_False_Button>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_minutes_to_checkpoint " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+
+
+            </UniformGrid>
+            <Button Content="Accept" Click="CreateSettingsFile"></Button>
+        </StackPanel>
+    </ScrollViewer>
+</Page>
