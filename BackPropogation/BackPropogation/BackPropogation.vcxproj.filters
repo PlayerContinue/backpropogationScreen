@@ -37,6 +37,12 @@
     <Filter Include="Header Files\Timer">
       <UniqueIdentifier>{5991efbd-dbb0-46f4-b4f2-06f8ff5f0b5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Pipe">
+      <UniqueIdentifier>{22e187ca-38aa-4300-8acb-7e3c572d6fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Pipe">
+      <UniqueIdentifier>{a8b7e78e-0e6a-4ac7-bf24-7899b233e4a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -96,6 +102,9 @@
     <ClInclude Include="NetworkTimer.h">
       <Filter>Header Files\Timer</Filter>
     </ClInclude>
+    <ClInclude Include="Connection_Pipe.h">
+      <Filter>Header Files\Pipe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -149,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="NetworkTimer.cpp">
       <Filter>Source Files\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Connection_Pipe.cpp">
+      <Filter>Source Files\Pipe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

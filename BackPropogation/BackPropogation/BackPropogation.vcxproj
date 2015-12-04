@@ -204,6 +204,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CGraphicNetwork.cuh" />
+    <ClInclude Include="Connection_Pipe.h" />
     <ClInclude Include="CudaCalculations.cuh" />
     <ClInclude Include="LongTermShortTermNetwork.cuh" />
     <ClInclude Include="memory_block.cuh" />
@@ -243,6 +244,7 @@
     <CudaCompile Include="structures_cuda.cu" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Connection_Pipe.cpp" />
     <ClCompile Include="NetworkTimer.cpp" />
     <CudaCompile Include="LongTermShortTermTraining.cu" />
     <ClCompile Include="Network.cpp">
