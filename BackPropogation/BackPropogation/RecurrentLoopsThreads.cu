@@ -51,6 +51,7 @@ void timer_thread(NetworkTimer old_timer,string shared){
 	std::pair<bool*, std::size_t> bool_values;
 	timer.start();
 	bool* temp = shared_timer.find<bool>(TIMER_NEEDED).first;
+
 	while (*(shared_timer.find<bool>(TIMER_NEEDED).first) == true){
 		if (timer.passed_checkpoint()){//A checkpoint should be created
 			bool_values = shared_timer.find<bool>(CHECKPOINT_TIMER);
@@ -58,10 +59,12 @@ void timer_thread(NetworkTimer old_timer,string shared){
 			cout << true;
 		}
 
-		if (static_cast<bool>(shared_timer.find<bool>("PRINT_TIMER").first)){
+		if (*(shared_timer.find<bool>(TIMER_PRINT).first)==true){
 			timer.restart_timer();
-			//cout << timer.estimated_time_remaining(reinterpret_cast<std::istream::streampos>(file_remaining.get_address()));
+			cout << timer.estimated_time_remaining(*(shared_timer.find<std::istream::streampos>(TIMER_PRINT_VALUE).first)) << endl;
 			timer.clear_timer();
+			bool_values = shared_timer.find<bool>(TIMER_PRINT);
+			std::memset(bool_values.first, (bool)0, bool_values.second);//Set the memory to false, as it has been printed
 		}
 
 	}
@@ -83,11 +86,11 @@ void ReccurentLoops::initialize_threads(){
 	this->thread_list = std::vector<thread*>(FINAL_THREAD_POS);
 	
 	managed_shared_memory managed{ open_only, TIMER_SHARED};
-	this->timer_shared_memory = &managed;
 	
-	timer_shared_memory->construct<bool>(TIMER_NEEDED)(true);
-	timer_shared_memory->construct<bool>("PRINT_TIMER")(false);
-	timer_shared_memory->construct<bool>(CHECKPOINT_TIMER)(false);
+	managed.construct<bool>(TIMER_NEEDED)(true);
+	managed.construct<bool>(TIMER_PRINT)(false);
+	managed.construct<bool>(CHECKPOINT_TIMER)(false);
+	managed.construct<std::istream::streampos>(TIMER_PRINT_VALUE)(std::istream::streampos());
 	this->thread_list[TIMER_THREAD] = new thread(timer_thread, this->timer, TIMER_SHARED);
 	
 }

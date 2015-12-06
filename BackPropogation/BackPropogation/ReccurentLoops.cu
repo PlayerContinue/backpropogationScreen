@@ -487,8 +487,11 @@ void ReccurentLoops::testTraining(){
 				if (length[1] != 0){
 					//Find the estimated time remaining from the length 
 					//The length of file * loops is number of previously found values
-					this->timer.restart_timer();
-					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + (this->length_of_file*loops)) << endl;
+					//this->timer.restart_timer();
+					//cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + (this->length_of_file*loops)) << endl;
+					std::memset(managed.find<std::istream::streampos>(TIMER_PRINT_VALUE).first, this->inputfile->tellg() + (this->length_of_file*loops), 
+						managed.find<std::istream::streampos>(TIMER_PRINT_VALUE).second);
+					std::memset(managed.find<bool>(TIMER_PRINT).first, (bool)1, managed.find<bool>(TIMER_PRINT).second);
 				}
 				this->timer.clear_timer();
 
@@ -787,6 +790,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 
 void ReccurentLoops::cleanLoops(){
 	this->mainNetwork->cleanNetwork();
+	this->stop_training_thread();
 	this->checkpoint.i_current_position_in_input_file = 0;
 	this->checkpoint.i_current_position_in_output_file = 0;
 	this->checkpoint.b_still_running = false;

@@ -46,6 +46,8 @@
 #define CHECKPOINT_TIMER "CHECKPOINT_TIMER"
 #define TIMER_SHARED "timer_shared_memory"
 #define TIMER_NEEDED "timer_needed"
+#define TIMER_PRINT "timer_print"
+#define TIMER_PRINT_VALUE "timer_print_value"
 //****************************************************************************************************
 //
 //Programmer: David Greenberg
