@@ -3,6 +3,7 @@
 #ifndef SEQUENCE_DELIMITER
 #define SEQUENCE_DELIMITER 4
 #endif
+using namespace boost::interprocess;
 //*****************************
 //Constructor
 //*****************************
@@ -450,6 +451,8 @@ void ReccurentLoops::testTraining(){
 	int output_length;
 	int output_stop;
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
+	this->stop_training_thread();//Remove any threads which may have been missed and remove all open shared_memory_locations
+	managed_shared_memory managed{ create_only, TIMER_SHARED, 1024 };
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
@@ -484,6 +487,7 @@ void ReccurentLoops::testTraining(){
 				if (length[1] != 0){
 					//Find the estimated time remaining from the length 
 					//The length of file * loops is number of previously found values
+					this->timer.restart_timer();
 					cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + (this->length_of_file*loops)) << endl;
 				}
 				this->timer.clear_timer();
@@ -512,12 +516,11 @@ void ReccurentLoops::testTraining(){
 					}
 					else{
 						this->timer.set_size_of_round(this->inputfile->tellg());//Set it to the position in the file after a single round
-						initialize_threads();
-
+						
 					}
+					this->initialize_threads();
 
-
-
+					
 				}
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();//Done afterwards for the purpose of setting the difference
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
@@ -590,10 +593,10 @@ void ReccurentLoops::testTraining(){
 						sequenceEnd(length_of_sequence, count_sequences, growth_check);
 
 						sequence_end = false;
-						
-						if (static_cast<bool>(this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).first)){//Create a checkpoint if the set checkpoint values has been passed
+						bool* temp = managed.find<bool>(CHECKPOINT_TIMER).first;
+						if (*(managed.find<bool>(CHECKPOINT_TIMER).first)==true){//Create a checkpoint if the set checkpoint values has been passed
 							this->createCheckpoint();
-							std::memset(this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).first, false, this->timer_shared_memory.find<bool>(CHECKPOINT_TIMER).second);
+							std::memset(managed.find<bool>(CHECKPOINT_TIMER).first, false, managed.find<bool>(CHECKPOINT_TIMER).second);
 						}
 
 						//A new sequence, start from the beginning
