@@ -8,10 +8,12 @@
             <Menu IsMainMenu="True" Name="MainMenu"  DockPanel.Dock="Top">
                 <MenuItem Header="_File">
                     <MenuItem Header="_Open"/>
-                    <MenuItem Click="MenuItem_Click" Header="_Start"/>
+                    <MenuItem Header="_Launch" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                        Path=OnMenuChangeScreensCommand}" CommandParameter="Launch_Program"/>
                 </MenuItem>
                 <MenuItem Header="_Display">
-                    <MenuItem Header="_GraphView"/>
+                            <MenuItem Header="_GraphView" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
+                        Path=OnMenuChangeScreensCommand}" CommandParameter="Graph_View"/>
                     <MenuItem Header="_CreateSettings" Command="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}},
                         Path=OnMenuChangeScreensCommand}" CommandParameter="Settings_Page"/>
                 </MenuItem>

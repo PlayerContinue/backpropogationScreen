@@ -23,10 +23,15 @@ namespace VisualBackPropogation.Pages
     public partial class Settings_Form : Page
     {
         private UIElement[] Elements;
+        public SortedDictionary<string, string> current_file_list;
+        private string settings_location;
+        private Launch_Learning_Algorithm learning_args=null;
         public Settings_Form()
         {
             InitializeComponent();
+            current_file_list = new SortedDictionary<string, string>();
         }
+
 
         public void LoadFromFile(object sender, RoutedEventArgs e)
         {
@@ -36,9 +41,29 @@ namespace VisualBackPropogation.Pages
 
         }
 
+        public bool Launch_Learning_Algorithm(string Application_Location)
+        {
+            if (learning_args == null)
+            {
+                learning_args = new Launch_Learning_Algorithm();
+                string output;
+                current_file_list.TryGetValue("s_network_name", out output);
+                learning_args.Launch("temp_pipe", settings_location, Application_Location);
+                return true;
+            }
+
+            if (settings_location == null)
+            {
+                throw new Exception("No File Opened");
+            }
+
+            return false;
+        }
+
         //Load the file infromation from a known file
         public void Load_File_Info(string filename)
         {
+            settings_location = filename;//Set the location of the file for later use
             if (Elements == null)
             {
                 createElementList();
@@ -49,7 +74,12 @@ namespace VisualBackPropogation.Pages
                 string[] line;
                 for (int k = 0, i = 0; k < lines.Length; k++)
                 {
+                    
                     line = lines[k].Split();
+                    if (line.Length == 2)
+                    {
+                        this.current_file_list.Add(line[0], line[1]);//Add the value to the map
+                    }
                     if (!line[0].StartsWith("Type"))
                     {
                         if (Elements[i] is File_Select_Button)
@@ -159,14 +189,14 @@ namespace VisualBackPropogation.Pages
                                  "i_number_new_weights",
                                  "i_number_of_testing_items",
                                  "b_allow_growth",
-                                 "i_number_minutes_to_checkpoint"};
+                                  "i_number_minutes_to_checkpoint",
+                                 "d_number_minutes_to_mean_square_test" };
 
                 if (Elements == null)
                 {
                     createElementList();
                 }
-                string value;
-              
+                
                 bool save_problem = false;
                 for (int i = 0, k = 0; k < lines.Length; k++)
                 {

@@ -7,6 +7,10 @@
 #include <thread>
 #include <boost/interprocess/managed_shared_memory.hpp>
 
+#ifndef __PIPEDLL_H_INCLUDED
+#define __PIPEDLL_H_INCLUDED
+#include "PipeDll\Connection_Pipe.h"
+#endif
 
 #ifdef __IOSTREAM_H_INCLUDED__
 
@@ -48,6 +52,8 @@
 #define TIMER_NEEDED "timer_needed"
 #define TIMER_PRINT "timer_print"
 #define TIMER_PRINT_VALUE "timer_print_value"
+#define PIPE_NEEDED "PIPE_NEEDED"
+#define SPECIAL_FUNCTIONS "SPECIAL_FUNCTIONS"
 //****************************************************************************************************
 //
 //Programmer: David Greenberg

@@ -25,7 +25,11 @@ bool ReccurentLoops::stop_training_thread(){
 			bool_values = shared_timer.find<bool>(TIMER_NEEDED);
 			std::memset(bool_values.first, (bool)1, bool_values.second);
 			this->thread_list[TIMER_THREAD]->join();//Wait for the thread to finish closing
-			this->thread_list.erase(this->thread_list.begin() + TIMER_THREAD);
+
+			bool_values = shared_timer.find<bool>(PIPE_NEEDED);
+			this->thread_list[PIPE_THREAD]->join();
+		
+			this->thread_list.clear();
 		}
 	}
 	catch(exception e){
@@ -77,8 +81,46 @@ void timer_thread(NetworkTimer old_timer,string shared){
 }
 
 
-void pipe_thread(){
+void pipe_thread(string pipe_name,string shared){
+	
+	try{
+		Connection_Pipe pipe = Connection_Pipe(pipe_name);
+		managed_shared_memory shared_mem(open_only, shared.c_str());
+		pipe.Open();
+		char * message;
+		char * message_list;
+		std::pair<int*, size_t> int_pair;
+		bool temp = false;
+		while (*(shared_mem.find<bool>(PIPE_NEEDED).first) == true){
 
+			if (pipe.has_new_message()){//Read a message
+				message = const_cast<char*>(pipe.read().c_str());
+				message_list = strtok(message, "--");
+				if (strcmp(message_list, "Menu")==0)
+				{
+					int_pair = shared_mem.find<int>(SPECIAL_FUNCTIONS);
+					std::memset(int_pair.first,std::stoi(strtok(NULL,"--")), int_pair.second);//Write the new value to memory
+				}
+				
+			}
+			try{
+				if (!temp){
+					cout << pipe.write("h\n");
+					temp = true;
+				}
+				
+			}
+			catch (exception e){
+				cout << e.what();
+			}
+
+		}
+		pipe.Close();
+	}
+	catch (exception e){
+
+	}
+	
 }
 
 
@@ -91,7 +133,11 @@ void ReccurentLoops::initialize_threads(){
 	managed.construct<bool>(TIMER_PRINT)(false);
 	managed.construct<bool>(CHECKPOINT_TIMER)(false);
 	managed.construct<std::istream::streampos>(TIMER_PRINT_VALUE)(std::istream::streampos());
+	managed.construct<int>(SPECIAL_FUNCTIONS)(-1);
+	managed.construct<bool>(PIPE_NEEDED)(true);
+	
 	this->thread_list[TIMER_THREAD] = new thread(timer_thread, this->timer, TIMER_SHARED);
+	this->thread_list[PIPE_THREAD] = new thread(pipe_thread,"temp_pipe",TIMER_SHARED);
 	
 }
 

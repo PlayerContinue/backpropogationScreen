@@ -25,6 +25,7 @@ namespace VisualBackPropogation
         VisualBackPropogation.Pages.Settings_Form Settings_Page;
         VisualBackPropogation.GraphView Graph;
         ICommand onMenuChangeScreensCommand;
+        String Run_Location;//Store the location of the process to run
         public ICommand OnMenuChangeScreensCommand
         {
             get
@@ -44,8 +45,8 @@ namespace VisualBackPropogation
             catch (Exception ex)
             {
                 ConsoleManager.Show();
-               Console.Write(ex.Message);
-             
+                Console.Write(ex.Message);
+
             }
         }
 
@@ -63,7 +64,7 @@ namespace VisualBackPropogation
                 Settings_Page.Load_File_Info(Loaded_Settings);
             }
         }
-      
+
 
         private void change_screens(object sender)
         {
@@ -71,21 +72,26 @@ namespace VisualBackPropogation
             switch (temp)
             {
                 case "Settings_Page":
-                    if (Settings_Page == null)
-                    {
-                        Settings_Page = new VisualBackPropogation.Pages.Settings_Form();
-                    }
 
-                  
-
-                    _mainFrame.Navigate(Settings_Page);
-
-                    if (Loaded_Settings != null)
-                    {
-                        Settings_Page.Load_File_Info(Loaded_Settings);
-                    }
-
+                    Switch_To_Settings();
                     break;
+
+                case "Launch_Program":
+
+                    Switch_To_Settings();
+                    if (Run_Location == null)
+                    {
+                        this.Run_Location = this.LoadFileLocation();
+                    }
+                    if (Loaded_Settings == null)
+                    {
+                        this.Loaded_Settings = this.Settings_Page.LoadFile();
+                    }
+
+                    Settings_Page.Load_File_Info(this.Loaded_Settings);
+                    Settings_Page.Launch_Learning_Algorithm(this.Run_Location);
+                    break;
+
                 case "Graph_View":
                     if (Graph == null)
                     {
@@ -96,10 +102,45 @@ namespace VisualBackPropogation
             }
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void Switch_To_Settings()
         {
-            Launch_Learning_Algorithm temp = new Launch_Learning_Algorithm();
-            temp.Launch();
+            if (Settings_Page == null)
+            {
+                Settings_Page = new VisualBackPropogation.Pages.Settings_Form();
+            }
+
+
+
+            _mainFrame.Navigate(Settings_Page);
+
+            if (Loaded_Settings != null)
+            {
+                Settings_Page.Load_File_Info(Loaded_Settings);
+            }
         }
+
+
+        private string LoadFileLocation()
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+
+            //Filter the file type
+            dlg.DefaultExt = ".txt";
+            dlg.Filter = "Application (*.exe)| *.exe";
+            // Display OpenFileDialog by calling ShowDialog method 
+            Nullable<bool> result = dlg.ShowDialog();
+            if (result == true)
+            {
+                return dlg.FileName;
+            }
+            else
+            {
+                return null;
+            }
+
+        }
+
     }
+
+
 }

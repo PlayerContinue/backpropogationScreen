@@ -1,5 +1,6 @@
+#include "stdafx.h"
 #include "Connection_Pipe.h"
-
+#include <iostream>
 
 Connection_Pipe::Connection_Pipe()
 {
@@ -22,7 +23,10 @@ void Connection_Pipe::Open(){
 }
 
 void Connection_Pipe::Close(){
+	DisconnectNamedPipe(this->hPipeIn);
+	DisconnectNamedPipe(this->hPipeOut);
 	CloseHandle(this->hPipeIn);
+	CloseHandle(this->hPipeOut);
 }
 
 bool Connection_Pipe::add_to_write_queue(string insert){
@@ -36,24 +40,42 @@ string Connection_Pipe::read_from_queue(){
 	return front;
 }
 
+int Connection_Pipe::write(string toWrite){
+	return this->write(this->convert_to_wstring(toWrite).c_str());
+}
+
 int Connection_Pipe::write(wstring toWrite){
 	DWORD bytesWritten = 0;
 	const wchar_t* data = toWrite.c_str();
-	WriteFile(this->hPipeOut, data, _tcslen(data) * sizeof(const wchar_t*), &bytesWritten, NULL);
+	size_t temp = wcslen(data)* sizeof(wchar_t);
+	WriteFile(this->hPipeOut, data, wcslen(data) * sizeof(wchar_t), &bytesWritten, NULL);
+	cout << GetLastError();
+	FlushFileBuffers(this->hPipeOut);
 	return (int)bytesWritten;
 }
 
 
+
+
+
 HANDLE Connection_Pipe::create_pipe(wstring pipe_name){
+	HANDLE hPipe;
 	pipe_name = TEXT("\\\\.\\pipe\\") + pipe_name;//Combine the name with the general name of a pipe
-	return ::CreateNamedPipe(pipe_name.c_str(),
-		PIPE_ACCESS_DUPLEX,
-		PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
-		PIPE_UNLIMITED_INSTANCES,
-		4096,
-		4096,
-		0,
-		NULL);
+	
+	hPipe = CreateFile(pipe_name.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
+		NULL, OPEN_EXISTING, 0, NULL);
+	if (hPipe != INVALID_HANDLE_VALUE){
+		hPipe = ::CreateNamedPipe(pipe_name.c_str(),
+			PIPE_ACCESS_DUPLEX,
+			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,
+			PIPE_UNLIMITED_INSTANCES,
+			4096,
+			4096,
+			0,
+			NULL);
+	}
+	return hPipe;
+
 }
 
 wstring Connection_Pipe::convert_to_wstring(string convert){
@@ -64,5 +86,9 @@ wstring Connection_Pipe::convert_to_wstring(string convert){
 }
 
 string Connection_Pipe::read(){
-	return "";
+	return this->read_from_queue();
+}
+
+bool Connection_Pipe::has_new_message(){
+	return (this->RecieveQueue.size() > 0);
 }

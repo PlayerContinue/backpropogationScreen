@@ -110,6 +110,7 @@
     </Compile>
     <Compile Include="GraphImage.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
+    <Compile Include="Helper\ServerPipe.cs" />
     <Compile Include="Pages\GraphView.xaml.cs">
       <DependentUpon>GraphView.xaml</DependentUpon>
     </Compile>
