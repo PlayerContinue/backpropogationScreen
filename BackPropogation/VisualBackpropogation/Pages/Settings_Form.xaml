@@ -11,9 +11,9 @@
 	Title="Settings_Form">
 
     <ScrollViewer>
-        <StackPanel Height="2040">
+        <StackPanel Height="2060">
             <Button Content="Accept" Click="CreateSettingsFile"></Button>
-            <UniformGrid Name="_Grid_View" Rows="40" Columns="2">
+            <UniformGrid Name="_Grid_View" Rows="41" Columns="2">
 
                 <UniformGrid.Height>
                     <Binding RelativeSource="{RelativeSource AncestorType={x:Type StackPanel}}" Path="Height" Converter="{StaticResource ConverterClass}"  ConverterParameter="-;40"/>
@@ -98,6 +98,8 @@
                 <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="b_allow_growth " Grid.RowSpan="1"/>
                 <local_control:True_False_Button></local_control:True_False_Button>
                 <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="i_number_minutes_to_checkpoint " Grid.RowSpan="1"/>
+                <local_control:Number_Picker></local_control:Number_Picker>
+                <local_control:Settings_TextBox Grid.Row="1" Grid.Column="0" Text="d_number_minutes_to_mean_square_test " Grid.RowSpan="1"/>
                 <local_control:Number_Picker></local_control:Number_Picker>
 
 

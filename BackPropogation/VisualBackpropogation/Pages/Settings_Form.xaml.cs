@@ -159,7 +159,8 @@ namespace VisualBackPropogation.Pages
                                  "i_number_new_weights",
                                  "i_number_of_testing_items",
                                  "b_allow_growth",
-                                 "i_number_minutes_to_checkpoint"};
+                                 "i_number_minutes_to_checkpoint",
+                                 "d_number_minutes_to_mean_square_test" };
 
                 if (Elements == null)
                 {

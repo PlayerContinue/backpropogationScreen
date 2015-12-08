@@ -110,6 +110,10 @@ public:
 	//The number Minutes to a checkpoint
 	int i_number_minutes_to_checkpoint;
 
+	//The number of minutes to a mean_square_test
+	double d_number_minutes_to_mean_square_test;
+
+
 	CSettings();
 
 
@@ -275,7 +279,11 @@ public:
 		is >> next;
 		is >> settings.i_number_minutes_to_checkpoint;
 
+		is >> next;
+		is >> settings.d_number_minutes_to_mean_square_test;
+
 		//Change Minutes to Seconds
+		settings.d_number_minutes_to_mean_square_test *= 60;
 		settings.i_number_minutes_to_checkpoint *= 60;
 
 		return is;
