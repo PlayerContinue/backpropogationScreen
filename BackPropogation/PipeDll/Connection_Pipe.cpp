@@ -18,13 +18,13 @@ Connection_Pipe::Connection_Pipe(string pipe_name)
 }
 
 void Connection_Pipe::Open(){
-	ConnectNamedPipe(this->hPipeIn, NULL);
+	//ConnectNamedPipe(this->hPipeIn, NULL);
 	ConnectNamedPipe(this->hPipeOut, NULL);
 }
 
 void Connection_Pipe::Close(){
-	DisconnectNamedPipe(this->hPipeIn);
-	DisconnectNamedPipe(this->hPipeOut);
+	//DisconnectNamedPipe(this->hPipeIn);
+	//DisconnectNamedPipe(this->hPipeOut);
 	CloseHandle(this->hPipeIn);
 	CloseHandle(this->hPipeOut);
 }
@@ -48,8 +48,8 @@ int Connection_Pipe::write(wstring toWrite){
 	DWORD bytesWritten = 0;
 	const wchar_t* data = toWrite.c_str();
 	size_t temp = wcslen(data)* sizeof(wchar_t);
-	WriteFile(this->hPipeOut, data, wcslen(data) * sizeof(wchar_t), &bytesWritten, NULL);
-	cout << GetLastError();
+	bool fail = WriteFile(this->hPipeOut, data, wcslen(data) * sizeof(wchar_t), &bytesWritten, NULL);
+	
 	FlushFileBuffers(this->hPipeOut);
 	return (int)bytesWritten;
 }
@@ -64,7 +64,8 @@ HANDLE Connection_Pipe::create_pipe(wstring pipe_name){
 	
 	hPipe = CreateFile(pipe_name.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
 		NULL, OPEN_EXISTING, 0, NULL);
-	if (hPipe != INVALID_HANDLE_VALUE){
+
+	if (hPipe == INVALID_HANDLE_VALUE){
 		hPipe = ::CreateNamedPipe(pipe_name.c_str(),
 			PIPE_ACCESS_DUPLEX,
 			PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE,

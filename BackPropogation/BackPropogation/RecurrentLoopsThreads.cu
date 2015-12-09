@@ -105,7 +105,7 @@ void pipe_thread(string pipe_name,string shared){
 			}
 			try{
 				if (!temp){
-					cout << pipe.write("h\n");
+					cout << pipe.write("hello world\n");
 					temp = true;
 				}
 				
@@ -118,7 +118,7 @@ void pipe_thread(string pipe_name,string shared){
 		pipe.Close();
 	}
 	catch (exception e){
-
+		cout << e.what();
 	}
 	
 }

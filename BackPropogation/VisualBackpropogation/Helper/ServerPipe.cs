@@ -15,7 +15,8 @@ namespace VisualBackPropogation.Helper
         public void ThreadStartServer(string pipe_name)
         {
             ConsoleManager.Show();
-
+            NamedPipeServerStream temp1 = new NamedPipeServerStream(pipe_name);
+            temp1.Close();
             // Create a name pipe
             using (NamedPipeServerStream pipeStream = new NamedPipeServerStream(pipe_name))
             {
