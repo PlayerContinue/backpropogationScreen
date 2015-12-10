@@ -26,10 +26,10 @@ i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
 b_loadFromCheckpoint 1
-s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork_215.txt
+s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork12.txt.txt
 b_loadNetworkFromFile 1
-s_loadNetworkFile E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork_215.txt
-i_numberTimesThroughFile 2
+s_loadNetworkFile E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork12.txt.txt
+i_numberTimesThroughFile 1
 Type:LongTermShortTerm_items
 i_backprop_unrolled 30
 i_number_in_sequence 5
@@ -38,3 +38,4 @@ i_number_new_weights 0
 i_number_of_testing_items 100
 b_allow_growth 0
 i_number_minutes_to_checkpoint 40
+d_number_minutes_to_mean_square_test 0
