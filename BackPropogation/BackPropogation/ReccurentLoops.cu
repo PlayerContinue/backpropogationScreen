@@ -313,17 +313,23 @@ void ReccurentLoops::loadFromFile(std::fstream &file, int length_of_results, dou
 }
 
 void ReccurentLoops::LoadTrainingSet(){
-	this->training_input = new weight_type*[this->settings.i_number_of_training];
-	this->training_output = new weight_type*[this->settings.i_number_of_training];
+	
 	int training_length[2];
 	std::fstream stream;
 
 	if (this->settings.b_testingFromFile){//A training file has been included and should be read from for the training set
 		stream.open(this->settings.s_testSet);
+		if (this->settings.i_number_of_testing_items <= 0){
+			this->settings.i_number_of_testing_items = 10000;
+		}
+
 	}
 	else{//A training file has not been included, get a random set from the input file
 		stream.open(this->settings.s_trainingSet);
+		
 	}
+	this->training_input = new weight_type*[this->settings.i_number_of_testing_items];
+	this->training_output = new weight_type*[this->settings.i_number_of_testing_items];
 
 	if (stream.is_open()){
 		this->loadFromFile(stream, this->settings.i_input, this->training_input, training_length, this->settings.i_number_of_testing_items, INPUT, this->settings.i_input, true);
@@ -500,7 +506,7 @@ void ReccurentLoops::testTraining(){
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
 			reset_file_for_loop(first_run);
-			if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0 && length[1] != -1){
+			if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0 && first_run){
 				this->inputfile->seekg(this->checkpoint.i_current_position_in_input_file);
 				this->outputfile->seekg(this->checkpoint.i_current_position_in_output_file);
 			}
@@ -554,12 +560,13 @@ void ReccurentLoops::testTraining(){
 
 					
 				}
+				first_run = false;
 				this->checkpoint.i_current_position_in_input_file = this->inputfile->tellg();//Done afterwards for the purpose of setting the difference
 				this->checkpoint.i_current_position_in_output_file = this->outputfile->tellg();
 				if (length[1] == -1 || output_stop == -1){//Sequence may break early
 					break;
 				}
-				first_run = false;
+				
 
 				for (int i = 0; i < length[0] && this->mean_square_error_results_new[0] > this->settings.d_threshold;){
 
@@ -731,7 +738,7 @@ void ReccurentLoops::testTraining(){
 void ReccurentLoops::getMeanSquareError(){
 	thrust::device_vector<weight_type> vec;
 	thrust::device_vector<weight_type> real_output = thrust::device_vector<weight_type>(this->settings.i_output);
-	for (int i = 0; i < this->number_in_training_sequence; i++){
+	for (int i = 0; i < this->length_of_arrays[TRAINING_1]; i++){
 		if (this->training_input[i][0] == SEQUENCE_DELIMITER && this->training_output[i][0] == SEQUENCE_DELIMITER){
 
 			this->mainNetwork->ResetSequence();
