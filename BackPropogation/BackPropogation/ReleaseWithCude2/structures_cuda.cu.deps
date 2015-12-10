@@ -378,7 +378,7 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\host_defines.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_types.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\structures_cuda.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory0
@@ -1328,7 +1328,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\SNeuron.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h

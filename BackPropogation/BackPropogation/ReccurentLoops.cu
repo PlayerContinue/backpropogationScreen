@@ -761,7 +761,7 @@ void ReccurentLoops::getMeanSquareError(){
 
 	//Divide the summed value
 	for (int i = 0; i < this->mean_square_error_results_new.size(); i++){
-		this->mean_square_error_results_new[i] /= this->number_in_training_sequence;
+		this->mean_square_error_results_new[i] /= this->length_of_arrays[TRAINING_1];
 	}
 }
 

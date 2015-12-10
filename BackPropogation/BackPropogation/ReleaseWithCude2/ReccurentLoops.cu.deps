@@ -378,7 +378,7 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\host_defines.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_functions.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\device_launch_parameters.h
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\vector_types.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\ReccurentLoops.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory0
@@ -456,14 +456,7 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cerrno
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\errno.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkTimer.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ctime
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_vector.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/config.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/simple_defines.h
@@ -477,16 +470,17 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/co
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/forceinline.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/hd_warning_disable.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/config/global_workarounds.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/normal_iterator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_adaptor.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_facade.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_malloc_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_ptr.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/memory.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/pointer_traits.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/has_trivial_assign.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_facade_category.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/is_metafunction_defined.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/has_nested_type.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_traits.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_traversal_tags.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/host_system_tag.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/execution_policy.h
@@ -494,44 +488,47 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/ex
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/device_system_tag.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/any_system_tag.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_traits.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_categories.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_category_with_system_and_traversal.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_traversal_tags.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/universal_categories.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/is_iterator_category.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_category_to_traversal.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_category_to_system.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pointer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_adaptor.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_facade.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_facade_category.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/is_iterator_category.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/distance_from_result.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/use_default.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_adaptor_base.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/iterator_traits.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/iterator_traits.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/is_trivial_iterator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/pointer_traits.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/is_metafunction_defined.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/has_nested_type.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/reverse_iterator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/reverse_iterator_base.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/reverse_iterator.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/contiguous_storage.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/allocator_traits.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/has_member_function.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/allocator_traits.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/is_call_possible.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/integer_traits.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/contiguous_storage.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/copy_construct_range.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/copy_construct_range.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference_forward_declaration.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pointer.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/select_system.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/minimum_system.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/minimum_type.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/type_traits.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/memory.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tag.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/pair.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pair.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/memory.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/malloc_and_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/malloc_and_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/raw_pointer_cast.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/malloc_and_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/malloc_and_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/guarded_cuda_runtime_api.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda_runtime_api.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/system_error.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/error_code.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/errno.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_category.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/functional.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\functional
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xfunctional
@@ -540,8 +537,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/fu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/actor.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/tuple.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tuple.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/pair.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pair.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/value.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/composite.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/operators/assignment_operator.h
@@ -557,35 +552,17 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/fu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/operators/logical_operators.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/operators/bitwise_operators.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/functional/operators/compound_assignment_operators.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/internal_functional.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/tuple_of_iterator_references.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference_forward_declaration.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/raw_reference_cast.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/raw_pointer_cast.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tuple_transform.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tuple_meta_transform.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/for_each.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/static_assert.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/function.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/for_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/for_each.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/distance.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/distance.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/advance.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/advance.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/advance.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/advance.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/distance.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/distance.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_code.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_condition.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/system_error.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/error.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/guarded_driver_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\driver_types.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/error.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/bad_alloc.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/throw_on_error.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system_error.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/terminate.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/bulk.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/config.hpp
@@ -596,20 +573,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda_runtime_api.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/throw_on_error.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/terminate.hpp
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system_error.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/error_code.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/errno.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_category.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_code.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/error_condition.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/system_error.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/system_error.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/error.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/guarded_driver_types.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\driver_types.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/error.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/guarded_cuda_runtime_api.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\cuda_runtime_api.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/cuda_launcher/runtime_introspection.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/cuda_launcher/cuda_launch_config.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/minmax.h
@@ -636,6 +599,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm/copy.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/is_contiguous_iterator.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/is_trivial_iterator.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm/reduce.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/iterator/strided_iterator.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm/scan.hpp
@@ -659,13 +623,58 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/zip_iterator.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/zip_iterator_base.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/minimum_category.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tuple_meta_transform.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tuple_transform.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/tuple_of_iterator_references.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/zip_iterator.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/detail/tail_flags.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm/sort.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/algorithm/detail/stable_merge_sort.hpp
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/bulk/iterator.hpp
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/malloc_and_free.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/seq.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/execute_with_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/allocator_traits.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/has_member_function.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/allocator_traits.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/type_traits/is_call_possible.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/integer_traits.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/static_assert.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/get_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/get_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/get_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/get_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/assign_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/internal_functional.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/raw_reference_cast.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/for_each.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/function.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/for_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/for_each.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/distance.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/distance.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/advance.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/advance.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/advance.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/advance.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/distance.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/distance.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/execute_on_stream.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform.h
@@ -686,62 +695,11 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_cross_system.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/temporary_array.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/tagged_iterator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/temporary_allocator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/tagged_allocator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/tagged_allocator.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/memory.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pointer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/pointer.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/memory.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/memory.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/malloc_and_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/malloc_and_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/malloc_and_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/malloc_and_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/bad_alloc.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/throw_on_error.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/terminate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/malloc_and_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/get_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/get_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/get_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/get_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/assign_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/assign_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/assign_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/assign_value.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/iter_swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/iter_swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/iter_swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/iter_swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/swap.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap_ranges.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/swap_ranges.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/swap_ranges.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/swap_ranges.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/swap_ranges.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/swap_ranges.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/swap_ranges.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/temporary_buffer.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/temporary_buffer.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/temporary_allocator.inl
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cassert
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/no_throw_allocator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/temporary_array.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/contiguous_storage.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/normal_iterator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/contiguous_storage.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/copy_construct_range.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/copy_construct_range.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/default_construct_range.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/default_construct_range.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/uninitialized_fill.h
@@ -771,6 +729,54 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/al
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/destroy_range.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/fill_construct_range.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/temporary_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/tagged_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/tagged_allocator.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/memory.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/temporary_buffer.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/temporary_buffer.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/temporary_allocator.inl
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cassert
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/allocator/no_throw_allocator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/temporary_array.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/trivial_copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/assign_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/assign_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/assign_value.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/iter_swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/iter_swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/iter_swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/iter_swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/swap.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/swap_ranges.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/swap_ranges.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/swap_ranges.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/swap_ranges.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/swap_ranges.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/swap_ranges.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/swap_ranges.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_ptr.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_reference.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_reference.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_malloc.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_malloc.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/reverse_iterator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/reverse_iterator_base.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/iterator/detail/reverse_iterator.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/vector_base.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/overlapped_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/equal.h
@@ -853,234 +859,1269 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/equal.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/equal.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/equal.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/host_vector.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_vector.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_malloc_allocator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_ptr.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/memory.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_ptr.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_reference.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_reference.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_malloc.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_malloc.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/device_free.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_free.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/device_vector.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/internal/decompose.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cuda_launch_config.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/extern_shared_ptr.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/reduce.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/alignment.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/inclusive_scan.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/complex.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\complex
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ccomplex
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/host_vector.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/host_vector.inl
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thread
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\chrono
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ratio
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xtimec.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthrcommon.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\concrt.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Windows Kits\8.1\Include\shared\guiddef.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthread
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xtime
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\thr/xthreads.h
+C:\Boost\boost_1_59_0\boost/interprocess/managed_shared_memory.hpp
+C:\Boost\boost_1_59_0\boost/config.hpp
+C:\Boost\boost_1_59_0\boost/config/user.hpp
+C:\Boost\boost_1_59_0\boost/config/select_compiler_config.hpp
+C:\Boost\boost_1_59_0\boost/config/compiler/nvcc.hpp
+C:\Boost\boost_1_59_0\boost/config/compiler/visualc.hpp
+C:\Boost\boost_1_59_0\boost/config/select_stdlib_config.hpp
+C:\Boost\boost_1_59_0\boost/config/stdlib/dinkumware.hpp
+C:\Boost\boost_1_59_0\boost/config/select_platform_config.hpp
+C:\Boost\boost_1_59_0\boost/config/platform/win32.hpp
+C:\Boost\boost_1_59_0\boost/config/suffix.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/workaround.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/managed_memory_impl.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/interprocess_fwd.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/std_fwd.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/utilities.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/utility_core.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/core.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/workaround.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/meta_utils.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/meta_utils_core.hpp
+C:\Boost\boost_1_59_0\boost/static_assert.hpp
+C:\Boost\boost_1_59_0\boost/detail/workaround.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/min_max.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/type_traits.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/mpl.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/pointer_traits.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/workaround.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/pointer_rebind.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/pointer_element.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/mpl.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/type_traits.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/os_file_functions.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/errors.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdarg.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/win32_api.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/date_time/filetime_functions.hpp
+C:\Boost\boost_1_59_0\boost/date_time/compiler_config.hpp
+C:\Boost\boost_1_59_0\boost/date_time/locale_config.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/config/auto_link.hpp
+C:\Boost\boost_1_59_0\boost/version.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time.hpp
+C:\Boost\boost_1_59_0\boost/operators.hpp
+C:\Boost\boost_1_59_0\boost/iterator.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_defs.hpp
+C:\Boost\boost_1_59_0\boost/date_time/special_defs.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date_defs.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cstdarg
+C:\Boost\boost_1_59_0\boost/detail/interlocked.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/permissions.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/creation_tags.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/exceptions.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/segment_manager.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/core/no_exceptions_support.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/transform_iterator.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/iterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/iterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/std_fwd.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/iterator_traits.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/nothrow.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/segment_manager_helper.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/in_place_interface.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/type_traits.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/minimal_char_traits_header.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/named_proxy.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/variadic_templates_tools.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/variadic_templates_tools.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/workaround.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/placement_new.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/offset_ptr.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/cast_tags.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/indexes/iset_index.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/minimal_pair_header.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/minimal_less_equal_header.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/set.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/intrusive_fwd.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/link_mode.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/rbtree.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/set_hook.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/rbtree_node.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/rbtree_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/assert.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/intrusive/detail/algo_type.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/bstree_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/bstree_algorithms_base.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/uncast.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/math.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/ebo_functor_holder.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/pointer_plus_bits.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/tree_node.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/options.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/pack_options.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/generic_hook.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/node_holder.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/bstree.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/bs_set_hook.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/tree_iterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/iiterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/is_stateful_value_traits.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/function_detector.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/empty_node_checker.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/default_header_holder.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/to_raw_pointer.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/reverse_iterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/exception_disposer.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/node_cloner_disposer.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/key_nodeptr_comp.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/simple_disposers.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/size_holder.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/algorithm.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/tree_value_compare.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/get_value_traits.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/hook_traits.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/parent_from_member.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/parent_from_member.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/adl_move_swap.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/allocators/allocator.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/containers/allocation_type.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/allocation_type.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/multiallocation_chain.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/container_fwd.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/std_fwd.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/to_raw_pointer.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/transform_iterator.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/slist.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/slist_hook.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/slist_node.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/circular_slist_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/common_slist_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/linear_slist_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/slist_iterator.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/array_initializer.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/equal_to_value.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/allocators/detail/allocator_common.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/utility/addressof.hpp
+C:\Boost\boost_1_59_0\boost/core/addressof.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/sync/scoped_lock.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/lock_options.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/posix_time_types_wrk.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/posix_time_types.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_clock.hpp
+C:\Boost\boost_1_59_0\boost/date_time/c_time.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ctime
+C:\Boost\boost_1_59_0\boost/throw_exception.hpp
+C:\Boost\boost_1_59_0\boost/exception/exception.hpp
+C:\Boost\boost_1_59_0\boost/current_function.hpp
+C:\Boost\boost_1_59_0\boost/shared_ptr.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/shared_ptr.hpp
+C:\Boost\boost_1_59_0\boost/config/no_tr1/memory.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/checked_delete.hpp
+C:\Boost\boost_1_59_0\boost/core/checked_delete.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/shared_count.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/bad_weak_ptr.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_counted_base.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_has_sync.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_counted_base_w32.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_interlocked.hpp
+C:\Boost\boost_1_59_0\boost/detail/sp_typeinfo.hpp
+C:\Boost\boost_1_59_0\boost/core/typeinfo.hpp
+C:\Boost\boost_1_59_0\boost/core/demangle.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_counted_impl.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_convertible.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/sp_nullptr_t.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/spinlock_pool.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/spinlock.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/spinlock_w32.hpp
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/yield_k.hpp
+C:\Boost\boost_1_59_0\boost/predef.h
+C:\Boost\boost_1_59_0\boost/predef/language.h
+C:\Boost\boost_1_59_0\boost/predef/language/stdc.h
+C:\Boost\boost_1_59_0\boost/predef/version_number.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/detail/test.h
+C:\Boost\boost_1_59_0\boost/predef/language/stdcpp.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/language/objc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/alpha.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/arm.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/blackfin.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/convex.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/ia64.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/m68k.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/mips.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/parisc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/ppc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/pyramid.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/rs6k.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/sparc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/superh.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/sys370.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/sys390.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/32.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/32.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/64.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/32.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/64.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/x86/64.h
+C:\Boost\boost_1_59_0\boost/predef/architecture/z.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/borland.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/clang.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/comeau.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/compaq.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/diab.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/digitalmars.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/dignus.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/edg.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/ekopath.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/gcc_xml.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/gcc.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/clang.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/greenhills.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/hp_acc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/iar.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/ibm.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/intel.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/kai.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/llvm.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/clang.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/metaware.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/metrowerks.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/microtec.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/mpw.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/palm.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/pgi.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/sgi_mipspro.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/sunpro.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/tendra.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/visualc.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/clang.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/detail/comp_detected.h
+C:\Boost\boost_1_59_0\boost/predef/compiler/watcom.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library.h
+C:\Boost\boost_1_59_0\boost/predef/library/c.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/_prefix.h
+C:\Boost\boost_1_59_0\boost/predef/detail/_cassert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/gnu.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/uc.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/vms.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/zos.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/_prefix.h
+C:\Boost\boost_1_59_0\boost/predef/detail/_exception.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/cxx.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/dinkumware.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/libcomo.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/modena.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/msl.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/roguewave.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/sgi.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/stdcpp3.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/stlport.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/std/vacpp.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os.h
+C:\Boost\boost_1_59_0\boost/predef/os/aix.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/amigaos.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/android.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/beos.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/macos.h
+C:\Boost\boost_1_59_0\boost/predef/os/ios.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/cygwin.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/haiku.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/hpux.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/irix.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/ios.h
+C:\Boost\boost_1_59_0\boost/predef/os/linux.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/macos.h
+C:\Boost\boost_1_59_0\boost/predef/os/os400.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/qnxnto.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/solaris.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/unix.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/vms.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/windows.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/detail/os_detected.h
+C:\Boost\boost_1_59_0\boost/predef/other.h
+C:\Boost\boost_1_59_0\boost/predef/other/endian.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/library/c/gnu.h
+C:\Boost\boost_1_59_0\boost/predef/os/macos.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/bsdi.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/dragonfly.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/free.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/open.h
+C:\Boost\boost_1_59_0\boost/predef/os/bsd/net.h
+C:\Boost\boost_1_59_0\boost/predef/os/android.h
+C:\Boost\boost_1_59_0\boost/predef/architecture.h
+C:\Boost\boost_1_59_0\boost/predef/platform.h
+C:\Boost\boost_1_59_0\boost/predef/platform/mingw.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/platform/windows_desktop.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/windows.h
+C:\Boost\boost_1_59_0\boost/predef/detail/platform_detected.h
+C:\Boost\boost_1_59_0\boost/predef/platform/windows_store.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/windows.h
+C:\Boost\boost_1_59_0\boost/predef/platform/windows_phone.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/windows.h
+C:\Boost\boost_1_59_0\boost/predef/platform/windows_runtime.h
+C:\Boost\boost_1_59_0\boost/predef/make.h
+C:\Boost\boost_1_59_0\boost/predef/os/windows.h
+C:\Boost\boost_1_59_0\boost/predef/version.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\algorithm
+C:\Boost\boost_1_59_0\boost/smart_ptr/detail/operator_bool.hpp
+C:\Boost\boost_1_59_0\boost/date_time/microsec_time_clock.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/ptime.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/posix_time_system.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/posix_time_config.hpp
+C:\Boost\boost_1_59_0\boost/limits.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/config/no_tr1/cmath.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_duration.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_resolution_traits.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/date_time/int_adapter.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/gregorian_types.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date.hpp
+C:\Boost\boost_1_59_0\boost/date_time/year_month_day.hpp
+C:\Boost\boost_1_59_0\boost/date_time/period.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_calendar.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_weekday.hpp
+C:\Boost\boost_1_59_0\boost/date_time/constrained_value.hpp
+C:\Boost\boost_1_59_0\boost/mpl/if.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/value_wknd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/static_cast.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/workaround.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/integral.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/msvc.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/eti.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/na_spec.hpp
+C:\Boost\boost_1_59_0\boost/mpl/lambda_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/void_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/adl_barrier.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/adl.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/intel.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/gcc.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/na.hpp
+C:\Boost\boost_1_59_0\boost/mpl/bool.hpp
+C:\Boost\boost_1_59_0\boost/mpl/bool_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/integral_c_tag.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/static_constant.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/na_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/ctps.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/lambda.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/ttp.hpp
+C:\Boost\boost_1_59_0\boost/mpl/int.hpp
+C:\Boost\boost_1_59_0\boost/mpl/int_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/nttp_decl.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/nttp.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/integral_wrapper.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/cat.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/config/config.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/lambda_arity_param.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/template_arity_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/arity.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/dtp.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/preprocessor/params.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/preprocessor.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/comma_if.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/punctuation/comma_if.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/if.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/iif.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/logical/bool.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/facilities/empty.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/punctuation/comma.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repeat.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/repeat.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/debug/error.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/eat.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/inc.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/arithmetic/inc.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/preprocessor/enum.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/preprocessor/def_params_tail.hpp
+C:\Boost\boost_1_59_0\boost/mpl/limits/arity.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/logical/and.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/logical/bitand.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/identity.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/facilities/identity.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/empty.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/arithmetic/add.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/arithmetic/dec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/while.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/fold_left.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/while.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/detail/fold_left.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/expr_iif.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/adt.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/is_binary.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/check.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/logical/compl.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/fold_right.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/while.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/detail/fold_right.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/reverse.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/control/detail/msvc/while.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/elem.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/facilities/expand.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/facilities/overload.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/variadic/size.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/rem.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/detail/is_single_return.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/variadic/elem.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/arithmetic/sub.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/overload_resolution.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/lambda_support.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_base_of.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_base_and_derived.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/intrinsics.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/config.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_same.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/integral_constant.hpp
+C:\Boost\boost_1_59_0\boost/mpl/integral_c.hpp
+C:\Boost\boost_1_59_0\boost/mpl/integral_c_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/integral_wrapper.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_function.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_lvalue_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_rvalue_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/ice.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/yes_no_type.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/ice_or.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/ice_and.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/ice_not.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/ice_eq.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/false_result.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/is_function_ptr_tester.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/remove_cv.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/cv_traits_impl.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_class.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_day_of_year.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian_calendar.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian_calendar.ipp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_ymd.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_day.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_year.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_month.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\map
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xtree
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\cctype
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_duration.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date_duration.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date_duration_types.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_duration_types.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/greg_date.hpp
+C:\Boost\boost_1_59_0\boost/date_time/adjust_functors.hpp
+C:\Boost\boost_1_59_0\boost/date_time/wrapping_int.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date_generators.hpp
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\sstream
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xcomplex
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/complex.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/arithmetic.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/c99math.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/math_private.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cproj.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexp.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexpf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clog.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clogf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpow.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpowf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccosh.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccoshf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinh.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinhf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanh.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanhf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrt.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrtf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrig.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrigf.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/stream.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reverse.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reverse.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tabulate.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/tabulate.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/insertion_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_backward.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/partition.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/copy.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/merge.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/integer_math.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/virtualized_smem_closure.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/temporary_indirect_permutation.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sequence.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sequence.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/gather.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/gather.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.inl
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub.h
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/util_namespace.cuh
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/cub.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_histogram.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_radix_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_exchange.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../util_ptx.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_type.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_macro.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_arch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_radix_rank.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\thread\../thread/thread_operators.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../block/block_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_raking.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_raking_layout.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_shfl.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_smem.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_load.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_store.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_warp_scans.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_discontinuity.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_atomic.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_load.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_shfl.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../util_debug.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_smem.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking_commutative_only.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_warp_reductions.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_store.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_shift.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_histogram.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_histogram_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_histogram_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_gatomic_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_satomic_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_sort_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_mapping.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_even_share.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_queue.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../util_device.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_partition.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_select_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\device_scan_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_scan_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\block_scan_prefix_operators.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../iterator/cache_modified_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_select_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_radix_sort.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_radix_sort_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_upsweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_downsweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_reduce.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/constant_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/arg_index_input_iterator.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_by_key_dispatch.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_by_key_sweep.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_scan.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_select.cuh
-c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\host/spinlock.cuh
-C:\Program Files (x86)\Windows Kits\8.1\Include\um\windows.h
+C:\Boost\boost_1_59_0\boost/date_time/date_clock_device.hpp
+C:\Boost\boost_1_59_0\boost/date_time/date_iterator.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_system_split.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_system_counted.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/date_duration_operators.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/posix_time_duration.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/time_period.hpp
+C:\Boost\boost_1_59_0\boost/date_time/time_iterator.hpp
+C:\Boost\boost_1_59_0\boost/date_time/dst_rules.hpp
+C:\Boost\boost_1_59_0\boost/date_time/posix_time/conversion.hpp
+C:\Boost\boost_1_59_0\boost/date_time/gregorian/conversion.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/simple_swap.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/mem_algo/detail/mem_algo_common.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/math_functions.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/containers/version_type.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/version_type.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/mpl.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/smart_ptr/deleter.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/managed_open_or_create_impl.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/os_thread_functions.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/streams/bufferstream.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\process.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/mapped_region.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/sync/windows/sync_utils.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/spin/mutex.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/atomic.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/detail/common_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/spin/wait.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/windows/winapi_semaphore_wrapper.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/windows/winapi_wrapper_common.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/windows/winapi_mutex_wrapper.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_external_begin.hpp
+C:\Boost\boost_1_59_0\boost/unordered/unordered_map.hpp
+C:\Boost\boost_1_59_0\boost/unordered/unordered_map_fwd.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash_fwd.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/hash_fwd.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/fwd.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/equivalent.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/table.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/buckets.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/util.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_convertible.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_empty.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/iterator/iterator_categories.hpp
+C:\Boost\boost_1_59_0\boost/detail/iterator.hpp
+C:\Boost\boost_1_59_0\boost/iterator/detail/config_def.hpp
+C:\Boost\boost_1_59_0\boost/mpl/eval_if.hpp
+C:\Boost\boost_1_59_0\boost/mpl/identity.hpp
+C:\Boost\boost_1_59_0\boost/mpl/placeholders.hpp
+C:\Boost\boost_1_59_0\boost/mpl/arg.hpp
+C:\Boost\boost_1_59_0\boost/mpl/arg_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/na_assert.hpp
+C:\Boost\boost_1_59_0\boost/mpl/assert.hpp
+C:\Boost\boost_1_59_0\boost/mpl/not.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/nested_type_wknd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/yes_no.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/arrays.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/gpu.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/pp_counter.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/arg_typedef.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/use_preprocessed.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/include_preprocessed.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/config/compiler.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/stringize.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/preprocessed/plain/arg.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/include_preprocessed.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/preprocessed/plain/placeholders.hpp
+C:\Boost\boost_1_59_0\boost/iterator/detail/config_undef.hpp
+C:\Boost\boost_1_59_0\boost/utility/enable_if.hpp
+C:\Boost\boost_1_59_0\boost/core/enable_if.hpp
+C:\Boost\boost_1_59_0\boost/detail/select_type.hpp
+C:\Boost\boost_1_59_0\boost/move/move.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/utility.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/traits.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/iterator.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/algorithm.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/detail/no_exceptions_support.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/seq/size.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/seq/enum.hpp
+C:\Boost\boost_1_59_0\boost/swap.hpp
+C:\Boost\boost_1_59_0\boost/core/swap.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/allocate.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/dec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/enum.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/enum_params.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/enum_binary_params.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/repeat_from_to.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_lvalue_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/tuple/tuple.hpp
+C:\Boost\boost_1_59_0\boost/ref.hpp
+C:\Boost\boost_1_59_0\boost/core/ref.hpp
+C:\Boost\boost_1_59_0\boost/tuple/detail/tuple_basic.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/cv_traits.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_const.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_volatile.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_cv.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_const.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_volatile.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/remove_const.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/remove_volatile.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/function_traits.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_pointer.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/remove_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/utility/swap.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/pointer_to_other.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/aligned_storage.hpp
+C:\Boost\boost_1_59_0\boost/aligned_storage.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/alignment_of.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/size_t_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/mpl/size_t.hpp
+C:\Boost\boost_1_59_0\boost/mpl/size_t_fwd.hpp
+C:\Boost\boost_1_59_0\boost/mpl/aux_/integral_wrapper.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/size_t_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/type_with_alignment.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/for_each_i.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/for.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/detail/auto_rec.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/repetition/detail/msvc/for.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/to_list.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/tuple/size.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/transform.hpp
+C:\Boost\boost_1_59_0\boost/preprocessor/list/append.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_pod.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_void.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_scalar.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_arithmetic.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_integral.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_float.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_enum.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_pointer.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_member_pointer.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_member_function_pointer.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_array.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/is_mem_fun_pointer_tester.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_nothrow_move_constructible.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_trivial_move_constructor.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_nothrow_copy.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_trivial_copy.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/utility/declval.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/add_rvalue_reference.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/type_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/is_nothrow_move_assignable.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_trivial_move_assign.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_nothrow_assign.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/has_trivial_assign.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_def.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/template_arity_spec.hpp
+C:\Boost\boost_1_59_0\boost/type_traits/detail/bool_trait_undef.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/unordered/detail/extract_key.hpp
+C:\Boost\boost_1_59_0\boost/unordered/detail/unique.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/hash.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/detail/hash_float.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/detail/float_functions.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/detail/limits.hpp
+C:\Boost\boost_1_59_0\boost/integer/static_log2.hpp
+C:\Boost\boost_1_59_0\boost/integer_fwd.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\typeindex
+C:\Boost\boost_1_59_0\boost/functional/hash/extensions.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/hash.hpp
+C:\Boost\boost_1_59_0\boost/detail/container_fwd.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\array
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_external_end.hpp
+C:\Boost\boost_1_59_0\boost/container/map.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/new_allocator.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/throw_exception.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/tree.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/allocator_traits.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/has_member_function_callable_with.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/fwd_macros.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/has_member_function_callable_with.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/has_member_function_callable_with.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/options.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/algorithm.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/compare_functors.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/destroyers.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/iterators.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/node_alloc_holder.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/addressof.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/alloc_helpers.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/allocator_version_traits.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/construct_in_place.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/iterator_to_raw_pointer.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/pair.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/avltree.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/avl_set_hook.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/avltree_node.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/avltree_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/splaytree.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/splaytree_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/sgtree.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/sgtree_algorithms.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/intrusive/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/value_init.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/move/detail/move_helpers.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/interprocess_tester.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/shared_memory_object.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/shared_dir_helpers.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/windows_intermodule_singleton.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/string.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/min_max.hpp
+C:\Boost\boost_1_59_0\boost/container/detail/next_capacity.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash.hpp
+C:\Boost\boost_1_59_0\boost/functional/hash/hash.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\locale
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocbuf
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocmes
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xlocmon
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xloctime
+C:\Boost\boost_1_59_0\boost/container/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/intermodule_singleton_common.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/mem_algo/rbtree_best_fit.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/mutex_family.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/interprocess_mutex.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/interprocess_recursive_mutex.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/sync/spin/recursive_mutex.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/cstdint.hpp
+C:\Boost\boost_1_59_0\boost/assert.hpp
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/sync/null_mutex.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_begin.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+C:\Boost\boost_1_59_0\boost/interprocess/detail/config_end.hpp
+E:\Documents\GitHub\backpropogationScreen\BackPropogation\PipeDll\Connection_Pipe.h
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\Windows.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\winapifamily.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\sdkddkver.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\excpt.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdarg.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\windef.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\minwindef.h
@@ -1278,6 +2319,221 @@ C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsvc.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\mcx.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\imm.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\ime_cmodes.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\tchar.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\queue
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\deque
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkTimer.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CSettings.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\NetworkBase.cuh
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/transform_reduce.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/transform_reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/copy_if.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/internal/decompose.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/default_decomposition.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cuda_launch_config.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/runtime_introspection.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reduce_intervals.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/extern_shared_ptr.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/reduce.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_closure.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/synchronize.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/launch_calculator.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/alignment.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/inclusive_scan.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/complex.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\complex
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ccomplex
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xcomplex
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/complex.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/arithmetic.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/c99math.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/math_private.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cproj.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexp.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cexpf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clog.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/clogf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpow.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/cpowf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccosh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ccoshf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csinhf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanh.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/ctanhf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrt.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/csqrtf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrig.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/catrigf.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/complex/stream.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\util.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\RecurrentNeuralNetwork.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\LongTermShortTermNetwork.cuh
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/reverse.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/reverse.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/reverse.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_merge_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/merge.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/merge.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/merge.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/merge.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/tabulate.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/tabulate.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/tabulate.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/insertion_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/copy_backward.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_primitive_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/stable_radix_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/partition.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_merge_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_sort_each.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/block/copy.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/merge.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/integer_math.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/virtualized_smem_closure.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/temporary_indirect_permutation.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/sequence.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/sequence.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/sequence.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/gather.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/generic/gather.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/adl/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/detail/sequential/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/gather.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_primitive_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/detail/stable_radix_sort.inl
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub.h
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/util_namespace.cuh
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/cub/cub.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_histogram.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_sort.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_radix_sort.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_exchange.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../util_ptx.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_type.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_macro.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_arch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\block_radix_rank.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_reduce.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\thread\../thread/thread_operators.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../thread/thread_scan.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\../block/block_scan.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_raking.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_raking_layout.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_scan.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_shfl.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_scan_smem.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_load.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../thread/thread_store.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_scan_warp_scans.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../block/block_discontinuity.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_histogram_atomic.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_load.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_reduce.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations\../../warp/warp_reduce.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_shfl.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations\../../util_debug.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\warp\specializations/warp_reduce_smem.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_raking_commutative_only.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block\specializations/block_reduce_warp_reductions.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_store.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block/block_shift.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_histogram.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_histogram_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_histogram_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_gatomic_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_satomic_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\specializations/block_histogram_sort_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_mapping.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_even_share.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../grid/grid_queue.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../util_device.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_partition.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_select_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\device_scan_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_scan_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\block_scan_prefix_operators.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\block_sweep\../iterator/cache_modified_input_iterator.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_select_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_radix_sort.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_radix_sort_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_upsweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_radix_sort_downsweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_reduce.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/constant_input_iterator.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../iterator/arg_index_input_iterator.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch/device_reduce_by_key_dispatch.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device\dispatch\../../block_sweep/block_reduce_by_key_sweep.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_scan.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\device/device_select.cuh
+c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\host/spinlock.cuh
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/cache_modified_output_iterator.cuh
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/counting_input_iterator.cuh
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/tex_obj_input_iterator.cuh
@@ -1285,8 +2541,6 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cu
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\iterator/transform_input_iterator.cuh
 c:\program files\nvidia gpu computing toolkit\cuda\v7.0\include\thrust\system\cuda\detail\cub\util_allocator.cuh
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\set
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xtree
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\map
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/partition.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/partition.inl
@@ -1312,7 +2566,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/partition.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/partition.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/detail/trivial_sequence.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\testcode.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/execution_policy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cpp/detail/par.h
@@ -1364,7 +2618,7 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cu
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/uninitialized_copy.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0\include\thrust/system/cuda/detail/unique_by_key.h
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\Unique_Iterators.cuh
-c:\users\dgree\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Recurrent_Functors.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\memory_block.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\Unique_Iterators.cuh
+e:\documents\github\backpropogationscreen\backpropogation\backpropogation\CRecurrentCheckpoint.h
