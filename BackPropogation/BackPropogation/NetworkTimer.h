@@ -19,6 +19,8 @@ public:
 
 	NetworkTimer(double seconds);
 
+	NetworkTimer(const NetworkTimer &);
+
 	void start();
 
 	double restart_timer();
@@ -44,6 +46,10 @@ public:
 		this->size_of_round = size;
 	}
 	void set_file_size(std::istream::streampos file_size);
+
+	std::istream::streampos get_file_size(){
+		return this->file_size;
+	}
 
 	//Get the estimated time remaining to run from the current most recent value
 	std::string estimated_time_remaining(std::istream::streampos file_pos);

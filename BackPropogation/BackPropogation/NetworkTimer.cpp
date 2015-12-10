@@ -15,6 +15,17 @@ NetworkTimer::NetworkTimer(double seconds){
 	this->checkpoint_timer = std::clock();
 }
 
+NetworkTimer::NetworkTimer(const NetworkTimer &timer){
+	this->timer_start = timer.timer_start;
+	this->current_time = timer.current_time;
+	this->checkpoint_time = timer.checkpoint_time;
+	this->checkpoint_timer = std::clock();
+	this->file_size = timer.file_size;
+	this->number_rounds = timer.number_rounds;
+	this->size_of_round = timer.size_of_round;
+
+	
+}
 
 
 void NetworkTimer::start(){

@@ -133,6 +133,19 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value){
 	this->runContinousNetwork(in, save_location, end_value, 1000);
 }
+
+
+template <typename T>
+struct round_value : public thrust::unary_function < T, T > {
+
+
+	__host__ __device__
+		T operator()(const T &x) const{
+		return (llrintf(x)==1 ? .9 : .1);
+	}
+
+};
+
 void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value, int max_sequence_length){
 	//Open a File for writing the output
 	ofstream results;
@@ -173,6 +186,8 @@ void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_locat
 				else{
 					input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
 				}
+
+				//thrust::transform(input.begin(), input.end(), input.begin(), round_value<weight_type>());
 				thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
 				results << endl;
 			}
@@ -385,8 +400,8 @@ void ReccurentLoops::startTraining(int type){
 	}
 }
 
-void ReccurentLoops::reset_file_for_loop(){
-	if ((int)this->inputfile->tellg() == 0){
+void ReccurentLoops::reset_file_for_loop(bool first_run){
+	if (first_run){
 		this->inputfile->clear();
 		this->inputfile->seekg(0, this->inputfile->end);
 		this->length_of_file = this->inputfile->tellg();
@@ -464,6 +479,7 @@ void ReccurentLoops::testTraining(){
 	this->mean_square_error_results_new[0] = this->settings.d_threshold + 1;
 	this->stop_training_thread();//Remove any threads which may have been missed and remove all open shared_memory_locations
 	managed_shared_memory managed{ create_only, TIMER_SHARED, 1024 };
+	std::istream::streampos location_in_file;
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
@@ -483,7 +499,7 @@ void ReccurentLoops::testTraining(){
 		cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
-			reset_file_for_loop();
+			reset_file_for_loop(first_run);
 			if (this->checkpoint.i_current_position_in_input_file > 0 && this->checkpoint.i_current_position_in_output_file > 0 && length[1] != -1){
 				this->inputfile->seekg(this->checkpoint.i_current_position_in_input_file);
 				this->outputfile->seekg(this->checkpoint.i_current_position_in_output_file);
@@ -501,8 +517,9 @@ void ReccurentLoops::testTraining(){
 					//The length of file * loops is number of previously found values
 					//this->timer.restart_timer();
 					//cout << this->timer.estimated_time_remaining(this->inputfile->tellg() + (this->length_of_file*loops)) << endl;
-					std::memset(managed.find<std::istream::streampos>(TIMER_PRINT_VALUE).first, this->inputfile->tellg() + (this->length_of_file*loops), 
-						managed.find<std::istream::streampos>(TIMER_PRINT_VALUE).second);
+					location_in_file = this->inputfile->tellg() + (this->length_of_file*(std::istream::streampos)loops);
+					std::memcpy(managed.find<std::istream::streampos>(TIMER_PRINT_VALUE).first, &location_in_file, 
+						sizeof(location_in_file));
 					std::memset(managed.find<bool>(TIMER_PRINT).first, (bool)1, managed.find<bool>(TIMER_PRINT).second);
 				}
 				this->timer.clear_timer();

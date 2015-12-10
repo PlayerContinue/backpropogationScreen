@@ -54,17 +54,17 @@ void timer_thread(NetworkTimer old_timer,string shared){
 	NetworkTimer timer = NetworkTimer(old_timer);
 	std::pair<bool*, std::size_t> bool_values;
 	timer.start();
-	bool* temp = shared_timer.find<bool>(TIMER_NEEDED).first;
+	std::istream::streampos temp;
 
 	while (*(shared_timer.find<bool>(TIMER_NEEDED).first) == true){
 		if (timer.passed_checkpoint()){//A checkpoint should be created
 			bool_values = shared_timer.find<bool>(CHECKPOINT_TIMER);
 			std::memset(bool_values.first,(bool)1,bool_values.second);//Set the memory to true
-			cout << true;
 		}
 
 		if (*(shared_timer.find<bool>(TIMER_PRINT).first)==true){
 			timer.restart_timer();
+			temp = static_cast<std::istream::streampos>(*(shared_timer.find<std::istream::streampos>(TIMER_PRINT_VALUE).first));
 			cout << timer.estimated_time_remaining(*(shared_timer.find<std::istream::streampos>(TIMER_PRINT_VALUE).first)) << endl;
 			timer.clear_timer();
 			bool_values = shared_timer.find<bool>(TIMER_PRINT);
@@ -133,7 +133,7 @@ void ReccurentLoops::initialize_threads(){
 	managed.construct<bool>(TIMER_NEEDED)(true);
 	managed.construct<bool>(TIMER_PRINT)(false);
 	managed.construct<bool>(CHECKPOINT_TIMER)(false);
-	managed.construct<std::istream::streampos>(TIMER_PRINT_VALUE)(std::istream::streampos());
+	managed.construct<std::istream::streampos>(TIMER_PRINT_VALUE)();
 	managed.construct<int>(SPECIAL_FUNCTIONS)(-1);
 	managed.construct<bool>(PIPE_NEEDED)(true);
 	

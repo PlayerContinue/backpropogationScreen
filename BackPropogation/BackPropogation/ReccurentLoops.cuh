@@ -6,7 +6,8 @@
 #include <thrust/host_vector.h>
 #include <thread>
 #include <boost/interprocess/managed_shared_memory.hpp>
-
+#include <thrust/transform.h>
+#include <thrust/functional.h>
 #ifndef __PIPEDLL_H_INCLUDED
 #define __PIPEDLL_H_INCLUDED
 #include "PipeDll\Connection_Pipe.h"
@@ -173,7 +174,7 @@ private:
 	//function to run at the end of sequence, seperated for cleaner looking code
 	void sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check);
 	//Resets the file and other information for a new loop
-	void reset_file_for_loop();
+	void reset_file_for_loop(bool first_run);
 	//*********************
 	//Clean the Network
 	//*********************
