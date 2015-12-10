@@ -925,7 +925,7 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	case '1':
 		//RLoops.runNetwork(temp);
 		//RLoops.startTraining(ReccurentLoops::LongTermShortTerm);
-		RLoops.testTraining();
+		RLoops.startTraining(ReccurentLoops::LongTermShortTerm);
 		break;
 	case '2':
 

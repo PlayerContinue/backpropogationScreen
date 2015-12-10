@@ -17,14 +17,29 @@ Connection_Pipe::Connection_Pipe(string pipe_name)
 	this->hPipeOut = create_pipe(convert_to_wstring(pipe_name + "_OUT"));
 }
 
+void Connection_Pipe::create_read_thread(){
+	while (true){
+		string data;
+		DWORD numRead;
+		if (ReadFile(this->hPipeIn, &data, 1024, &numRead, NULL)){//If something was read
+			if (numRead > 0){
+				this->RecieveQueue.push(data);
+			}
+		}
+	}
+}
+
 void Connection_Pipe::Open(){
-	//ConnectNamedPipe(this->hPipeIn, NULL);
+	using namespace std::placeholders;
+	ConnectNamedPipe(this->hPipeIn, NULL);
 	ConnectNamedPipe(this->hPipeOut, NULL);
+	auto bound_member_fn = std::bind(&Connection_Pipe::create_read_thread, this);
+	this->read_thread = new thread(bound_member_fn);
 }
 
 void Connection_Pipe::Close(){
-	//DisconnectNamedPipe(this->hPipeIn);
-	//DisconnectNamedPipe(this->hPipeOut);
+	DisconnectNamedPipe(this->hPipeIn);
+	DisconnectNamedPipe(this->hPipeOut);
 	CloseHandle(this->hPipeIn);
 	CloseHandle(this->hPipeOut);
 }
@@ -49,7 +64,7 @@ int Connection_Pipe::write(wstring toWrite){
 	const wchar_t* data = toWrite.c_str();
 	size_t temp = wcslen(data)* sizeof(wchar_t);
 	bool fail = WriteFile(this->hPipeOut, data, wcslen(data) * sizeof(wchar_t), &bytesWritten, NULL);
-	
+
 	FlushFileBuffers(this->hPipeOut);
 	return (int)bytesWritten;
 }
@@ -61,7 +76,7 @@ int Connection_Pipe::write(wstring toWrite){
 HANDLE Connection_Pipe::create_pipe(wstring pipe_name){
 	HANDLE hPipe;
 	pipe_name = TEXT("\\\\.\\pipe\\") + pipe_name;//Combine the name with the general name of a pipe
-	
+
 	hPipe = CreateFile(pipe_name.c_str(), GENERIC_READ | GENERIC_WRITE, 0,
 		NULL, OPEN_EXISTING, 0, NULL);
 
@@ -75,6 +90,12 @@ HANDLE Connection_Pipe::create_pipe(wstring pipe_name){
 			0,
 			NULL);
 	}
+
+	if (hPipe == INVALID_HANDLE_VALUE){
+		cout << pipe_name.c_str();
+
+	}
+
 	return hPipe;
 
 }

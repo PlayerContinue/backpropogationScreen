@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include <tchar.h>
 #include <queue>
+#include <thread>
 
 using namespace std;
 
@@ -20,6 +21,7 @@ private:
 	HANDLE hPipeOut;
 	std::queue<const wchar_t*> SendQueue;
 	std::queue<string> RecieveQueue;
+	std::thread* read_thread;
 public:
 	Connection_Pipe();
 	Connection_Pipe(string pipe_name);
@@ -45,7 +47,7 @@ private:
 
 	//Retrieve a message from the queue
 	string read_from_queue();
-	
+	void create_read_thread();
 };
 
 

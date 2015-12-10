@@ -18,25 +18,37 @@ namespace VisualBackPropogation.Helper
             NamedPipeServerStream temp1 = new NamedPipeServerStream(pipe_name);
             temp1.Close();
             // Create a name pipe
-            using (NamedPipeServerStream pipeStream = new NamedPipeServerStream(pipe_name))
+            using (NamedPipeServerStream pipeStream = new NamedPipeServerStream(pipe_name + "_OUT"))
             {
-                Console.WriteLine("[Server] Pipe created {0}", pipeStream.GetHashCode());
-
-                // Wait for a connection
-                pipeStream.WaitForConnection();
-                Console.WriteLine("[Server] Pipe connection established");
-
-                using (StreamReader sr = new StreamReader(pipeStream))
+                using (NamedPipeServerStream clientStream = new NamedPipeServerStream(pipe_name + "_IN"))
                 {
-                    string temp;
-                    // We read a line from the pipe and print it together with the current time
-                    while ((temp = sr.ReadLine()) != null || true)
+                    Console.WriteLine("[Server] Pipe created {0}", pipeStream.GetHashCode());
+
+                    // Wait for a connection
+                    pipeStream.WaitForConnection();
+                    Console.WriteLine("[Server] Pipe connection established");
+
+                    using (StreamWriter sw = new StreamWriter(clientStream))
                     {
-                        if (temp != null)
+                        sw.Write("Menu--1");
+                        //sw.Flush();
+                    
+
+                    using (StreamReader sr = new StreamReader(pipeStream))
+                    {
+                        
+                        string temp;
+                        // We read a line from the pipe and print it together with the current time
+                        while ((temp = sr.ReadLine()) != null || true)
                         {
-                            Console.WriteLine("{0}: {1}", DateTime.Now, temp);
+                            if (temp != null)
+                            {
+                                Console.WriteLine("{0}: {1}", DateTime.Now, temp);
+                            }
                         }
                     }
+                    }
+                
                 }
             }
 

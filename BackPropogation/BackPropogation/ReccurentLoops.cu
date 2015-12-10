@@ -77,16 +77,7 @@ void ReccurentLoops::InitializeNetwork(){
 	this->outputfile = new std::fstream();
 	this->inputfile->open(this->settings.s_trainingSet);
 	this->outputfile->open(this->settings.s_outputTrainingFile);
-	try{
-		this->LoadTrainingSet();
-	}
-	catch (exception e){
-		cout << "error" << endl;
-		cout << e.what();
-		cin.sync();
-		cin.get();
-		std::exit(0);
-	}
+	
 }
 
 
@@ -145,6 +136,7 @@ void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_locat
 void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value, int max_sequence_length){
 	//Open a File for writing the output
 	ofstream results;
+	this->mainNetwork->ResetSequence();
 	results.open(save_location, ios::trunc);//Open the location
 	if (!results.is_open()){
 		//The file could not be opened. Throw an exception for usage
@@ -171,21 +163,29 @@ void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_locat
 			output.push_back(end_value[i]);
 		}
 		//Run with gathered output
-		for (int i = 0; i < max_sequence_length
-			/*&& thrust::mismatch(output.begin(), output.end(), input.begin()) != thrust::pair<device_vector<weight_type>::iterator, device_vector<weight_type>::iterator>(output.end(), input.end())*/; i++){
-			if (this->checkpoint.b_still_running){
-				input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITH_MEMORY_CELLS);
+		for (int j = 0; j < 10; j++){
+
+			for (int i = 0; i < max_sequence_length
+				/*&& thrust::mismatch(output.begin(), output.end(), input.begin()) != thrust::pair<device_vector<weight_type>::iterator, device_vector<weight_type>::iterator>(output.end(), input.end())*/; i++){
+				if (this->checkpoint.b_still_running){
+					input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITH_MEMORY_CELLS);
+				}
+				else{
+					input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
+				}
+				thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
+				results << endl;
 			}
-			else{
-				input = this->mainNetwork->runNetwork(input, NetworkBase::run_type::WITHOUT_MEMORY_CELLS);
-			}
+
+			thrust::fill(input.begin(), input.end(), (weight_type)0);
+			this->mainNetwork->ResetSequence();
 			thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
 			results << endl;
 		}
 
 	}
 
-
+	results.close();
 
 }
 
@@ -351,6 +351,17 @@ void ReccurentLoops::startTraining(int type){
 	//}
 	this->inputfile->open(this->settings.s_outputTrainingFile);
 	this->outputfile->open(this->settings.s_outputTestSet);
+	try{//Load the set for testing the output
+		this->LoadTrainingSet();
+	}
+	catch (exception e){
+		cout << "error" << endl;
+		cout << e.what();
+		cin.sync();
+		cin.get();
+		std::exit(0);
+	}
+
 	if (this->inputfile->is_open() && this->outputfile->is_open()){
 		switch (type){
 		case ReccurentLoops::RealTimeTraining:
@@ -468,6 +479,7 @@ void ReccurentLoops::testTraining(){
 			exit(0);
 		}
 
+	
 		cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){

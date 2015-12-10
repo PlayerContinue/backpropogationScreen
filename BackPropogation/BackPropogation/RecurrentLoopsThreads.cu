@@ -94,6 +94,7 @@ void pipe_thread(string pipe_name,string shared){
 		while (*(shared_mem.find<bool>(PIPE_NEEDED).first) == true){
 
 			if (pipe.has_new_message()){//Read a message
+				cout << "test" << endl;
 				message = const_cast<char*>(pipe.read().c_str());
 				message_list = strtok(message, "--");
 				if (strcmp(message_list, "Menu")==0)

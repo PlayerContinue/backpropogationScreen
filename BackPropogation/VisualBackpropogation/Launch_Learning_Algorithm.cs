@@ -21,10 +21,10 @@ namespace VisualBackPropogation
         }
 
         public void Launch(string pipe_name,string settings_loc, string application_location){
-
+            ServerThread = new Thread(() => Communication_Pipe.ThreadStartServer(pipe_name));
             this.Learning_Algorithm = startProcessWithOutput("\"" + application_location + "\"", "\"" + settings_loc + "\" 1 1");
             Communication_Pipe = new ServerPipe();
-            ServerThread = new Thread(() => Communication_Pipe.ThreadStartServer(pipe_name +"_OUT"));
+           
 
             ServerThread.Start();
         }
