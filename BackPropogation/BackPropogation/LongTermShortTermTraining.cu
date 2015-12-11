@@ -125,9 +125,35 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				this->GPUPreviousOutput_Values.begin()
 				);
 
+			//Redo the cell with the gate values
+			thrust::for_each(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,//Input
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL],//Forget
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//Potential Memory Cell
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//Old Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] // New Memory Cell
+				)
+
+				),
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL],//Input
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//Forget
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//Potential Memory Cell
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL], //Old Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL] // New Memory Cell
+				)
+
+				),
+				functors::find_memory_cell_value<weight_type>()
+
+				);
+
 
 #ifdef NVIDA_OUTPUT_TEST2
-			testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1" + std::to_string(j) + std::to_string(i), "tests/prevbias3.txt");
+				testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1" + std::to_string(j) + std::to_string(i), "tests/prevbias3.txt");
 #endif
 
 			//Add the bias to the current value
@@ -841,7 +867,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 		//this->runNetwork(in, number_of_extra_weights);
 		//newSequence = false;
 	}
-	
+
 	return this->runNetwork(number_of_extra_weights);
 }
 
@@ -849,7 +875,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(weight_t
 
 thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int number_of_extra_weights){
 
-	
+
 	//Stores the numberofmblocks in a layer
 	unsigned int numberMBlocks;
 	//Number mBlocks in previous layer

@@ -1,5 +1,5 @@
-s_network_name E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork.txt
-i_loops 10000
+s_network_name E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\Letters\Letter_network_2.txt
+i_loops 1000
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
 i_number_allowed_same 5000
@@ -25,15 +25,15 @@ i_number_of_training 100000
 i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
-b_loadFromCheckpoint 1
+b_loadFromCheckpoint 0
 s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork.txt3.txt
-b_loadNetworkFromFile 1
+b_loadNetworkFromFile 0
 s_loadNetworkFile E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\LetterNetwork12.txt.txt
 i_numberTimesThroughFile 1
 Type:LongTermShortTerm_items
 i_backprop_unrolled 30
 i_number_in_sequence 5
-i_number_start_nodes 100
+i_number_start_nodes 500
 i_number_new_weights 0
 i_number_of_testing_items 200
 b_allow_growth 0

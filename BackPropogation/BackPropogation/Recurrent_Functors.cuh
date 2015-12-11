@@ -514,17 +514,17 @@ namespace functors{
 		__host__ __device__
 			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value,  old input, old Output, old forget, old potential, old memory cell
 			//Compute Logistic value of input,output,forget,and potential
-			thrust::get<0>(x) = logistic_function(thrust::get<0>(x) + thrust::get<9>(x), 1, 0);
-			thrust::get<1>(x) = logistic_function(thrust::get<1>(x) + thrust::get<9>(x), 1, 0);
-			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) + thrust::get<9>(x), 1, 0);
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) + thrust::get<9>(x), 1, 0);
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x) + thrust::get<9>(x), 1, 0);//Find the new input
+			thrust::get<1>(x) = logistic_function(thrust::get<1>(x) + thrust::get<9>(x), 1, 0);//Find the new output
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) + thrust::get<9>(x), 1, 0);//Find the new value
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) + thrust::get<9>(x), 1, 0);//Find the new memory
 
-			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
-			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
+			T memory_value_input = (T)thrust::get<6>(x) * (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<7>(x) * (T)thrust::get<9>(x);//Get the value of the forget gate
 
 
 			
-			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Sum the input value and the forget value
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate,1,0); //Find the new memory cell value
 		}
 
 		__host__ __device__
@@ -538,6 +538,25 @@ namespace functors{
 			return ((thrust::complex<T>)max_value /
 				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
 		}
+
+	};
+
+	template <typename T>
+	struct find_memory_cell_value : public thrust::unary_function < T, T > {
+
+
+		template <typename Tuple>
+		__host__ __device__
+			void operator()(const Tuple &x)const{//Received Tuple is in the form old input, old forget, old potential memory cell, old memory cell value, new memory cell 
+			//Compute Logistic value of input,output,forget,and potential
+			
+
+			thrust::get<4>(x) = ((T)thrust::get<0>(x) * (T)thrust::get<2>(x)) +//Multiply Potential value by the input value to get input value gate
+			((T)thrust::get<1>(x) * (T)thrust::get<3>(x));//Get the value of the forget gate
+
+		}
+
+
 
 	};
 
