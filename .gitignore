@@ -208,3 +208,4 @@ BackPropogation/BackPropogation/DebugWithDebug/RecurrentNeuralNetwork.cu.deps
 BackPropogation/BackPropogation/recurrent_networks/Recurrent_Training_Test/recurrent_network_test_3_Contious_Output
 *.deps
 *.deps
+*.dll

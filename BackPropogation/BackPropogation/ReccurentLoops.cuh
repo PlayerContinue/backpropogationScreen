@@ -150,7 +150,7 @@ public:
 	//max_sequence_length the max length of the sequence
 	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value);
 	void runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value,int max_sequence_length);
-
+	void startNetworkForRun();
 public:
 	template <typename T>
 	weight_type* convert_array(T* in);

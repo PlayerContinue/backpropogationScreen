@@ -131,6 +131,7 @@ vector<RETURN_WEIGHT_TYPE> ReccurentLoops::runNetwork(weight_type* in){
 }
 
 void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_location, weight_type* end_value){
+	this->startNetworkForRun();
 	this->runContinousNetwork(in, save_location, end_value, 1000);
 }
 
@@ -189,13 +190,13 @@ void ReccurentLoops::runContinousNetwork(weight_type* in, std::string save_locat
 
 				//thrust::transform(input.begin(), input.end(), input.begin(), round_value<weight_type>());
 				thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
+				thrust::transform(input.begin(), input.end(), input.begin(), round_value<weight_type>());
 				results << endl;
 			}
-
-			thrust::fill(input.begin(), input.end(), (weight_type)0);
 			this->mainNetwork->ResetSequence();
 			thrust::copy(input.begin(), input.end(), std::ostream_iterator<weight_type>(results, ","));
 			results << endl;
+			
 		}
 
 	}
@@ -217,6 +218,13 @@ device_vector<weight_type> ReccurentLoops::runTrainingNetwork(weight_type* in){
 	return temp_device;
 
 }
+
+void ReccurentLoops::startNetworkForRun(){
+	if (!this->checkpoint.b_still_running){
+		this->mainNetwork->InitializeRun();
+	}
+}
+
 //*****************************
 //Get Data From the users file
 //*****************************
@@ -510,9 +518,10 @@ void ReccurentLoops::testTraining(){
 				this->inputfile->seekg(this->checkpoint.i_current_position_in_input_file);
 				this->outputfile->seekg(this->checkpoint.i_current_position_in_output_file);
 			}
-			this->getMeanSquareError();
-			testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
-
+			if (first_run){
+				this->getMeanSquareError();
+				testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
+			}
 			this->mainNetwork->ResetSequence();
 			length[1] = 0;
 			this->timer.start();
@@ -658,11 +667,13 @@ void ReccurentLoops::testTraining(){
 
 			}
 		}
+		cout << "Finished Training" << endl;
 		//No longer running loops
 		this->mainNetwork->ResetSequence();
+		this->stop_training_thread();
 		//this->mainNetwork->seti_backprop_unrolled(this->settings.i_backprop_unrolled - 2);
 		//this->mainNetwork->StartTraining(this->input, this->output);
-		this->createCheckpoint("Last_Train_Check");
+		this->createCheckpoint();
 		try{
 
 
@@ -692,11 +703,11 @@ void ReccurentLoops::testTraining(){
 				}
 			}
 			this->checkpoint.b_still_running = false;
-			this->createCheckpoint("RunResultsInMemory");
+			this->createCheckpoint();
 			this->mainNetwork->ResetSequence();
 			this->mainNetwork->cleanNetwork();
 			this->mainNetwork->InitializeRun();
-			this->createCheckpoint("RunStart");
+			this->createCheckpoint();
 			for (int i = 0; i < this->number_in_training_sequence; i++){
 				if (i == 0){
 					testing::outputArrayToFile<weight_type>(this->training_input[i], this->settings.i_input, "tests/results2.txt");
@@ -712,7 +723,7 @@ void ReccurentLoops::testTraining(){
 					this->mainNetwork->ResetSequence();
 				}
 			}
-			this->createCheckpoint("RunResultsFromHost");
+			this->createCheckpoint();
 
 			this->cleanLoops();
 		}

@@ -23,11 +23,10 @@ bool ReccurentLoops::stop_training_thread(){
 			std::pair<bool*, std::size_t> bool_values;
 			managed_shared_memory shared_timer(open_only, TIMER_SHARED);
 			bool_values = shared_timer.find<bool>(TIMER_NEEDED);
-			std::memset(bool_values.first, (bool)1, bool_values.second);
-			this->thread_list[TIMER_THREAD]->join();//Wait for the thread to finish closing
+			std::memset(bool_values.first, (bool)0, bool_values.second);
 
 			bool_values = shared_timer.find<bool>(PIPE_NEEDED);
-			this->thread_list[PIPE_THREAD]->join();
+			std::memset(bool_values.first, (bool)0, bool_values.second);
 		
 			this->thread_list.clear();
 		}

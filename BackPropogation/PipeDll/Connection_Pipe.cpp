@@ -18,7 +18,7 @@ Connection_Pipe::Connection_Pipe(string pipe_name)
 }
 
 void Connection_Pipe::create_read_thread(){
-	while (true){
+	while (false){
 		string data;
 		DWORD numRead;
 		if (ReadFile(this->hPipeIn, &data, 1024, &numRead, NULL)){//If something was read

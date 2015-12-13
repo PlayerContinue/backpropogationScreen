@@ -992,5 +992,44 @@ namespace functors{
 		}
 	};
 
+	template <typename T>
+	struct square_root_error : public thrust::unary_function < T, T >{
+
+		square_root_error(){};
+
+		
+		__host__ __device__
+			T operator()(const T &new_val)const{
+			thrust::complex<T> exped = ((thrust::complex<T>)thrust::sqrt((thrust::complex<T>)new_val));
+			return (T)exped.real();
+		}
+
+		__host__ __device__
+			T operator()(const T &target, const T &pred)const{
+			thrust::complex<T> exped = ((thrust::complex<T>)thrust::sqrt(thrust::pow((thrust::complex<T>) (pred - target),(thrust::complex<T>)2)));
+			return (T)exped.real();
+		}
+	};
+
+	template <typename T>
+	struct square_root_error_special : public thrust::unary_function < T, T >{
+
+		square_root_error_special(){};
+
+		__host__ __device__
+			T operator()(const T &new_val, const T &original)const{
+			thrust::complex<T> exped = ((thrust::complex<T>)thrust::sqrt((thrust::complex<T>)new_val));
+			return original + exped.real();
+		}
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{
+			thrust::complex<T> exped = thrust::sqrt((thrust::complex<T>)(((T)thrust::get<1>(x) -(T)thrust::get<0>(x))*((T)thrust::get<1>(x) -(T)thrust::get<0>(x))));
+			T temp = (T)exped.real();
+			return temp;
+		}
+	};
+
 	
 }
