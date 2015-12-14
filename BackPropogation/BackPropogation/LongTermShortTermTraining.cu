@@ -126,7 +126,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				);
 
 			//Redo the cell with the gate values
-			thrust::for_each(
+			/*thrust::for_each(
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,//Input
@@ -154,7 +154,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				),
 				functors::find_memory_cell_value<weight_type>()
 
-				);
+				);*/
 
 
 #ifdef NVIDA_OUTPUT_TEST2
@@ -734,7 +734,11 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		);
 
 	thrust::transform(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), this->GPUPreviousTemp.begin(), this->GPUPreviousWeights.begin(), _1 + _2);
-
+	
+	bool test = false;
+	if (test == true){
+		testing::outputToFile<weight_type>(this->GPUPreviousWeights, "Delta2", "tests/test5.txt");
+	}
 
 #ifdef TRAININGTEST2
 	testing::outputToFile<weight_type>(this->device_deltas, "Delta2", "tests/test5.txt");
