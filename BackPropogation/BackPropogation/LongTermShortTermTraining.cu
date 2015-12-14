@@ -130,20 +130,25 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,//Input
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL],//Output
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL],//Forget
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//Potential Memory Cell
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//Old Memory Cell
-				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] // New Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL], // New Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] // New Output
 				)
 
 				),
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL],//Input
+				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL],//Output
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL],//Forget
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],//Potential Memory Cell
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL], //Old Memory Cell
-				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL] // New Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL], // New Memory Cell
+				this->GPUPreviousOutput_Values.begin() + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] // New Output
+
 				)
 
 				),

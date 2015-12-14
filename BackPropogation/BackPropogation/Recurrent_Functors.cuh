@@ -517,7 +517,7 @@ namespace functors{
 			thrust::get<0>(x) = logistic_function(thrust::get<0>(x) + thrust::get<9>(x), 1, 0);//Find the new input
 			thrust::get<1>(x) = logistic_function(thrust::get<1>(x) + thrust::get<9>(x), 1, 0);//Find the new output
 			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) + thrust::get<9>(x), 1, 0);//Find the new value
-			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) + thrust::get<9>(x), 1, 0);//Find the new memory
+			thrust::get<3>(x) = logistic_function(thrust::get<1>(x) * thrust::get<9>(x), 1, 0);//Find the new memory
 
 			T memory_value_input = (T)thrust::get<6>(x) * (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
 			T forget_gate = (T)thrust::get<7>(x) * (T)thrust::get<9>(x);//Get the value of the forget gate
@@ -547,12 +547,14 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			void operator()(const Tuple &x)const{//Received Tuple is in the form old input, old forget, old potential memory cell, old memory cell value, new memory cell 
+			void operator()(const Tuple &x)const{//Received Tuple is in the form old input,old output, old forget, old potential memory cell, old memory cell value, new memory cell, new output cell 
 			//Compute Logistic value of input,output,forget,and potential
 			
 
-			thrust::get<4>(x) = ((T)thrust::get<0>(x) * (T)thrust::get<2>(x)) +//Multiply Potential value by the input value to get input value gate
-			((T)thrust::get<1>(x) * (T)thrust::get<3>(x));//Get the value of the forget gate
+			thrust::get<5>(x) = ((T)thrust::get<0>(x) * (T)thrust::get<3>(x)) +//Multiply Potential value by the input value to get input value gate
+			((T)thrust::get<2>(x) * (T)thrust::get<4>(x));//Get the value of the forget gate
+
+			thrust::get<6>(x) = thrust::get<1>(x) * thrust::get<4>(x);
 
 		}
 
