@@ -137,6 +137,10 @@ public:
 		this->HessianFreeOptimizationApplyError();
 	}
 
+	virtual int GetNumberLocked(){
+		return 0;
+	}
+
 private:
 	void LongShortTermMemoryTraining(device_vector<weight_type> in, weight_type* out);
 	

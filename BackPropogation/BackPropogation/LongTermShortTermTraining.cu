@@ -21,6 +21,11 @@ void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
 	this->host_deltas = host_vector<weight_type>(this->GPUOutput_values.size() - this->numberNonWeights);
 	this->device_deltas = device_vector<weight_type>(this->GPUOutput_values.size() - (this->settings.i_backprop_unrolled*this->numberNonWeights));
+	this->weight_locked = device_vector<bool>(this->GPUWeights.size());
+	//Set the memory cells to locked and everything else to unlocked
+	thrust::fill(this->weight_locked.begin(), this->weight_locked.end(), (bool)0);
+	thrust::transform_if(thrust::make_constant_iterator((bool)1), thrust::make_constant_iterator((bool)1) + this->GPUWeights.size(),
+		this->GPUWeights.begin(), this->weight_locked.begin(),thrust::identity<bool>(), _1==1);
 	this->training_previous_number_rows = this->settings.i_backprop_unrolled;
 	this->count_weights_in_layers(true);
 }
@@ -780,19 +785,18 @@ void LongTermShortTermNetwork::ApplyLongTermShortTermMemoryError(){
 
 		)
 		),
+		this->weight_locked.begin(),
 		this->GPUWeights.begin(),
 		functors::add_and_store<weight_type>(this->settings.i_backprop_unrolled - 1),
-		functors::compare_two<(unsigned int)0, weight_type>(5, 1));
+		_1 == 0);
 
 #ifdef APPLY_DELTA_BIAS
 
 	testing::outputToFile<weight_type>(this->GPUBias, "Bias-5", "tests/prevbias2.txt");
 	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias-5", "tests/prevbias2.txt");
 #endif
-
-
-
 }
+
 
 void LongTermShortTermNetwork::ApplyErrorToBias(){
 	int start_mem_cells = this->GPUBias.size() - this->settings.i_output - this->number_nodes_by_type[0][MEMORY_CELL];
@@ -825,6 +829,25 @@ void LongTermShortTermNetwork::ApplyErrorToBias(){
 	testing::outputToFile<weight_type>(this->GPUBias, "Bias4", "tests/prevbias2.txt");
 	testing::outputToFile<weight_type>(this->GPUPreviousBias, "PrevBias4", "tests/prevbias2.txt");
 #endif
+}
+
+void LongTermShortTermNetwork::CheckDeltaNeedLocked(){
+	thrust::transform(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		this->GPUPreviousWeights.begin(),
+		this->GPUWeights.begin()
+		)
+		),
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		this->GPUPreviousWeights.end(),
+		this->GPUWeights.end()
+		)),
+		this->weight_locked.begin(),
+		functors::return_x_or_y<weight_type,1,0>(this->settings.d_lock_node_level)
+	);
+	 this->number_locked = thrust::count(this->weight_locked.begin(), this->weight_locked.end(), (bool)1);
 }
 
 //*********************

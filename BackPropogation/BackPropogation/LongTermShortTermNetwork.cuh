@@ -94,6 +94,7 @@ private:
 
 	int numberNonWeights; //Keeps track of the number of non-weights before an actual weight appears
 	int training_previous_number_rows;
+	int number_locked; // The number of nodes which are locked
 	unsigned int total_number_of_unrolled;
 	long last_output_cell_pos;
 	long last_memory_cell_pos;
@@ -114,8 +115,7 @@ private:
 	//Stores the weights in GPU Memory
 	thrust::device_vector<weight_type> GPUWeights;
 	thrust::device_vector<weight_type> GPUPreviousWeights;
-
-
+	thrust::device_vector<bool> weight_locked;//Any weight which is locked will not change
 	//Vectors for the inputs
 	host_vector<weight_type> output_bias;
 
@@ -228,6 +228,11 @@ private:
 		this->ApplyLongTermShortTermMemoryError();
 	}
 
+	virtual int GetNumberLocked(){
+		this->CheckDeltaNeedLocked();
+		return this->number_locked;
+	}
+
 private:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
@@ -256,12 +261,17 @@ private:
 	//Apply the error to the bias
 	void ApplyErrorToBias();
 
+	//Check, and lock, any delta which are below the set cap
+	void CheckDeltaNeedLocked();
+
 	//Combine these two function, they do the same thing
 	template <typename T>
 	void specialCopyToNodes(int start_output, int number_output, device_vector<T> &GPUWeightVector, device_vector<int> &toPosition, device_vector<int> &fromPosition, host_vector<T> &weights, host_vector<int> map);
 
 	template <typename T>
 	void copyNodesToDevice(device_vector<T> &GPU_Vector, device_vector<int> &fromPosition, host_vector<T> &local_host_Vector, host_vector<int> host_from_vector);
+	
+
 public:
 
 	//*********************

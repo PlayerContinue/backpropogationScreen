@@ -191,6 +191,27 @@ namespace functors{
 
 
 	};
+	
+	template <typename T,int valX, int valY>
+	struct return_x_or_y {
+		const T compare;
+		return_x_or_y() :compare(0){};
+		return_x_or_y(T _compare):compare(_compare){};
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x) const{
+
+			if (thrust::get<0>(x) <= compare || thrust::get<1>(x) == (T)1){//Return 1 if the number is less than compare or equal to 1
+				return (T)valX;
+			}
+			else{//Otherwise return y
+				return (T)valY; 
+
+			}
+
+		}
+	
+	};
 
 	template <unsigned int pos_in_tuple, typename T>
 	struct compare_two : public thrust::unary_function < bool, T > {
@@ -519,8 +540,8 @@ namespace functors{
 			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) + thrust::get<9>(x), 1, 0);//Find the new value
 			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) + thrust::get<9>(x), 1, 0);//Find the new potential memory
 
-			T memory_value_input = (T)thrust::get<6>(x) + (T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
-			T forget_gate = (T)thrust::get<7>(x) + (T)thrust::get<9>(x);//Get the value of the forget gate
+			T memory_value_input = (T)thrust::get<6>(x) +(T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = (T)thrust::get<7>(x);//Get the value of the forget gate
 
 
 			

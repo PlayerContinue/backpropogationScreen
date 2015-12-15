@@ -30,12 +30,15 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->numberNonWeights = this->settings.i_input;
 	srand(time(NULL));
 	this->numberOfWeightsInLayers = vector<unsigned int>();
-	this->InitialcreateMemoryBlock(this->settings.i_number_start_nodes);
+	if (!this->settings.b_loadFromCheckpoint){//Only create new nodes if there are none to load
+		this->InitialcreateMemoryBlock(this->settings.i_number_start_nodes);
+		this->addWeight(this->settings.i_number_new_weights);
+	}
 	this->weights = host_vector<weight_type>();
 	this->mapTo = host_vector<int>();
 	this->mapFrom = host_vector<int>();
 	this->bias = host_vector<weight_type>();
-	this->addWeight(this->settings.i_number_new_weights);
+	
 	//Initialize the weight of cell type count
 	this->number_weights_by_type = std::vector<std::vector<int>>();
 	this->number_nodes_by_type = std::vector<std::vector<int>>();
@@ -593,6 +596,7 @@ void LongTermShortTermNetwork::emptyGPUMemory(){
 	clear_vector::free(this->GPUBias);
 	clear_vector::free(this->GPUPreviousBias);
 	clear_vector::free(this->GPUPreviousTemp);
+	clear_vector::free(this->weight_locked);
 }
 //*********************
 //Misc

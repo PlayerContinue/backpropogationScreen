@@ -59,7 +59,7 @@ public:
 	virtual void StartTraining(weight_type** in, weight_type** out) = 0;
 	//Apply the error to the network
 	virtual void ApplyError() = 0;
-
+	virtual int GetNumberLocked() = 0;
 public:
 
 	//*********************

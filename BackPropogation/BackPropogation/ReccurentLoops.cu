@@ -435,16 +435,22 @@ void ReccurentLoops::reset_file_for_loop(bool first_run){
 }
 
 void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check){
+	
 	if (length_of_sequence > 0){
 		this->mainNetwork->seti_backprop_unrolled(length_of_sequence);
+		
 		//Apply the error at the end of the sequence
 		this->mainNetwork->ApplyError();
 	
 		length_of_sequence = 0;
 	}
-	//The sequence has ended, so we need to reset the sequence
-	this->mainNetwork->ResetSequence();
+	
+	
 	if (count_sequences >= this->settings.i_loops){
+		
+		cout << this->mainNetwork->GetNumberLocked() << endl;//Since a sequence has ended, we need to check the output
+		
+		this->mainNetwork->ResetSequence();
 		//Copy the previous set of error to the new set of errors
 		std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
 
@@ -473,6 +479,8 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 		this->mainNetwork->ResetSequence();
 		count_sequences = 0;
 	}
+	//The sequence has ended, so we need to reset the sequence
+	this->mainNetwork->ResetSequence();
 	count_sequences++;
 }
 
