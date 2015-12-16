@@ -115,6 +115,7 @@ private:
 			for (unsigned int i = 0; i < block.memory_cell_weights.size(); i++){
 				os << block.memory_cell_weights[i] << " ";
 			}
+			
 		}
 
 
@@ -180,9 +181,8 @@ private:
 			for (unsigned int i = 0; i < count; i++){
 				is >> std::skipws >> value;
 				block.memory_cell_weights.push_back(value);
-
-
 			}
+			block.number_memory_cells = count;//Number of memory cells
 		}
 
 		block.createStorage();

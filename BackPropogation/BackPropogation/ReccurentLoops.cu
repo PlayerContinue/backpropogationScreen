@@ -506,7 +506,7 @@ void ReccurentLoops::testTraining(){
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
 		}
-
+		this->createCheckpoint();
 		this->checkpoint.b_still_running = true;
 		//this->createCheckpoint("Initial Checkpoint");
 		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){

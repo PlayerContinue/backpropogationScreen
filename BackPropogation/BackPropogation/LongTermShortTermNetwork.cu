@@ -121,6 +121,8 @@ void LongTermShortTermNetwork::UnrollNetwork(int numLayers){
 	this->numberOfNodes = 0;
 	//Add room for the intial input values
 
+	
+
 	for (unsigned int i = 0; i < this->mBlocksLayers.size() - 1; i++){
 		this->GPUOutput_values.resize(this->GPUOutput_values.size() + this->numberNonWeights);
 		this->loadUnrolledToDevice(2, i);

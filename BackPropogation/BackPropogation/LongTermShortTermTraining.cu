@@ -14,6 +14,8 @@
 
 
 void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
+	//Resize the GPUOutput_values in order to ensure size of the memory is correct
+	this->emptyGPUMemory();
 	//Store all the values in the device
 	//Will later add option for too little memory
 	//Copy the information to the device
@@ -653,9 +655,10 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 			this->GPUWeights.end()
 			)
 			),
+			this->weight_locked.begin(),
 			this->GPUWeights.begin(),
 			functors::multiply_add<weight_type>(),
-			functors::compare_two<(unsigned int)1, weight_type>(5, 1)
+			_1==0
 			);
 	}
 
@@ -832,21 +835,23 @@ void LongTermShortTermNetwork::ApplyErrorToBias(){
 }
 
 void LongTermShortTermNetwork::CheckDeltaNeedLocked(){
-	thrust::transform(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		this->GPUPreviousWeights.begin(),
-		this->GPUWeights.begin()
-		)
-		),
-		thrust::make_zip_iterator(
-		thrust::make_tuple(
-		this->GPUPreviousWeights.end(),
-		this->GPUWeights.end()
-		)),
-		this->weight_locked.begin(),
-		functors::return_x_or_y<weight_type,1,0>(this->settings.d_lock_node_level)
-	);
+	if (this->settings.b_allow_node_locking){//Only allow nodes to be locked if the user has allowed it
+		thrust::transform(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousWeights.begin(),
+			this->GPUWeights.begin()
+			)
+			),
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUPreviousWeights.end(),
+			this->GPUWeights.end()
+			)),
+			this->weight_locked.begin(),
+			functors::return_x_or_y<weight_type, 1, 0>(this->settings.d_lock_node_level)
+			);
+	}
 	 this->number_locked = thrust::count(this->weight_locked.begin(), this->weight_locked.end(), (bool)1);
 }
 
