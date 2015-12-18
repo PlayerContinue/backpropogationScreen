@@ -24,10 +24,7 @@ void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 	this->host_deltas = host_vector<weight_type>(this->GPUOutput_values.size() - this->numberNonWeights);
 	this->device_deltas = device_vector<weight_type>(this->GPUOutput_values.size() - (this->settings.i_backprop_unrolled*this->numberNonWeights));
 	this->weight_locked = device_vector<bool>(this->GPUWeights.size());
-	//Set the memory cells to locked and everything else to unlocked
-	thrust::fill(this->weight_locked.begin(), this->weight_locked.end(), (bool)0);
-	thrust::transform_if(thrust::make_constant_iterator((bool)1), thrust::make_constant_iterator((bool)1) + this->GPUWeights.size(),
-		this->GPUWeights.begin(), this->weight_locked.begin(),thrust::identity<bool>(), _1==1);
+	this->SetInitialLock();//Place a lock on those weights which should never change
 	this->training_previous_number_rows = this->settings.i_backprop_unrolled;
 	this->count_weights_in_layers(true);
 }
@@ -853,6 +850,13 @@ void LongTermShortTermNetwork::CheckDeltaNeedLocked(){
 			);
 	}
 	 this->number_locked = thrust::count(this->weight_locked.begin(), this->weight_locked.end(), (bool)1);
+}
+
+void LongTermShortTermNetwork::SetInitialLock(){
+	//Set the memory cells to locked and everything else to unlocked
+	thrust::fill(this->weight_locked.begin(), this->weight_locked.end(), (bool)0);
+	thrust::transform_if(thrust::make_constant_iterator((bool)1), thrust::make_constant_iterator((bool)1) + this->GPUWeights.size(),
+		this->GPUWeights.begin(), this->weight_locked.begin(), thrust::identity<bool>(), _1 == 1);
 }
 
 //*********************

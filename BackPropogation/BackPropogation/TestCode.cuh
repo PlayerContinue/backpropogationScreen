@@ -194,6 +194,7 @@ namespace value_testing{
 		storage[0] = getMeanSquareErrorResults<T>(_pred_begin, _pred_end, _real_begin, _real_end) / (storage.size() - 1);
 		//Copy the values
 		thrust::copy(_real_begin, _real_end, storage.begin() + 1);
+		thrust::copy(_real_begin, _real_end, storage.begin() + 1 + (_real_end - _real_begin));
 	}
 
 	template <typename T, typename Iterator>
@@ -201,6 +202,34 @@ namespace value_testing{
 		host_vector<weight_type> temp = host_vector<weight_type>(storage.size()-1);
 		storage[0] += (getMeanSquareErrorResults<T>(_pred_begin, _pred_end, _real_begin, _real_end) / temp.size());
 		thrust::copy(_real_begin, _real_end, temp.begin());
+		
+		//Find the max value
+		thrust::transform(thrust::host, temp.begin(), temp.end(), storage.begin() + 1 + (_real_end - _real_begin), storage.begin() + 1 + (_real_end - _real_begin), thrust::maximum<weight_type>());
+		
 		thrust::transform(thrust::host, temp.begin(), temp.end(), storage.begin() + 1, storage.begin() + 1, _1 + _2);
+
+		
+
 	}
+
+
+	template <typename T>
+	struct return_x_or_y {
+		return_x_or_y(){};
+
+	
+		__host__ 
+			T operator()(const T &x, const T &y) const{
+
+			if (x >= y){//Return 1 if the number is less than compare or equal to 1
+				return x;
+			}
+			else{//Otherwise return y
+				return y;
+
+			}
+
+		}
+
+	};
 }

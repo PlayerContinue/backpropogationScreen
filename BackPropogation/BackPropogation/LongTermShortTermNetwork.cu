@@ -5,6 +5,7 @@
 LongTermShortTermNetwork::LongTermShortTermNetwork(){
 	this->settings = CSettings();
 	LongTermShortTermNetwork(this->settings);
+	this->must_initialize_for_network();
 }
 
 LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings){
@@ -15,6 +16,7 @@ LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings){
 LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings, bool checkpoint){
 	this->settings = settings;
 	this->RealOutput = device_vector<weight_type>(this->settings.i_output);
+	this->must_initialize_for_network();
 }
 
 LongTermShortTermNetwork::~LongTermShortTermNetwork(){
@@ -27,7 +29,7 @@ LongTermShortTermNetwork::~LongTermShortTermNetwork(){
 
 void LongTermShortTermNetwork::initialize_network(){
 	positionOfLastWeightToNode = vector<long>();
-	this->numberNonWeights = this->settings.i_input;
+	this->must_initialize_for_network();
 	srand(time(NULL));
 	this->numberOfWeightsInLayers = vector<unsigned int>();
 	if (!this->settings.b_loadFromCheckpoint){//Only create new nodes if there are none to load
@@ -45,6 +47,11 @@ void LongTermShortTermNetwork::initialize_network(){
 	this->number_nodes_in_layer = std::vector<int>();
 	//Count the number of weights
 	this->count_weights_in_layers();
+	
+}
+
+void LongTermShortTermNetwork::must_initialize_for_network(){
+	this->numberNonWeights = this->settings.i_input;
 	this->total_number_of_unrolled = this->settings.i_backprop_unrolled;
 }
 

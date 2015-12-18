@@ -181,6 +181,8 @@ public:
 private:
 	//Initialize the network from the settings object if possible
 	void initialize_network();
+	//Function containing initilization functions which must occur no matter what way the network is being initilized
+	void must_initialize_for_network();
 	void count_weights_in_layers();
 	void count_weights_in_layers(bool running);
 
@@ -263,7 +265,7 @@ private:
 
 	//Check, and lock, any delta which are below the set cap
 	void CheckDeltaNeedLocked();
-
+	void SetInitialLock();
 	//Combine these two function, they do the same thing
 	template <typename T>
 	void specialCopyToNodes(int start_output, int number_output, device_vector<T> &GPUWeightVector, device_vector<int> &toPosition, device_vector<int> &fromPosition, host_vector<T> &weights, host_vector<int> map);
@@ -695,6 +697,12 @@ public:
 
 		network.GPUPreviousTemp = thrust::device_vector<weight_type>((network.GPUPreviousBias.size() > network.GPUPreviousWeights.size()) ? network.GPUPreviousBias.size() : network.GPUPreviousWeights.size());
 		network.training_previous_number_rows = network.settings.i_backprop_unrolled;
+
+
+		//Set the locked nodes
+		//Might be changed to be stored later, but might be better to leave this way for now
+		network.weight_locked = thrust::device_vector<bool>(network.GPUWeights.size());
+		network.SetInitialLock();
 
 		return is;
 	}

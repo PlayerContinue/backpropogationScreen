@@ -71,8 +71,8 @@ void ReccurentLoops::InitializeNetwork(){
 	this->length_of_arrays[OUTPUT] = 0;
 	this->output = new weight_type*[this->settings.i_number_of_training];
 	this->length_of_arrays[INPUT] = 0;
-	this->mean_square_error_results_new = host_vector<weight_type>(this->settings.i_output + 1);
-	this->mean_square_error_results_old = host_vector<weight_type>(this->settings.i_output + 1);
+	this->mean_square_error_results_new = host_vector<weight_type>((this->settings.i_output*2) + 1);
+	this->mean_square_error_results_old = host_vector<weight_type>((this->settings.i_output * 2) + 1);
 	this->inputfile = new std::fstream();
 	this->outputfile = new std::fstream();
 	this->inputfile->open(this->settings.s_trainingSet);
@@ -467,7 +467,7 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 
 		if (this->settings.b_allow_growth && this->mean_square_error_results_old[0] < this->mean_square_error_results_new[0] - this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
 
-			this->mainNetwork->addNeuron(3);
+			//this->mainNetwork->addNeuron(3);
 			//Set a new old mean square error so it will attempt to learn before gaining a new node
 			this->getMeanSquareError();
 			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
@@ -508,13 +508,13 @@ void ReccurentLoops::testTraining(){
 		}
 		this->createCheckpoint();
 		this->checkpoint.b_still_running = true;
-		//this->createCheckpoint("Initial Checkpoint");
-		if (this->settings.b_allow_growth && this->settings.b_allow_node_locking){
-			//this->mainNetwork->addWeight(1);
-			this->mainNetwork->removeWeight();
-			this->createCheckpoint("Remove_Checkpoint_1");
-			this->mainNetwork->cleanNetwork();
-			exit(0);
+		
+
+
+		this->mainNetwork->getInfoAboutNetwork(length);
+		if (this->settings.b_allow_growth && length[0] < this->settings.i_number_start_nodes){
+			this->mainNetwork->addNeuron(this->settings.i_number_start_nodes - length[0]);
+			this->createCheckpoint();
 		}
 
 	
