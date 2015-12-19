@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:custom="clr-namespace:VisualBackPropogation"
+      xmlns:custom_page="clr-namespace:VisualBackPropogation.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Grid.IsSharedSizeScope="True"
@@ -32,12 +33,16 @@
                 </ColumnDefinition.Width>
             </ColumnDefinition>
         </Grid.ColumnDefinitions>
-
-        <StackPanel Grid.Row="0" Grid.Column="0" Background="Gray"></StackPanel>
-
+        <ScrollViewer Grid.Row="0" Grid.Column="0" >
+            <custom_page:Weight_Display Background="Gray" x:Name="_WeightGrid"></custom_page:Weight_Display>
+        </ScrollViewer>
         <GridSplitter Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Background="Red"/>
-        <custom:GraphImage x:Name="_MainGraphView" Grid.Row="0" Grid.Column="2"  Background="Orange"></custom:GraphImage>
-        
+        <ScrollViewer Grid.Row="0" Grid.Column="2" >
+         
+                <custom:GraphImage x:Name="_MainGraphView"  Background="Orange"></custom:GraphImage>
+           
+        </ScrollViewer>
+
 
 
     </Grid>

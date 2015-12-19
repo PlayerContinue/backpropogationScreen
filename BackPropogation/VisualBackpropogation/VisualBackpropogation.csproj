@@ -123,6 +123,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Pages\Weight_Display.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -131,6 +135,9 @@
   <ItemGroup>
     <Compile Include="Pages\Settings_Form.xaml.cs">
       <DependentUpon>Settings_Form.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Weight_Display.xaml.cs">
+      <DependentUpon>Weight_Display.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

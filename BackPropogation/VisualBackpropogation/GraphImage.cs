@@ -50,6 +50,7 @@ namespace VisualBackPropogation
         private List<Ellipse> Nodes = new List<Ellipse>();
         private List<System.Windows.Shapes.Line> Edges = new List<Line>();
         private List<PolyBezierSegment> RecursiveEdges = new List<PolyBezierSegment>();
+        private int EllipseDiameter;
         static GraphImage()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphImage), new FrameworkPropertyMetadata(typeof(GraphImage)));
@@ -59,7 +60,7 @@ namespace VisualBackPropogation
         public void DrawGraph(List<int[]> MapToFrom, int num_nodes)
         {
             int start;
-
+            this.EllipseDiameter = 20;
             if (this.Nodes.Count > num_nodes)
             {
                 start = this.Nodes.Count;
@@ -74,7 +75,7 @@ namespace VisualBackPropogation
                 start = this.Nodes.Count;
                 for (int i = 0; i < num_nodes - start; i++)
                 {
-                    this.Nodes.Add(AddEllipse(new Ellipse{Width = 10, Height = 10}, 50, i));
+                    this.Nodes.Add(AddEllipse(new Ellipse { Width = EllipseDiameter, Height = EllipseDiameter }, 50, i));
                     this.Children.Add(this.Nodes[i]);
                 }
             }
@@ -86,12 +87,12 @@ namespace VisualBackPropogation
                 {
                     if (i > start)
                     {
-                        this.Edges.Add(AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line()));
-                        this.Children.Add(this.Edges.Last<Line>());
+                      
+                        this.RecursiveEdges.Add(AddNonRecursiveEdge(MapToFrom[i][0], MapToFrom[i][1], new PolyBezierSegment()));
                     }
                     else
                     {
-                        this.Edges[i] = AddEdge(MapToFrom[i][0], MapToFrom[i][1], new Line());
+                        this.RecursiveEdges[i] = AddNonRecursiveEdge(MapToFrom[i][0], MapToFrom[i][1], new PolyBezierSegment());
                     }
                    
                 }
@@ -100,15 +101,17 @@ namespace VisualBackPropogation
                     if (i > start)
                     {
                         this.RecursiveEdges.Add(AddRecursiveEdge(MapToFrom[i][0], new PolyBezierSegment()));
-                        
                     }
                     else
                     {
                         this.RecursiveEdges[i] = AddRecursiveEdge(MapToFrom[i][0], new PolyBezierSegment());
                     }
+
                     
                 }
             }
+
+            
 
 
         }
@@ -132,23 +135,92 @@ namespace VisualBackPropogation
             return Shape;
         }
 
-        private PolyBezierSegment AddRecursiveEdge(int node, PolyBezierSegment TempLine)
+        private PolyBezierSegment AddNonRecursiveEdge(int node1,int node2, PolyBezierSegment TempLine)
         {
-            TempLine.Points = new PointCollection() { new Point(Canvas.GetLeft(this.Nodes[node]), Canvas.GetTop(this.Nodes[node])),
-                new Point(Canvas.GetLeft(this.Nodes[node])+ (this.Nodes[node].Width/2), Canvas.GetTop(this.Nodes[node]) + (this.Nodes[node].Height)+5),
-                new Point(Canvas.GetLeft(this.Nodes[node]) + (this.Nodes[node].Width), Canvas.GetTop(this.Nodes[node]) + (this.Nodes[node].Height/2))
+
+            Ellipse LeftNode = Canvas.GetLeft(this.Nodes[node1]) < Canvas.GetLeft(this.Nodes[node2]) ? this.Nodes[node1] : this.Nodes[node2];
+            Ellipse RightNode = Canvas.GetLeft(this.Nodes[node1]) >= Canvas.GetLeft(this.Nodes[node2]) ? this.Nodes[node1] : this.Nodes[node2];
+
+            Point StartPoint = new Point(Canvas.GetLeft(LeftNode) + LeftNode.Width/2, Canvas.GetTop(LeftNode));//Point at which the bezel start
+
+            TempLine.Points = new PointCollection() { StartPoint,//Start at middle of left
+                new Point(Canvas.GetLeft(LeftNode) + (Canvas.GetLeft(RightNode) - Canvas.GetLeft(LeftNode))/2, Canvas.GetTop(LeftNode) - (LeftNode.Height) - 20), //Go above for a second
+                new Point(Canvas.GetLeft(RightNode) + (RightNode.Width/2), Canvas.GetTop(RightNode))//End at middle of right
             };
+
+            // Set up the Path to insert the segments
+            PathGeometry path = new PathGeometry();
+
+
+            PathFigure pathFigure = new PathFigure();
+            pathFigure.StartPoint = StartPoint;
+            pathFigure.IsClosed = false;
+            path.Figures.Add(pathFigure);
+
+            pathFigure.Segments.Add(TempLine);
+            System.Windows.Shapes.Path p = new Path();
+            p.Stroke = Brushes.Red;
+            p.StrokeThickness = 2;
+            p.Data = path;
+            this.Children.Add(p);
+
+
 
             return TempLine;
 
         }
 
-        private Line AddEdge(int node1, int node2, Line TempLine)
+        private PolyBezierSegment AddRecursiveEdge(int node, PolyBezierSegment TempLine)
         {
-            double X1 = Canvas.GetLeft(this.Nodes[node1]);
-            double X2 = Canvas.GetLeft(this.Nodes[node2]);
-            double Y1 = Canvas.GetTop(this.Nodes[node1]);
-            double Y2 = Canvas.GetTop(this.Nodes[node2]);
+
+           //BezierSegment curve = new BezierSegment(new Point(11, 11), new Point(22, 22), new Point(15, 15), false);
+
+           Point StartPoint = new Point(Canvas.GetLeft(this.Nodes[node]), Canvas.GetTop(this.Nodes[node]) + this.Nodes[node].Height/2);//Point at which the bezel start
+
+            TempLine.Points = new PointCollection() { StartPoint,//Start at middle of left
+                new Point(Canvas.GetLeft(this.Nodes[node]) + (this.Nodes[node].Width/2), Canvas.GetTop(this.Nodes[node]) - (this.Nodes[node].Height) - 20), //Go above for a second
+                new Point(Canvas.GetLeft(this.Nodes[node]) + (this.Nodes[node].Width), Canvas.GetTop(this.Nodes[node]) + (this.Nodes[node].Height/2))//End at middle of right
+            };
+
+            // Set up the Path to insert the segments
+            PathGeometry path = new PathGeometry();
+           
+            
+            PathFigure pathFigure = new PathFigure();
+            pathFigure.StartPoint = StartPoint;
+            pathFigure.IsClosed = false;
+            path.Figures.Add(pathFigure);
+
+            pathFigure.Segments.Add(TempLine);
+            System.Windows.Shapes.Path p = new Path();
+            p.Stroke = Brushes.Red;
+            p.StrokeThickness = 2;
+            p.Data = path;
+            this.Children.Add(p);
+            return TempLine;
+
+        }
+
+        private Line AddEdge(int node1, int node2, int diameter, Line TempLine)
+        {
+
+            double X1;
+            double X2;
+            double Y1;
+            double Y2;
+            if (Canvas.GetLeft(this.Nodes[node1]) < Canvas.GetLeft(this.Nodes[node2]))//Node 1 is to the left
+            {
+                X1 = Canvas.GetLeft(this.Nodes[node1]) + diameter;
+                X2 = Canvas.GetLeft(this.Nodes[node2]);
+            }
+            else//Node 2 is to the left
+            {
+                X1 = Canvas.GetLeft(this.Nodes[node1]);
+                X2 = Canvas.GetLeft(this.Nodes[node2]) + diameter;
+            }
+            
+            Y1 = Canvas.GetTop(this.Nodes[node1]) + (diameter / 2);
+            Y2 = Canvas.GetTop(this.Nodes[node2]) + (diameter / 2);
 
             TempLine.X1 = X1;
             TempLine.X2 = X2;
