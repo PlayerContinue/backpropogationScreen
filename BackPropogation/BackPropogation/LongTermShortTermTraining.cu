@@ -162,7 +162,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 
 
 #ifdef NVIDA_OUTPUT_TEST2
-				testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1" + std::to_string(j) + std::to_string(i), "tests/prevbias3.txt");
+			testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1" + std::to_string(j) + std::to_string(i), "tests/prevbias3.txt");
 #endif
 
 			//Add the bias to the current value
@@ -467,8 +467,13 @@ void LongTermShortTermNetwork::FindPreviousBias(){
 
 		thrust::make_permutation_iterator(
 		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
 		this->device_deltas.begin() + this->numberOfNodes,
-		functors::multiply_by_constant<weight_type>((weight_type)this->settings.d_beta)
+		Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->number_nodes_by_type[0][INPUT_CELL]))
+		)
+		),
+		functors::find_changed_delta<weight_type>(this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes)
 		),
 
 		thrust::make_transform_iterator(
@@ -634,7 +639,19 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 
 
 #endif
+#ifdef TESTING_UNIQUE
+	testing::outputToFile<weight_type>(Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->number_nodes_by_type[0][INPUT_CELL])),
+		this->numberOfNodes, "test", "tests/test2.txt");
 
+	testing::outputToFile<weight_type>(thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		thrust::make_constant_iterator((int)1),
+		Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->number_nodes_by_type[0][INPUT_CELL]))
+		)),
+		functors::find_changed_delta<weight_type>(this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes)
+		), this->device_deltas.size(), "test", "tests/testingtest1.txt");
+#endif
 	//Apply the alpha
 	if (this->settings.d_alpha != 0){
 		thrust::transform_if(
@@ -655,7 +672,7 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 			this->weight_locked.begin(),
 			this->GPUWeights.begin(),
 			functors::multiply_add<weight_type>(),
-			_1==0
+			_1 == 0
 			);
 	}
 
@@ -676,7 +693,15 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		thrust::make_tuple(
 
 		thrust::make_permutation_iterator(
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
 		this->device_deltas.begin() + this->numberOfNodes,
+		Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->number_nodes_by_type[0][INPUT_CELL]))
+		)
+		),
+		functors::find_changed_delta<weight_type>(this->settings.d_beta,this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes)
+		),
 		thrust::make_transform_iterator(//Add the number of nodes when the end of the mapto is reached
 
 		thrust::make_zip_iterator(
@@ -726,7 +751,7 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 
 		)
 		),
-		functors::find_previous_weight<weight_type>(this->settings.d_beta)
+		functors::multiply<weight_type>()
 		),//End Transform Iterator
 		thrust::make_transform_iterator(//Weight 1 - 0, Weight 2-0,....
 		thrust::make_counting_iterator((int)0),
@@ -739,7 +764,7 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		);
 
 	thrust::transform(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), this->GPUPreviousTemp.begin(), this->GPUPreviousWeights.begin(), _1 + _2);
-	
+
 	bool test = false;
 	if (test == true){
 		testing::outputToFile<weight_type>(this->GPUPreviousWeights, "Delta2", "tests/test5.txt");
@@ -849,7 +874,7 @@ void LongTermShortTermNetwork::CheckDeltaNeedLocked(){
 			functors::return_x_or_y<weight_type, 1, 0>(this->settings.d_lock_node_level)
 			);
 	}
-	 this->number_locked = thrust::count(this->weight_locked.begin(), this->weight_locked.end(), (bool)1);
+	this->number_locked = thrust::count(this->weight_locked.begin(), this->weight_locked.end(), (bool)1);
 }
 
 void LongTermShortTermNetwork::SetInitialLock(){
@@ -946,7 +971,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int numb
 			testing::outputToFile(this->GPUPreviousOutput_Values, "GPUPREV_START", "tests/PrevOut2.txt");
 			testing::outputToFile(this->GPUOutput_values, "GPU_START", "tests/PrevOut2.txt");
 
-		}
+	}
 
 #endif
 
@@ -985,7 +1010,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int numb
 			testing::outputToFile(this->GPUOutput_values, "GPUPreBias2", "tests/PrevOut2.txt");
 			testing::outputToFile<weight_type>(this->GPUMapTo.begin() + previousnumberMBlocks, this->numberOfWeightsInLayers[i], "Map0", "tests/map2.txt");
 
-		}
+}
 
 
 #endif

@@ -507,6 +507,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		this->GPUPreviousTemp.resize(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
 		//Make sure all weights which need to be locked are locked
 		this->SetInitialLock();
+		this->total_unlearned_new_nodes++;
 		//Clean the extra vectors
 		clear_vector::free(CountOrder_Inserts);
 		clear_vector::free(SumOrder_Inserts);

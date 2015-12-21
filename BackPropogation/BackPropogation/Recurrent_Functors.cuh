@@ -859,19 +859,21 @@ namespace functors{
 
 	};
 
-	//Find the previous weight of the main loops
+	//Multiply the delta by the beta for that particular node
 	template <typename T>
-	struct find_previous_weight : public thrust::unary_function < T, T > {
+	struct find_changed_delta : public thrust::unary_function < T, T > {
 		const T beta;
-		find_previous_weight(T _beta) : beta(_beta){
+		const int new_node_start;
+		find_changed_delta(T _beta, int _new_node_start) : beta(_beta), new_node_start(_new_node_start) {
 
 		}
 
 		template <typename Tuple>
 		__host__ __device__ //Delta,output
 			T operator()(const Tuple &x)const{
-			//Multiply beta * output * delta
-			return (T)this->beta * (T)thrust::get<0>(x) * (T)thrust::get<1>(x);
+			//Multiply delta * beta
+			return ((T)this->beta +
+				(((int)(thrust::get<1>(x) / new_node_start))*(this->beta / 2))) * thrust::get<0>(x);
 		}
 
 

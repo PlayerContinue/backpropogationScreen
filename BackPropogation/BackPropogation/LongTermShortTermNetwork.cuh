@@ -96,9 +96,7 @@ private:
 	int training_previous_number_rows;
 	int number_locked; // The number of nodes which are locked
 	unsigned int total_number_of_unrolled;
-	long last_output_cell_pos;
-	long last_memory_cell_pos;
-	long last_input_cell_pos;
+	unsigned int total_unlearned_new_nodes;//Number of nodes which have not yet learned
 
 	enum cell_type{ INPUT_CELL, OUTPUT_CELL, FORGET_CELL, POTENTIAL_MEMORY_CELL, MEMORY_CELL, NONE_CELL };
 	//Contains the number of weights of each type

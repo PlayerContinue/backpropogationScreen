@@ -47,6 +47,51 @@ namespace Unique_Iterator{
 	};
 
 
+	template<typename Iterator>
+	inline __host__ __device__
+		Unique_Iterator::repeat_iterator<Iterator> make_repeat_iterator(Iterator it, int n){
+		return Unique_Iterator::repeat_iterator<Iterator>(it, n);
+	};
+
+	//Repeats several numbers in a list and then restarts
+	template<typename Iterator>
+	class repeat_list_iterator
+		: public thrust::iterator_adaptor <
+		repeat_list_iterator<Iterator>, // the first template parameter is the name of the iterator we're creating
+		Iterator                   // the second template parameter is the name of the iterator we're adapting
+		// we can use the default for the additional template parameters
+		>
+	{
+	public:
+		// shorthand for the name of the iterator_adaptor we're deriving from
+		typedef thrust::iterator_adaptor <
+			repeat_list_iterator<Iterator>,
+			Iterator
+		> super_t;
+		__host__ __device__
+			repeat_list_iterator(const Iterator &x, int n) : super_t(x), begin(x), n(n) {}
+		// befriend thrust::iterator_core_access to allow it access to the private interface below
+		friend class thrust::iterator_core_access;
+	private:
+		// repeat each element of the adapted range n times
+		unsigned int n;
+		// used to keep track of where we began
+		const Iterator begin;
+		// it is private because only thrust::iterator_core_access needs access to it
+		__host__ __device__
+			typename super_t::reference dereference() const
+		{
+			return *(begin + ((this->base() - begin) % n));
+		}
+	};
+
+
+	template<typename Iterator>
+	inline __host__ __device__
+		Unique_Iterator::repeat_list_iterator<Iterator> make_repeat_list_iterator(Iterator it, int n){
+		return Unique_Iterator::repeat_list_iterator<Iterator>(it, n);
+	};
+
 
 	//Special Iterator for skipping a set number of places on each iteration
 	/*template<typename Iterator>

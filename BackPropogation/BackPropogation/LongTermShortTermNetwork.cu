@@ -53,6 +53,7 @@ void LongTermShortTermNetwork::initialize_network(){
 void LongTermShortTermNetwork::must_initialize_for_network(){
 	this->numberNonWeights = this->settings.i_input;
 	this->total_number_of_unrolled = this->settings.i_backprop_unrolled;
+	this->total_unlearned_new_nodes = 0;
 }
 
 //*********************
