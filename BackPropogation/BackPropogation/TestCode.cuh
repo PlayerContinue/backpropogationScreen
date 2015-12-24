@@ -164,27 +164,6 @@ namespace value_testing{
 	T getMeanSquareErrorResults(Iterator _pred_begin, Iterator _pred_end, Iterator _real_begin, Iterator _real_end){
 		thrust::transform(_real_begin, _real_end, _pred_begin, _real_begin, functors::square_root_error<weight_type>());
 		return thrust::reduce(_real_begin, _real_end,(weight_type)0);
-		//Reduce the results
-		/*return thrust::reduce(
-			thrust::make_transform_iterator(
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			_real_begin,
-			_pred_begin
-			)
-			),
-			functors::mean_square_error_special<weight_type>()
-			),
-			thrust::make_transform_iterator(
-			thrust::make_zip_iterator(
-			thrust::make_tuple(
-			_real_end,
-			_pred_end
-			)
-			),
-			functors::mean_square_error_special<weight_type>()
-			)
-		);*/
 
 		
 	}

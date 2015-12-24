@@ -200,6 +200,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 
 
 		//Temporary measure, will be altered to actual value later
+		//Placement of the memory cell
 		this->GPUMapFrom.insert(int_iterator,
 			thrust::make_constant_iterator((int)-(j-start_new)-1),
 			thrust::make_constant_iterator((int)-(j-start_new)-1) + this->mBlocksLayers[layer][j].number_memory_cells);
@@ -224,11 +225,12 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		//Increase the stored values
 		number_new_added += 1;//Note a new node has been added
 		start_of_weights_to_insert_on += size_to_add;
+		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start, start_of_nodes_to_insert_on + this->numberNonWeights, 1, size_to_add);
 		start_of_nodes_to_insert_on += 1;
 		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].number_memory_cells;
 		this->number_weights_by_type[layer][type] += size_to_add;
 		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
-		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start,start_of_nodes_to_insert_on, 1, size_to_add);
+		
 		
 
 		this->number_nodes_by_type[layer][type] += 1;
@@ -291,6 +293,7 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 		//Increase the stored values
 		number_new_added += 1;//Note a new node has been added
 		start_of_weights_to_insert_on += size_to_add;
+		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start_weights, start_of_nodes_to_insert_on + this->numberNonWeights, 1, size_to_add);
 		start_of_nodes_to_insert_on += 1;
 		this->numberOfWeightsInLayers[layer] += size_to_add;
 		this->number_weights_by_type[layer][type] += size_to_add;
@@ -299,7 +302,6 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 		this->numberOfNodes += 1;
 		//Increment From to include the new values
-		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start_weights, start_of_nodes_to_insert_on, 1, size_to_add);
 		number_new_added_total += number_new_added;//Note n new nodes have been added
 		number_new_added = 0;
 	}
@@ -409,7 +411,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 			this->addNonMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
 				number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts,SumOrder_Inserts, (cell_type)type_cell, (Memory_Block::cell_type)memory_type);
 			if (type_cell == OUTPUT_CELL && this->mBlocksLayers[layer][0].getTypeOfMemoryBlock()!=Memory_Block::memory_block_type::OUTPUT){//Add connection to the succeeding layer
-				last_added = start_of_nodes_to_insert_on - (add_length)+1;//Position of the start of new outputs
+				last_added = start_of_nodes_to_insert_on - (add_length) + this->numberNonWeights;//Position of the start of new outputs
 				cell_block = &(this->mBlocksLayers[layer+1]);
 				//Add the link to the output to the output row
 				for (int i = 0; i < (*cell_block).size(); i++){
@@ -433,7 +435,8 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		addMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
 			number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts, SumOrder_Inserts, MEMORY_CELL, Memory_Block::cell_type::MEMORY_CELL);
 		
-		
+		start_of_nodes_to_insert_on = this->numberNonWeights + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL]+1;
+
 		//Replace the information pointing to the Memory Cell values
 		//Works due to the start_of_nodes_to_insert_on-add_length being the last original memory_cell value. Thus the new memory cell is just x more than that one
 		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), (_1 * -1) + (start_of_nodes_to_insert_on) - add_length, _1 < 0);
@@ -506,8 +509,9 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 
 		this->GPUPreviousTemp.resize(((this->GPUPreviousBias.size() > this->GPUPreviousWeights.size()) ? this->GPUPreviousBias.size() : this->GPUPreviousWeights.size()));
 		//Make sure all weights which need to be locked are locked
+
 		this->SetInitialLock();
-		this->total_unlearned_new_nodes++;
+		
 		//Clean the extra vectors
 		clear_vector::free(CountOrder_Inserts);
 		clear_vector::free(SumOrder_Inserts);
@@ -521,6 +525,7 @@ void LongTermShortTermNetwork::addNeuron(int numberNeuronsToAdd){
 	this->createMemoryBlock(numberNeuronsToAdd, layer);
 
 	this->addCellToGPU(start_value, layer);
+	this->total_unlearned_new_nodes += numberNeuronsToAdd;
 }
 
 

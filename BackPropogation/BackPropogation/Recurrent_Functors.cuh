@@ -864,7 +864,8 @@ namespace functors{
 	struct find_changed_delta : public thrust::unary_function < T, T > {
 		const T beta;
 		const int new_node_start;
-		find_changed_delta(T _beta, int _new_node_start) : beta(_beta), new_node_start(_new_node_start) {
+		const int nodes_to_output;
+		find_changed_delta(T _beta, int _new_node_start,int _nodes_to_output) : beta(_beta), new_node_start(_new_node_start),nodes_to_output(_nodes_to_output) {
 
 		}
 
@@ -872,8 +873,13 @@ namespace functors{
 		__host__ __device__ //Delta,output
 			T operator()(const Tuple &x)const{
 			//Multiply delta * beta
-			return ((T)this->beta +
-				(((int)(thrust::get<1>(x) / new_node_start))*(this->beta / 2))) * thrust::get<0>(x);
+			return (this->beta +
+				(((int)(thrust::get<1>(x) / new_node_start)) +
+				((int)(thrust::get<2>(x) / nodes_to_output)) +
+				((int)((
+				((thrust::get<1>(x) / new_node_start) + (thrust::get<2>(x) / nodes_to_output)) / 2)))
+
+				) * (this->beta / 2)) * thrust::get<0>(x);
 		}
 
 
