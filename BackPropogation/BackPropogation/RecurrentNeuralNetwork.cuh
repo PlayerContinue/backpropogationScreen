@@ -206,7 +206,9 @@ private:
 
 public:
 	void ResetSequence();
+	void ResetAllSequence(){
 
+	}
 	//Copies the information stored on the GPU into main memory
 	void CopyToHost();
 

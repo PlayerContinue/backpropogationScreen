@@ -431,7 +431,7 @@ void ReccurentLoops::reset_file_for_loop(bool first_run){
 	int temp1 = this->outputfile->tellg();
 	int temp2 = this->inputfile->tellg();
 
-	this->mainNetwork->ResetSequence();
+	this->mainNetwork->ResetAllSequence();
 }
 
 void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check){

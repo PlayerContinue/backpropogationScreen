@@ -769,6 +769,8 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 
 	bool test = false;
 	if (test == true){
+		testing::outputToFile<weight_type>(this->device_deltas, "Delta3", "tests/delta_test_1.txt");
+
 		testing::outputToFile<weight_type>(this->GPUPreviousWeights, "Delta2", "tests/test5.txt");
 	}
 
@@ -885,7 +887,10 @@ void LongTermShortTermNetwork::SetInitialLock(){
 	thrust::fill(this->weight_locked.begin(), this->weight_locked.end(), (bool)0);
 	thrust::transform_if(thrust::make_constant_iterator((bool)1), thrust::make_constant_iterator((bool)1) + this->GPUWeights.size(),
 		this->GPUWeights.begin(), this->weight_locked.begin(), thrust::identity<bool>(), _1 == 1);
-	//testing::outputToFile(this->weight_locked, "test", "tests/weight_locked.txt");
+	bool test = false;
+	if (test == true){
+		testing::outputToFile(this->weight_locked, "test", "tests/weight_locked.txt");
+	}
 }
 
 //*********************

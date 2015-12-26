@@ -180,6 +180,11 @@ void LongTermShortTermNetwork::ResetSequence(){
 	this->newSequence = true;//Tell the network a new sequence is too be read. Only needed during training
 }
 
+void LongTermShortTermNetwork::ResetAllSequence(){
+	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
+	this->ResetSequence();
+}
+
 template <typename T>
 void copyValuesToHost(int start, device_vector<T> &GPU_Vector, host_vector<T> &local_host_Vector){
 	//Copy the values into the network

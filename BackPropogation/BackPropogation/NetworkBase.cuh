@@ -81,7 +81,8 @@ public:
 	virtual void removeWeight() = 0;
 public:
 	virtual void ResetSequence() = 0;
-
+	//Resets all values except the weights, to-from, and other position information
+	virtual void ResetAllSequence() = 0;
 	//Copies the information stored on the GPU into main memory
 	virtual void CopyToHost() = 0;
 
