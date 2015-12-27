@@ -113,6 +113,10 @@ public:
 	//The number of minutes to a mean_square_test
 	double d_number_minutes_to_mean_square_test;
 
+	double d_unlearned_beta;
+
+	double d_replaced_beta;
+
 	CSettings();
 
 
@@ -284,6 +288,10 @@ public:
 		//Change Minutes to Seconds
 		settings.d_number_minutes_to_mean_square_test *= 60;
 		settings.i_number_minutes_to_checkpoint *= 60;
+
+		//Temp setting of the replace and unlearned beta
+		settings.d_unlearned_beta = .2;
+		settings.d_replaced_beta = .4;
 
 		return is;
 	}

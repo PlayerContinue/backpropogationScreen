@@ -474,7 +474,9 @@ void LongTermShortTermNetwork::FindPreviousBias(){
 		Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->numberOfNodes - this->numberNonWeights))
 		)
 		),
-		functors::find_changed_delta<weight_type>(this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes, this->numberOfNodes - this->numberNonWeights - this->settings.i_output)
+		functors::find_changed_delta<weight_type>(
+		this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes,
+		this->numberOfNodes - this->numberNonWeights - this->settings.i_output, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
 		),
 
 		thrust::make_transform_iterator(
@@ -702,7 +704,9 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		Unique_Iterator::make_repeat_list_iterator(thrust::make_counting_iterator((int)0), (int)(this->numberOfNodes - this->numberNonWeights))
 		)
 		),
-		functors::find_changed_delta<weight_type>(this->settings.d_beta,this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes, this->numberOfNodes - this->numberNonWeights - this->settings.i_output)
+		functors::find_changed_delta<weight_type>(
+		this->settings.d_beta,this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes, 
+		this->numberOfNodes - this->numberNonWeights - this->settings.i_output, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
 		),
 		thrust::make_transform_iterator(//Add the number of nodes when the end of the mapto is reached
 

@@ -105,6 +105,9 @@ public:
 	void seti_backprop_unrolled(int length){
 		this->settings.i_backprop_unrolled = length;
 	}
+
+	virtual int get_number_unlearned()=0;
+	virtual void set_number_unlearned(int) = 0;
 };
 
 //*********************

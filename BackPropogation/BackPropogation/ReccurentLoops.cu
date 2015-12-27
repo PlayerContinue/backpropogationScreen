@@ -73,6 +73,7 @@ void ReccurentLoops::InitializeNetwork(){
 	this->length_of_arrays[INPUT] = 0;
 	this->mean_square_error_results_new = host_vector<weight_type>((this->settings.i_output*2) + 1);
 	this->mean_square_error_results_old = host_vector<weight_type>((this->settings.i_output * 2) + 1);
+	this->mean_square_error_initial = host_vector<weight_type>((this->settings.i_output * 2) + 1);
 	this->inputfile = new std::fstream();
 	this->outputfile = new std::fstream();
 	this->inputfile->open(this->settings.s_trainingSet);
@@ -513,6 +514,8 @@ void ReccurentLoops::testTraining(){
 
 		this->mainNetwork->getInfoAboutNetwork(length);
 		if (this->settings.b_allow_growth && length[0] < this->settings.i_number_start_nodes){
+			this->getMeanSquareError();
+			thrust::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_initial.begin());
 			this->mainNetwork->addNeuron(this->settings.i_number_start_nodes - length[0]);
 			this->createCheckpoint();
 		}
@@ -782,6 +785,12 @@ void ReccurentLoops::getMeanSquareError(){
 	for (int i = 0; i < this->mean_square_error_results_new.size(); i++){
 		this->mean_square_error_results_new[i] /= this->length_of_arrays[TRAINING_1];
 	}
+
+	if (this->mainNetwork->get_number_unlearned() > 0){
+		if (this->mean_square_error_initial[0] <= this->mean_square_error_results_new[0]){
+			this->mainNetwork->set_number_unlearned(0);
+		}
+	}
 }
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){
@@ -844,7 +853,7 @@ weight_type* ReccurentLoops::createTestInputOutput(int numberOfInput, int input_
 }
 
 void ReccurentLoops::cleanLoops(){
-	this->mainNetwork->cleanNetwork();
+	
 	this->stop_training_thread();
 	this->checkpoint.i_current_position_in_input_file = 0;
 	this->checkpoint.i_current_position_in_output_file = 0;
@@ -870,7 +879,7 @@ void ReccurentLoops::cleanLoops(){
 	this->length_of_arrays[OUTPUT] = 0;
 	this->length_of_arrays[TRAINING_1] = 0;
 	this->length_of_arrays[TRAINING_2] = 0;
-
+	this->mainNetwork->cleanNetwork();
 }
 
 //Create a checkpoint with the network name

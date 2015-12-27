@@ -162,8 +162,11 @@ namespace value_testing{
 	//Find the mean square error
 	template <typename T, typename Iterator>
 	T getMeanSquareErrorResults(Iterator _pred_begin, Iterator _pred_end, Iterator _real_begin, Iterator _real_end){
-		thrust::transform(_real_begin, _real_end, _pred_begin, _real_begin, functors::square_root_error<weight_type>());
-		return thrust::reduce(_real_begin, _real_end,(weight_type)0);
+		
+		thrust::transform(_real_begin, _real_end, _pred_begin, _real_begin, functors::mean_square_error<weight_type>());//Find the square of the difference
+		weight_type temp = thrust::reduce(_real_begin, _real_end, (weight_type)0);//Find the sum of the values
+		thrust::transform(_real_begin, _real_end, _real_begin, thrust::sqrt<weight_type>());//Find the squareroot of the squared values
+		return std::sqrt(temp);
 
 		
 	}

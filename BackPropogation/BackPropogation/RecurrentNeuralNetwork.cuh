@@ -141,6 +141,9 @@ public:
 		return 0;
 	}
 
+	virtual int get_number_unlearned(){ return 0; };
+	virtual void set_number_unlearned(int){};
+
 private:
 	void LongShortTermMemoryTraining(device_vector<weight_type> in, weight_type* out);
 	

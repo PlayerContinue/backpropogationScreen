@@ -385,6 +385,11 @@ public:
 
 	//Empty all data from memory
 	void emptyGPUMemory();
+
+
+	virtual int get_number_unlearned(){ return this->total_number_of_unrolled; };
+	virtual void set_number_unlearned(int i){ this->total_unlearned_new_nodes = i; };
+
 private:
 	//Load the bias into the system
 	void moveBiasToGPU();

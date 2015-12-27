@@ -862,24 +862,31 @@ namespace functors{
 	//Multiply the delta by the beta for that particular node
 	template <typename T>
 	struct find_changed_delta : public thrust::unary_function < T, T > {
-		const T beta;
-		const int new_node_start;
-		const int nodes_to_output;
-		find_changed_delta(T _beta, int _new_node_start,int _nodes_to_output) : beta(_beta), new_node_start(_new_node_start),nodes_to_output(_nodes_to_output) {
+		const T beta;//The normal beta
+		const int new_node_start;//Number nodes to start of the unlearned nodes
+		const int nodes_to_output;//The number of nodes to the output
+		const T unlearned_beta;//The beta to replace the normal beta with for unlearned nodes
+		const T replaced_beta;//The beta to replace the normal beta with for any learned nodes
+		const int unlearned_nodes;//1 if one or more nodes unlearned
+		find_changed_delta(T _beta, int _new_node_start, int _nodes_to_output) : beta(_beta), new_node_start(_new_node_start),
+			nodes_to_output(_nodes_to_output), unlearned_beta(.6), replaced_beta(.1), unlearned_nodes(0){};
 
-		}
+		find_changed_delta(T _beta, int _new_node_start, int _nodes_to_output, T _unlearned_beta, T _replaced_beta, int _unlearned_nodes) : beta(_beta),
+			replaced_beta(_replaced_beta), new_node_start(_new_node_start),
+			nodes_to_output(_nodes_to_output), unlearned_beta(_unlearned_beta), unlearned_nodes(_unlearned_nodes){};
 
 		template <typename Tuple>
 		__host__ __device__ //Delta,output
 			T operator()(const Tuple &x)const{
-			//Multiply delta * beta
-			return (this->beta +
-				(((int)(thrust::get<1>(x) / new_node_start)) +
+
+			int temp = (((int)(thrust::get<1>(x) / new_node_start)) +
 				((int)(thrust::get<2>(x) / nodes_to_output)) +
 				((int)((
 				((thrust::get<1>(x) / new_node_start) + (thrust::get<2>(x) / nodes_to_output)) / 2)))
+				)*unlearned_nodes;//Find if the the current is an unlearned node and if there are any unlearned nodes
 
-				) * (this->beta / 2)) * thrust::get<0>(x);
+			//Multiply delta * beta
+			return (((this->beta*(1-unlearned_nodes)) + (this->replaced_beta*unlearned_nodes)) + (temp * this->unlearned_beta)) * thrust::get<0>(x);
 		}
 
 
