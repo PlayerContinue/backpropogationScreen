@@ -1016,6 +1016,17 @@ namespace functors{
 			return (((T)thrust::get<1>(x) -(T)thrust::get<0>(x))*((T)thrust::get<1>(x) -(T)thrust::get<0>(x)));
 		}
 	};
+	template <typename T>
+	struct sqrt{
+
+		sqrt(){};
+
+		__host__ __device__
+			T operator()(const T &target)const{
+			thrust::complex<T> exped = thrust::sqrt((thrust::complex<T>)target);
+			return (T)exped.real();
+		}
+	};
 
 	template <typename T>
 	struct mean_square_error_special : public thrust::unary_function < T, T >{

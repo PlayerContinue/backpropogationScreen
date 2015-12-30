@@ -210,3 +210,4 @@ BackPropogation/BackPropogation/recurrent_networks/Recurrent_Training_Test/recur
 *.deps
 *.dll
 BackPropogation/BackPropogation/tests/meansquare_test_1
+BackPropogation/BackPropogation/tests/meansquare_test_2

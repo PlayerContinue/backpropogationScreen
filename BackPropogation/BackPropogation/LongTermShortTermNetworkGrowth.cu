@@ -315,6 +315,8 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 	thrust::device_vector<int> &key,
 	thrust::device_vector<int> &value,
 	vector<Memory_Block>* cell_block){
+
+	int temp_fix[4];
 	if (this->mBlocksLayers[layer][0].getTypeOfMemoryBlock() != Memory_Block::memory_block_type::OUTPUT){
 		thrust::device_vector<bool>::iterator weight_locked_iterator;
 		//Add the interventing nodes
@@ -333,9 +335,16 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 		for (unsigned int i = 0; i < (*cell_block).size(); i++){
 			weight_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			int_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
+			
 			to_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			weight_locked_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			pos = (int)*(to_iterator - 1);
+			
+			//Workaround, fix later
+			temp_fix[0] = (to_iterator - this->GPUMapTo.begin());
+			temp_fix[1] = (weight_iterator - this->GPUWeights.begin());
+			temp_fix[2] = (int_iterator - this->GPUMapFrom.begin());
+			temp_fix[3] = (weight_locked_iterator - this->weight_locked.begin());
 
 			this->GPUWeights.insert(weight_iterator, (*cell_block)[i].weight_lists[type].end() - (add_length), (*cell_block)[i].weight_lists[type].end());
 			this->weight_locked.insert(weight_locked_iterator, thrust::make_constant_iterator((bool)0), thrust::make_constant_iterator((bool)0) + add_length);
@@ -346,18 +355,24 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 				_1 + this->numberOfNodes + this->numberNonWeights),
 				thrust::make_transform_iterator((*cell_block)[i].mapFrom.end(),
 				_1 + this->numberOfNodes + this->numberNonWeights));
+		
 
 			this->GPUMapTo.insert(to_iterator, thrust::make_constant_iterator((int)pos),
 				thrust::make_constant_iterator((int)pos) + add_length
 				);
 
-			
-
+			//Temporary fix until better reason can be found
+			weight_iterator = temp_fix[0] + this->GPUWeights.begin();
+			to_iterator = this->GPUMapTo.begin() + temp_fix[0];
+			int_iterator = this->GPUMapFrom.begin() + temp_fix[2];
+			weight_locked_iterator = this->weight_locked.begin() + temp_fix[3];
 
 			this->addNewSumCount(to_iterator - this->GPUMapTo.begin(), to_iterator - this->GPUMapTo.begin() + add_length, -(layer+1)*(this->numberOfNodes + this->numberNonWeights), 0, key, value, this->GPUMapFrom);
 			
 			//Adds the number of new connections to the old positions to confirm they are set correctly
 			thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 + add_length, _1 >= to_iterator - this->GPUMapTo.begin());
+
+			
 
 			weight_iterator += this->mBlocksLayers[layer].size() - start_new;
 			weight_locked_iterator += this->mBlocksLayers[layer].size() - start_new;
@@ -435,7 +450,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		addMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
 			number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts, SumOrder_Inserts, MEMORY_CELL, Memory_Block::cell_type::MEMORY_CELL);
 		
-		start_of_nodes_to_insert_on = this->numberNonWeights + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL]+1;
+		start_of_nodes_to_insert_on = this->numberNonWeights + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL] - (number_new_added_total/NUMBER_NODES_IN_CELL);
 
 		//Replace the information pointing to the Memory Cell values
 		//Works due to the start_of_nodes_to_insert_on-add_length being the last original memory_cell value. Thus the new memory cell is just x more than that one

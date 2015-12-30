@@ -195,6 +195,7 @@ void Memory_Block::incrementFromPosition(int add, int add_from){
 }
 
 weight_type Memory_Block::getNewWeight(){
+	srand(time(NULL));
 	return RandomClamped();
 }
 
