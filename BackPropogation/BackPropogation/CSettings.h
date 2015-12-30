@@ -117,6 +117,9 @@ public:
 
 	double d_replaced_beta;
 
+	//The minimum variance required to add another node
+	double d_variance_to_growth;
+
 	CSettings();
 
 
@@ -279,6 +282,17 @@ public:
 		is >> next;
 		is >> settings.b_allow_growth;
 
+		
+		//Temp setting of the replace and unlearned beta
+		is >> next;
+		is >> settings.d_unlearned_beta;
+		is >> next;
+		is>> settings.d_replaced_beta;
+
+		//Set required to variance to growth
+		is >> next;
+		is >> settings.d_variance_to_growth;
+
 		is >> next;
 		is >> settings.i_number_minutes_to_checkpoint;
 
@@ -289,9 +303,6 @@ public:
 		settings.d_number_minutes_to_mean_square_test *= 60;
 		settings.i_number_minutes_to_checkpoint *= 60;
 
-		//Temp setting of the replace and unlearned beta
-		settings.d_unlearned_beta = .2;
-		settings.d_replaced_beta = .4;
 
 		return is;
 	}

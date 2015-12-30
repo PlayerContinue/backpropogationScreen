@@ -900,8 +900,6 @@ void initializeFeedForwardNetwork(int argc, char** argv, CSettings settings){
 void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	ReccurentLoops RLoops;
 
-
-
 	if (!settings.b_loadFromCheckpoint){
 		RLoops = ReccurentLoops(settings, ReccurentLoops::LongTermShortTerm);
 	}

@@ -385,8 +385,8 @@ void ReccurentLoops::startTraining(int type){
 		this->LoadTrainingSet();
 	}
 	catch (exception e){
-		cout << "error" << endl;
-		cout << e.what();
+		std::cout << "error" << endl;
+		std::cout << e.what();
 		cin.sync();
 		cin.get();
 		std::exit(0);
@@ -435,6 +435,19 @@ void ReccurentLoops::reset_file_for_loop(bool first_run){
 	this->mainNetwork->ResetAllSequence();
 }
 
+inline bool ReccurentLoops::growthTraining(){
+	vector<weight_type> temp = vector<weight_type>(this->settings.i_output + 1);
+	for (int i = 0; i < this->settings.i_output + 1; i++){
+		temp[i] = this->mean_square_error_results_new[i];
+	}
+	this->mean_square_points.add(temp);
+	if (this->mean_square_points.is_limit_found()){
+		this->mainNetwork->addNeuron(1);
+		thrust::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_initial.begin());
+	}
+	return true;
+}
+
 void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, int &growth_check){
 	
 	if (length_of_sequence > 0){
@@ -449,7 +462,7 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 	
 	if (count_sequences >= this->settings.i_loops){
 		
-		cout << this->mainNetwork->GetNumberLocked() << endl;//Since a sequence has ended, we need to check the output
+		std::cout << this->mainNetwork->GetNumberLocked() << endl;//Since a sequence has ended, we need to check the output
 		
 		this->mainNetwork->ResetSequence();
 		//Copy the previous set of error to the new set of errors
@@ -457,22 +470,11 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 
 		//Get the mean Square error
 		this->getMeanSquareError();
-
-		//Check to see if the change is great enough
-		growth_check = 0;
-		for (int mean_pos = 0; mean_pos < this->mean_square_error_results_new.size(); mean_pos++){
-			if (this->mean_square_error_results_old[mean_pos] < this->mean_square_error_results_new[mean_pos] - this->settings.d_fluctuate_square_mean){
-				growth_check++;
-			}
+		
+		if (this->settings.b_allow_growth){
+			this->growthTraining();
 		}
 
-		if (this->settings.b_allow_growth && this->mean_square_error_results_old[0] < this->mean_square_error_results_new[0] - this->settings.d_fluctuate_square_mean && growth_check >= (this->mean_square_error_results_new.size() / 2) + 1){
-
-			//this->mainNetwork->addNeuron(3);
-			//Set a new old mean square error so it will attempt to learn before gaining a new node
-			this->getMeanSquareError();
-			std::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_results_old.begin());
-		}
 		int temp[1];
 		this->mainNetwork->getInfoAboutNetwork(temp);
 		testing::outputToFile<weight_type>(this->mean_square_error_results_new, "new", "tests/meansquare.txt");
@@ -503,6 +505,7 @@ void ReccurentLoops::testTraining(){
 	this->stop_training_thread();//Remove any threads which may have been missed and remove all open shared_memory_locations
 	managed_shared_memory managed{ create_only, TIMER_SHARED, 1024 };
 	std::istream::streampos location_in_file;
+	this->mean_square_points = DataPoints<weight_type>(this->settings.i_output + 1,this->settings.d_variance_to_growth);
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
@@ -521,7 +524,7 @@ void ReccurentLoops::testTraining(){
 		}
 
 	
-		cout << "Training Start" << endl;
+		std::cout << "Training Start" << endl;
 
 		for (int loops = 0; loops < this->settings.i_numberTimesThroughFile; loops++){
 			reset_file_for_loop(first_run);
@@ -592,15 +595,15 @@ void ReccurentLoops::testTraining(){
 
 					for (; k < this->settings.i_backprop_unrolled; k++){
 						if (i < length[0] && (this->input[i][0] == SEQUENCE_DELIMITER || this->output[i][0] == SEQUENCE_DELIMITER) && this->output[i][0] != this->input[i][0]){//Checks for sequence input and output mistmatch
-							cout << "Sequence End Mismatch. The input or output do not both have the same end sequence" << endl;
-							cout << "Countinue? ";
+							std::cout << "Sequence End Mismatch. The input or output do not both have the same end sequence" << endl;
+							std::cout << "Countinue? ";
 							cin.sync();
 							if (cin.get() == 'n'){
 								this->cleanLoops();
 								exit(0);
 							}
 							else{
-								cout << endl;
+								std::cout << endl;
 							}
 
 						}
@@ -678,7 +681,7 @@ void ReccurentLoops::testTraining(){
 
 			}
 		}
-		cout << "Finished Training" << endl;
+		std::cout << "Finished Training" << endl;
 		//No longer running loops
 		this->mainNetwork->ResetSequence();
 		this->stop_training_thread();
@@ -739,8 +742,8 @@ void ReccurentLoops::testTraining(){
 			this->cleanLoops();
 		}
 		catch (exception e){
-			cout << "error" << endl;
-			cout << e.what();
+			std::cout << "error" << endl;
+			std::cout << e.what();
 			cin.sync();
 			cin.get();
 			//this->mainNetwork->emptyGPUMemory();
@@ -750,8 +753,8 @@ void ReccurentLoops::testTraining(){
 	}
 
 	catch (exception e){//Edit to write the problems to file later
-		cout << "error" << endl;
-		cout << e.what();
+		std::cout << "error" << endl;
+		std::cout << e.what();
 		cin.sync();
 		cin.get();
 	}

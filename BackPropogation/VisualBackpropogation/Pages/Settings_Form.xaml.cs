@@ -189,6 +189,9 @@ namespace VisualBackPropogation.Pages
                                  "i_number_new_weights",
                                  "i_number_of_testing_items",
                                  "b_allow_growth",
+                                 "d_unlearned_beta",
+                                 "d_replaced_beta",
+                                 "d_variance_to_growth",
                                   "i_number_minutes_to_checkpoint",
                                  "d_number_minutes_to_mean_square_test" };
 

@@ -32,7 +32,10 @@
 #include "RecurrentNeuralNetwork.cuh"
 #include "LongTermShortTermNetwork.cuh"
 
-
+#ifndef __DATAPOINTS_H_INCLUDED___
+#include "DataPoints.h"
+#define __DATAPOINTS_H_INCLUDED__
+#endif
 
 
 #ifndef __TESTCODE_CUH_INCLUDED___
@@ -102,6 +105,8 @@ private:
 	vector<std::thread*> thread_list;
 	enum thread_types {TIMER_THREAD,PIPE_THREAD,FINAL_THREAD_POS};
 	std::istream::streampos length_of_file = (std::istream::streampos)0;
+	DataPoints<weight_type> mean_square_points;
+
 
 	//*********************
 	//Constructors
@@ -164,7 +169,7 @@ public:
 
 	void testTraining();
 
-
+	inline bool growthTraining();
 private:
 	//Training data is passed in
 	bool train_network_RealTimeRecurrentTraining();
