@@ -39,7 +39,7 @@ public:
 	DataPoints(int n);
 	//Create container with n number of available vectors and a variance limit
 	DataPoints(int n,T variance_limit);
-	~DataPoints();
+	//~DataPoints();
 
 	//---------------Initialize--------------------//
 
@@ -81,7 +81,7 @@ DataPoints<T>::DataPoints(int n, T variance_limit){
 	initialize(n);
 }
 
-template <typename T>
+/*template <typename T>
 DataPoints<T>::~DataPoints(){
 	if (this->limit_start != NULL){
 		delete[] this->limit_start;
@@ -91,7 +91,7 @@ DataPoints<T>::~DataPoints(){
 		delete[] sum_of_x_squared;//The sum of the x squared
 		delete[] sum_of_xy_product;//The sum of the xy product
 	}
-}
+}*/
 
 //---------------Initialize--------------------//
 template <typename T>
@@ -103,7 +103,8 @@ void DataPoints<T>::initialize(int number_lists){
 	this->sum_of_x_squared = new T[number_lists];
 	this->sum_of_xy_product = new  T[number_lists];
 	this->current_position = 0;
-	for (int i = 0; i < this->number_containers; i++){
+	this->number_containers = number_lists;
+	for (int i = 0; i < number_lists; i++){
 		this->difference_sizes[i] = vector<T>();
 		this->dataPointContainer[i] = vector<T>();
 		this->average[i] = 0;
@@ -114,7 +115,7 @@ void DataPoints<T>::initialize(int number_lists){
 
 	this->limit_start = new int[number_lists];
 	this->limit_end = new int[number_lists];
-	this->number_containers = number_lists;
+	
 
 }
 
@@ -169,7 +170,7 @@ bool DataPoints<T>::add(std::vector<T> to_add){
 template <typename T>
 bool DataPoints<T>::is_limit_found(){
 	for (int i = 0; i<this->number_containers; i++){
-		if (this->variance[i] > this->variance_limit || this->variance[i]==-1){
+		if (this->current_position < 2 || this->variance[i] > this->variance_limit || this->variance[i]==-1){
 			return false;
 		}
 	}

@@ -166,7 +166,7 @@ namespace value_testing{
 		thrust::transform(_real_begin, _real_end, _pred_begin, _real_begin, functors::mean_square_error<weight_type>());//Find the square of the difference
 		weight_type temp = thrust::reduce(_real_begin, _real_end, (weight_type)0);//Find the sum of the values
 		thrust::transform(_real_begin, _real_end, _real_begin, functors::sqrt<weight_type>());//Find the squareroot of the squared values
-		return std::sqrt(temp);
+		return std::sqrt(temp / (_real_end - _real_begin));
 
 		
 	}
@@ -182,7 +182,7 @@ namespace value_testing{
 	template <typename T, typename Iterator>
 	void getMeanSquareErrorSum(Iterator _pred_begin, Iterator _pred_end, Iterator _real_begin, Iterator _real_end, host_vector<T> &storage){
 		host_vector<weight_type> temp = host_vector<weight_type>(storage.size()-1);
-		storage[0] += getMeanSquareErrorResults<T>(_pred_begin, _pred_end, _real_begin, _real_end);
+		storage[0] += (getMeanSquareErrorResults<T>(_pred_begin, _pred_end, _real_begin, _real_end));
 		thrust::copy(_real_begin, _real_end, temp.begin());
 		
 		//Find the max value

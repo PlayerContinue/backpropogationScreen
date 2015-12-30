@@ -442,7 +442,10 @@ inline bool ReccurentLoops::growthTraining(){
 	}
 	this->mean_square_points.add(temp);
 	if (this->mean_square_points.is_limit_found()){
+		this->mean_square_points.clean_list();
+		srand(time(NULL));
 		this->mainNetwork->addNeuron(1);
+		
 		thrust::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_initial.begin());
 	}
 	return true;
