@@ -26,11 +26,13 @@ private:
 	int* limit_end = NULL;//The end point in the vector of the limit 
 	int number_containers;//The number of datalists which are being examined
 	int current_position;//Position in the current data set
+	int slope_distance;//Distance between positions to find the slope
 	T variance_limit;
 	T* average = NULL;//The sum of the x
 	T* variance = NULL;// The sum of the y
 	T* sum_of_x_squared = NULL;//The sum of the x squared
 	T* sum_of_xy_product = NULL;//The sum of the xy product
+	T* slope = NULL;//The slope
 public:
 
 	//Create an empty container of the object type
@@ -39,12 +41,13 @@ public:
 	DataPoints(int n);
 	//Create container with n number of available vectors and a variance limit
 	DataPoints(int n,T variance_limit);
-	//~DataPoints();
+	//Allows modification of the number searched in the variable
+	DataPoints(int n, T variance_limit, int between_spots);
 
 	//---------------Initialize--------------------//
 
 private:
-	void initialize(int number_lists);
+	void initialize(int number_lists, int slope_distance);
 
 public:
 
@@ -64,6 +67,7 @@ public:
 
 private:
 	void find_limits();//Find limits in the network if they exist
+	void find_slope();//Finds the slope of an approximation of a best fit line over the last x, where x is defined by the user
 };
 //*********************************************//
 //---------------Definitions--------------------//
@@ -76,9 +80,13 @@ template <typename T>
 DataPoints<T>::DataPoints(int n) : DataPoints<T>::DataPoints(n, .2){}
 
 template <typename T>
-DataPoints<T>::DataPoints(int n, T variance_limit){
+DataPoints<T>::DataPoints(int n, T variance_limit) : DataPoints<T>::DataPoints(n, variance_limit,10){}
+
+template <typename T>
+DataPoints<T>::DataPoints(int n, T variance_limit, int slope_distance){
 	this->variance_limit = variance_limit;
-	initialize(n);
+	this->slope_distance = slope_distance;
+	initialize(n,slope_distance);
 }
 
 /*template <typename T>
@@ -95,26 +103,32 @@ DataPoints<T>::~DataPoints(){
 
 //---------------Initialize--------------------//
 template <typename T>
-void DataPoints<T>::initialize(int number_lists){
+void DataPoints<T>::initialize(int number_lists,int slope_distance){
 	this->dataPointContainer = std::vector<std::vector<T>>(number_lists);
 	this->difference_sizes = std::vector<std::vector<T>>(number_lists);//Size of change between the two points when they begin to jump
 	this->average = new T[number_lists];
 	this->variance = new T[number_lists];
 	this->sum_of_x_squared = new T[number_lists];
 	this->sum_of_xy_product = new  T[number_lists];
+	this->slope = new T[number_lists];
+	this->limit_start = new int[number_lists];
+	this->limit_end = new int[number_lists];
 	this->current_position = 0;
 	this->number_containers = number_lists;
+	
 	for (int i = 0; i < number_lists; i++){
 		this->difference_sizes[i] = vector<T>();
 		this->dataPointContainer[i] = vector<T>();
+		this->slope[i] = 0;
 		this->average[i] = 0;
 		this->variance[i] = -1;
 		this->sum_of_x_squared[i] = 0;
 		this->sum_of_xy_product[i] = 0;
+		this->limit_start[i] = 0;
+		this->limit_end[i] = slope_distance;
 	}
 
-	this->limit_start = new int[number_lists];
-	this->limit_end = new int[number_lists];
+	
 	
 
 }
@@ -130,6 +144,9 @@ bool DataPoints<T>::clean_list(){
 		this->variance[i] = -1;
 		this->sum_of_x_squared[i] = 0;
 		this->sum_of_xy_product[i] = 0;
+		this->slope[i] = 0;
+		this->limit_start[i] = 0;
+		this->limit_end[i] = slope_distance;
 	}
 	this->current_position = 0;
 	return true;
@@ -148,7 +165,11 @@ bool DataPoints<T>::reset_limit(){
 		this->variance[i] = -1;
 		this->sum_of_x_squared[i] = 0;
 		this->sum_of_xy_product[i] = 0;
+		this->slope[i] = 0;
+		this->limit_start[i] = 0;
+		this->limit_end[i] = slope_distance;
 	}
+	
 	return true;
 }
 
@@ -158,7 +179,8 @@ bool DataPoints<T>::add(std::vector<T> to_add){
 		for (int i = 0; i < this->number_containers; i++){
 			this->dataPointContainer[i].push_back(to_add[i]);
 		}
-		this->find_limits();
+		//this->find_limits();
+		this->find_slope();
 	}
 	else{
 		throw new std::exception("To Many/To Few values passed in");
@@ -170,7 +192,7 @@ bool DataPoints<T>::add(std::vector<T> to_add){
 template <typename T>
 bool DataPoints<T>::is_limit_found(){
 	for (int i = 0; i<this->number_containers; i++){
-		if (this->current_position < 2 || this->variance[i] > this->variance_limit || this->variance[i]==-1){
+		if (this->current_position < this->slope_distance || this->slope[i] > this->variance_limit){
 			return false;
 		}
 	}
@@ -179,13 +201,12 @@ bool DataPoints<T>::is_limit_found(){
 
 template <typename T>
 void DataPoints<T>::find_limits(){
-
 	for (int i = 0; i < this->number_containers; i++){
 		if (this->dataPointContainer[i].size() > this->current_position + 1){
-			this->difference_sizes[i].push_back(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]);
 			//Find the variance of the points
 			this->average[i] += this->dataPointContainer[i][this->current_position + 1];
-			this->variance[i] = std::pow(this->dataPointContainer[i][this->current_position + 1] - (this->average[i] / this->current_position + 1), 2);	
+			
+			this->variance[i] = std::pow(this->dataPointContainer[i][this->current_position + 1] - (this->average[i] / (this->current_position + 1)), 2);
 		}
 	}
 	if (this->dataPointContainer[0].size() > this->current_position + 1){
@@ -193,3 +214,18 @@ void DataPoints<T>::find_limits(){
 	}
 }
 
+template <typename T>
+void DataPoints<T>::find_slope(){
+	if (this->dataPointContainer[0].size() > this->current_position + 1){
+		for (int i = 0; i < this->number_containers; i++){
+			this->difference_sizes[i].push_back((this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position])/2);
+			if (this->limit_end[i] > this->limit_start[i] && limit_end[i] <= this->difference_sizes[i].size()){
+				this->slope[i] = (this->difference_sizes[i][this->limit_end[i]-1] - this->difference_sizes[i][this->limit_start[i]]) / (this->limit_end[i] - this->limit_start[i]);
+				this->limit_end[i]++;
+				this->limit_start[i]++;
+			}
+
+		}
+		this->current_position++;
+	}
+}

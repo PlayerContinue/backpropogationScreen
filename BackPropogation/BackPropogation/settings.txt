@@ -1,5 +1,5 @@
 s_network_name E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\variance_growth_test\variance_growth_1.txt
-i_loops 5000
+i_loops 1000
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
 i_number_allowed_same 5000
@@ -39,6 +39,6 @@ i_number_of_testing_items 200
 b_allow_growth 1
 d_unlearned_beta .2
 d_replaced_beta .4
-d_variance_to_growth .02
+d_variance_to_growth .02e-6
 i_number_minutes_to_checkpoint 15
 d_number_minutes_to_mean_square_test 0
