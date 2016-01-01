@@ -27,6 +27,7 @@ private:
 	/*_______________Variables__________*/
 	std::vector<std::vector<T>> dataPointContainer;//Contains the data points from the network
 	std::vector<std::vector<double>> difference_sizes;//Size of change between the two points when they begin to jump
+	std::vector<std::vector<double>> x_points;//The points on the x-axis
 	int* limit_start = NULL;//The start point in the vector of the limit
 	int* limit_end = NULL;//The end point in the vector of the limit 
 	int number_containers;//The number of datalists which are being examined
@@ -89,9 +90,16 @@ private:
 	void find_limits();//Find limits in the network if they exist
 	void find_slope();//Finds the slope of an approximation of a best fit line over the last x, where x is defined by the user
 	inline void find_datapoints();//Finds all the datapoints required to find information about the network
+	inline void find_datapoints(int pos);//Seperated for Cleanliness
 	void find_linear_regression_slope();//Find the slope of the linear regression
 	void find_rolling_variance(int pos, int window_size, double new_value, double old_value, double* variance, double* average);//Find the standard deviation for x and y
+	 
+
 };
+
+
+
+
 //*********************************************//
 //---------------Definitions--------------------//
 //*********************************************//
@@ -119,6 +127,7 @@ template <typename T>
 void DataPoints<T>::initialize(int number_lists, int slope_distance){
 	this->dataPointContainer = std::vector<std::vector<T>>(number_lists);
 	this->difference_sizes = std::vector<std::vector<double>>(number_lists);//Size of change between the two points when they begin to jump
+	this->x_points = std::vector<std::vector<double>>(number_lists);
 	this->average = new double[number_lists];
 	this->variance = new double[number_lists];
 	this->variance_x = new double[number_lists];
@@ -139,6 +148,7 @@ void DataPoints<T>::initialize(int number_lists, int slope_distance){
 	for (int i = 0; i < number_lists; i++){
 		this->difference_sizes[i] = vector<double>();
 		this->dataPointContainer[i] = vector<T>();
+		this->x_points[i] = vector<double>();
 		reset_internal_values(i);
 	}
 
@@ -154,6 +164,7 @@ bool DataPoints<T>::clean_list(){
 	for (int i = 0; i < this->number_containers; i++){
 		this->difference_sizes[i].empty();
 		this->dataPointContainer[i].empty();
+		this->x_points[i].empty();
 		reset_internal_values(i);
 	}
 	this->current_position = 0;
@@ -248,29 +259,19 @@ void DataPoints<T>::find_slope(){
 template <typename T>
 inline void DataPoints<T>::find_datapoints(){
 	double temp_point;
-	double temp_window;
+	
+
 	if (this->dataPointContainer[0].size() > this->current_position + 1){
 		for (int i = 0; i < this->number_containers; i++){
 			temp_point = (this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]) / 2;
+			this->x_points[i].push_back(this->current_position);
+
 			this->difference_sizes[i].push_back(temp_point);
 			this->sum_of_x[i] += this->current_position;
 			this->sum_of_y[i] += temp_point;
 			this->sum_of_xy_product[i] += (temp_point*this->current_position);
 			this->sum_of_x_squared[i] += std::pow(this->current_position, 2);
-			
-
-			if (this->window_size > 0 && this->difference_sizes[i].size() > this->window_size){
-				temp_window = this->difference_sizes[i][0];
-				find_rolling_variance(i, this->window_size, temp_point, temp_window, this->variance_x, this->x_average);//Find the variance of x
-				find_rolling_variance(i, this->window_size, this->current_position + 1, this->current_position - this->window_size + 1, this->variance_y, this->y_average);//Find the variance of y
-				//this->sum_of_xy_product[i] += (temp_point*this->current_position) - (temp_window * (this->current_position - this->window_size + 1));
-				this->difference_sizes[i].erase(this->difference_sizes[i].begin());
-			}
-			else{//Find the average of x and y
-				this->x_average[i] = ((this->x_average[i] * (this->current_position-1)) + temp_point)/this->current_position;
-				this->y_average[i] = ((this->y_average[i] * (this->current_position - 1)) + this->current_position) / this->current_position;
-				//this->sum_of_xy_product[i] += temp_point*this->current_position;
-			}
+			this->find_datapoints(i);//Seperated for easier reading
 		}
 
 		//if (this->window_size > 0 && this->current_position+1 > this->window_size){
@@ -281,6 +282,39 @@ inline void DataPoints<T>::find_datapoints(){
 		this->current_position++;
 	}
 }
+
+
+
+template <typename T>
+inline void DataPoints<T>::find_datapoints(int pos){
+	
+	if (this->window_size > 0 && this->difference_sizes[pos].size() > this->window_size){
+		double temp_window = this->difference_sizes[pos][0];
+
+		//Subtract the old values from the sum of the values to find the rolling window value
+		this->sum_of_y[pos] -= temp_window;
+		this->sum_of_x[pos] -= (this->x_points[pos][0]);//Remove the sum of the y value
+		this->sum_of_xy_product[pos] -= (temp_window * this->x_points[pos][0]);
+		this->sum_of_x_squared[pos] -= std::pow(this->x_points[pos][0], 2);
+
+		find_rolling_variance(pos, this->window_size,
+			this->difference_sizes[pos].back(), temp_window,
+			this->variance_y, this->y_average);//Find the variance of y
+		find_rolling_variance(pos, this->window_size, 
+			this->x_points[pos].back(), this->x_points[pos][0],
+			this->variance_x, this->x_average);//Find the variance of x
+		
+		//Remove the first one in the list
+		this->difference_sizes[pos].erase(this->difference_sizes[pos].begin());
+		this->x_points[pos].erase(this->x_points[pos].begin());
+	}
+	else{//Find the average of x and y
+		this->x_average[pos] = ((this->x_average[pos] * (this->current_position - 1)) + this->current_position) / this->current_position;
+		this->y_average[pos] = ((this->y_average[pos] * (this->current_position - 1)) + this->x_points[pos].back()) / this->current_position;
+	}
+}
+
+
 
 #ifdef INTERNAL_TEST
 namespace temp{
@@ -328,7 +362,7 @@ void DataPoints<T>::find_rolling_variance(int pos, int window_size, double new_v
 	double old_average = average[pos];
 
 	average[pos] = old_average + ((new_value - old_value) / window_size);
-	
+
 	variance[pos] += ((new_value - old_value)*(new_value - average[pos] + old_value - old_average))/(window_size-1);
 
 }

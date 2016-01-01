@@ -28,26 +28,26 @@ public:
 
 	//Threshold - Value which sets the system as trained
 	//If Mean Square Error is higher than this
-	double d_threshold;
+	double d_threshold = .1;
 
 	//Store the threshold for distance to add a new row
-	double d_row_distance_threshold;
+	double d_row_distance_threshold = 0;
 
 	//Store the threshold for distance to add a new neuron to a row
-	double d_neuron_distance_threshold;
+	double d_neuron_distance_threshold=0;
 
 	//Store the threshold for distance to add a new row
-	double d_row_success_threshold;
+	double d_row_success_threshold=0;
 
 	//Store the threshold for distance to add a new neuron to a row
-	double d_neuron_success_threshold;
+	double d_neuron_success_threshold=0;
 
 	//Store the value which allows the change in Square Mean Error to flucuate slightly
-	double d_fluctuate_square_mean;
+	double d_fluctuate_square_mean=0;
 
 	//Alpha and Beta
-	double d_alpha;
-	double d_beta;
+	double d_alpha=0;
+	double d_beta=.1;
 
 	//Stores the name of the file containing the training set
 	bool b_trainingFromFile = false;
@@ -65,7 +65,7 @@ public:
 	string s_outputTestSet;
 
 	//Number of pieces from the testing set per round
-	int i_number_of_training;
+	int i_number_of_training = 100;
 
 	//Stores the name of the file to load a checkpoint from
 	bool b_loadFromCheckpoint;
@@ -73,7 +73,7 @@ public:
 
 
 	//Number of allowed output matches to allow a layer in
-	int i_number_allowed_same;
+	int i_number_allowed_same = 100;
 
 	//Load From File
 	bool b_loadNetworkFromFile = false;
@@ -104,6 +104,9 @@ public:
 
 	bool b_allow_growth = false;
 
+	//The size of the sliding window when growing
+	int i_size_of_window = 10;
+
 	//Number of times to go through the training file before ending
 	int i_numberTimesThroughFile;
 
@@ -119,6 +122,9 @@ public:
 
 	//The minimum variance required to add another node
 	double d_variance_to_growth;
+
+	
+
 
 	CSettings();
 
@@ -282,6 +288,9 @@ public:
 		is >> next;
 		is >> settings.b_allow_growth;
 
+		//The size of the sliding window 
+		is >> next;
+		is >> settings.i_size_of_window;
 		
 		//Temp setting of the replace and unlearned beta
 		is >> next;

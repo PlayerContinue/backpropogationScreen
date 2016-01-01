@@ -474,6 +474,12 @@ void ReccurentLoops::sequenceEnd(int &length_of_sequence, int &count_sequences, 
 		//Get the mean Square error
 		this->getMeanSquareError();
 		
+		if (this->mainNetwork->get_number_unlearned() > 0){
+			if (this->mean_square_error_initial[0] >= this->mean_square_error_results_new[0]){
+				this->mainNetwork->set_number_unlearned(0);
+			}
+		}
+
 		if (this->settings.b_allow_growth){
 			this->growthTraining();
 		}
@@ -508,7 +514,7 @@ void ReccurentLoops::testTraining(){
 	this->stop_training_thread();//Remove any threads which may have been missed and remove all open shared_memory_locations
 	managed_shared_memory managed{ create_only, TIMER_SHARED, 1024 };
 	std::istream::streampos location_in_file;
-	this->mean_square_points = DataPoints<weight_type>(this->settings.i_output + 1,this->settings.d_variance_to_growth);
+	this->mean_square_points = DataPoints<weight_type>(this->settings.i_output + 1,this->settings.d_variance_to_growth,this->settings.i_size_of_window);
 	try{
 		if (!this->checkpoint.b_still_running){
 			this->mainNetwork->InitializeTraining();
@@ -792,11 +798,7 @@ void ReccurentLoops::getMeanSquareError(){
 		this->mean_square_error_results_new[i] /= this->length_of_arrays[TRAINING_1];
 	}
 
-	if (this->mainNetwork->get_number_unlearned() > 0){
-		if (this->mean_square_error_initial[0] <= this->mean_square_error_results_new[0]){
-			this->mainNetwork->set_number_unlearned(0);
-		}
-	}
+	
 }
 
 bool ReccurentLoops::train_network_HessianFreeOptimizationTraining(){

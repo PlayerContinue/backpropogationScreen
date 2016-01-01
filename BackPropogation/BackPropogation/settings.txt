@@ -37,6 +37,7 @@ i_number_start_nodes 1
 i_number_new_weights 0
 i_number_of_testing_items 200
 b_allow_growth 1
+i_size_of_window 10
 d_unlearned_beta .2
 d_replaced_beta .4
 d_variance_to_growth 2e-6

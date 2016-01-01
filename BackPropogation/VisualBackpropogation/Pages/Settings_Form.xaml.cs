@@ -189,6 +189,7 @@ namespace VisualBackPropogation.Pages
                                  "i_number_new_weights",
                                  "i_number_of_testing_items",
                                  "b_allow_growth",
+                                 "i_size_of_window",
                                  "d_unlearned_beta",
                                  "d_replaced_beta",
                                  "d_variance_to_growth",
@@ -221,7 +222,6 @@ namespace VisualBackPropogation.Pages
                         else if (Elements[i] is TextBox)
                         {
                             lines[k] += " "+((TextBox)Elements[i]).Text;
-
                         }
 
                         i++;
