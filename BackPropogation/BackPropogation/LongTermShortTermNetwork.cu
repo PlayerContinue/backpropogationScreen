@@ -19,9 +19,9 @@ LongTermShortTermNetwork::LongTermShortTermNetwork(CSettings& settings, bool che
 	this->must_initialize_for_network();
 }
 
-LongTermShortTermNetwork::~LongTermShortTermNetwork(){
-	this->emptyGPUMemory();//Empty the GPU Memory
-}
+//LongTermShortTermNetwork::~LongTermShortTermNetwork(){
+	//this->emptyGPUMemory();//Empty the GPU Memory
+//}
 
 //***************************
 //Initialize Network

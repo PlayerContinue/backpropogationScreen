@@ -441,7 +441,7 @@ inline bool ReccurentLoops::growthTraining(){
 		temp[i] = this->mean_square_error_results_new[i];
 	}
 	this->mean_square_points.add(temp);
-	if (this->mean_square_points.is_limit_found() && this->mainNetwork->get_number_unlearned() < 1){//Growth should occur when the network has reached a limit (i.e. the slope is near zero and the unlearned nodes have been taught
+	if (this->mainNetwork->get_number_unlearned() < 1 && this->mean_square_points.is_limit_found()){//Growth should occur when the network has reached a limit (i.e. the slope is near zero and the unlearned nodes have been taught
 		this->mean_square_points.clean_list();
 		srand(time(NULL));
 		this->mainNetwork->addNeuron(1);

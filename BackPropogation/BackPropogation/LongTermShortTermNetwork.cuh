@@ -172,7 +172,7 @@ public:
 	//*********************
 	//Destructor
 	//*********************
-	~LongTermShortTermNetwork();
+	//~LongTermShortTermNetwork();
 	//*********************
 	//Initialization
 	//*********************
@@ -387,7 +387,7 @@ public:
 	void emptyGPUMemory();
 
 
-	virtual int get_number_unlearned(){ return this->total_number_of_unrolled; };
+	virtual int get_number_unlearned(){ return this->total_unlearned_new_nodes; };
 	virtual void set_number_unlearned(int i){ this->total_unlearned_new_nodes = i; };
 
 private:
