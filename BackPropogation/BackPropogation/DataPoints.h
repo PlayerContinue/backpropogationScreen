@@ -263,7 +263,7 @@ inline void DataPoints<T>::find_datapoints(){
 
 	if (this->dataPointContainer[0].size() > this->current_position + 1){
 		for (int i = 0; i < this->number_containers; i++){
-			temp_point = (this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]) / 2;
+			temp_point = this->dataPointContainer[i][this->current_position];//(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]) / 2;
 			this->x_points[i].push_back(this->current_position);
 
 			this->difference_sizes[i].push_back(temp_point);
@@ -297,12 +297,12 @@ inline void DataPoints<T>::find_datapoints(int pos){
 		this->sum_of_xy_product[pos] -= (temp_window * this->x_points[pos][0]);
 		this->sum_of_x_squared[pos] -= std::pow(this->x_points[pos][0], 2);
 
-		find_rolling_variance(pos, this->window_size,
-			this->difference_sizes[pos].back(), temp_window,
-			this->variance_y, this->y_average);//Find the variance of y
-		find_rolling_variance(pos, this->window_size, 
-			this->x_points[pos].back(), this->x_points[pos][0],
-			this->variance_x, this->x_average);//Find the variance of x
+		//find_rolling_variance(pos, this->window_size,
+			//this->difference_sizes[pos].back(), temp_window,
+			//this->variance_y, this->y_average);//Find the variance of y
+		//find_rolling_variance(pos, this->window_size, 
+			//this->x_points[pos].back(), this->x_points[pos][0],
+			//this->variance_x, this->x_average);//Find the variance of x
 		
 		//Remove the first one in the list
 		this->difference_sizes[pos].erase(this->difference_sizes[pos].begin());
@@ -347,9 +347,9 @@ namespace temp{
 
 template <typename T>
 void DataPoints<T>::find_linear_regression_slope(){
-	int difference_size = this->difference_sizes.size();
+	int difference_size = (this->window_size <= this->current_position) ? this->window_size : this->current_position;
 	for (int i = 0; i < this->number_containers; i++){
-		this->linear_regression_slopes[i] = ((difference_size)* this->sum_of_xy_product[i]) - (this->sum_of_x[i] * this->sum_of_y[i]);
+		this->linear_regression_slopes[i] = ((difference_size) * this->sum_of_xy_product[i]) - (this->sum_of_x[i] * this->sum_of_y[i]);
 		this->linear_regression_slopes[i] /= ((difference_size * this->sum_of_x_squared[i]) - std::pow(this->sum_of_x[i], 2)); 
 	}
 #ifdef INTERNAL_TEST
