@@ -530,6 +530,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		//Clean the extra vectors
 		clear_vector::free(CountOrder_Inserts);
 		clear_vector::free(SumOrder_Inserts);
+		this->ResetAllSequence();
 	}
 
 }
@@ -538,7 +539,6 @@ void LongTermShortTermNetwork::addNeuron(int numberNeuronsToAdd){
 	int start_value = this->mBlocksLayers[0].size();
 	int layer = 0;
 	this->createMemoryBlock(numberNeuronsToAdd, layer);
-
 	this->addCellToGPU(start_value, layer);
 	this->total_unlearned_new_nodes += numberNeuronsToAdd;
 }

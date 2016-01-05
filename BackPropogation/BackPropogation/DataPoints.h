@@ -46,6 +46,7 @@ private:
 	double* x_average = NULL;//The average of the x values
 	double* y_average = NULL; //The average of the y values
 	double* linear_regression_slopes = NULL;//List of the linear regression slopes
+	double* linear_regression_slopes_average = NULL;//List of the average slope for each line
 	double* slope = NULL;//The slope
 public:
 
@@ -139,6 +140,7 @@ void DataPoints<T>::initialize(int number_lists, int slope_distance){
 	this->x_average = new double[number_lists];
 	this->y_average = new double[number_lists];
 	this->linear_regression_slopes = new double[number_lists];
+	this->linear_regression_slopes_average = new double[number_lists];
 	this->slope = new double[number_lists];
 	this->limit_start = new int[number_lists];
 	this->limit_end = new int[number_lists];
@@ -162,9 +164,12 @@ void DataPoints<T>::initialize(int number_lists, int slope_distance){
 template <typename T>
 bool DataPoints<T>::clean_list(){
 	for (int i = 0; i < this->number_containers; i++){
-		this->difference_sizes[i].empty();
-		this->dataPointContainer[i].empty();
-		this->x_points[i].empty();
+		this->difference_sizes[i].clear();
+		this->difference_sizes[i].resize(0);
+		this->dataPointContainer[i].clear();
+		this->dataPointContainer[i].resize(0);
+		this->x_points[i].clear();
+		this->x_points[i].resize(0);
 		reset_internal_values(i);
 	}
 	this->current_position = 0;
@@ -211,6 +216,7 @@ inline void DataPoints<T>::reset_internal_values(int pos){
 	this->sum_of_x_squared[pos] = 0;
 	this->sum_of_xy_product[pos] = 0;
 	this->linear_regression_slopes[pos] = 0;
+	this->linear_regression_slopes_average[pos] = 0;
 	this->slope[pos] = 0;
 	this->limit_start[pos] = 0;
 	this->limit_end[pos] = slope_distance;
@@ -219,12 +225,34 @@ inline void DataPoints<T>::reset_internal_values(int pos){
 //---------------Examine The Values--------------------//
 template <typename T>
 bool DataPoints<T>::is_limit_found(){
-	for (int i = 0; i < this->number_containers; i++){
-		if (this->current_position < this->slope_distance || this->current_position < this->window_size || std::abs(this->linear_regression_slopes[i]) > this->variance_limit){
+	if (this->current_position >= this->slope_distance){
+		int number_times_above_zero = 0;
+		bool failure = false;
+		for (int i = 0; i < this->number_containers; i++){
+			if (
+				this->current_position < this->window_size ||
+				std::abs(this->linear_regression_slopes_average[i] / (this->current_position - 1)) > this->variance_limit){
+				failure = true;
+			}
+
+			if (this->linear_regression_slopes[i] > 0){//If the slope is positive, then the value is going up, which is bad
+				number_times_above_zero++;
+			}
+
+		}
+
+		if ((this->number_containers != 1 && number_times_above_zero > (this->number_containers / 2)) || failure == false){
+			return true;//At least half of the slopes are positive or all of them are going down at a rate small enough not to matter
+		}
+		else{
 			return false;
 		}
 	}
-	return true;
+	else{
+		return false;
+	}
+
+	
 }
 
 template <typename T>
@@ -263,14 +291,15 @@ inline void DataPoints<T>::find_datapoints(){
 
 	if (this->dataPointContainer[0].size() > this->current_position + 1){
 		for (int i = 0; i < this->number_containers; i++){
-			temp_point = this->dataPointContainer[i][this->current_position];//(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]) / 2;
-			this->x_points[i].push_back(this->current_position);
+			temp_point = (this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]); //this->dataPointContainer[i][this->current_position];
+			this->x_points[i].push_back((this->current_position%this->window_size)+1);
 
 			this->difference_sizes[i].push_back(temp_point);
-			this->sum_of_x[i] += this->current_position;
+			
+			this->sum_of_x[i] += this->x_points[i].back();
 			this->sum_of_y[i] += temp_point;
-			this->sum_of_xy_product[i] += (temp_point*this->current_position);
-			this->sum_of_x_squared[i] += std::pow(this->current_position, 2);
+			this->sum_of_xy_product[i] += (temp_point* this->x_points[i].back());
+			this->sum_of_x_squared[i] += std::pow(this->x_points[i].back(), 2);
 			this->find_datapoints(i);//Seperated for easier reading
 		}
 
@@ -278,7 +307,7 @@ inline void DataPoints<T>::find_datapoints(){
 			this->find_linear_regression_slope();
 		//}
 		
-		this->find_slope();
+		//this->find_slope();
 		this->current_position++;
 	}
 }
@@ -347,13 +376,30 @@ namespace temp{
 
 template <typename T>
 void DataPoints<T>::find_linear_regression_slope(){
-	int difference_size = (this->window_size <= this->current_position) ? this->window_size : this->current_position;
+	int difference_size;
 	for (int i = 0; i < this->number_containers; i++){
+		difference_size = (this->window_size <= this->current_position) ? this->window_size : this->difference_sizes[i].size();
 		this->linear_regression_slopes[i] = ((difference_size) * this->sum_of_xy_product[i]) - (this->sum_of_x[i] * this->sum_of_y[i]);
-		this->linear_regression_slopes[i] /= ((difference_size * this->sum_of_x_squared[i]) - std::pow(this->sum_of_x[i], 2)); 
+		this->linear_regression_slopes[i] /= ((difference_size * this->sum_of_x_squared[i]) - std::pow(this->sum_of_x[i], 2));
+		if (this->current_position > 1){
+			this->linear_regression_slopes_average[i] += this->linear_regression_slopes[i];
+		}
 	}
 #ifdef INTERNAL_TEST
-	temp::outputArrayToFile<double>(this->linear_regression_slopes, this->number_containers, "tests/slopes.txt");
+	if (this->current_position > 1){
+		for (int i = 0; i < this->number_containers; i++){
+			this->linear_regression_slopes_average[i] /= this->current_position;
+		}
+		temp::outputArrayToFile<double>(this->linear_regression_slopes, this->number_containers, "tests/slopes.txt");
+		temp::outputArrayToFile<double>(this->linear_regression_slopes_average, this->number_containers, "tests/slopes_average.txt");
+		for (int i = 0; i < this->number_containers; i++){
+			this->linear_regression_slopes_average[i] *= this->current_position;
+		}
+	}
+	else{
+		temp::outputArrayToFile<double>(this->linear_regression_slopes, this->number_containers, "tests/slopes.txt");
+		temp::outputArrayToFile<double>(this->linear_regression_slopes_average, this->number_containers, "tests/slopes_average.txt");
+	}
 #endif
 }
 

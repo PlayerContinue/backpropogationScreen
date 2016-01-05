@@ -129,7 +129,7 @@ weight_type Memory_Block::getBias(cell_type type){
 void Memory_Block::addNewConnection(int pos){
 	this->mapFrom.push_back(pos);
 	
-	this->potential_memory_cell_value.push_back(this->getNewWeight());
+	this->potential_memory_cell_value.push_back(RandomClamped(0,.5));
 	this->weight_lists[POTENTIAL_MEMORY_CELL].push_back(this->potential_memory_cell_value[this->potential_memory_cell_value.size() - 1]);
 	if (this->type != OUTPUT){
 		this->input_weights.push_back(this->getNewWeight());
