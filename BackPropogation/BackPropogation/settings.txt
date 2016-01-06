@@ -1,4 +1,4 @@
-s_network_name E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\variance_growth_test\variance_4.txt
+s_network_name E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\variance_growth_test\Long\Long_Variance_1.txt
 i_loops 1000
 i_number_allowed_failures 100
 i_number_before_growth_potential 5000
@@ -25,7 +25,7 @@ i_number_of_training 10000
 i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
-b_loadFromCheckpoint 1
+b_loadFromCheckpoint 0
 s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\variance_growth_test\variance_3.txt6.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\beta_test\test3.txt10.txt

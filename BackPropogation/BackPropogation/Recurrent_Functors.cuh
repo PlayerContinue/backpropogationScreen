@@ -562,6 +562,43 @@ namespace functors{
 
 	};
 
+	//Uses the found input values in a memory cell function
+	//After running, stored values will be in sigmoid form for all but the memory cell
+	template <typename T>
+	struct run_memory_block_functon_multiply : public thrust::unary_function < T, T > {
+
+
+		template <typename Tuple>
+		__host__ __device__
+			void operator()(const Tuple &x)const{//Received Tuple is in the form input, output, forget, potential memory cell, memory cell value,  old input, old Output, old forget, old potential, old memory cell
+			//Compute Logistic value of input,output,forget,and potential
+			thrust::get<0>(x) = logistic_function(thrust::get<0>(x) +thrust::get<9>(x), 1, 0);//Find the new input
+			thrust::get<1>(x) = logistic_function(thrust::get<1>(x) +thrust::get<9>(x), 1, 0);//Find the new output
+			thrust::get<2>(x) = logistic_function(thrust::get<2>(x) +thrust::get<9>(x), 1, 0);//Find the new value
+			thrust::get<3>(x) = logistic_function(thrust::get<3>(x) +thrust::get<9>(x), 1, 0);//Find the new potential memory
+
+			T memory_value_input = (T)thrust::get<6>(x) *(T)thrust::get<8>(x); //Multiply Potential value by the input value to get input value gate
+			T forget_gate = thrust::get<9>(x) * (T)thrust::get<7>(x);//Get the value of the forget gate
+
+
+
+			thrust::get<4>(x) = logistic_function(memory_value_input + forget_gate, 1, 0); //Find the new memory cell value
+		}
+
+		__host__ __device__
+			T sigmoid_function(const T &value)const{
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
+			return (T)1 / ((T)1 + (T)exped.real());
+		}
+
+		__host__ __device__
+			T  logistic_function(const T &value, const T &max_value, const T &midpoint)const{
+			return ((thrust::complex<T>)max_value /
+				((thrust::complex<T>)1 + thrust::exp((thrust::complex<T>)(-1) * ((thrust::complex<T>)value - (thrust::complex<T>)midpoint)))).real();
+		}
+
+	};
+
 	template <typename T>
 	struct find_memory_cell_value : public thrust::unary_function < T, T > {
 
@@ -574,8 +611,6 @@ namespace functors{
 
 			thrust::get<5>(x) = ((T)thrust::get<0>(x) * (T)thrust::get<3>(x)) +//Multiply Potential value by the input value to get input value gate
 			((T)thrust::get<2>(x) * (T)thrust::get<4>(x));//Get the value of the forget gate
-
-			thrust::get<6>(x) = thrust::get<1>(x) * thrust::get<4>(x);
 
 		}
 

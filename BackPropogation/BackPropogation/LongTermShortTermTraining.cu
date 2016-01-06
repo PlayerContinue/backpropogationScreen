@@ -1081,7 +1081,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int numb
 			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL], //Old Potential
 			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL]//Old Memory Cell Values
 			)),
-			functors::run_memory_block_functon<weight_type>());
+			functors::run_memory_block_functon_multiply<weight_type>());
 
 #ifdef TRAININGTEST
 		if (number_of_extra_weights == 0){
