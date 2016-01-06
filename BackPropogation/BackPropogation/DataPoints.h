@@ -241,7 +241,7 @@ bool DataPoints<T>::is_limit_found(){
 
 		}
 
-		if ((this->number_containers != 1 && number_times_above_zero > (this->number_containers / 2)) || failure == false){
+		if ((this->number_containers != 1 && number_times_above_zero > (this->number_containers / 2) && this->linear_regression_slopes[0]>=0) || failure == false){
 			return true;//At least half of the slopes are positive or all of them are going down at a rate small enough not to matter
 		}
 		else{
@@ -291,7 +291,7 @@ inline void DataPoints<T>::find_datapoints(){
 
 	if (this->dataPointContainer[0].size() > this->current_position + 1){
 		for (int i = 0; i < this->number_containers; i++){
-			temp_point = (this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]); //this->dataPointContainer[i][this->current_position];
+			temp_point = this->dataPointContainer[i][this->current_position]; //(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]); 
 			this->x_points[i].push_back((this->current_position%this->window_size)+1);
 
 			this->difference_sizes[i].push_back(temp_point);

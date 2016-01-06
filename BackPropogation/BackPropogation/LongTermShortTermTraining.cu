@@ -130,7 +130,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				);
 
 			//Redo the cell with the gate values
-			/*thrust::for_each(
+			thrust::for_each(
 				thrust::make_zip_iterator(
 				thrust::make_tuple(
 				this->GPUOutput_values.begin() + number_nodes_to_beginning_of_layer,//Input
@@ -158,7 +158,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				),
 				functors::find_memory_cell_value<weight_type>()
 
-				);*/
+				);
 
 
 #ifdef NVIDA_OUTPUT_TEST2

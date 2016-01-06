@@ -879,8 +879,8 @@ namespace functors{
 		__host__ __device__ //Delta,output
 			T operator()(const Tuple &x)const{
 
-			int temp = (((int)(thrust::get<1>(x) / new_node_start)) +
-				((int)(thrust::get<2>(x) / nodes_to_output)) +
+			int temp = (((int)(thrust::get<1>(x) / new_node_start)) + //Node is unlearned node
+				((int)(thrust::get<2>(x) / nodes_to_output)) + //node is output node
 				((int)((
 				((thrust::get<1>(x) / new_node_start) + (thrust::get<2>(x) / nodes_to_output)) / 2)))
 				)*unlearned_nodes;//Find if the the current is an unlearned node and if there are any unlearned nodes
