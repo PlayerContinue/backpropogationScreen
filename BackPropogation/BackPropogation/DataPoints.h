@@ -34,13 +34,16 @@ private:
 	int current_position;//Position in the current data set
 	int slope_distance;//Distance between positions to find the slope
 	int window_size; //Size of the window to find the standard deviation over, -1 if no ending 
+	int* number_standard_deviation_y_above; // Number of times the current value is above the lowest standard deviation
 	double variance_limit;
 	double* average = NULL;//average
 	double* variance = NULL;// variance
 	double* variance_x = NULL; //The rolling variance of x
 	double* variance_y = NULL; //The rolling variance of y
+	double* standard_deviation_y = NULL;//The rolling SD of y
 	double* sum_of_x = NULL;//The sum of the x
 	double* sum_of_y = NULL;// The sum of the y
+	double* sum_of_y_squared = NULL;//The sum of the squared ys
 	double* sum_of_x_squared = NULL;//The sum of the x squared
 	double* sum_of_xy_product = NULL;//The sum of the xy product
 	double* x_average = NULL;//The average of the x values
@@ -48,6 +51,9 @@ private:
 	double* linear_regression_slopes = NULL;//List of the linear regression slopes
 	double* linear_regression_slopes_average = NULL;//List of the average slope for each line
 	double* slope = NULL;//The slope
+
+	double* lowest_standard_deviation_point_y = NULL;// The 
+
 public:
 
 	//Create an empty container of the object type
@@ -93,7 +99,10 @@ private:
 	inline void find_datapoints();//Finds all the datapoints required to find information about the network
 	inline void find_datapoints(int pos);//Seperated for Cleanliness
 	void find_linear_regression_slope();//Find the slope of the linear regression
-	void find_rolling_variance(int pos, int window_size, double new_value, double old_value, double* variance, double* average);//Find the standard deviation for x and y
+	void find_rolling_variance(int pos, int window_size,
+		double* sum, double* sum_squared, 
+		double* variance, double* standard_deviation,
+		double* average);//Find the standard deviation for x and y
 	 
 
 };
@@ -133,8 +142,11 @@ void DataPoints<T>::initialize(int number_lists, int slope_distance){
 	this->variance = new double[number_lists];
 	this->variance_x = new double[number_lists];
 	this->variance_y = new double[number_lists];
+	this->standard_deviation_y = new double[number_lists];
+	this->lowest_standard_deviation_point_y = new double[number_lists];
 	this->sum_of_x = new double[number_lists];
 	this->sum_of_y = new double[number_lists];
+	this->sum_of_y_squared = new double[number_lists];
 	this->sum_of_x_squared = new double[number_lists];
 	this->sum_of_xy_product = new double[number_lists];
 	this->x_average = new double[number_lists];
@@ -145,6 +157,7 @@ void DataPoints<T>::initialize(int number_lists, int slope_distance){
 	this->limit_start = new int[number_lists];
 	this->limit_end = new int[number_lists];
 	this->current_position = 0;
+	this->number_standard_deviation_y_above = new int[number_lists];
 	this->number_containers = number_lists;
 
 	for (int i = 0; i < number_lists; i++){
@@ -211,8 +224,13 @@ inline void DataPoints<T>::reset_internal_values(int pos){
 	this->variance[pos] = -1;
 	this->variance_x[pos] = 0;
 	this->variance_y[pos] = 0;
+	this->y_average[pos] = 0;
+	this->x_average[pos] = 0;
+	this->standard_deviation_y[pos] = 0;
+	this->lowest_standard_deviation_point_y[pos] = -1;
 	this->sum_of_x[pos] = 0;
 	this->sum_of_y[pos] = 0;
+	this->sum_of_y_squared[pos] = 0;
 	this->sum_of_x_squared[pos] = 0;
 	this->sum_of_xy_product[pos] = 0;
 	this->linear_regression_slopes[pos] = 0;
@@ -220,6 +238,7 @@ inline void DataPoints<T>::reset_internal_values(int pos){
 	this->slope[pos] = 0;
 	this->limit_start[pos] = 0;
 	this->limit_end[pos] = slope_distance;
+	this->number_standard_deviation_y_above[pos] = 1;
 }
 
 //---------------Examine The Values--------------------//
@@ -229,19 +248,19 @@ bool DataPoints<T>::is_limit_found(){
 		int number_times_above_zero = 0;
 		bool failure = false;
 		for (int i = 0; i < this->number_containers; i++){
-			if (
+			/*if (
 				this->current_position < this->window_size ||
 				std::abs(this->linear_regression_slopes_average[i] / (this->current_position - 1)) > this->variance_limit){
-				failure = true;
-			}
+				failure = false;
+			}*/
 
-			if (this->linear_regression_slopes[i] > 0){//If the slope is positive, then the value is going up, which is bad
+			if (this->number_standard_deviation_y_above[i] > (this->window_size/2)){//If the slope is positive, then the value is going up, which is bad
 				number_times_above_zero++;
 			}
 
 		}
 
-		if ((this->number_containers != 1 && number_times_above_zero > (this->number_containers / 2) && this->linear_regression_slopes[0]>=0) || failure == false){
+		if ((number_times_above_zero > (this->number_containers / 2) && this->number_standard_deviation_y_above[0] >= (this->window_size / 2))){
 			return true;//At least half of the slopes are positive or all of them are going down at a rate small enough not to matter
 		}
 		else{
@@ -261,7 +280,6 @@ void DataPoints<T>::find_limits(){
 		if (this->dataPointContainer[i].size() > this->current_position + 1){
 			//Find the variance of the points
 			this->average[i] += this->dataPointContainer[i][this->current_position + 1];
-
 			this->variance[i] = std::pow(this->dataPointContainer[i][this->current_position + 1] - (this->average[i] / (this->current_position + 1)), 2);
 		}
 	}
@@ -284,75 +302,15 @@ void DataPoints<T>::find_slope(){
 
 }
 
-template <typename T>
-inline void DataPoints<T>::find_datapoints(){
-	double temp_point;
-	
-
-	if (this->dataPointContainer[0].size() > this->current_position + 1){
-		for (int i = 0; i < this->number_containers; i++){
-			temp_point = this->dataPointContainer[i][this->current_position]; //(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]); 
-			this->x_points[i].push_back((this->current_position%this->window_size)+1);
-
-			this->difference_sizes[i].push_back(temp_point);
-			
-			this->sum_of_x[i] += this->x_points[i].back();
-			this->sum_of_y[i] += temp_point;
-			this->sum_of_xy_product[i] += (temp_point* this->x_points[i].back());
-			this->sum_of_x_squared[i] += std::pow(this->x_points[i].back(), 2);
-			this->find_datapoints(i);//Seperated for easier reading
-		}
-
-		//if (this->window_size > 0 && this->current_position+1 > this->window_size){
-			this->find_linear_regression_slope();
-		//}
-		
-		//this->find_slope();
-		this->current_position++;
-	}
-}
-
-
-
-template <typename T>
-inline void DataPoints<T>::find_datapoints(int pos){
-	
-	if (this->window_size > 0 && this->difference_sizes[pos].size() > this->window_size){
-		double temp_window = this->difference_sizes[pos][0];
-
-		//Subtract the old values from the sum of the values to find the rolling window value
-		this->sum_of_y[pos] -= temp_window;
-		this->sum_of_x[pos] -= (this->x_points[pos][0]);//Remove the sum of the y value
-		this->sum_of_xy_product[pos] -= (temp_window * this->x_points[pos][0]);
-		this->sum_of_x_squared[pos] -= std::pow(this->x_points[pos][0], 2);
-
-		//find_rolling_variance(pos, this->window_size,
-			//this->difference_sizes[pos].back(), temp_window,
-			//this->variance_y, this->y_average);//Find the variance of y
-		//find_rolling_variance(pos, this->window_size, 
-			//this->x_points[pos].back(), this->x_points[pos][0],
-			//this->variance_x, this->x_average);//Find the variance of x
-		
-		//Remove the first one in the list
-		this->difference_sizes[pos].erase(this->difference_sizes[pos].begin());
-		this->x_points[pos].erase(this->x_points[pos].begin());
-	}
-	else{//Find the average of x and y
-		this->x_average[pos] = ((this->x_average[pos] * (this->current_position - 1)) + this->current_position) / this->current_position;
-		this->y_average[pos] = ((this->y_average[pos] * (this->current_position - 1)) + this->x_points[pos].back()) / this->current_position;
-	}
-}
-
-
-
 #ifdef INTERNAL_TEST
 namespace temp{
 	template <typename T>
 	void outputArrayToFile(T* out, int size, std::string file_name){
-		static bool opened_once = false;
+		static int opened_once = 0;
+		opened_once++;
 		std::ofstream outputfile;
 		outputfile.precision(30);
-		if (opened_once){
+		if (opened_once < 3){
 			outputfile.open(file_name, std::ios::app | std::ios::ate);
 		}
 		else{
@@ -373,6 +331,97 @@ namespace temp{
 }
 
 #endif
+
+
+template <typename T>
+inline void DataPoints<T>::find_datapoints(){
+	double temp_point;
+	
+
+	if (this->dataPointContainer[0].size() > this->current_position + 1){
+		for (int i = 0; i < this->number_containers; i++){
+			temp_point = this->dataPointContainer[i][this->current_position]; //(this->dataPointContainer[i][this->current_position + 1] - this->dataPointContainer[i][this->current_position]); 
+			this->x_points[i].push_back((this->current_position%this->window_size)+1);
+
+			this->difference_sizes[i].push_back(temp_point);
+			
+			this->sum_of_x[i] += this->x_points[i].back();
+			this->sum_of_y[i] += temp_point;
+			this->sum_of_y_squared[i] += std::pow(temp_point, 2);
+			this->sum_of_xy_product[i] += (temp_point* this->x_points[i].back());
+			this->sum_of_x_squared[i] += std::pow(this->x_points[i].back(), 2);
+			this->find_datapoints(i);//Seperated for easier reading
+		}
+
+		//if (this->window_size > 0 && this->current_position+1 > this->window_size){
+			this->find_linear_regression_slope();
+		//}
+		
+		//this->find_slope();
+		this->current_position++;
+
+#ifdef INTERNAL_TEST
+		temp::outputArrayToFile<double>(this->standard_deviation_y, this->number_containers, "tests/standard_deviation.txt");
+#endif
+
+	}
+}
+
+
+template <typename T>
+inline void DataPoints<T>::find_datapoints(int pos){
+	
+	if (this->window_size > 0 && this->difference_sizes[pos].size() > this->window_size){
+		double temp_window = this->difference_sizes[pos][0];
+
+		//Subtract the old values from the sum of the values to find the rolling window value
+		this->sum_of_y[pos] -= temp_window;
+		this->sum_of_y_squared[pos] -= std::pow(temp_window, 2);
+		this->sum_of_x[pos] -= (this->x_points[pos][0]);//Remove the sum of the y value
+		this->sum_of_xy_product[pos] -= (temp_window * this->x_points[pos][0]);
+		this->sum_of_x_squared[pos] -= std::pow(this->x_points[pos][0], 2);
+		
+		//Remove the first one in the list
+		this->difference_sizes[pos].erase(this->difference_sizes[pos].begin());
+		this->x_points[pos].erase(this->x_points[pos].begin());
+	}
+
+	find_rolling_variance(pos, this->window_size,
+		this->sum_of_y, this->sum_of_y_squared,
+		this->variance_y, this->standard_deviation_y, this->y_average);//Find the variance of y
+	if (this->current_position >= this->window_size){
+		if (this->lowest_standard_deviation_point_y[pos] == -1 || this->standard_deviation_y[pos] < this->lowest_standard_deviation_point_y[pos]){
+			this->lowest_standard_deviation_point_y[pos] = this->standard_deviation_y[pos];
+			if (this->number_standard_deviation_y_above[pos] > 0){
+				this->number_standard_deviation_y_above[pos] -= 1;
+			}
+		}
+		else{
+			this->number_standard_deviation_y_above[pos] += 1;
+		}
+	}
+		
+}
+
+
+template <typename T>
+void DataPoints<T>::find_rolling_variance(int pos, int window_size, double* sum, double* sum_squared, double* variance, double* standard_deviation, double* average){
+	int length = (this->current_position <= window_size) ? (this->current_position+1) : this->window_size;
+
+	average[pos] = sum[pos] / length;//Find the average
+	//Find the variance
+	variance[pos] = sum_squared[pos] - (2*(average[pos] * sum[pos])) + (length*std::pow(average[pos], 2));
+	variance[pos] /= length;
+	//Find the standard deviation
+	standard_deviation[pos] = std::sqrt(variance[pos]);
+
+	
+
+}
+
+
+
+
 
 template <typename T>
 void DataPoints<T>::find_linear_regression_slope(){
@@ -403,12 +452,3 @@ void DataPoints<T>::find_linear_regression_slope(){
 #endif
 }
 
-template <typename T>
-void DataPoints<T>::find_rolling_variance(int pos, int window_size, double new_value, double old_value, double* variance, double* average){
-	double old_average = average[pos];
-
-	average[pos] = old_average + ((new_value - old_value) / window_size);
-
-	variance[pos] += ((new_value - old_value)*(new_value - average[pos] + old_value - old_average))/(window_size-1);
-
-}
