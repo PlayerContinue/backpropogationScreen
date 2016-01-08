@@ -222,17 +222,52 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 			this->RealOutput[j] = out[i - 1][j];
 		}
 
-		//Find the delta of the output for the current layer
-		//output * (1-output) * (target - output)
-		thrust::transform(
-			this->RealOutput.begin(),
-			this->RealOutput.end(),
-			this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output,
-			this->device_deltas.begin() + delta_next_end - this->settings.i_output,
-			functors::find_output_delta<weight_type>());
+		if (this->total_unlearned_new_nodes <= 0){
+			//Find the delta of the output for the current layer
+			//output * (1-output) * (target - output)
+			thrust::transform(
+				this->RealOutput.begin(),
+				this->RealOutput.end(),
+				this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output,
+				this->device_deltas.begin() + delta_next_end - this->settings.i_output,
+				functors::find_output_delta<weight_type>());
+		}
+		else{
+			//Find the amount provided by the trained nodes
+			thrust::reduce_by_key(
+				Unique_Iterator::make_repeat_iterator(thrust::make_counting_iterator(0), this->number_nodes_by_type[0][OUTPUT_CELL]-this->total_number_of_unrolled),
+				Unique_Iterator::make_repeat_iterator(thrust::make_counting_iterator(0), this->number_nodes_by_type[0][OUTPUT_CELL] - this->total_number_of_unrolled) 
+				+ (this->settings.i_output*this->number_nodes_by_type[0][OUTPUT_CELL] - this->total_number_of_unrolled),
+				Unique_Iterator::make_skip_iterator(
+				thrust::make_transform_iterator(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUOutput_values.begin() + 
+				((this->numberOfNodes + this->numberNonWeights) * (i)) - this->numberOfNodes + this->number_nodes_by_type[0][INPUT_CELL],
+				this->GPUWeights.end() - this->numberOfWeightsInLayers[1]
+				)
+				),
+				functors::multiply<weight_type>()
+				), this->number_nodes_by_type[0][OUTPUT_CELL] - this->total_number_of_unrolled, this->total_number_of_unrolled),
+				thrust::make_discard_iterator(),
+				this->GPUPreviousOutput_Values.begin()
+				);
 
+			//Find the delta of the output for the current layer
+			//output * (1-output) * (target - output)
+			thrust::transform(
+				this->RealOutput.begin(),
+				this->RealOutput.end(),
 
-
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights) * i) - this->settings.i_output,
+				this->GPUPreviousOutput_Values.begin()
+				)
+				),
+				this->device_deltas.begin() + delta_next_end - this->settings.i_output,
+				functors::find_unlearned_output_delta<weight_type>());
+		}
 
 #ifdef DELTA_TEST
 		this->device_deltas[0] = -1;

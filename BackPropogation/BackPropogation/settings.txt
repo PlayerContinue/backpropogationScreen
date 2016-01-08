@@ -26,20 +26,20 @@ i_trainingSetType char
 i_outputTrainingSetType double
 i_recurrent_flip_flop 3
 b_loadFromCheckpoint 0
-s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\check_test\size10.txt3.txt
+s_checkpoint_file E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\check_test\size12.txt3.txt
 b_loadNetworkFromFile 0
 s_loadNetworkFile E:\Documents\GitHub\backpropogationScreen\BackPropogation\BackPropogation\recurrent_networks\beta_test\test3.txt10.txt
 i_numberTimesThroughFile 8
 Type:LongTermShortTerm_items
 i_backprop_unrolled 30
 i_number_in_sequence 5
-i_number_start_nodes 1
+i_number_start_nodes 3
 i_number_new_weights 0
 i_number_of_testing_items 200
 b_allow_growth 1
 i_size_of_window 20
-d_unlearned_beta .3
-d_replaced_beta .4
+d_unlearned_beta .6
+d_replaced_beta 0
 d_variance_to_growth .002
 i_number_minutes_to_checkpoint 15
 d_number_minutes_to_mean_square_test 0

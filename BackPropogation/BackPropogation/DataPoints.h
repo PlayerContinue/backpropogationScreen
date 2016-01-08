@@ -260,7 +260,7 @@ bool DataPoints<T>::is_limit_found(){
 
 		}
 
-		if ((number_times_above_zero > (this->number_containers / 2) && this->number_standard_deviation_y_above[0] >= (this->window_size / 2))){
+		if ((number_times_above_zero > (this->number_containers / 2))){
 			return true;//At least half of the slopes are positive or all of them are going down at a rate small enough not to matter
 		}
 		else{

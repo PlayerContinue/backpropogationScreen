@@ -1041,6 +1041,30 @@ namespace functors{
 		}
 	};
 
+	template <typename T>
+	struct find_unlearned_output_delta : public thrust::binary_function < T, T, T > {
+		find_unlearned_output_delta(){};
+		template <typename Tuple>
+		__host__ __device__
+		T operator()(const T &target, const Tuple &output)const{
+			T new_output = sigmoid_function(inverse_sigmoid((T)thrust::get<0>(output)) - thrust::get<1>(output));//Find the effect of the new value
+			T new_target = sigmoid_function(inverse_sigmoid((T)target) - thrust::get<1>(output));
+			return ((T)new_output)*((T)1 - (T)new_output)*((T)new_target - (T)new_output);
+		}
+
+		__host__ __device__
+		T inverse_sigmoid(const T &x)const{
+			return -1 *
+				((thrust::complex<T>)thrust::log((thrust::complex<T>)((T)(1 / x) - 1))).real();
+		}
+
+		__host__ __device__
+			T sigmoid_function(const T &value)const{
+			thrust::complex<T> exped = thrust::exp(((thrust::complex<T>) ((thrust::complex<T>) - 1 * (thrust::complex<T>)value)));
+			return (T)1 / ((T)1 + (T)exped.real());
+		}
+	};
+
 
 
 	template <typename T>

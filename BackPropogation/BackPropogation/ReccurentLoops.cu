@@ -444,7 +444,9 @@ inline bool ReccurentLoops::growthTraining(){
 	if (this->mainNetwork->get_number_unlearned() < 1 && this->mean_square_points.is_limit_found()){//Growth should occur when the network has reached a limit (i.e. the slope is near zero and the unlearned nodes have been taught
 		this->mean_square_points.clean_list();
 		srand(time(NULL));
-		this->mainNetwork->addNeuron(2);
+		int temp[1];
+		this->mainNetwork->getInfoAboutNetwork(temp);
+		this->mainNetwork->addNeuron(temp[0]);
 		thrust::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_initial.begin());
 	}
 	return true;
