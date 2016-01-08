@@ -107,7 +107,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 	for (int i = start; i < this->settings.i_backprop_unrolled; i++){
 		number_nodes_to_internal_next_layer = 0;
 		number_weights_to_internal_next_layer = 0;
-		for (int j = 0; j < this->mBlocksLayers.size(); j++){
+		for (int j = 0; j < this->mBlocksLayers.size(); j++){//Go through each layer of the current iteration
 			thrust::reduce_by_key(
 				this->GPUMapTo.begin() + number_weights_to_internal_next_layer,
 				this->GPUMapTo.begin() + number_weights_to_internal_next_layer + this->numberOfWeightsInLayers[j],
@@ -127,6 +127,14 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				),
 				thrust::make_discard_iterator(),
 				this->GPUPreviousOutput_Values.begin()
+				);
+
+			//Add the bias to the current value
+			thrust::transform(this->GPUBias.begin() + number_nodes_to_internal_next_layer,
+				this->GPUBias.begin() + number_nodes_to_internal_next_layer + this->number_nodes_in_layer[j],
+				this->GPUPreviousOutput_Values.begin(),
+				this->GPUOutput_values.begin() + number_nodes_to_start_of_storage_layer + number_nodes_to_internal_next_layer,//Start + number of nodes to layer with searching values + number of nodes to current layer
+				functors::sum_and_sigmoid<weight_type>()
 				);
 
 			//Redo the cell with the gate values
@@ -165,13 +173,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 			testing::outputToFile<weight_type>(this->GPUPreviousOutput_Values, "prevout1" + std::to_string(j) + std::to_string(i), "tests/prevbias3.txt");
 #endif
 
-			//Add the bias to the current value
-			thrust::transform(this->GPUBias.begin() + number_nodes_to_internal_next_layer,
-				this->GPUBias.begin() + number_nodes_to_internal_next_layer + this->number_nodes_in_layer[j],
-				this->GPUPreviousOutput_Values.begin(),
-				this->GPUOutput_values.begin() + number_nodes_to_start_of_storage_layer + number_nodes_to_internal_next_layer,//Start + number of nodes to layer with searching values + number of nodes to current layer
-				functors::sum_and_sigmoid<weight_type>()
-				);
+			
 
 			number_nodes_to_internal_next_layer += this->number_nodes_in_layer[j];
 			number_weights_to_internal_next_layer += this->numberOfWeightsInLayers[j];
