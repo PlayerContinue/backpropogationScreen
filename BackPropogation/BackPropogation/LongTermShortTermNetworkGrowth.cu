@@ -114,7 +114,7 @@ void LongTermShortTermNetwork::createMemoryBlock(int numberMemoryCells, int laye
 
 }
 
-void  LongTermShortTermNetwork::addPositionOfWeightChange(int start, int start_weights,int start_nodes, int extension,int number_new_weights){
+void  LongTermShortTermNetwork::addPositionOfWeightChange(int start, int start_weights, int start_nodes, int extension, int number_new_weights){
 	//Increment the from values to be the new position of the nodes in the array 
 	thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), _1 + extension, _1 >= start_nodes);
 	//Increment the to values to be the new position of the nodes in the array 
@@ -127,22 +127,22 @@ void  LongTermShortTermNetwork::addPositionOfWeightChange(int start, int start_w
 
 template <typename T>
 void LongTermShortTermNetwork::addNewSumCount(int start, int end, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert){
-	this->addNewSumCount(start, end, 0,0, key, value, insert);
+	this->addNewSumCount(start, end, 0, 0, key, value, insert);
 }
 
 template <typename T>
-void LongTermShortTermNetwork::addNewSumCount(int start, int end, int add_to_from,int add_to_value, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert){
+void LongTermShortTermNetwork::addNewSumCount(int start, int end, int add_to_from, int add_to_value, thrust::device_vector<T> &key, thrust::device_vector<T> &value, thrust::device_vector<T> insert){
 	//Add the new positions for the sum list
 	key.insert(key.end(),
 		thrust::make_transform_iterator(
 		insert.begin(),
 		_1 + add_to_from)
 		+ start,
-		
+
 		thrust::make_transform_iterator(
 		insert.begin(),
 		_1 + add_to_from)
-		 + end);
+		+ end);
 
 	//Add the position of the new weights
 	value.insert(value.end(),
@@ -176,21 +176,21 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		//Insert the new weights
 		weight_iterator = this->GPUWeights.begin() + start_of_weights_to_insert_on;
 		weight_locked_iterator = this->weight_locked.begin() + start_of_weights_to_insert_on;
-		this->GPUWeights.insert(weight_iterator, 
-			this->mBlocksLayers[layer][j].weight_lists[memory_type].begin(), 
+		this->GPUWeights.insert(weight_iterator,
+			this->mBlocksLayers[layer][j].weight_lists[memory_type].begin(),
 			this->mBlocksLayers[layer][j].weight_lists[memory_type].end());
 		weight_iterator = this->GPUWeights.begin() + start_of_weights_to_insert_on + this->mBlocksLayers[layer][j].weight_lists[memory_type].size();
-		
+
 		//Insert weights to memory cell
-		this->GPUWeights.insert(weight_iterator, 
+		this->GPUWeights.insert(weight_iterator,
 			thrust::make_constant_iterator((int)1),
 			thrust::make_constant_iterator((int)1) + this->mBlocksLayers[layer][j].number_memory_cells);
-		
+
 		//Add unlocked weight marker
 		this->weight_locked.insert(weight_locked_iterator, thrust::make_constant_iterator((bool)0), thrust::make_constant_iterator((bool)0) + size_to_add);
 
 		int_iterator = this->GPUMapFrom.begin() + start_of_weights_to_insert_on;
-		
+
 		//Insert where the value should come from
 		this->GPUMapFrom.insert(int_iterator,
 			this->mBlocksLayers[layer][j].mapFrom.begin(),
@@ -202,10 +202,10 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		//Temporary measure, will be altered to actual value later
 		//Placement of the memory cell
 		this->GPUMapFrom.insert(int_iterator,
-			thrust::make_constant_iterator((int)-(j-start_new)-1),
-			thrust::make_constant_iterator((int)-(j-start_new)-1) + this->mBlocksLayers[layer][j].number_memory_cells);
+			thrust::make_constant_iterator((int)-(j - start_new) - 1),
+			thrust::make_constant_iterator((int)-(j - start_new) - 1) + this->mBlocksLayers[layer][j].number_memory_cells);
 
-		
+
 
 		//Insert where the values should go to
 		int_iterator = this->GPUMapTo.begin() + start_of_weights_to_insert_on;
@@ -218,10 +218,10 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		this->GPUBias.insert(weight_iterator, this->mBlocksLayers[layer][j].getBias(memory_type));
 
 
-		
-		
+
+
 		addNewSumCount(start_of_weights_to_insert_on, start_of_weights_to_insert_on + this->mBlocksLayers[layer][j].weight_lists[memory_type].size() + this->mBlocksLayers[layer][j].number_memory_cells, key, value, this->GPUMapFrom);
-		
+
 		//Increase the stored values
 		number_new_added += 1;//Note a new node has been added
 		start_of_weights_to_insert_on += size_to_add;
@@ -230,8 +230,8 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].number_memory_cells;
 		this->number_weights_by_type[layer][type] += size_to_add;
 		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
-		
-		
+
+
 
 		this->number_nodes_by_type[layer][type] += 1;
 		this->number_nodes_in_layer[layer] += 1;
@@ -239,7 +239,7 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		this->numberOfNodes += 1;
 	}
 
-	
+
 	number_new_added_total += number_new_added;//Note n new nodes have been added
 	number_new_added = 0;
 }
@@ -308,9 +308,9 @@ void LongTermShortTermNetwork::addMemoryCellTOGPU(unsigned int &start_new, unsig
 
 }
 
-void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_output_layer_weights, int add_length, int start_new, 
+void LongTermShortTermNetwork::addConnectionToNewCells(int layer, int start_of_output_layer_weights, int add_length, int start_new,
 	thrust::device_vector<weight_type>::iterator &weight_iterator,
-	thrust::device_vector<int>::iterator &int_iterator, 
+	thrust::device_vector<int>::iterator &int_iterator,
 	thrust::device_vector<int>::iterator &to_iterator,
 	thrust::device_vector<int> &key,
 	thrust::device_vector<int> &value,
@@ -330,16 +330,16 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 		Memory_Block::cell_type type = Memory_Block::cell_type::POTENTIAL_MEMORY_CELL;
 		cell_type block_type = POTENTIAL_MEMORY_CELL;
 		//Transform the mapfrom values to include the change to the position of the output
-		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(),this->GPUMapFrom.begin(), _1 + add_length, _1 > this->numberNonWeights + this->numberOfNodes);
-		
+		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), _1 + add_length, _1 > this->numberNonWeights + this->numberOfNodes);
+
 		for (unsigned int i = 0; i < (*cell_block).size(); i++){
 			weight_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			int_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
-			
+
 			to_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			weight_locked_iterator += (*cell_block)[i].weight_lists[type].size() - (add_length);
 			pos = (int)*(to_iterator - 1);
-			
+
 			//Workaround, fix later
 			temp_fix[0] = (to_iterator - this->GPUMapTo.begin());
 			temp_fix[1] = (weight_iterator - this->GPUWeights.begin());
@@ -348,14 +348,14 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 
 			this->GPUWeights.insert(weight_iterator, (*cell_block)[i].weight_lists[type].end() - (add_length), (*cell_block)[i].weight_lists[type].end());
 			this->weight_locked.insert(weight_locked_iterator, thrust::make_constant_iterator((bool)0), thrust::make_constant_iterator((bool)0) + add_length);
-			
+
 
 			this->GPUMapFrom.insert(int_iterator,
 				thrust::make_transform_iterator((*cell_block)[i].mapFrom.end() - (add_length),
 				_1 + this->numberOfNodes + this->numberNonWeights),
 				thrust::make_transform_iterator((*cell_block)[i].mapFrom.end(),
 				_1 + this->numberOfNodes + this->numberNonWeights));
-		
+
 
 			this->GPUMapTo.insert(to_iterator, thrust::make_constant_iterator((int)pos),
 				thrust::make_constant_iterator((int)pos) + add_length
@@ -367,33 +367,33 @@ void LongTermShortTermNetwork::addConnectionToNewCells(int layer,int start_of_ou
 			int_iterator = this->GPUMapFrom.begin() + temp_fix[2];
 			weight_locked_iterator = this->weight_locked.begin() + temp_fix[3];
 
-			this->addNewSumCount(to_iterator - this->GPUMapTo.begin(), to_iterator - this->GPUMapTo.begin() + add_length, -(layer+1)*(this->numberOfNodes + this->numberNonWeights), 0, key, value, this->GPUMapFrom);
-			
+			this->addNewSumCount(to_iterator - this->GPUMapTo.begin(), to_iterator - this->GPUMapTo.begin() + add_length, -(layer + 1)*(this->numberOfNodes + this->numberNonWeights), 0, key, value, this->GPUMapFrom);
+
 			//Adds the number of new connections to the old positions to confirm they are set correctly
 			thrust::transform_if(this->positionToSum.begin(), this->positionToSum.end(), this->positionToSum.begin(), _1 + add_length, _1 >= to_iterator - this->GPUMapTo.begin());
 
-			
+
 
 			weight_iterator += this->mBlocksLayers[layer].size() - start_new;
 			weight_locked_iterator += this->mBlocksLayers[layer].size() - start_new;
 			int_iterator += this->mBlocksLayers[layer].size() - start_new;
 			to_iterator += this->mBlocksLayers[layer].size() - start_new;
-			this->numberOfWeightsInLayers[layer + 1]+= add_length;
-			this->number_weights_by_type[layer+1][block_type]+=add_length;
+			this->numberOfWeightsInLayers[layer + 1] += add_length;
+			this->number_weights_by_type[layer + 1][block_type] += add_length;
 		}
 	}
 }
 
 template <typename T>
 T findTotalNumberWeights(thrust::device_vector<T> device){
-	T value=0;
+	T value = 0;
 	for (int weight = 0; weight < device.size() - 1; weight++){
 		value += device[weight];
 	}
 	return value;
 }
 
-void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int layer){
+void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int layer, unsigned int copy_from){
 	if (layer < this->mBlocksLayers.size()){
 		srand(time(NULL));
 		thrust::device_vector<weight_type>::iterator weight_iterator;
@@ -409,6 +409,8 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		unsigned int start_of_output_layer_nodes = 0;
 		unsigned int start_of_output_layer_weights = 0;
 		unsigned int add_length = this->mBlocksLayers[layer].size() - start_new;
+		unsigned int output_pos;
+		weight_type output_value;
 		vector<Memory_Block>* cell_block;
 		for (int i = 0; i < layer; i++){
 			start_of_weights_to_insert_on += this->numberOfWeightsInLayers[i];
@@ -416,7 +418,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 			start_of_output_layer_nodes += this->number_nodes_in_layer[i];
 			start_of_output_layer_weights += this->numberOfWeightsInLayers[i];
 		}
-		
+
 
 
 		for (int type_cell = INPUT_CELL, memory_type = Memory_Block::cell_type::INPUT_CELL; type_cell != MEMORY_CELL && memory_type != Memory_Block::cell_type::MEMORY_CELL; type_cell++, memory_type++){
@@ -424,85 +426,86 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 			start_of_weights_to_insert_on += this->number_weights_by_type[layer][type_cell];
 			start_of_nodes_to_insert_on += this->number_nodes_by_type[layer][type_cell];
 			this->addNonMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
-				number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts,SumOrder_Inserts, (cell_type)type_cell, (Memory_Block::cell_type)memory_type);
-			if (type_cell == OUTPUT_CELL && this->mBlocksLayers[layer][0].getTypeOfMemoryBlock()!=Memory_Block::memory_block_type::OUTPUT){//Add connection to the succeeding layer
-				last_added = start_of_nodes_to_insert_on - (add_length) + this->numberNonWeights;//Position of the start of new outputs
-				cell_block = &(this->mBlocksLayers[layer+1]);
+				number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts, SumOrder_Inserts, (cell_type)type_cell, (Memory_Block::cell_type)memory_type);
+			if (type_cell == OUTPUT_CELL && this->mBlocksLayers[layer][0].getTypeOfMemoryBlock() != Memory_Block::memory_block_type::OUTPUT){//Add connection to the succeeding layer
+				last_added = start_of_nodes_to_insert_on - (add_length)+this->numberNonWeights;//Position of the start of new outputs
+				cell_block = &(this->mBlocksLayers[layer + 1]);
 				//Add the link to the output to the output row
+				output_pos = (this->GPUWeights.size() - (this->numberOfWeightsInLayers[layer + 1]) + (copy_from));
 				for (int i = 0; i < (*cell_block).size(); i++){
+					output_value = this->GPUWeights[output_pos];
 					for (int j = 0; j < add_length; j++){
-						(*cell_block)[i].addNewConnection(last_added + j);
+						(*cell_block)[i].addNewWeightConnection(last_added + j, output_value / (1+add_length));
 					}
+					this->GPUWeights[output_pos] = output_value / (add_length + 1);
+					output_pos += this->mBlocksLayers[layer].size()-add_length;
 				}
 			}
 
 		}
 
 
-		
+
 		start_of_weights_to_insert_on += this->number_weights_by_type[layer][MEMORY_CELL];
 		start_of_nodes_to_insert_on += this->number_nodes_by_type[layer][MEMORY_CELL];
 
 
-		
+
 
 		//Add the memory cell
 		addMemoryCellTOGPU(start_new, start_of_weights_to_insert_on, start_of_nodes_to_insert_on,
 			number_new_added, number_new_added_total, layer, weight_iterator, int_iterator, CountOrder_Inserts, SumOrder_Inserts, MEMORY_CELL, Memory_Block::cell_type::MEMORY_CELL);
-		
-		start_of_nodes_to_insert_on = this->numberNonWeights + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL] - (number_new_added_total/NUMBER_NODES_IN_CELL);
+
+		start_of_nodes_to_insert_on = this->numberNonWeights + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL] - (number_new_added_total / NUMBER_NODES_IN_CELL);
 
 		//Replace the information pointing to the Memory Cell values
 		//Works due to the start_of_nodes_to_insert_on-add_length being the last original memory_cell value. Thus the new memory cell is just x more than that one
-		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), (_1 * -1) + (start_of_nodes_to_insert_on) - add_length, _1 < 0);
+		thrust::transform_if(this->GPUMapFrom.begin(), this->GPUMapFrom.end(), this->GPUMapFrom.begin(), (_1 * -1) + (start_of_nodes_to_insert_on)-add_length, _1 < 0);
 
 		//Change the values of the keys
 		thrust::transform_if(CountOrder_Inserts.begin(), CountOrder_Inserts.end(), CountOrder_Inserts.begin(), (_1 * -1) + (start_of_nodes_to_insert_on)-add_length, _1 < 0);
-		
-		
+
+
 		//Add a new weight to the connect the output of the new nodes to the input of the next layer
 		//Get the start of the next layer
 		start_of_output_layer_weights += this->numberOfWeightsInLayers[layer];
 		start_of_output_layer_nodes += this->number_nodes_in_layer[layer];
-		
-		testing::outputToFile(CountOrder_Inserts, "count", "tests/count.txt");
-		testing::outputToFile(SumOrder_Inserts, "sum", "tests/count.txt");
-		//Connect the new nodes to the input of the next layer
-		this->addConnectionToNewCells(layer, start_of_output_layer_weights, add_length, start_new, weight_iterator, int_iterator, to_iterator,CountOrder_Inserts,SumOrder_Inserts, cell_block);
-		
-		testing::outputToFile(CountOrder_Inserts, "count", "tests/count.txt");
-		testing::outputToFile(SumOrder_Inserts, "sum", "tests/count.txt");
 
+	
+		//Connect the new nodes to the input of the next layer
+		this->addConnectionToNewCells(layer, start_of_output_layer_weights, add_length, start_new, weight_iterator, int_iterator, to_iterator, CountOrder_Inserts, SumOrder_Inserts, cell_block);
+
+		
 
 		cell_block = NULL;
 		delete cell_block;//Remove the cell block pointer
 		//Increase the node a connection is mapped from if that node is in another layer
 		//This works to fix an issue where a new node is added, but it doesn't make much sense
-		
-		int previous_count_size = this->count.size();
-		
 
-	
+		int previous_count_size = this->count.size();
+
+
+
 		//Remove any which point to the Input
 		int_iterator = thrust::remove_if(SumOrder_Inserts.begin(), SumOrder_Inserts.end(), CountOrder_Inserts.begin(), _1 < this->numberNonWeights);
 		SumOrder_Inserts.erase(int_iterator, SumOrder_Inserts.end());
-	
+
 		int_iterator = thrust::remove_if(CountOrder_Inserts.begin(), CountOrder_Inserts.end(), _1 < this->numberNonWeights);
 		CountOrder_Inserts.erase(int_iterator, CountOrder_Inserts.end());
-		
+
 		//Sort the keys
 		thrust::sort_by_key(CountOrder_Inserts.begin(), CountOrder_Inserts.end(), SumOrder_Inserts.begin());
-	
-		
+
+
 
 		//Merge the two lists together
-		thrust::merge_by_key(this->count.begin(), 
+		thrust::merge_by_key(this->count.begin(),
 			this->count.begin() + previous_count_size,
-			CountOrder_Inserts.begin(), 
-			CountOrder_Inserts.end(), 
-			this->positionToSum.begin(), 
-			SumOrder_Inserts.begin(), 
-			this->GPUOutput_values.begin(), 
+			CountOrder_Inserts.begin(),
+			CountOrder_Inserts.end(),
+			this->positionToSum.begin(),
+			SumOrder_Inserts.begin(),
+			this->GPUOutput_values.begin(),
 			this->device_deltas.begin());
 
 		//Resize the two list to include room for the new values
@@ -514,9 +517,9 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 
 
 		this->GPUPreviousBias.resize(this->GPUBias.size());
-		
+
 		this->GPUPreviousOutput_Values.resize(this->GPUPreviousOutput_Values.size() + number_new_added_total);
-		
+
 		this->GPUPreviousWeights.resize(this->GPUWeights.size());
 		this->device_deltas.resize(this->device_deltas.size() + (number_new_added_total*this->total_number_of_unrolled));
 		//Add the new outputs to each row
@@ -526,7 +529,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 		//Make sure all weights which need to be locked are locked
 
 		this->SetInitialLock();
-		
+
 		//Clean the extra vectors
 		clear_vector::free(CountOrder_Inserts);
 		clear_vector::free(SumOrder_Inserts);
@@ -538,11 +541,52 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 void LongTermShortTermNetwork::addNeuron(int numberNeuronsToAdd){
 	int start_value = this->mBlocksLayers[0].size();
 	int layer = 0;
-	this->createMemoryBlock(numberNeuronsToAdd, layer);
-	this->addCellToGPU(start_value, layer);
+	this->addNewMemoryBlock(numberNeuronsToAdd, layer, 0, layer);
+	this->addCellToGPU(start_value, layer,0);
 	this->total_unlearned_new_nodes += numberNeuronsToAdd;
 }
 
+void LongTermShortTermNetwork::addNewMemoryBlock(int numberMemoryCells, int layer_num, int copy_from, int layer_from){
+	
+	vector<weight_type> list_of_values = vector<weight_type>();
+	Memory_Block mem;
+	this->mBlocksLayers[layer_num].push_back(Memory_Block(this->mBlocksLayers[layer_from][copy_from]));
+	
+	int start_of_weights_for_node = 0;
+	int start_of_nodes = 0;
+	for (int i = 0; i < layer_from; i++){//Get to the start of the layer
+		start_of_weights_for_node += this->numberOfWeightsInLayers[i];
+		start_of_nodes += this->number_nodes_in_layer[i];
+	}
+
+	for (int i = 0; i < copy_from; i++){//Get to the start of the node whos values are to be used
+		start_of_weights_for_node += this->mBlocksLayers[layer_from][i].forget_weights.size();
+		start_of_nodes += 1;
+	}
+
+	//Replace the weights with the weights from the selected node
+	for (int i = 0; i < NUMBER_NODES_IN_CELL; i++){
+		for (int j = 0; j < this->mBlocksLayers[layer_from][copy_from].weight_lists[i].size(); j++){
+			list_of_values.push_back(this->GPUWeights[start_of_weights_for_node+j]);
+		}
+		start_of_weights_for_node += this->number_weights_by_type[layer_from][i];
+	}
+
+	for (int i = INPUT_CELL; i <= MEMORY_CELL; i++){
+		list_of_values.push_back(this->GPUBias[start_of_nodes]);
+		start_of_nodes += this->number_nodes_by_type[layer_from][i];
+	}
+	
+	this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size() - 1].ReplaceWeights(list_of_values);
+	this->numberOfWeightsInLayers[layer_num] += this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size() - 1].number_weights;
+	for (int i = 0; i < numberMemoryCells-1; i++){
+		mem = Memory_Block(this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size() - 1]);
+
+		this->mBlocksLayers[layer_num].push_back(mem);
+		this->numberOfWeightsInLayers[layer_num] += this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size()-1].number_weights;
+	}
+
+}
 
 
 int LongTermShortTermNetwork::decideNodeToAttachTo(){
@@ -617,7 +661,7 @@ void LongTermShortTermNetwork::addWeight(int numberWeightsToAdd){
 	int decideTo = this->decideNodeToAttachTo();
 	for (int i = 0; i < numberWeightsToAdd; i++){
 		if (decideTo != -1){
-			this->mBlocksLayers[0][decideTo].addNewConnection(this->settings.i_input + this->mBlocksLayers[0].size(), this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
+			this->mBlocksLayers[0][decideTo].addNewConnection((int)this->settings.i_input + this->mBlocksLayers[0].size(), (int) this->settings.i_input + (2 * this->mBlocksLayers[0].size()));
 			if (this->GPUMapTo.size() > 0){
 				this->addWeightToGPU(decideTo, 0);
 			}
@@ -653,25 +697,25 @@ void LongTermShortTermNetwork::addWeightToGPU(int nodePosition, int layer, int s
 			);
 
 		//Add the locked weight
-		this->weight_locked.insert(this->weight_locked.begin() + start - 1, 
+		this->weight_locked.insert(this->weight_locked.begin() + start - 1,
 			thrust::make_constant_iterator((bool)0), thrust::make_constant_iterator((bool)0));
 
 		this->GPUMapFrom.insert(this->GPUMapFrom.begin() + start - 1,
 			*(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin())
 			);
 
-		this->GPUMapTo.insert(this->GPUMapTo.begin() + start -1,
+		this->GPUMapTo.insert(this->GPUMapTo.begin() + start - 1,
 			*(this->GPUMapTo.begin() + start - 1)
 			);
 
-		
+
 
 		//Transform the positionToSum
 		thrust::transform(
 			this->positionToSum.begin(),
 			this->positionToSum.end(),
 			this->positionToSum.begin(),
-		functors::add_different_by_value<int,0,1,1>(start-1));
+			functors::add_different_by_value<int, 0, 1, 1>(start - 1));
 
 		int_iterator = thrust::find(this->count.begin(), this->count.end(), *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));
 		this->count.insert(int_iterator, *(this->mBlocksLayers[layer][nodePosition].mapFrom.rbegin()));
@@ -681,11 +725,11 @@ void LongTermShortTermNetwork::addWeightToGPU(int nodePosition, int layer, int s
 		start -= this->number_weights_by_type[layer][i];
 		this->number_weights_by_type[layer][i] += 1;
 		this->numberOfWeightsInLayers[layer] += 1;
-		
+
 	}
 
 	this->GPUPreviousWeights.resize(this->GPUWeights.size());
-	
+
 
 }
 

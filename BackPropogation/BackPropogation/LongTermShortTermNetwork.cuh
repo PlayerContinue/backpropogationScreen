@@ -291,11 +291,11 @@ public:
 	//Creates a new memory block with connections to all inputs
 	void InitialcreateMemoryBlock(int numberMemoryCells);
 	void createMemoryBlock(int numberMemoryCells, int layer_num);
-
+	void addNewMemoryBlock(int numberMemoryCells, int layer_num, int copy_from, int layer_from);//Add a new set of memoryblocks which copy their weights from another node
 	void addNeuron(int numberNeuronsToAdd);
 
 private:
-	void addCellToGPU(unsigned int start_new, unsigned int layer);
+	void addCellToGPU(unsigned int start_new, unsigned int layer,unsigned int copy_from);
 	void addNonMemoryCellTOGPU(unsigned int &start_new, unsigned int &start_of_weights_to_insert_on, unsigned int &start_of_nodes_to_insert_on,
 		unsigned int &number_new_added,
 		unsigned int &number_new_added_total,

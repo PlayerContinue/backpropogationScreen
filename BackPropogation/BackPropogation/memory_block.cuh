@@ -72,12 +72,14 @@ public:
 
 public:
 	void addNewConnection(int);
+	void addNewWeightConnection(int, weight_type);
 	void addNewConnection(int min, int max);
 	void incrementFromPosition(int add);
 	void incrementFromPosition(int add, int add_from);
 	weight_type getBias(cell_type type);
 	memory_block_type getTypeOfMemoryBlock();
 	bool Memory_Block::removeConnection(int toRemove);
+	void Memory_Block::ReplaceWeights(vector<weight_type> replace);//Replace the values of the network
 private:
 	weight_type getNewWeight();
 	void createStorage();

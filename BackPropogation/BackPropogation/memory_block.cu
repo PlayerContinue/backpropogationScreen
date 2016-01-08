@@ -73,6 +73,39 @@ void Memory_Block::createStorage(){
 	this->weight_lists[cell_type::POTENTIAL_MEMORY_CELL] = this->potential_memory_cell_value;
 }
 
+void Memory_Block::ReplaceWeights(vector<weight_type> replace){
+	int count = 0;
+	for (int i = INPUT_CELL; i <= MEMORY_CELL;i++){
+		for (int j = 0; j < this->weight_lists[i].size();j++){
+			this->weight_lists[i][j] = replace[count];
+			count++;
+		}
+	}
+	for (int i = 0; i < this->bias.size(); i++){
+		this->bias[i] = replace[count];
+		count++;
+	}
+
+	for (int i = 0; i < this->input_weights.size(); i++){
+		//Replace the value so they match
+		this->input_weights[i] = this->weight_lists[cell_type::INPUT_CELL][i];
+		this->output_weights[i] = this->weight_lists[cell_type::OUTPUT_CELL][i];
+		if (i < this->memory_cell_weights.size()){
+			this->memory_cell_weights[i] = this->weight_lists[cell_type::MEMORY_CELL][i];
+		}
+		this->forget_weights[i] = this->weight_lists[cell_type::FORGET_CELL][i];
+		this->potential_memory_cell_value[i] = this->weight_lists[cell_type::POTENTIAL_MEMORY_CELL][i];
+	}
+
+	weight_type temp;
+	
+
+	
+	
+
+
+}
+
 void Memory_Block::setInitialWeights(int start, int numberInput, memory_block_type type){
 	//Add weights which connect from the input nodes to the output nodes
 	for (int i = 0; i < numberInput; i++){
@@ -124,12 +157,14 @@ weight_type Memory_Block::getBias(cell_type type){
 	}
 }
 
-
-
 void Memory_Block::addNewConnection(int pos){
+	this->addNewWeightConnection(pos, this->getNewWeight());
+}
+
+void Memory_Block::addNewWeightConnection(int pos, weight_type weight){
 	this->mapFrom.push_back(pos);
 	
-	this->potential_memory_cell_value.push_back(RandomClamped(0,.5));
+	this->potential_memory_cell_value.push_back(weight);
 	this->weight_lists[POTENTIAL_MEMORY_CELL].push_back(this->potential_memory_cell_value[this->potential_memory_cell_value.size() - 1]);
 	if (this->type != OUTPUT){
 		this->input_weights.push_back(this->getNewWeight());
