@@ -1146,5 +1146,34 @@ namespace functors{
 		}
 	};
 
+
+	template <typename T>
+	struct find_alpha {
+		find_alpha(){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x){//Delta, value, weight*value
+
+			return -1*(thrust::get<0>(x) * thrust::get<2>(x)) / (thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<0>(x));
+
+		}
+
+	};
+
+	template <typename T>
+	struct find_beta {
+		find_beta(){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x){//prev_delta,value, delta
+
+			return  (thrust::get<2>(x) * thrust::get<1>(x) * thrust::get<2>(x)) / (thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<0>(x));
+
+		}
+
+	};
+
 	
 }

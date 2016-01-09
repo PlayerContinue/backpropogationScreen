@@ -132,7 +132,7 @@ private:
 	//Stores the delta in GPU Memory
 	host_vector<weight_type> host_deltas;
 	thrust::device_vector<weight_type> device_deltas;
-
+	thrust::device_vector<weight_type> alphas;
 	//Stores the total error
 	weight_type total_error;
 
@@ -261,6 +261,11 @@ private:
 	//Apply the error to the bias
 	void ApplyErrorToBias();
 
+	//Find the alpha to multiply the delta by
+	template <typename Iterator, typename value_iterator>
+	void findAlpha(thrust::device_vector<Iterator>::iterator delta_start, thrust::device_vector<Iterator>::iterator delta_end,
+		thrust::device_vector<Iterator>::iterator prev_delta_start, thrust::device_vector<Iterator>::iterator prev_delta_end,
+		thrust::device_vector<value_iterator>::iterator value_begin, thrust::device_vector<value_iterator>::iterator value_end, int layer);
 	//Check, and lock, any delta which are below the set cap
 	void CheckDeltaNeedLocked();
 	void SetInitialLock();
