@@ -184,5 +184,56 @@ namespace Unique_Iterator{
 		return Unique_Iterator::return_zero_iterator<Iterator, Iterator2>(it, end, return_value);
 	};
 
+	//*************************************
+	//return_value_iterator
+	//return zero when value is between certain positions
+	//n - the length of the array
+	//x - the iterator
+	//*************************************
+
+	//Special Iterator for skipping a set number of places on each iteration
+	template<typename Iterator>
+	class return_iterator : public thrust::iterator_adaptor <  return_iterator<Iterator>, Iterator>
+	{
+	public:
+		// shorthand for the name of the iterator_adaptor we're deriving from
+		typedef thrust::iterator_adaptor <
+			return_iterator<Iterator>,
+			Iterator
+		> super_t;
+		__host__ __device__
+			return_iterator(const Iterator &x, const Iterator &_replace, int n, int skip, int _num_extra) : super_t(x), begin(x), replace(_replace), n(n), skip(skip), num_extra(_num_extra){}
+		// befriend thrust::iterator_core_access to allow it access to the private interface below
+		friend class thrust::iterator_core_access;
+	private:
+		// skip skip elements every n elements
+		const unsigned int n;
+		const unsigned int skip;
+		const unsigned int num_extra;
+		// used to keep track of where we began
+		const Iterator begin;
+		const Iterator replace;
+		// it is private because only thrust::iterator_core_access needs access to it
+		__host__ __device__
+			typename super_t::reference dereference() const
+		{
+			int pos = (this->base() - begin) - n;
+			if (pos < 0 || (((pos + n) % skip)) < num_extra){
+				return *(replace);
+			}
+			else{
+				pos -= ((int)((pos + n) / skip))*num_extra;
+				return *(begin + (pos));
+			}
+			
+		}
+	};
+
+	template<typename Iterator>
+	Unique_Iterator::return_iterator<Iterator> make_return_iterator(Iterator it,
+		Iterator begin, int skip_start, int count_to_skip, int extra_skip){
+		return Unique_Iterator::return_iterator<Iterator>(it, begin, skip_start, count_to_skip, extra_skip);
+	};
 
 }
+

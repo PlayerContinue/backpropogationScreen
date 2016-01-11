@@ -262,10 +262,7 @@ private:
 	void ApplyErrorToBias();
 
 	//Find the alpha to multiply the delta by
-	template <typename Iterator, typename value_iterator>
-	void findAlpha(thrust::device_vector<Iterator>::iterator delta_start, thrust::device_vector<Iterator>::iterator delta_end,
-		thrust::device_vector<Iterator>::iterator prev_delta_start, thrust::device_vector<Iterator>::iterator prev_delta_end,
-		thrust::device_vector<value_iterator>::iterator value_begin, thrust::device_vector<value_iterator>::iterator value_end, int layer);
+	void findAlpha();
 	//Check, and lock, any delta which are below the set cap
 	void CheckDeltaNeedLocked();
 	void SetInitialLock();

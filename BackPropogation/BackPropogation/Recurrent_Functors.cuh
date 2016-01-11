@@ -50,6 +50,22 @@ namespace functors{
 
 	};
 
+	template<typename T>
+	struct special_divide : public thrust::unary_function < T, T > {
+		special_divide(){};
+
+		//Overload the function operator
+		__host__ __device__
+			T operator()(const T &top, const T &bottom) const{
+			if (bottom == (T)0){
+				return (T)0;
+			}
+			else{
+				return (top / bottom);
+			}
+		}
+	};
+
 
 	template<typename T, T add_less_than, T add_more_than, T add_equal_to>
 	struct add_different_by_value : public thrust::unary_function < T, T > {
@@ -1146,20 +1162,30 @@ namespace functors{
 		}
 	};
 
-
 	template <typename T>
-	struct find_alpha {
-		find_alpha(){};
-
+	struct find_top_alpha : public thrust::unary_function < T, T > {
+		find_top_alpha(){};
+		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x){//Delta, value, weight*value
-
-			return -1*(thrust::get<0>(x) * thrust::get<2>(x)) / (thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<0>(x));
-
+			T operator()(const Tuple &x) const{
+			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x) * (T)thrust::get<2>(x) * (T)-1);
 		}
 
 	};
+
+	template <typename T>
+	struct find_alpha_denominator : public thrust::unary_function < T, T > {
+		find_alpha_denominator(){};
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x) const{
+			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x) * (T)thrust::get<0>(x));
+		}
+
+	};
+
 
 	template <typename T>
 	struct find_beta {
