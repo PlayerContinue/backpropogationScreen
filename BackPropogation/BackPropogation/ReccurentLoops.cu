@@ -25,7 +25,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->settings = settings;
 	this->InitializeNetwork();
 	this->checkpoint = CRecurrentCheckpoint();
-	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
+	this->mainNetwork = new Hessian_Network(settings, true);
 
 	this->loadCheckpoint();
 }
@@ -42,7 +42,7 @@ ReccurentLoops::ReccurentLoops(CSettings settings, int type){
 		this->mainNetwork = new RecurrentNeuralNetwork(settings);
 		break;
 	case ReccurentLoops::LongTermShortTerm:
-		this->mainNetwork = new LongTermShortTermNetwork(settings);
+		this->mainNetwork = new Hessian_Network(settings);
 		break;
 	}
 

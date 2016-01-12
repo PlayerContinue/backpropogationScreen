@@ -223,6 +223,7 @@
     <ClInclude Include="CGraphicNetwork.cuh" />
     <ClInclude Include="CudaCalculations.cuh" />
     <ClInclude Include="DataPoints.h" />
+    <ClInclude Include="Hessian_Network.cuh" />
     <ClInclude Include="LongTermShortTermNetwork.cuh" />
     <ClInclude Include="memory_block.cuh" />
     <ClInclude Include="Network.h">
@@ -254,6 +255,7 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="CGraphicNetwork.cu" />
+    <CudaCompile Include="Hessian_Network.cu" />
     <CudaCompile Include="LongTermShortTermNetwork.cu" />
     <CudaCompile Include="LongTermShortTermNetworkGrowth.cu" />
     <CudaCompile Include="LongTermShortTermShrink.cu" />

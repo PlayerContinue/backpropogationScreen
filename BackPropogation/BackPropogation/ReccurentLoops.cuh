@@ -30,7 +30,13 @@
 #include "NetworkBase.cuh"
 #endif
 #include "RecurrentNeuralNetwork.cuh"
+
+#ifndef _X_INCLUDE_LONG_TERM_
+#define _X_INCLUDE_LONG_TERM_
 #include "LongTermShortTermNetwork.cuh"
+#endif
+
+#include "Hessian_Network.cuh"
 
 #ifndef __DATAPOINTS_H_INCLUDED___
 #include "DataPoints.h"

@@ -87,7 +87,7 @@ class LongTermShortTermNetwork : public NetworkBase{
 	//*********************
 	//Class Variables
 	//*********************
-private:
+protected:
 
 	vector<long> positionOfLastWeightToNode;
 	long numberOfNodes; //The number of nodes currently in the system which can be linked to
@@ -132,7 +132,7 @@ private:
 	//Stores the delta in GPU Memory
 	host_vector<weight_type> host_deltas;
 	thrust::device_vector<weight_type> device_deltas;
-	thrust::device_vector<weight_type> alphas;
+	
 	//Stores the total error
 	weight_type total_error;
 
@@ -207,33 +207,34 @@ private:
 	//***************************
 	//Train the Network
 	//***************************
-
+public:
 	//Initilialize the network for training
 	virtual void InitializeTraining(){
 		this->InitializeLongShortTermMemory();
 	}
 
-	virtual void StartTraining(weight_type* in, weight_type* out){
+	void StartTraining(weight_type* in, weight_type* out){
 		//Does nothing for the moment
 	}
 
 	//Run a round of training
-	virtual void StartTraining(weight_type** in, weight_type* out){
+	void StartTraining(weight_type** in, weight_type* out){
 		//this->LongShortTermMemoryTraining(in, out);
 	}
 
 	void StartTraining(weight_type** in, weight_type** out);
+
 	//Apply the error to the network
 	virtual void ApplyError(){
 		this->ApplyLongTermShortTermMemoryError();
 	}
 
-	virtual int GetNumberLocked(){
+	int GetNumberLocked(){
 		this->CheckDeltaNeedLocked();
 		return this->number_locked;
 	}
 
-private:
+protected:
 	//Add the input into the GPU_Weight_objects
 	void setInput(weight_type* in);
 	void setInput(weight_type** in);
@@ -261,10 +262,6 @@ private:
 	//Apply the error to the bias
 	void ApplyErrorToBias();
 
-	//Find the alpha to multiply the delta by
-	void findAlpha();
-	//Find the hessian free matrix
-	void findHessianFreeMatrix();
 	//Check, and lock, any delta which are below the set cap
 	void CheckDeltaNeedLocked();
 	void SetInitialLock();
@@ -284,8 +281,8 @@ public:
 
 	//Only used for dubug. Outputs a simple example of what the network looks like
 	void VisualizeNetwork();
-	virtual ostream& OutputNetwork(ostream &os);
-	virtual istream& LoadNetwork(istream& is);
+	ostream& OutputNetwork(ostream &os);
+	istream& LoadNetwork(istream& is);
 	//***************************
 	//Modify Structure Of Neuron
 	//***************************

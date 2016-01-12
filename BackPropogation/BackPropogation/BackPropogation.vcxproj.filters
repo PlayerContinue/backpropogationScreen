@@ -43,6 +43,12 @@
     <Filter Include="Source Files\DataPoints">
       <UniqueIdentifier>{0f6854d2-0769-446b-9cc7-10413a19479e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RecurrentNetwork\Hessian Network">
+      <UniqueIdentifier>{7d42d9f0-4285-48cf-b9c4-1c722a36ea7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RecurrentNetwork\Hessian_Network">
+      <UniqueIdentifier>{6fd6d85c-049b-4bd7-9216-db66893e5e78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="structures.h">
@@ -105,6 +111,9 @@
     <ClInclude Include="DataPoints.h">
       <Filter>Header Files\DataPoints</Filter>
     </ClInclude>
+    <ClInclude Include="Hessian_Network.cuh">
+      <Filter>Header Files\RecurrentNetwork\Hessian Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="BackPropogation.rc">
@@ -147,6 +156,9 @@
     </CudaCompile>
     <CudaCompile Include="RecurrentLoopsThreads.cu">
       <Filter>Source Files\RecurrentNetwork</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Hessian_Network.cu">
+      <Filter>Source Files\RecurrentNetwork\Hessian_Network</Filter>
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
