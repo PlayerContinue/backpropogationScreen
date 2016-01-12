@@ -1222,7 +1222,7 @@ namespace functors{
 			return  ((T)x * (T)sigmoid_derivative_function(y));
 
 		}
-
+		__host__ __device__
 		inline T sigmoid_derivative_function(const thrust::complex<T> &x) const {
 			thrust::complex<T> temp = thrust::exp(((thrust::complex<T>)x) / thrust::pow((thrust::exp((thrust::complex<T>)x) + (thrust::complex<T>)1), (thrust::complex<T>)2));
 			return temp.real();
