@@ -1088,8 +1088,8 @@ namespace functors{
 		mean_square_error(){};
 
 		__host__ __device__
-			T operator()(const T &target,const T &pred)const{
-			return (pred - target)*(pred - target);
+			T operator()(const thrust::complex<T> &target,const thrust::complex<T> &pred)const{
+			return ((thrust::complex<T>)thrust::pow(target-pred,(thrust::complex<T>)2)).real();
 		}
 
 		template <typename Tuple>
@@ -1200,6 +1200,35 @@ namespace functors{
 		}
 
 	};
+
+
+	template <typename T>
+	struct find_forward_x_hessian : public thrust::unary_function < T, T > {
+		find_forward_x_hessian(){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x) const{
+			return ((T)thrust::get<0>(x)* (T)thrust::get<1>(x)) + ((T)thrust::get<2>(x) * (T)thrust::get<3>(x));
+		}
+		
+	};
+	template <typename T>
+	struct find_forward_y_hessian {
+		
+		__host__ __device__
+			T operator()(const T &x, const T &y)const{//hessian x_i, unsquashed input
+
+			return  ((T)x * (T)sigmoid_derivative_function(y));
+
+		}
+
+		inline T sigmoid_derivative_function(const thrust::complex<T> &x) const {
+			thrust::complex<T> temp = thrust::exp(((thrust::complex<T>)x) / thrust::pow((thrust::exp((thrust::complex<T>)x) + (thrust::complex<T>)1), (thrust::complex<T>)2));
+			return temp.real();
+		}
+	};
+
 
 	
 }

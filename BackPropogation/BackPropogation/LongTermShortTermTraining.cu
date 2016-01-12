@@ -81,7 +81,12 @@ void LongTermShortTermNetwork::StartTraining(weight_type** in, weight_type** out
 	//Find the delta 
 	this->FindBackPropDelta(out, 0);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-	this->findAlpha();
+	//Find Initial Hessian Values
+	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	//this->findHessianFreeMatrix();
+	//thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	//Find the alpha
+	//this->findAlpha();
 	this->FindPreviousBias();
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	this->FindPreviousWeights();
@@ -131,13 +136,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				this->GPUPreviousOutput_Values.begin()
 				);
 
-			/*thrust::transform(
-				this->GPUBias.begin() + number_nodes_to_internal_next_layer,
-				this->GPUBias.begin() + number_nodes_to_internal_next_layer + this->number_nodes_in_layer[j],
-				this->GPUPreviousOutput_Values.begin(),
-				this->alphas.begin() + number_nodes_to_start_of_alpha_storage + number_nodes_to_internal_next_layer,
-				thrust::plus<weight_type>()
-				);*/
+			thrust::copy(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), this->alphas.begin() + number_nodes_to_start_of_storage_layer + number_nodes_to_internal_next_layer);
 
 			//Add the bias to the current value
 			thrust::transform(this->GPUBias.begin() + number_nodes_to_internal_next_layer,
@@ -147,7 +146,7 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 				functors::sum_and_sigmoid<weight_type>()
 				);
 
-			if (j == 0){
+			/*if (j == -1){
 				//Redo the cell with the gate values
 				thrust::for_each(
 					thrust::make_zip_iterator(
@@ -178,21 +177,10 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 
 					);
 
-				/*thrust::copy(
-					this->GPUPreviousOutput_Values.begin() + 
-					this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + 
-					this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL],
-					this->GPUPreviousOutput_Values.begin() +
-					this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + 
-					this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + 
-					this->number_nodes_by_type[0][MEMORY_CELL],
-					this->alphas.begin() + number_nodes_to_start_of_alpha_storage + 
-					number_nodes_to_internal_next_layer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL]
-					);*/
 
 				
 
-			}
+			}*/
 
 
 #ifdef NVIDA_OUTPUT_TEST2
@@ -230,6 +218,43 @@ void LongTermShortTermNetwork::LongTermShortTermNetwork::LongShortTermMemoryTrai
 
 }
 
+void LongTermShortTermNetwork::findHessianFreeMatrix(){
+	//Initial layer has x_i of 0
+	// and therefore y_i of 0
+	//Find the vector of the x_i
+	thrust::reduce_by_key(
+		Unique_Iterator::make_repeat_list_iterator(this->GPUMapTo.begin(), this->GPUMapTo.size()),
+		Unique_Iterator::make_repeat_list_iterator(this->GPUMapTo.begin(), this->GPUMapTo.size()),
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		Unique_Iterator::make_repeat_list_iterator(this->GPUWeights.begin(), this->GPUWeights.size()),
+		Unique_Iterator::make_return_iterator(this->alphas.begin(), this->alphas.end(), this->numberOfNodes + this->numberNonWeights,
+		this->numberOfNodes + this->numberNonWeights, this->settings.i_input),
+		this->GPUOutput_values.begin(),
+		thrust::make_constant_iterator((int)1)
+		)
+		),
+		functors::find_forward_x_hessian<weight_type>()
+		),
+		thrust::make_discard_iterator(),
+		this->GPUPreviousOutput_Values.begin()
+		);
+
+	//Find the forward hessian weight
+	thrust::transform(
+		this->GPUPreviousOutput_Values.begin(),
+		this->GPUPreviousOutput_Values.begin() + this->numberOfNodes,
+		this->alphas.begin(),
+		this->alphas.begin(),
+		functors::find_forward_y_hessian<weight_type>()
+		);
+
+
+
+
+}
+
 
 
 
@@ -248,7 +273,7 @@ void LongTermShortTermNetwork::FindBackPropDelta(weight_type** out, int current_
 			this->RealOutput[j] = out[i - 1][j];
 		}
 
-		if (this->total_unlearned_new_nodes <= 0){
+		if (this->total_unlearned_new_nodes <= 0 || true){
 			//Find the delta of the output for the current layer
 			//output * (1-output) * (target - output)
 			thrust::transform(
@@ -1125,7 +1150,7 @@ void LongTermShortTermNetwork::findAlpha(){
 		functors::special_divide<weight_type>()
 		);
 
-	thrust::reduce_by_key(
+	/*thrust::reduce_by_key(
 		Unique_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), this->settings.i_backprop_unrolled),
 		Unique_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), this->settings.i_backprop_unrolled) + alpha_length,
 		thrust::make_permutation_iterator(
@@ -1161,7 +1186,7 @@ void LongTermShortTermNetwork::findAlpha(){
 		this->GPUWeights.begin(),
 		thrust::plus<weight_type>()
 
-		);
+		);*/
 	testing::outputToFile(this->alphas, "alpha", "tests/alpha.txt");
 	testing::outputToFile(this->GPUPreviousWeights, "prev", "tests/prev.txt");
 	
@@ -1351,7 +1376,7 @@ thrust::device_vector<weight_type> LongTermShortTermNetwork::runNetwork(int numb
 			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL], //Old Potential
 			this->GPUOutput_values.begin() + numberBlocksToLayer + this->number_nodes_by_type[0][INPUT_CELL] + this->number_nodes_by_type[0][OUTPUT_CELL] + this->number_nodes_by_type[0][FORGET_CELL] + this->number_nodes_by_type[0][POTENTIAL_MEMORY_CELL] + this->number_nodes_by_type[0][MEMORY_CELL]//Old Memory Cell Values
 			)),
-			functors::run_memory_block_functon_multiply<weight_type>());
+			functors::run_memory_block_functon<weight_type>());
 
 #ifdef TRAININGTEST
 		if (number_of_extra_weights == 0){

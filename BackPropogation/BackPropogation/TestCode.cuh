@@ -175,6 +175,7 @@ namespace value_testing{
 	void getMeanSquareError(Iterator _pred_begin, Iterator _pred_end, Iterator _real_begin, Iterator _real_end, host_vector<T> &storage){
 		storage[0] = getMeanSquareErrorResults<T>(_pred_begin, _pred_end, _real_begin, _real_end);
 		//Copy the values
+		int k = _real_end - _real_begin;
 		thrust::copy(_real_begin, _real_end, storage.begin() + 1);
 		thrust::copy(_real_begin, _real_end, storage.begin() + 1 + (_real_end - _real_begin));
 	}

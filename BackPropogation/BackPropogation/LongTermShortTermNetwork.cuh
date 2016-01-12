@@ -263,6 +263,8 @@ private:
 
 	//Find the alpha to multiply the delta by
 	void findAlpha();
+	//Find the hessian free matrix
+	void findHessianFreeMatrix();
 	//Check, and lock, any delta which are below the set cap
 	void CheckDeltaNeedLocked();
 	void SetInitialLock();

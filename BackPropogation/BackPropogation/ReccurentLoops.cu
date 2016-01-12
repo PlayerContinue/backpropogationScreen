@@ -782,6 +782,8 @@ void ReccurentLoops::getMeanSquareError(){
 		}
 		else{
 			vec = this->runTrainingNetwork(this->training_input[i]);
+			thrust::copy(thrust::make_constant_iterator(.2), thrust::make_constant_iterator(.2) + vec.size(), vec.begin()); 
+			thrust::copy(thrust::make_constant_iterator(.2), thrust::make_constant_iterator(.2) + real_output.size(), real_output.begin());
 			for (int j = 0; j < this->settings.i_output; j++){
 				real_output[j] = this->training_output[i][j];
 			}
