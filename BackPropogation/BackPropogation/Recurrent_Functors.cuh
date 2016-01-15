@@ -1208,11 +1208,12 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x) const{
+			T operator()(const Tuple &x) const{//weight,R(Y),Y, v
 			return ((T)thrust::get<0>(x)* (T)thrust::get<1>(x)) + ((T)thrust::get<2>(x) * (T)thrust::get<3>(x));
 		}
 		
 	};
+
 	template <typename T>
 	struct find_forward_y_hessian {
 		
@@ -1223,10 +1224,123 @@ namespace functors{
 
 		}
 		__host__ __device__
-		inline T sigmoid_derivative_function(const thrust::complex<T> &x) const {
-			thrust::complex<T> temp = thrust::exp(((thrust::complex<T>)x) / thrust::pow((thrust::exp((thrust::complex<T>)x) + (thrust::complex<T>)1), (thrust::complex<T>)2));
-			return temp.real();
+		inline T sigmoid_derivative_function(const T &x) const {
+			
+			return x * (1-x);
 		}
+	};
+
+	//Find the hessian of the output layer
+	template <typename T>
+	struct find_backward_w_hessian_output {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{//hessian x_i, squashed output, delta
+			T R_Y = ((T)thrust::get<0>(x) * (T)sigmoid_derivative_function(thrust::get<1>(x)));
+			thrust::get<2>(X) = ((T)sigmoid_derivative_function(thrust::get<1>(x)) * R_Y) + ((thrust::get<0>(x)*(1 - (2 * thrust::get<1>(x))) * (T)sigmoid_derivative_function(thrust::get<1>(x)) * thrust::get<2>(x)));
+			R_Y = thrust::get<1>(x) * R_Y;
+			return R_Y ;
+
+		}
+		__host__ __device__
+			inline T sigmoid_derivative_function(const T &x) const {
+
+			return x * (1 - x);
+		}
+	};
+
+	template <typename T>
+	struct find_backward_partial_y_hessian {
+
+		const bool is_second;
+		find_backward_partial_y_hessian(bool _is_second) :is_second(_is_second){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{//W, R(DE/dx_j), hessian x_i,y_j,v_ij, y_i
+			//R(y)  * (e'(y) * (y)*(1-y) * w^2)
+			T R_Y = error_derivative_function(thrust::get<3>(x)) * sigmoid_derivative_function(thrust::get<3>(x)) * thrust::get<0>(x) * thrust::get<0>(x);
+			R_Y *= (thrust::get<5>(x) * thrust::get<2>(x)); //R(x_i) * y_i
+			R_Y += (thrust::get<0>(x) * thrust::get<1>(x)) + (thrust::get<4>(x) * sigmoid_derivative_function(thrust::get<3>(x)));
+			R_Y *= sigmoid_derivative_function(thrust::get<3>(x));
+			return  R_Y;
+
+		}
+		__host__ __device__
+			inline T sigmoid_derivative_function(const T &x) const {
+
+			return x * (1 - x);
+		}
+
+		inline T error_derivative_function(const T &x) const{
+			if (is_second){
+				return 1;
+			}
+			else{
+				return x * (1 - x);
+			}
+		}
+	};
+
+	template <typename T>
+	struct find_backward_partial_x_hessian {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{//y_i,dE/y_i,R(x_i),delta_i
+			return thrust::get<1>(x) + (thrust::get<2>(x)*(1 - (2 * thrust::get<0>(x)))*sigmoid_derivative_function(thrust::get<0>(x)*thrust::get<3>(x));
+
+		}
+		__host__ __device__
+			inline T sigmoid_derivative_function(const T &x) const {
+
+			return x * (1 - x);
+		}
+
+		 inline T error_derivative_function(const T &x) const{
+			if (is_second){
+				return 1;
+			}
+			else{
+				return x * (1 - x);
+			}
+		}
+	};
+
+	template <typename T>
+	struct find_backward_partial_w_hessian {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{//y_j,dE/dx_j,R(x_i)
+			return (thrust::get<0>(x) * thrust::get<1>(x)) + (thrust::get<0>(x) * thrust::get<2>(x) * sigmoid_derivative_function(thrust::get<0>(x)));
+
+		}
+		__host__ __device__
+			inline T sigmoid_derivative_function(const T &x) const {
+
+			return x * (1 - x);
+		}
+
+		
+	};
+
+	//Find the value of the derivative of the error
+	template <typename T>
+	struct find_derivative_error {
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x)const{//hessian x_i, unsquashed input
+			thrust::complex<T> exper = thrust::get<0>(x);
+			exper = thrust::exp(exper);
+			exper = (1 / thrust::pow((exper + 1), (thrust::complex<T>)2)) - (1 / (exper + 1));
+
+			return  (T)exper.real() * (T)thrust::get<1>(x);
+
+		}
+
 	};
 
 

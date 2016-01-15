@@ -11,22 +11,26 @@ private:
 public:
 	//Default Constructor
 	//Creates a network with 1 input and 1 output
-	Hessian_Network() :LongTermShortTermNetwork(){};
+	Hessian_Network() :LongTermShortTermNetwork(){
+	};
 
 	//Constructor which asks for a settings object 
 	//The settings object contains all the information required to perform a function
-	Hessian_Network(CSettings& settings):LongTermShortTermNetwork(settings){};
+	Hessian_Network(CSettings& settings):LongTermShortTermNetwork(settings){
+	};
 
 	//Create a LongTermShortTermNetwork from a checkpoint
-	Hessian_Network(CSettings& settings, bool checkpoint) :LongTermShortTermNetwork(settings,checkpoint){};
+	Hessian_Network(CSettings& settings, bool checkpoint) :LongTermShortTermNetwork(settings,checkpoint){
+	};
 
 	//***************************
 	//Train the Network
 	//***************************
-
+	void InitializeHessianNetwork();
+	void InitializeTraining();
 	void ApplyError();
 	void StartTraining(weight_type** in, weight_type** out);
-	void InitializeHessianNetwork();
+	
 	void TrainingRun(weight_type** in, weight_type** out);
 private:
 
@@ -37,8 +41,8 @@ private:
 	
 
 	//Find the hessian free matrix
-	void findHessianFreeMatrix();
+	void findHessianFreeMatrixForward();
 
-	
+	void findHessianFreeMatrixBackward();
 
 };
