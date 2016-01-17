@@ -28,19 +28,27 @@ void Hessian_Network::StartTraining(weight_type** in, weight_type** out){
 	//Run the network
 	this->TrainingRun(in, out);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-	//Find the delta 
-	this->FindBackPropDelta(out, 0);
-	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	int temp = this->GPUPreviousOutput_Values.size();
 	//Find Initial Hessian Values
 	this->GPUPreviousOutput_Values.resize(this->numberOfNodes + this->numberNonWeights);
-	thrust::copy(this->GPUOutput_values.begin(), this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights, 
+	thrust::copy(this->GPUOutput_values.begin(), this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights,
 		this->GPUPreviousOutput_Values.begin());
 	this->findHessianFreeMatrixForward();
-	//thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
-	//Find the alpha
-	//this->findAlpha();
+	this->GPUPreviousOutput_Values.resize(temp);
+	//Find the delta 
+	this->FindBackPropDelta(out, 0);
+	
+	//Find backward
+	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	this->GPUPreviousOutput_Values.resize(this->numberOfNodes + this->numberNonWeights);
+	this->findHessianFreeMatrixBackward();
+	
+	this->GPUPreviousOutput_Values.resize(temp);
+	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	
 	this->FindPreviousBias();
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	
 	this->FindPreviousWeights();
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
@@ -127,17 +135,16 @@ void Hessian_Network::findHessianFreeMatrixForward(){
 	unsigned int end_node_internal = 0;//The number of nodes to the end of the current iterator
 	unsigned int start_weight_internal = 0;//The number of weights to the start of the current iteration
 	unsigned int end_weight_internal = 0;//Number of weights to the end of the current iteration
-	
+#ifdef HESSIAN_FORWARD_OUT
 	testing::outputToFile(this->GPUPreviousOutput_Values, "input", "tests/alphas.txt");
 	testing::outputToFile<weight_type>(this->GPUOutput_values, "output", "tests/alphas.txt");
+#endif
 	//thrust::fill(this->GPUOutput_values.begin(), this->GPUOutput_values.end(), (weight_type).6);
-	for (int i = 0; i < this->settings.i_backprop_unrolled; i++){
+	testing::outputToFile(this->GPUOutput_values, "tests", "tests/gpuout1.txt");
+	for (int i = 0; i < this->settings.i_backprop_unrolled-1; i++){
 		for (int j = 0; j < this->mBlocksLayers.size(); j++){
 		end_weight_internal += this->numberOfWeightsInLayers[j];
 		end_node_internal += this->number_nodes_in_layer[j];
-		if (j == 1){//Add the number of nodes which are part of the input layer
-			end_node_internal += this->numberNonWeights;
-		}
 		
 #ifdef HESSIAN_FORWARD_OUT
 		testing::outputToFile<weight_type>(
@@ -196,6 +203,7 @@ void Hessian_Network::findHessianFreeMatrixForward(){
 			thrust::make_discard_iterator(),
 			this->alphas.begin() + start + start_node_internal
 			);
+
 #ifdef HESSIAN_FORWARD_OUT
 		testing::outputToFile(this->alphas, "R(X)", "tests/alphas.txt");
 #endif
@@ -207,6 +215,7 @@ void Hessian_Network::findHessianFreeMatrixForward(){
 			this->GPUPreviousOutput_Values.begin() + start_node_internal + this->numberNonWeights,
 			functors::find_forward_y_hessian<weight_type>()
 			);
+		
 #ifdef HESSIAN_FORWARD_OUT
 		testing::outputToFile(this->GPUPreviousOutput_Values, "R(Y)", "tests/alphas.txt");
 #endif
@@ -231,33 +240,34 @@ void Hessian_Network::findHessianFreeMatrixForward(){
 }
 
 void Hessian_Network::findHessianFreeMatrixBackward(){
-	int start_node_internal = (this->settings.i_backprop_unrolled * (this->numberOfNodes)) - this->numberOfNodes;
-	int end_node_internal = (this->settings.i_backprop_unrolled * (this->numberOfNodes));
-	int start_output = (this->settings.i_backprop_unrolled) * (this->numberOfNodes + this->numberNonWeights) - this->numberNonWeights - this->numberOfNodes;
+	int start_node_internal = ((this->settings.i_backprop_unrolled-1) * (this->numberOfNodes)) - this->numberOfNodes;
+	int end_node_internal = ((this->settings.i_backprop_unrolled -1) * (this->numberOfNodes));
+	int start_output = (this->settings.i_backprop_unrolled - 1) * (this->numberOfNodes + this->numberNonWeights) - this->numberNonWeights - this->numberOfNodes;
 	int end_output = (this->settings.i_backprop_unrolled) * (this->numberOfNodes + this->numberNonWeights);
 	bool is_second = false;
 	//Find R(dE/dx_i) and R(dE/dy_i) of the outputs
 	//R(dE/dx_i) is stored in device_deltas, R(dE/dy_i) is stored in alphas
-	thrust::transform(
+	testing::outputToFile(this->alphas, "testing", "tests/alphas.txt");
+	thrust::for_each(
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
-		Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes,this->settings.i_output,this->numberOfNodes),
-		Unique_Iterator::make_skip_iterator(this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights, this->settings.i_output, this->numberOfNodes + this->numberNonWeights),
-		Unique_Iterator::make_skip_iterator(this->device_deltas.begin() + this->numberOfNodes, this->numberOfNodes, this->settings.i_output)
+		Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes - this->settings.i_output, this->settings.i_output, this->numberOfNodes - this->settings.i_output),
+		Unique_Iterator::make_skip_iterator(this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights - this->settings.i_output, this->settings.i_output, this->numberOfNodes + this->numberNonWeights - this->settings.i_output),
+		Unique_Iterator::make_skip_iterator(this->device_deltas.begin() + this->numberOfNodes - this->settings.i_output, this->settings.i_output, this->numberOfNodes - this->settings.i_output)
 		)
 		),
 		thrust::make_zip_iterator(
 		thrust::make_tuple(
-		Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes, this->settings.i_output, this->numberOfNodes) + end_node_internal,
-		Unique_Iterator::make_skip_iterator(this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights,
-		this->settings.i_output, this->numberOfNodes + this->numberNonWeights) + end_node_internal,
-		Unique_Iterator::make_skip_iterator(this->device_deltas.begin() + this->numberOfNodes, this->settings.i_output, this->numberOfNodes) + end_node_internal
+		Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes - this->settings.i_output, this->settings.i_output, this->numberOfNodes - this->settings.i_output) + end_node_internal,
+		Unique_Iterator::make_skip_iterator(this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights - this->settings.i_output, this->settings.i_output, this->numberOfNodes + this->numberNonWeights - this->settings.i_output) + end_output,
+		Unique_Iterator::make_skip_iterator(this->device_deltas.begin() + this->numberOfNodes - this->settings.i_output, this->settings.i_output, this->numberOfNodes - this->settings.i_output) + end_node_internal
 		)
 		),
-		functors::find_backward_w_hessian_output<weight_type>(),
-		Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes, this->settings.i_output, this->numberOfNodes)
+		functors::find_backward_w_hessian_output<weight_type>()
 		);
-
+	//testing::outputToFile<weight_type>(Unique_Iterator::make_skip_iterator(this->alphas.begin() + this->numberOfNodes 
+		//- this->settings.i_output, this->settings.i_output, this->numberOfNodes - this->settings.i_output), this->settings.i_output * (this->settings.i_backprop_unrolled - 1), "test", "tests/out1.txt");
+	testing::outputToFile(this->alphas, "testing", "tests/alphas2.txt");
 	for (int i = this->settings.i_backprop_unrolled - 1; i >= 0; i--){
 		
 		
@@ -307,6 +317,7 @@ void Hessian_Network::findHessianFreeMatrixBackward(){
 					thrust::make_discard_iterator(),
 					this->GPUPreviousOutput_Values.begin()
 					);
+
 				//Find w_i
 				thrust::transform(
 					thrust::make_zip_iterator(
@@ -323,6 +334,7 @@ void Hessian_Network::findHessianFreeMatrixBackward(){
 					this->alphas.begin() + start_node_internal + this->numberOfNodes
 					)
 					),
+					
 					this->alphas.begin() + start_node_internal + this->numberOfNodes,
 					functors::find_backward_partial_w_hessian<weight_type>()
 					);
@@ -345,8 +357,8 @@ void Hessian_Network::findHessianFreeMatrixBackward(){
 					this->device_deltas.begin() + end_node_internal
 					)
 					),
-					functors::find_backward_partial_x_hessian<weight_type>(),
-					this->GPUPreviousOutput_Values.begin()
+					this->GPUPreviousOutput_Values.begin(),
+					functors::find_backward_partial_x_hessian<weight_type>()
 					);
 			
 				

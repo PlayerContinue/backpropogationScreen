@@ -1215,7 +1215,7 @@ namespace functors{
 	};
 
 	template <typename T>
-	struct find_forward_y_hessian {
+	struct find_forward_y_hessian : public thrust::unary_function < T, T >{
 		
 		__host__ __device__
 			T operator()(const T &x, const T &y)const{//hessian x_i, unsquashed input
@@ -1232,15 +1232,18 @@ namespace functors{
 
 	//Find the hessian of the output layer
 	template <typename T>
-	struct find_backward_w_hessian_output {
+	struct find_backward_w_hessian_output : public thrust::unary_function < T, T >{
 
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(const Tuple &x)const{//hessian x_i, squashed output, delta
-			T R_Y = ((T)thrust::get<0>(x) * (T)sigmoid_derivative_function(thrust::get<1>(x)));
-			thrust::get<2>(X) = ((T)sigmoid_derivative_function(thrust::get<1>(x)) * R_Y) + ((thrust::get<0>(x)*(1 - (2 * thrust::get<1>(x))) * (T)sigmoid_derivative_function(thrust::get<1>(x)) * thrust::get<2>(x)));
-			R_Y = thrust::get<1>(x) * R_Y;
-			return R_Y ;
+			T R_Y = ((T)thrust::get<0>(x) * (T)sigmoid_derivative_function((T)thrust::get<1>(x)));
+			thrust::get<2>(x) = ((T)sigmoid_derivative_function((T)thrust::get<1>(x)) * R_Y) + 
+				(((T)thrust::get<0>(x)*(1 - (2 * (T)thrust::get<1>(x))) * (T)sigmoid_derivative_function((T)thrust::get<1>(x)) * 
+				(T)thrust::get<2>(x)));
+			thrust::get<0>(x) = (T)thrust::get<1>(x) * R_Y;
+			
+			return R_Y;
 
 		}
 		__host__ __device__
@@ -1251,7 +1254,7 @@ namespace functors{
 	};
 
 	template <typename T>
-	struct find_backward_partial_y_hessian {
+	struct find_backward_partial_y_hessian : public thrust::unary_function < T, T >{
 
 		const bool is_second;
 		find_backward_partial_y_hessian(bool _is_second) :is_second(_is_second){};
@@ -1284,12 +1287,12 @@ namespace functors{
 	};
 
 	template <typename T>
-	struct find_backward_partial_x_hessian {
+	struct find_backward_partial_x_hessian : public thrust::unary_function < T, T >{
 
 		template <typename Tuple>
 		__host__ __device__
 			T operator()(const Tuple &x)const{//y_i,dE/y_i,R(x_i),delta_i
-			return thrust::get<1>(x) + (thrust::get<2>(x)*(1 - (2 * thrust::get<0>(x)))*sigmoid_derivative_function(thrust::get<0>(x)*thrust::get<3>(x));
+			return thrust::get<1>(x) + (thrust::get<2>(x)*(1 - (2 * thrust::get<0>(x)))*sigmoid_derivative_function(thrust::get<0>(x)*thrust::get<3>(x)));
 
 		}
 		__host__ __device__
@@ -1309,7 +1312,7 @@ namespace functors{
 	};
 
 	template <typename T>
-	struct find_backward_partial_w_hessian {
+	struct find_backward_partial_w_hessian : public thrust::unary_function < T, T >{
 
 		template <typename Tuple>
 		__host__ __device__
@@ -1328,7 +1331,7 @@ namespace functors{
 
 	//Find the value of the derivative of the error
 	template <typename T>
-	struct find_derivative_error {
+	struct find_derivative_error : public thrust::unary_function < T, T >{
 
 		template <typename Tuple>
 		__host__ __device__
