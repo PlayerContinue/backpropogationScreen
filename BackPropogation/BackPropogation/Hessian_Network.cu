@@ -20,6 +20,8 @@ void Hessian_Network::InitializeTraining(){
 //Training the Network
 //*********************
 
+
+
 void Hessian_Network::StartTraining(weight_type** in, weight_type** out){
 	//Reset the weights to the end of the weights
 	this->averageWeights();
@@ -52,10 +54,10 @@ void Hessian_Network::StartTraining(weight_type** in, weight_type** out){
 	this->GPUPreviousOutput_Values.resize(temp);
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	
-	this->FindPreviousBias();
-	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
+	//this->FindPreviousBias();
+	//thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	
-	this->FindPreviousWeights();
+	//this->FindPreviousWeights();
 	thrust::fill(this->GPUPreviousOutput_Values.begin(), this->GPUPreviousOutput_Values.end(), (weight_type)0);
 	thrust::fill(this->device_deltas.begin(), this->device_deltas.end(), (weight_type)0);
 }
@@ -259,14 +261,17 @@ void Hessian_Network::findWeightDeltas(){
 		)
 		),
 		thrust::make_discard_iterator(),
-		this->GPUBias.begin()
+		this->GPUPreviousBias.begin()
 		);
+	testing::outputToFile(this->device_deltas, "testing", "tests/device_deltas.txt");
+	testing::outputToFile(this->GPUPreviousBias, "testing", "tests/GPUPREVBIAS.txt");
+	testing::outputToFile(this->GPUOutput_values, "testing", "tests/GPUOUTPUTVALUES.txt");
 	//Find the deltas of the weights
 	thrust::transform(
 		this->GPUWeights.begin(),
 		this->GPUWeights.end(),
 		thrust::make_permutation_iterator(
-		this->GPUBias.begin(),
+		this->GPUPreviousBias.begin(),
 		this->GPUMapTo.begin()
 		),
 		this->GPUPreviousWeights.begin(),
@@ -423,57 +428,141 @@ void Hessian_Network::findHessianFreeMatrixBackward(){
 }
 
 void Hessian_Network::ApplyError(){
-	this->ApplyLongTermShortTermMemoryError();
+	//this->ApplyLongTermShortTermMemoryError();
 }
 
 void Hessian_Network::findAlpha(){
 	
-	testing::outputToFile(this->hessian, "testing", "tests/hessian.txt");
-	thrust::fill(this->alphas.begin(), this->alphas.end(), (weight_type)0);
-	
-	//Find the top half
-	thrust::reduce_by_key(
-		this->count.begin(),
-		this->count.end(),
-		thrust::make_permutation_iterator(
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(//Hessian, Delta of weights, delta x
-		this->hessian.begin(),
-		this->GPUPreviousWeights.begin(),
-		this->alphas.begin()
-		)
-		),
-		functors::find_top_alpha<weight_type>()
-		),
-		this->positionToSum.begin()
-		),
-		thrust::make_discard_iterator(),
-		this->alphas.begin()
-		);
+	testing::outputToFile(this->GPUWeights, "testing", "tests/weights.txt");
+	testing::outputToFile(this->hessian, "training_output", "tests/hessian.txt");
+	thrust::device_vector<weight_type> temp = thrust::device_vector<weight_type>(this->GPUPreviousWeights);
+	thrust::fill(this->GPUPreviousWeights.begin() + this->numberOfWeightsInLayers[0] + (this->mBlocksLayers[0].size()), this->GPUPreviousWeights.end(), (weight_type)0);
+	testing::outputToFile(this->GPUPreviousWeights, "training_output", "tests/deltas.txt");
+	weight_type top;//Value of the top half
+	weight_type bottom;
+	for (int i = 0; i < this->settings.i_output; i++){
+		//Find the top half
+		top = thrust::reduce(
+			
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(//Hessian, Delta of weights, delta x
+			this->hessian.begin(),
+			this->GPUPreviousWeights.begin(),
+			this->alphas.begin()
+			)
+			),
+			functors::find_top_alpha<weight_type>()
+			),
 
-	//Find the denominator
-	thrust::reduce_by_key(
-		this->count.begin(),
-		this->count.end(),
-		thrust::make_permutation_iterator(
-		thrust::make_transform_iterator(
-		thrust::make_zip_iterator(
-		thrust::make_tuple(//Hessian, Delta of weights, delta x
-		this->hessian.begin(),
-		this->GPUPreviousWeights.begin(),
-		this->alphas.begin()
-		)
-		),
-		functors::find_top_alpha<weight_type>()
-		),
-		this->positionToSum.begin()
-		),
-		thrust::make_discard_iterator(),
-		this->alphas.begin()
-		);
+			
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(//Hessian, Delta of weights, delta x
+			this->hessian.begin(),
+			this->GPUPreviousWeights.begin(),
+			this->alphas.begin()
+			)
+			),
+			functors::find_top_alpha<weight_type>()
+			) + this->GPUWeights.size()
+			);
+
+		bottom = thrust::reduce(
+			
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(//Hessian, Delta of weights, delta x
+			this->hessian.begin(),
+			this->GPUPreviousWeights.begin()
+			)
+			),
+			functors::find_bottom_alpha<weight_type>()
+			),
+
+			
+			thrust::make_transform_iterator(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(//Hessian, Delta of weights, delta x
+			this->hessian.begin(),
+			this->GPUPreviousWeights.begin()
+			)
+			) + this->GPUWeights.size(),
+			functors::find_bottom_alpha<weight_type>()
+			)
+			);
 
 
-	testing::outputToFile(this->alphas, "testing", "tests/alphas.txt");
+		//Apply the error
+		thrust::transform(
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.begin(),
+			this->GPUPreviousWeights.begin(),
+			thrust::make_constant_iterator(top / bottom)
+			)
+			),
+			thrust::make_zip_iterator(
+			thrust::make_tuple(
+			this->GPUWeights.begin(),
+			this->GPUPreviousWeights.begin(),
+			thrust::make_constant_iterator(top / bottom)
+			)
+			),
+			this->GPUWeights.begin(),
+			functors::apply_hessian_alpha<weight_type>()
+			);
+		if (i < this->settings.i_output - 1){
+			//Find the new delta
+			top = thrust::reduce(
+				Unique_Iterator::make_skip_iterator(
+				thrust::make_transform_iterator(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(//Hessian, Delta of weights, delta x
+				this->hessian.begin(),
+				this->GPUPreviousWeights.begin(),
+				temp.begin()
+				)
+				),
+				functors::find_beta<weight_type>()
+				),
+				this->numberOfWeightsInLayers[0], this->mBlocksLayers[0].size()),
+
+				Unique_Iterator::make_skip_iterator(
+				thrust::make_transform_iterator(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(//Hessian, Delta of weights, delta x
+				this->hessian.begin(),
+				this->GPUPreviousWeights.begin(),
+				temp.begin()
+				)
+				),
+				functors::find_beta<weight_type>()
+				),
+				this->numberOfWeightsInLayers[0] + ((i+1)* this->mBlocksLayers[0].size()), this->mBlocksLayers[0].size()) + this->GPUWeights.size()
+				);
+
+			thrust::transform(
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUPreviousWeights.begin(),
+				temp.begin(),
+				thrust::make_constant_iterator(top / bottom)
+				)
+				),
+				thrust::make_zip_iterator(
+				thrust::make_tuple(
+				this->GPUPreviousWeights.begin(),
+				temp.begin(),
+				thrust::make_constant_iterator(top / bottom)
+				)
+				) + this->GPUPreviousBias.size(),
+				this->GPUPreviousWeights.begin(),
+				functors::find_new_beta<weight_type>()
+				);
+		}//End if Statement
+	}
+	//testing::outputToFile(this->alphas, "testing", "tests/alphas.txt");
+	testing::outputToFile(this->GPUWeights, "testing", "tests/weights.txt");
 
 }

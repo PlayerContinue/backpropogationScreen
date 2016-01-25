@@ -1174,17 +1174,55 @@ namespace functors{
 
 	};
 
+	template <typename T>
+	struct find_bottom_alpha : public thrust::unary_function < T, T > {
+		find_bottom_alpha(){};
+		//Overload the function operator
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x) const{//Hessian, Delta of weights, alpha top
+			return thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<1>(x);
+		}
 
+	};
 
 	template <typename T>
-	struct find_beta {
+	struct find_beta : public thrust::unary_function < T, T > {
 		find_beta(){};
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x){//prev_delta,value, delta
+			T operator()(const Tuple &x){//hessian, delta_i, delta_(i+1) 
 
-			return  (thrust::get<2>(x) * thrust::get<1>(x) * thrust::get<2>(x)) / (thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<0>(x));
+			return  thrust::get<0>(x) * thrust::get<1>(x) * thrust::get<2>(x);
+
+		}
+
+	};
+
+	template <typename T>
+	struct find_new_beta : public thrust::unary_function < T, T > {
+		find_new_beta(){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x){//d_i,delta_f(x_i+1), B_i 
+
+			return  (((T)-1)*thrust::get<1>(x)) + (thrust::get<0>(x) * thrust::get<1>(x));
+
+		}
+
+	};
+
+	template <typename T>
+	struct apply_hessian_alpha : public thrust::unary_function < T, T >  {
+		apply_hessian_alpha(){};
+
+		template <typename Tuple>
+		__host__ __device__
+			T operator()(const Tuple &x){//weights, delta weights, alphas
+
+			return  thrust::get<0>(x) +(thrust::get<1>(x) * thrust::get<2>(x));
 
 		}
 

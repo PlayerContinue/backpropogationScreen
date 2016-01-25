@@ -31,7 +31,9 @@ void LongTermShortTermNetwork::InitializeLongShortTermMemory(){
 
 void LongTermShortTermNetwork::averageWeights(){
 
-	thrust::copy(this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights)* this->training_previous_number_rows - 2), this->GPUOutput_values.begin() + ((this->numberOfNodes + this->numberNonWeights)* this->training_previous_number_rows - 1), this->GPUOutput_values.begin());//Replace the current input with the output from the last run
+	thrust::copy(this->GPUOutput_values.end() - this->numberNonWeights - this->numberOfNodes,
+		this->GPUOutput_values.end(),
+		this->GPUOutput_values.begin());//Replace the current input with the output from the last run
 	thrust::fill(this->GPUOutput_values.begin() + this->numberOfNodes + this->numberNonWeights, this->GPUOutput_values.end(), (weight_type)0);//Reset the rest of the output values
 
 
