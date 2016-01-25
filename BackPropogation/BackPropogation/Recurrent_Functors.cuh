@@ -1168,23 +1168,12 @@ namespace functors{
 		//Overload the function operator
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x) const{
-			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x) * (T)thrust::get<2>(x) * (T)-1);
+			T operator()(const Tuple &x) const{//Hessian, Delta of weights, Delta x
+			return -1 * (thrust::get<1>(x) * ((thrust::get<0>(x) * thrust::get<2>(x)) + thrust::get<1>(x)));
 		}
 
 	};
 
-	template <typename T>
-	struct find_alpha_denominator : public thrust::unary_function < T, T > {
-		find_alpha_denominator(){};
-		//Overload the function operator
-		template <typename Tuple>
-		__host__ __device__
-			T operator()(const Tuple &x) const{
-			return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x) * (T)thrust::get<0>(x));
-		}
-
-	};
 
 
 	template <typename T>
@@ -1230,27 +1219,29 @@ namespace functors{
 		}
 	};
 
-	//Find the hessian of the output layer
+
+
 	template <typename T>
-	struct find_backward_w_hessian_output : public thrust::unary_function < T, T >{
+	struct find_output_x_hessian_backward {
+
+		find_output_x_hessian_backward(){};
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x)const{//hessian x_i, squashed output, delta
-			T R_Y = ((T)thrust::get<0>(x) * (T)sigmoid_derivative_function((T)thrust::get<1>(x)));
-			thrust::get<2>(x) = ((T)sigmoid_derivative_function((T)thrust::get<1>(x)) * R_Y) + 
-				(((T)thrust::get<0>(x)*(1 - (2 * (T)thrust::get<1>(x))) * (T)sigmoid_derivative_function((T)thrust::get<1>(x)) * 
-				(T)thrust::get<2>(x)));
-			thrust::get<0>(x) = (T)thrust::get<1>(x) * R_Y;
-			
-			return R_Y;
+			void operator()(const Tuple &x)const {
+			T temp = thrust::get<0>(x) * (1 - thrust::get<0>(x));
+			thrust::get<1>(x) = (temp *
+				((T)thrust::get<2>(x) * (T)temp)) +
+				(((T)thrust::get<2>(x)*(1 - (2 * (T)thrust::get<0>(x))) * (T)temp *
+				(T)thrust::get<1>(x)));
+
 
 		}
-		__host__ __device__
-			inline T sigmoid_derivative_function(const T &x) const {
 
-			return x * (1 - x);
-		}
+	
+
+
+
 	};
 
 	template <typename T>
@@ -1275,7 +1266,7 @@ namespace functors{
 
 			return x * (1 - x);
 		}
-
+		__host__ __device__
 		inline T error_derivative_function(const T &x) const{
 			if (is_second){
 				return 1;
@@ -1300,7 +1291,7 @@ namespace functors{
 
 			return x * (1 - x);
 		}
-
+		__host__ __device__
 		 inline T error_derivative_function(const T &x) const{
 			if (is_second){
 				return 1;
@@ -1316,8 +1307,8 @@ namespace functors{
 
 		template <typename Tuple>
 		__host__ __device__
-			T operator()(const Tuple &x)const{//y_j,dE/dx_j,R(x_i)
-			return (thrust::get<0>(x) * thrust::get<1>(x)) + (thrust::get<0>(x) * thrust::get<2>(x) * sigmoid_derivative_function(thrust::get<0>(x)));
+			T operator()(const Tuple &x, T y)const{//y_j,dE/dx_j,R(x_i)
+			return  y + (thrust::get<0>(x) * thrust::get<1>(x)) + (thrust::get<0>(x) * thrust::get<2>(x) * sigmoid_derivative_function(thrust::get<0>(x)));
 
 		}
 		__host__ __device__

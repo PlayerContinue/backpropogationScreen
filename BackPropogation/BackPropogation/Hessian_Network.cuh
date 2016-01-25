@@ -7,7 +7,7 @@
 class Hessian_Network : public LongTermShortTermNetwork {
 private:
 	thrust::device_vector<weight_type> alphas;
-
+	thrust::device_vector<weight_type> hessian;
 public:
 	//Default Constructor
 	//Creates a network with 1 input and 1 output
@@ -45,4 +45,24 @@ private:
 
 	void findHessianFreeMatrixBackward();
 
+	//Find the deltas of the weights
+	void findWeightDeltas();
+
+	void ResetSequence(){
+		LongTermShortTermNetwork::ResetSequence();
+		thrust::fill(this->alphas.begin(), this->alphas.end(),(weight_type)0);
+		thrust::fill(this->hessian.begin(), this->hessian.end(), (weight_type)0);
+	};
+	//Resets all values except the weights, to-from, and other position information
+	void ResetAllSequence(){
+		LongTermShortTermNetwork::ResetAllSequence();
+		thrust::fill(this->alphas.begin(), this->alphas.end(), (weight_type)0);
+		thrust::fill(this->hessian.begin(), this->hessian.end(), (weight_type)0);
+	}
+
+	void emptyGPUMemory(){
+		LongTermShortTermNetwork::emptyGPUMemory();
+		clear_vector::free(this->alphas);
+		clear_vector::free(this->hessian);
+	}
 };
