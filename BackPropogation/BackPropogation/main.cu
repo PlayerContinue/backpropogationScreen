@@ -901,10 +901,10 @@ void initializeRecurrentNetwork(int argc, char** argv, CSettings settings){
 	ReccurentLoops RLoops;
 
 	if (!settings.b_loadFromCheckpoint){
-		RLoops = ReccurentLoops(settings, ReccurentLoops::LongTermShortTerm);
+		RLoops = ReccurentLoops(settings, ReccurentLoops::LongTermShortTerm,false);
 	}
 	else{
-		RLoops = ReccurentLoops(settings);
+		RLoops = ReccurentLoops(settings,ReccurentLoops::LongTermShortTerm,true);
 	}
 	double* temp = new double[settings.i_input];
 	char start;

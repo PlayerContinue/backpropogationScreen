@@ -227,8 +227,8 @@ void LongTermShortTermNetwork::addNonMemoryCellTOGPU(unsigned int &start_new, un
 		start_of_weights_to_insert_on += size_to_add;
 		this->addPositionOfWeightChange(start_of_weights_to_insert_on, start, start_of_nodes_to_insert_on + this->numberNonWeights, 1, size_to_add);
 		start_of_nodes_to_insert_on += 1;
-		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].number_memory_cells;
-		this->number_weights_by_type[layer][type] += size_to_add;
+		this->numberOfWeightsInLayers[layer] += this->mBlocksLayers[layer][j].weight_lists[memory_type].size() + 1;
+		this->number_weights_by_type[layer][type] += this->mBlocksLayers[layer][j].weight_lists[memory_type].size() + 1;
 		this->number_nodes_in_layer[this->number_nodes_in_layer.size() - 1] += 1;
 
 
@@ -431,14 +431,10 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 				last_added = start_of_nodes_to_insert_on - (add_length)+this->numberNonWeights;//Position of the start of new outputs
 				cell_block = &(this->mBlocksLayers[layer + 1]);
 				//Add the link to the output to the output row
-				output_pos = (this->GPUWeights.size() - (this->numberOfWeightsInLayers[layer + 1]) + (copy_from));
 				for (int i = 0; i < (*cell_block).size(); i++){
-					output_value = this->GPUWeights[output_pos];
 					for (int j = 0; j < add_length; j++){
-						(*cell_block)[i].addNewWeightConnection(last_added + j, output_value / (1+add_length));
+						(*cell_block)[i].addNewWeightConnection(last_added + j, RandomClamped(-.01,.01));
 					}
-					this->GPUWeights[output_pos] = output_value / (add_length + 1);
-					output_pos += this->mBlocksLayers[layer].size()-add_length;
 				}
 			}
 
@@ -550,7 +546,7 @@ void LongTermShortTermNetwork::addNewMemoryBlock(int numberMemoryCells, int laye
 	
 	vector<weight_type> list_of_values = vector<weight_type>();
 	Memory_Block mem;
-	this->mBlocksLayers[layer_num].push_back(Memory_Block(this->mBlocksLayers[layer_from][copy_from]));
+	/*this->mBlocksLayers[layer_num].push_back(Memory_Block(this->mBlocksLayers[layer_from][copy_from]));
 	
 	int start_of_weights_for_node = 0;
 	int start_of_nodes = 0;
@@ -584,6 +580,12 @@ void LongTermShortTermNetwork::addNewMemoryBlock(int numberMemoryCells, int laye
 
 		this->mBlocksLayers[layer_num].push_back(mem);
 		this->numberOfWeightsInLayers[layer_num] += this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size()-1].number_weights;
+	}*/
+	for (int i = 0; i < numberMemoryCells; i++){
+		this->mBlocksLayers[layer_num].push_back(Memory_Block(this->settings.i_input));
+		//Reset the memory weights to zero
+		this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size() - 1].memory_cell_weights[0] = 1;
+		this->mBlocksLayers[layer_num][this->mBlocksLayers[layer_num].size() - 1].weight_lists[cell_type::MEMORY_CELL][0] = 1;
 	}
 
 }

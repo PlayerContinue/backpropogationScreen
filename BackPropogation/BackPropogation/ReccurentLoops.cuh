@@ -125,10 +125,10 @@ public:
 	//Constructor for an network created from user settings
 	ReccurentLoops(CSettings settings);
 
-	ReccurentLoops(CSettings settings, int type);
+	ReccurentLoops(CSettings settings, int type, bool loadCheckpoint);
 
 	//Constructor for an object with settings and a checkpoint
-	ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint);
+	ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint, int type);
 
 
 private:
@@ -141,6 +141,7 @@ private:
 	//*********************
 	//Load Network From File
 	//*********************
+	
 	bool loadNetworkFromFile();
 	//Load from a file, returns the length of the sequence and the length of the returned list
 	void loadFromFile(std::fstream &file, int length_of_results, double** storage, int* sequence_length, data_type type, int max_allowed, bool first_run);

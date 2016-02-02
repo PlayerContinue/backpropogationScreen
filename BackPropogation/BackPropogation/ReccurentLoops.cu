@@ -30,34 +30,64 @@ ReccurentLoops::ReccurentLoops(CSettings settings){
 	this->loadCheckpoint();
 }
 
-ReccurentLoops::ReccurentLoops(CSettings settings, int type){
+ReccurentLoops::ReccurentLoops(CSettings settings, int type, bool loadCheckpoint){
 	this->settings = settings;
+	if (loadCheckpoint){
+		this->InitializeNetwork();
+	}
 
 	switch (type){
 	case ReccurentLoops::RealTimeTraining:
 		//Train the network using real time recurrent
 		//this->train_network_RealTimeRecurrentTraining();
 		break;
-	case ReccurentLoops::HessianFreeOptimization:
-		this->mainNetwork = new RecurrentNeuralNetwork(settings);
-		break;
+	
 	case ReccurentLoops::LongTermShortTerm:
-		this->mainNetwork = new Hessian_Network(settings);
+		if (loadCheckpoint){
+			this->mainNetwork = new LongTermShortTermNetwork(this->settings,true);
+		}
+		else{
+			this->mainNetwork = new LongTermShortTermNetwork(this->settings);
+		}
+		break;
+	
+	default:
+		if (loadCheckpoint){
+			this->mainNetwork = new Hessian_Network(this->settings, true);
+		}
+		else{
+			this->mainNetwork = new Hessian_Network(this->settings);
+		}
+
 		break;
 	}
 
-
-	this->InitializeNetwork();
-
-	this->checkpoint = CRecurrentCheckpoint(settings);
-
+	if (!loadCheckpoint){
+		this->InitializeNetwork();
+		this->checkpoint = CRecurrentCheckpoint(settings);
+	}
+	else{
+		this->checkpoint = CRecurrentCheckpoint();
+		this->loadCheckpoint();
+	}
 
 }
 
-ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint){
+ReccurentLoops::ReccurentLoops(CSettings settings, CRecurrentCheckpoint checkpoint, int type){
 	this->settings = settings;
 	this->checkpoint = checkpoint;
-	this->mainNetwork = new LongTermShortTermNetwork(settings, true);
+	switch (type){
+	case ReccurentLoops::RealTimeTraining:
+		//Train the network using real time recurrent
+		//this->train_network_RealTimeRecurrentTraining();
+		break;
+	case ReccurentLoops::HessianFreeOptimization:
+		this->mainNetwork = new Hessian_Network(this->settings,true);
+		break;
+	case ReccurentLoops::LongTermShortTerm:
+		this->mainNetwork = new LongTermShortTermNetwork(this->settings, true);
+		break;
+	}
 	this->InitializeNetwork();
 }
 
@@ -80,7 +110,6 @@ void ReccurentLoops::InitializeNetwork(){
 	this->outputfile->open(this->settings.s_outputTrainingFile);
 	
 }
-
 
 
 //*****************************
@@ -446,8 +475,9 @@ inline bool ReccurentLoops::growthTraining(){
 		srand(time(NULL));
 		int temp[1];
 		this->mainNetwork->getInfoAboutNetwork(temp);
-		this->mainNetwork->addNeuron(temp[0]);
+		this->mainNetwork->addNeuron(1);
 		thrust::copy(this->mean_square_error_results_new.begin(), this->mean_square_error_results_new.end(), this->mean_square_error_initial.begin());
+		this->createCheckpoint();
 	}
 	return true;
 }

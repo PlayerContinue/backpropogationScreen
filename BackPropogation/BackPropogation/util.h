@@ -41,7 +41,12 @@ inline double RandomClamped(){
 
 //return a random float between a and b
 inline double RandomClamped(double a, double b){
-	double random = (rand()) / RAND_MAX;
+	if (b < a){
+		int c = b;
+		b = a;
+		a = c;
+	}
+	double random = ((double)rand()) / (double)RAND_MAX;
 	double diff = b - a;
 	double r = random * diff;
 	return a + r;
