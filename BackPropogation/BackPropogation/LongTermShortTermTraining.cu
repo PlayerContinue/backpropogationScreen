@@ -528,7 +528,7 @@ void LongTermShortTermNetwork::FindPreviousBias(){
 		),
 		functors::find_changed_delta<weight_type>(
 		this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes,
-		this->numberOfNodes - this->numberNonWeights - this->settings.i_output, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
+		this->numberOfNodes - this->numberNonWeights - this->settings.i_output,this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
 		),
 
 		thrust::make_transform_iterator(
@@ -540,7 +540,14 @@ void LongTermShortTermNetwork::FindPreviousBias(){
 		this->GPUPreviousTemp.begin()
 		);
 
-	thrust::transform(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), this->GPUPreviousTemp.begin(), this->GPUPreviousBias.begin(), _1 + _2);
+	thrust::transform_if(this->GPUPreviousBias.begin(), this->GPUPreviousBias.end(), 
+		this->GPUPreviousTemp.begin(), 
+		thrust::make_counting_iterator((int)1),
+		this->GPUPreviousBias.begin(), 
+		_1 + _2,
+		(this->total_unlearned_new_nodes == 0 || _1 >= this->numberOfNodes - this->settings.i_output - this->number_nodes_by_type[0][MEMORY_CELL]) ||
+		(this->total_unlearned_new_nodes > 0 && (_1 % (this->number_nodes_by_type[0][INPUT_CELL] - this->total_unlearned_new_nodes + 1)) != 0));
+
 
 #ifdef APPLY_DELTA_BIAS
 	testing::outputToFile<weight_type>(this->GPUBias, "Bias3", "tests/prevbias2.txt");
@@ -730,6 +737,7 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 			_1 == 0
 			);
 	}
+	
 
 	//Find the previous weights
 	thrust::reduce_by_key(
@@ -758,7 +766,7 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		),
 		functors::find_changed_delta<weight_type>(
 		this->settings.d_beta, this->number_nodes_by_type[0][LongTermShortTermNetwork::INPUT_CELL] - this->total_unlearned_new_nodes,
-		this->numberOfNodes - this->numberNonWeights - this->settings.i_output, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
+		this->numberOfNodes - this->numberNonWeights - this->settings.i_output, this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes, this->settings.d_unlearned_beta, this->settings.d_replaced_beta, (int)(this->total_unlearned_new_nodes > 0))
 		),
 		thrust::make_transform_iterator(//Add the number of nodes when the end of the mapto is reached
 
@@ -821,7 +829,38 @@ void LongTermShortTermNetwork::FindPreviousWeights(){
 		this->GPUPreviousTemp.begin()
 		);
 
-	thrust::transform(this->GPUPreviousWeights.begin(), this->GPUPreviousWeights.end(), this->GPUPreviousTemp.begin(), this->GPUPreviousWeights.begin(), _1 + _2);
+	thrust::transform(
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.begin(), this->number_weights_by_type[0][0] - (this->settings.i_input + 1), 
+		(this->settings.i_input + 1) * this->total_unlearned_new_nodes),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.begin(), 
+		this->number_weights_by_type[0][0] - (this->settings.i_input + 1), (this->settings.i_input + 1)* this->total_unlearned_new_nodes) + (this->number_weights_by_type[0][0] * (NUMBER_NODES_IN_CELL - 1)) - (((this->settings.i_input + 1)* this->total_unlearned_new_nodes)*(NUMBER_NODES_IN_CELL - 1)),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousTemp.begin(), this->number_weights_by_type[0][0] - (this->settings.i_input + 1), 
+		(this->settings.i_input + 1)* this->total_unlearned_new_nodes),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.begin(), this->number_weights_by_type[0][0] - (this->settings.i_input + 1),
+		(this->settings.i_input + 1)* this->total_unlearned_new_nodes),
+		_1 + _2
+		);
+
+	thrust::transform(
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.begin() + (this->number_weights_by_type[0][0] * (NUMBER_NODES_IN_CELL - 1)) + 
+		this->number_weights_by_type[0][MEMORY_CELL], 
+		this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes,
+		1 * this->total_unlearned_new_nodes),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.end(), 
+		this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes, 
+		1 * this->total_number_of_unrolled),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousTemp.begin() + (this->number_weights_by_type[0][0] * 
+		(NUMBER_NODES_IN_CELL - 1)) + this->number_weights_by_type[0][MEMORY_CELL], 
+		this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes, 
+		1 * this->total_unlearned_new_nodes),
+		Unique_Iterator::make_skip_iterator(this->GPUPreviousWeights.begin() + (this->number_weights_by_type[0][0] * (NUMBER_NODES_IN_CELL - 1)) +
+		this->number_weights_by_type[0][MEMORY_CELL], 
+		this->mBlocksLayers[0].size() - this->total_unlearned_new_nodes, 
+		1 * this->total_unlearned_new_nodes),
+		_1 + _2
+		);
+
+	
 
 	bool test = false;
 	if (test == true){
