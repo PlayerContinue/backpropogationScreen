@@ -433,7 +433,7 @@ void LongTermShortTermNetwork::addCellToGPU(unsigned int start_new, unsigned int
 				//Add the link to the output to the output row
 				for (int i = 0; i < (*cell_block).size(); i++){
 					for (int j = 0; j < add_length; j++){
-						(*cell_block)[i].addNewWeightConnection(last_added + j, RandomClamped(-.01,.01));
+						(*cell_block)[i].addNewWeightConnection(last_added + j, RandomClamped(0,0));
 					}
 				}
 			}
