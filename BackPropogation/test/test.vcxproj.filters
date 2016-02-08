@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{8a32dfb8-231d-4e68-ae71-f334a74a41ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{f859f309-2981-4f8b-aab7-90aa82a4a8ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Topology">
+      <UniqueIdentifier>{0133ada2-9821-4b52-893a-6d878662e671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Settings">
+      <UniqueIdentifier>{56c88506-7bad-4b8d-b6a4-18ad338ddf1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Trainer">
+      <UniqueIdentifier>{f30ca1c1-88db-442f-b7ef-3a81067b684c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\misc">
+      <UniqueIdentifier>{f5a1e402-4cd7-46f9-80b1-c5bb22138347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\Runner">
+      <UniqueIdentifier>{09300cf7-a08a-4654-b9b9-ef5f3db3c812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Topology">
+      <UniqueIdentifier>{4743e116-4615-4f8a-a385-0a85abb64ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Trainer">
+      <UniqueIdentifier>{88b36b0b-cc82-4c35-9a30-cd06be60b62d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Runner">
+      <UniqueIdentifier>{5738001c-93e4-46b1-a7be-91f94522ad4b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="main.cu">
+      <Filter>Source</Filter>
+    </CudaCompile>
+    <CudaCompile Include="RNNTopology.cu">
+      <Filter>Source\Topology</Filter>
+    </CudaCompile>
+    <CudaCompile Include="RNNTrainer.cu">
+      <Filter>Source\Trainer</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.cuh">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="TopologyBase.cuh">
+      <Filter>Header\Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="RNNTopology.cuh">
+      <Filter>Header\Topology</Filter>
+    </ClInclude>
+    <ClInclude Include="NSettings.h">
+      <Filter>Header\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainerBase.cuh">
+      <Filter>Header\Trainer</Filter>
+    </ClInclude>
+    <ClInclude Include="SpecialIterators.cuh">
+      <Filter>Header\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCode.cuh">
+      <Filter>Header\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>Header\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="RunnerBase.cuh">
+      <Filter>Header\Runner</Filter>
+    </ClInclude>
+    <ClInclude Include="RNNTrainer.cuh">
+      <Filter>Header\Runner</Filter>
+    </ClInclude>
+    <ClInclude Include="Functors.cuh">
+      <Filter>Header\misc</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

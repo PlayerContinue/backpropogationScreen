@@ -45,7 +45,6 @@ public:
 	NSettings settings;//Contains the settings for the current topology
 public:
 	TopologyBase();
-	virtual ~TopologyBase(){};
 	//*********************************************
 	//Network Construction
 	//

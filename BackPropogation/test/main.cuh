@@ -9,6 +9,8 @@ Reason : Class designed primarily for testing the network
 #include "NSettings.h"
 #include "TopologyBase.cuh"
 #include "RNNTopology.cuh"
+#include "TrainerBase.cuh"
+#include "RNNTrainer.cuh"
 
 
 
@@ -60,16 +62,19 @@ public:
 			std::cout << "2) Feedforward Neural Network" << endl;
 			start = cin.get();
 		}
-		RNNTopology host;
-		TopologyLayerData *temp;
+		TrainerBase *host;
+		TopologyBase *top;
+		TopologyLayerData temp;
+		std::ofstream outputfile;
 		switch (start){
 		case '1':
-			host = RNNTopology(RNNTopology::HOST_DEVICE::DEVICE);
-			host.buildTopology(settings);
-			temp = &(host.getLayer(0));
-			testing::outputToFile<int>(temp->to_vector_begin, temp->to_vector_end, "test", "tests/to_vector.txt");
-			testing::outputToFile<int>(temp->from_vector_begin, temp->from_vector_end, "test", "tests/from_vector.txt");
-			testing::outputToFile<double>(temp->weight_vector_begin, temp->weight_vector_end, "test", "tests/weights_vector.txt");
+			host = new RNNTrainer();
+			top = new RNNTopology();
+			host->createTrainingEnviornment(*top,settings);
+			outputfile.precision(30);
+			outputfile.open(settings.s_network_name, ios::trunc);
+			host->createCheckpoint(outputfile);
+			outputfile.close();
 			exit(0);
 			break;
 		case '2':
