@@ -71,11 +71,11 @@
     <ClInclude Include="RunnerBase.cuh">
       <Filter>Header\Runner</Filter>
     </ClInclude>
-    <ClInclude Include="RNNTrainer.cuh">
-      <Filter>Header\Runner</Filter>
-    </ClInclude>
     <ClInclude Include="Functors.cuh">
       <Filter>Header\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="RNNTrainer.cuh">
+      <Filter>Header\Trainer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

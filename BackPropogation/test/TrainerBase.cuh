@@ -6,6 +6,7 @@ Reason: Contains the base functions required to train a network. Is an abstract 
 #pragma once
 #include <thrust\device_vector.h>
 #include <thrust\host_vector.h>
+#include "TestCode.cuh"
 #include "NSettings.h"
 #include "TopologyBase.cuh"
 #include "RNNTopology.cuh"

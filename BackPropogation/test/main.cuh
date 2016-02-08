@@ -65,13 +65,15 @@ public:
 		TrainerBase *host;
 		TopologyBase *top;
 		TopologyLayerData temp;
+		thrust::device_vector<WEIGHT_TYPE> input = thrust::device_vector<WEIGHT_TYPE>(thrust::make_constant_iterator((WEIGHT_TYPE)1), thrust::make_constant_iterator((WEIGHT_TYPE)1)+settings.i_input);
+		thrust::device_vector<WEIGHT_TYPE> output = thrust::device_vector<WEIGHT_TYPE>(thrust::make_constant_iterator((WEIGHT_TYPE)1), thrust::make_constant_iterator((WEIGHT_TYPE)1) + settings.i_output);
 		std::ofstream outputfile;
 		switch (start){
 		case '1':
 			host = new RNNTrainer();
 			top = new RNNTopology();
 			host->createTrainingEnviornment(*top,settings);
-			host->train(thrust::device_vector<WEIGHT_TYPE>(settings.i_input), thrust::device_vector<WEIGHT_TYPE>(settings.i_output));
+			host->train(input,output);
 			outputfile.precision(30);
 			outputfile.open(settings.s_network_name, ios::trunc);
 			host->createCheckpoint(outputfile);

@@ -24,7 +24,7 @@ namespace functors{
 
 
 		__host__ __device__
-			inline double  logistic_function(const double &value, const double &max_value, const double &midpoint){
+			inline double logistic_function(const double &value, const double &max_value, const double &midpoint){
 			return ((thrust::complex<double>)max_value /
 				((thrust::complex<double>)1 + thrust::exp((thrust::complex<double>)(-1) * ((thrust::complex<double>)value - (thrust::complex<double>)midpoint)))).real();
 		};
@@ -44,7 +44,7 @@ namespace functors{
 		};
 
 
-		//Multiply a two object tuple
+		//Add two numbers and sigmoid the results
 		template <typename T>
 		struct bias_sigmoid_functor : public thrust::unary_function < T, T > {
 
@@ -55,6 +55,21 @@ namespace functors{
 			}
 
 		};
+
+		//Find the square error of the provided two values
+		template <typename T>
+		struct bias_sigmoid_functor : public thrust::unary_function < T, T > {
+
+			//Overload the function operator
+			__host__ __device__
+				T operator()(const T x, const T y) const{
+				thrust::complex<T> temp = thrust::pow((thrust::complex<T>)(x - y), (thrust::complex<T>)2);
+				return temp.real();
+			}
+
+		};
+
+
 
 
 

@@ -9,10 +9,10 @@ Reason: Contains the functions for training a recurrent network in a Hessian-Fre
 
 class RNNTrainer :public TrainerBase{
 private:
-	thrust::device_vector<WEIGHT_TYPE> device_deltas;
-	thrust::host_vector<WEIGHT_TYPE> host_deltas;
-	thrust::device_vector<WEIGHT_TYPE> device_input;
-	thrust::host_vector<WEIGHT_TYPE> host_input;
+	thrust::device_vector<WEIGHT_TYPE> device_error;
+	thrust::host_vector<WEIGHT_TYPE> host_error;
+	thrust::device_vector<WEIGHT_TYPE> device_input;//Input from the previous run
+	thrust::host_vector<WEIGHT_TYPE> host_input;//Input from the previous run
 	TopologyLayerData layer_data;
 public:
 	RNNTrainer();
@@ -33,6 +33,8 @@ public:
 	
 	//Run the network forward to find an output
 	void forwardRun();
+
+	void findError();
 	//*********************************************
 	//Clean Up Topology
 	//Remove the current values
