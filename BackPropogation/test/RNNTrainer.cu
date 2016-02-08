@@ -36,7 +36,7 @@ void RNNTrainer::train(thrust::device_vector<WEIGHT_TYPE> input, thrust::device_
 
 
 
-	for (int i = 0; i < (input.size() / this->_topology->InfoInLayer(0,TopologyBase::INPUT_NODES)); i++){
+	for (int i = 0; i < input.size(); i += this->_topology->InfoInLayer(0, TopologyBase::INPUT_NODES)){
 		thrust::copy(this->layer_data.device_output_vector_begin, this->layer_data.device_output_vector_end, this->device_input.begin());//Copy the output of the previous run
 		
 		forwardRun();
@@ -46,8 +46,9 @@ void RNNTrainer::train(thrust::device_vector<WEIGHT_TYPE> input, thrust::device_
 		end_of_input += this->_topology->InfoInLayer(0,TopologyBase::INPUT_NODES);
 		start_of_output += this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES);
 		end_of_output += this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES);
-		
-		thrust::copy(start_of_input, end_of_input, this->layer_data.device_output_vector_begin);//Copy the input values
+		if (input.size() >(i + this->_topology->InfoInLayer(0, TopologyBase::INPUT_NODES))){
+			thrust::copy(start_of_input, end_of_input, this->layer_data.device_output_vector_begin);//Copy the input values
+		}
 	}
 
 }

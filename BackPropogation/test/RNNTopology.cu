@@ -147,7 +147,7 @@ std::ostream& RNNTopology::createCheckpoint(std::ostream &os){
 	//Output host_to
 	os << "From" << endl;
 	os << this->host_from.size() << endl;
-	thrust::copy(this->host_from.begin(), this->host_to.end(), std::ostream_iterator<int>(os, " "));
+	thrust::copy(this->host_from.begin(), this->host_from.end(), std::ostream_iterator<int>(os, " "));
 	os << endl;
 	os << "To" << endl;
 	os << this->host_to.size() << endl;

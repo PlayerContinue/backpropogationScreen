@@ -71,6 +71,7 @@ public:
 			host = new RNNTrainer();
 			top = new RNNTopology();
 			host->createTrainingEnviornment(*top,settings);
+			host->train(thrust::device_vector<WEIGHT_TYPE>(settings.i_input), thrust::device_vector<WEIGHT_TYPE>(settings.i_output));
 			outputfile.precision(30);
 			outputfile.open(settings.s_network_name, ios::trunc);
 			host->createCheckpoint(outputfile);
