@@ -107,7 +107,7 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 	thrust::device_vector<unsigned int>::iterator to_vector_start = this->layer_data.to_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
 	thrust::device_vector<unsigned int>::iterator from_vector_start = this->layer_data.from_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
 	thrust::device_vector<WEIGHT_TYPE>::iterator weight_vector_start = this->layer_data.weight_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
-	thrust::device_vector<WEIGHT_TYPE>::iterator error_start = this->device_error.begin();
+	thrust::device_vector<WEIGHT_TYPE>::iterator error_start = this->device_error.end() - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES);
 	//Find the error of the output
 	thrust::transform(this->layer_data.device_output_vector_end - this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES),
 		this->layer_data.device_output_vector_end,
@@ -116,7 +116,7 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 		functors::transform_functors::find_output_gradiant<WEIGHT_TYPE>()
 		);
 
-	thrust::fill(this->layer_data.weight_vector_begin, this->layer_data.weight_vector_end, (WEIGHT_TYPE)1);
+	
 
 	//Assumes all hidden nodes connect to output node
 	//Will change if better idea becomes apparent
@@ -143,7 +143,6 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 		this->device_error.begin()
 		);
 
-	testing::outputToFile<WEIGHT_TYPE>(Special_Iterator::make_repeat_list_iterator(error_start, this->device_error.end() - error_start), Special_Iterator::make_repeat_list_iterator(error_start, this->device_error.end() - error_start) + (this->layer_data.weight_vector_end - weight_vector_start), "testing", "tests/bend.txt");
 };
 
 //*********************************************
