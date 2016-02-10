@@ -2,7 +2,7 @@
 
 RNNTrainer::RNNTrainer(){
 
-}
+};
 
 //*********************************************
 //Create Training Enviornment
@@ -18,7 +18,7 @@ bool RNNTrainer::createTrainingEnviornment(TopologyBase& topology, NSettings set
 	this->host_input = thrust::host_vector<WEIGHT_TYPE>(layer_data.device_output_vector_end - layer_data.device_output_vector_begin);
 	this->device_input = this->host_input;
 	return true;
-}
+};
 
 //*********************************************
 //Run Training
@@ -39,8 +39,8 @@ void RNNTrainer::train(thrust::device_vector<WEIGHT_TYPE> input, thrust::device_
 	for (int i = 0; i < input.size(); i += this->_topology->InfoInLayer(0, TopologyBase::INPUT_NODES)){
 		thrust::copy(this->layer_data.device_output_vector_begin, this->layer_data.device_output_vector_end, this->device_input.begin());//Copy the output of the previous run
 		
-		forwardRun();
-
+		this->forwardRun();//Find the predicted output
+		this->findGradiant(start_of_output);//Find the gradiant
 		//Increment the input and output
 		start_of_input += this->_topology->InfoInLayer(0,TopologyBase::INPUT_NODES);
 		end_of_input += this->_topology->InfoInLayer(0,TopologyBase::INPUT_NODES);
@@ -51,7 +51,7 @@ void RNNTrainer::train(thrust::device_vector<WEIGHT_TYPE> input, thrust::device_
 		}
 	}
 
-}
+};
 
 void RNNTrainer::forwardRun(){
 	//Store where the math should come from
@@ -101,16 +101,50 @@ void RNNTrainer::forwardRun(){
 		output_start += this->_topology->InfoInLayer(0, TopologyBase::HIDDEN_NODES);
 		output_end += this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES);
 	}
-}
+};
 
-void RNNTrainer::findError(){
+void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start_target){
+	thrust::device_vector<unsigned int>::iterator to_vector_start = this->layer_data.to_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
+	thrust::device_vector<unsigned int>::iterator from_vector_start = this->layer_data.from_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
+	thrust::device_vector<WEIGHT_TYPE>::iterator weight_vector_start = this->layer_data.weight_vector_end - this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_WEIGHTS);
+	thrust::device_vector<WEIGHT_TYPE>::iterator error_start = this->device_error.begin();
 	//Find the error of the output
-	thrust::transform(this->layer_data.device_output_vector_end - this->_topology->InfoInLayer(TopologyBase::OUTPUT_NODES),
+	thrust::transform(this->layer_data.device_output_vector_end - this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES),
 		this->layer_data.device_output_vector_end,
-		this->device_error.end() - this->_topology->InfoInLayer(TopologyBase::OUTPUT_NODES),
+		start_target,
+		this->device_error.end() - this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES),
+		functors::transform_functors::find_output_gradiant<WEIGHT_TYPE>()
+		);
 
-		)
-}
+	thrust::fill(this->layer_data.weight_vector_begin, this->layer_data.weight_vector_end, (WEIGHT_TYPE)1);
+
+	//Assumes all hidden nodes connect to output node
+	//Will change if better idea becomes apparent
+	thrust::reduce_by_key(
+		Special_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES)),
+		Special_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), 
+		this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES)) + (this->layer_data.weight_vector_end - weight_vector_start),
+		
+		thrust::make_transform_iterator(
+		thrust::make_zip_iterator(
+		thrust::make_tuple(
+		
+		Special_Iterator::make_repeat_list_iterator(error_start, this->device_error.end() - error_start),
+		Special_Iterator::make_transpose_iterator(weight_vector_start,
+		this->layer_data.weight_vector_end, this->_topology->InfoInLayer(0, TopologyBase::HIDDEN_NODES),
+		this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES))//Transpose_Iterator_End
+
+		)//Tuple End
+		),//Zip Iterator end
+		functors::transform_functors::find_hidden_node_gradiant<WEIGHT_TYPE>()
+		),//Transform end
+		
+		thrust::make_discard_iterator(),
+		this->device_error.begin()
+		);
+
+	testing::outputToFile<WEIGHT_TYPE>(Special_Iterator::make_repeat_list_iterator(error_start, this->device_error.end() - error_start), Special_Iterator::make_repeat_list_iterator(error_start, this->device_error.end() - error_start) + (this->layer_data.weight_vector_end - weight_vector_start), "testing", "tests/bend.txt");
+};
 
 //*********************************************
 //Clean Up Topology
@@ -143,4 +177,4 @@ std::ostream& RNNTrainer::createCheckpoint(std::ostream& os){
 
 	this->_topology->createCheckpoint(os);
 	return os;
-}
+};

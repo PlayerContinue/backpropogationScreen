@@ -235,5 +235,47 @@ namespace Special_Iterator{
 		return Special_Iterator::return_iterator<Iterator>(it, begin, skip_start, count_to_skip, extra_skip);
 	};
 
+	//*************************************
+	//Make a transpose_iterator
+	//*************************************
+
+	//Special Iterator for skipping a set number of places on each iteration
+	template<typename Iterator>
+	class transpose_iterator : public thrust::iterator_adaptor <  transpose_iterator<Iterator>, Iterator>
+	{
+	public:
+		// shorthand for the name of the iterator_adaptor we're deriving from
+		typedef thrust::iterator_adaptor <
+			transpose_iterator<Iterator>,
+			Iterator
+		> super_t;
+		__host__ __device__
+			transpose_iterator(const Iterator &x, const Iterator &y, int _row_length, int _col_length) : super_t(x), begin(x), end(y),row_length(_row_length),col_length(_col_length){}
+		// befriend thrust::iterator_core_access to allow it access to the private interface below
+		friend class thrust::iterator_core_access;
+	private:
+		// used to keep track of where we began
+		const Iterator begin;
+		const Iterator end;
+		const int row_length;
+		const int col_length;
+		// it is private because only thrust::iterator_core_access needs access to it
+		__host__ __device__
+			typename super_t::reference dereference() const
+		{
+			int pos = this->base() - begin;//Number passed
+			int row = pos / col_length;
+			int col = pos%col_length;
+			return *(begin + ((col*row_length) + row));
+
+
+		}
+	};
+
+	template<typename Iterator>
+	Special_Iterator::transpose_iterator<Iterator> make_transpose_iterator(Iterator begin, Iterator end, int row_length, int col_length){
+		return Special_Iterator::transpose_iterator<Iterator>(begin, end, row_length, col_length);
+	};
+
 }
 

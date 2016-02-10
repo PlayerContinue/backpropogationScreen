@@ -56,19 +56,35 @@ namespace functors{
 
 		};
 
-		//Find the square error of the provided two values
+		//Find the error of the provided two values
 		template <typename T>
-		struct bias_sigmoid_functor : public thrust::unary_function < T, T > {
+		struct find_output_gradiant : public thrust::unary_function < T, T > {
 
 			//Overload the function operator
 			__host__ __device__
-				T operator()(const T x, const T y) const{
-				thrust::complex<T> temp = thrust::pow((thrust::complex<T>)(x - y), (thrust::complex<T>)2);
-				return temp.real();
+				T operator()(const T output, const T target) const{
+				//thrust::complex<T> temp = thrust::pow((thrust::complex<T>)(x - y), (thrust::complex<T>)2);
+				//return temp.real();
+				return ((T)output)*((T)1 - (T)output)*((T)target - (T)output);
+
 			}
 
 		};
 
+		//Find the error of the hidden layers
+		template <typename T>
+		struct find_hidden_node_gradiant : public thrust::unary_function < T, T > {
+
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const Tuple t) const{//0=error of next layer, 1=weight
+
+				return  (T)thrust::get<0>(t) * ((T)1 - (T)thrust::get<0>(t)) * (T)thrust::get<1>(t);
+
+			}
+
+		};
 
 
 
