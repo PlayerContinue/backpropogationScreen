@@ -15,6 +15,7 @@ bool RNNTrainer::createTrainingEnviornment(TopologyBase& topology, NSettings set
 	this->layer_data = this->_topology->getLayer(0);
 	this->host_error = thrust::host_vector<WEIGHT_TYPE>(layer_data.device_output_vector_end - layer_data.device_output_vector_begin);
 	this->device_error = this->host_error;
+	this->host_weight_error = thrust::host_vector<WEIGHT_TYPE>(layer_data.weight_vector_end - layer_data.weight_vector_begin);
 	this->host_input = thrust::host_vector<WEIGHT_TYPE>(layer_data.device_output_vector_end - layer_data.device_output_vector_begin);
 	this->device_input = this->host_input;
 	return true;
@@ -153,6 +154,7 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 bool RNNTrainer::cleanTrainer(){
 	thrust::fill(this->device_error.begin(), this->device_error.end(), (WEIGHT_TYPE)0);
 	thrust::fill(this->device_input.begin(), this->device_input.end(), (WEIGHT_TYPE)0);
+	thrust::fill(this->device_weight_error.begin(), this->device_weight_error.end(), (WEIGHT_TYPE)0);
 	this->_topology->cleanTopology();
 	return true;
 };
@@ -161,6 +163,7 @@ bool RNNTrainer::cleanTrainer(){
 bool RNNTrainer::emptyTrainer(){
 	clean_device::free(this->device_error);
 	clean_device::free(this->device_input);
+	clean_device::free(this->device_weight_error);
 	this->_topology->emptyTopology();
 	return true;
 };

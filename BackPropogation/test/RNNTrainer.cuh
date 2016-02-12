@@ -11,6 +11,8 @@ class RNNTrainer :public TrainerBase{
 private:
 	thrust::device_vector<WEIGHT_TYPE> device_error;
 	thrust::host_vector<WEIGHT_TYPE> host_error;
+	thrust::device_vector<WEIGHT_TYPE> device_weight_error;//Contains the error of the weights
+	thrust::host_vector<WEIGHT_TYPE> host_weight_error;
 	thrust::device_vector<WEIGHT_TYPE> device_input;//Input from the previous run
 	thrust::host_vector<WEIGHT_TYPE> host_input;//Input from the previous run
 	TopologyLayerData layer_data;
