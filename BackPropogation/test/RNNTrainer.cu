@@ -58,14 +58,13 @@ void RNNTrainer::forwardRun(){
 	//Store where the math should come from
 	thrust::device_vector<WEIGHT_TYPE>::iterator previous_start = this->device_input.begin();
 	thrust::device_vector<WEIGHT_TYPE>::iterator previous_end = this->device_input.end();
-	thrust::device_vector<WEIGHT_TYPE>::iterator output_start = this->layer_data.device_output_vector_begin + this->_topology->InfoInLayer(0,TopologyBase::INPUT_NODES);
-	thrust::device_vector<WEIGHT_TYPE>::iterator output_end = this->layer_data.device_output_vector_begin + this->_topology->InfoInLayer(0, TopologyBase::INPUT_NODES) + this->_topology->InfoInLayer(0, TopologyBase::HIDDEN_NODES);
+	thrust::device_vector<WEIGHT_TYPE>::iterator output_start = this->layer_data.device_output_vector_begin;
+	thrust::device_vector<WEIGHT_TYPE>::iterator output_end = this->layer_data.device_output_vector_end;
 	thrust::device_vector<unsigned int>::iterator from_start = this->layer_data.to_vector_begin;
-	thrust::device_vector<unsigned int>::iterator from_end = this->layer_data.to_vector_begin + this->_topology->InfoInLayer(0, TopologyBase::HIDDEN_WEIGHTS);
+	thrust::device_vector<unsigned int>::iterator from_end = this->layer_data.to_vector_end;
 
 	//testing::outputToFile<WEIGHT_TYPE>(layer_data.device_output_vector_begin, layer_data.device_output_vector_end, "out1", "tests/output_vector.txt");
 	//In RNN there are only three layers, input/hidden/output
-	for (int i = 0; i < 2; i++){
 		thrust::reduce_by_key(//Find hidden layer values
 			from_start,
 			from_end,
@@ -84,24 +83,14 @@ void RNNTrainer::forwardRun(){
 			thrust::make_discard_iterator(),
 			output_start);
 		
-		//testing::outputToFile<WEIGHT_TYPE>(layer_data.device_output_vector_begin, layer_data.device_output_vector_end, "out1", "tests/output_vector.txt");
-		
-		thrust::transform(
-			output_start,
-			output_end,
-			layer_data.device_bias_begin,
-			output_start,
-			functors::transform_functors::bias_sigmoid_functor<WEIGHT_TYPE>());
-		
-		//testing::outputToFile<WEIGHT_TYPE>(layer_data.device_output_vector_begin, layer_data.device_output_vector_end, "out1", "tests/output_vector.txt");
 
-		previous_start = layer_data.device_output_vector_begin;
-		previous_end = layer_data.device_output_vector_end;
-		from_start = from_end;
-		from_end += this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_WEIGHTS);
-		output_start += this->_topology->InfoInLayer(0, TopologyBase::HIDDEN_NODES);
-		output_end += this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES);
-	}
+	thrust::transform(
+		this->layer_data.device_output_vector_begin,
+		this->layer_data.device_output_vector_end,
+		layer_data.device_bias_begin,
+		output_start,
+		functors::transform_functors::bias_sigmoid_functor<WEIGHT_TYPE>());
+
 };
 
 void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start_target){
@@ -121,7 +110,7 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 
 	//Assumes all hidden nodes connect to output node
 	//Will change if better idea becomes apparent
-	thrust::reduce_by_key(
+	/*thrust::reduce_by_key(
 		Special_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), this->_topology->InfoInLayer(0,TopologyBase::OUTPUT_NODES)),
 		Special_Iterator::make_repeat_iterator(thrust::make_counting_iterator((int)0), 
 		this->_topology->InfoInLayer(0, TopologyBase::OUTPUT_NODES)) + (this->layer_data.weight_vector_end - weight_vector_start),
@@ -142,7 +131,9 @@ void RNNTrainer::findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start
 		
 		thrust::make_discard_iterator(),
 		this->device_error.begin()
-		);
+		);*/
+
+	thrust::reduce_
 
 };
 
