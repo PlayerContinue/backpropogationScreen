@@ -77,5 +77,8 @@
     <ClInclude Include="RNNTrainer.cuh">
       <Filter>Header\Trainer</Filter>
     </ClInclude>
+    <ClInclude Include="Iterator_Structures.cuh">
+      <Filter>Header\misc</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@ Reason: The current header is an object designed to be overriden which contains 
 #include <iostream>
 #include <fstream>
 #include "NSettings.h"
+#include "Iterator_Structures.cuh"
 #include "Util.h"
 
 #define WEIGHT_TYPE double
@@ -50,6 +51,7 @@ struct TopologyLayerData{
 	};
 
 };
+
 
 
 

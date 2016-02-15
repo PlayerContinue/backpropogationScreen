@@ -41,7 +41,42 @@ namespace functors{
 				return ((T)thrust::get<0>(x) * (T)thrust::get<1>(x));
 			}
 
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const T &x, const T &y) const{
+				return ((T)x * (T)y);
+			}
+
 		};
+
+
+		//Multiply a two object tuple
+		template <typename T>
+		struct subtract : public thrust::unary_function < T, T > {
+
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const Tuple &x) const{
+				return ((T)thrust::get<0>(x) - (T)thrust::get<1>(x));
+			}
+
+		};
+
+		//Multiply a two object tuple
+		template <typename T>
+		struct sum : public thrust::unary_function < T, T > {
+
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const Tuple &x) const{
+				return ((T)thrust::get<0>(x)  + (T)thrust::get<1>(x));
+			}
+
+		};
+
 
 
 		//Add two numbers and sigmoid the results
@@ -69,6 +104,14 @@ namespace functors{
 
 			}
 
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const Tuple t) const{// 0= output, 1 = target
+				return ((T)thrust::get<0>(t))*((T)1 - (T)thrust::get<0>(t))*((T)thrust::get<1>(t) -(T)thrust::get<0>(t));
+
+			}
+
 		};
 
 		//Find the error of the hidden layers
@@ -86,7 +129,25 @@ namespace functors{
 
 		};
 
+		//Find the gradiant of the weights with respect to a given node
+		template <typename T>
+		struct find_weight_gradiant : public thrust::unary_function < T, T > {
 
+			//Overload the function operator
+			template <typename Tuple>
+			__host__ __device__
+				T operator()(const Tuple t) const{//0=weight_error 1=output of previous layer 2=from 3=to
+
+				if (thrust::get<2>(t) == thrust::get<3>(t)){
+					return thrust::get<0>(t) +thrust::get<1>(t);
+				}
+				else{
+					return thrust::get<0>(t);
+				}
+
+			}
+
+		};
 
 
 	}

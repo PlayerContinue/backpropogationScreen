@@ -36,7 +36,12 @@ public:
 	//Run the network forward to find an output
 	void forwardRun();
 
+	//Find the gradiant values to apply
 	void findGradiant(thrust::device_vector<WEIGHT_TYPE>::iterator start_target);
+
+	//Apply the error
+	void applyGradiant();
+
 	//*********************************************
 	//Clean Up Topology
 	//Remove the current values
